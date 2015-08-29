@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Guppy</title>
+    <link rel="stylesheet" href="katex/katex.min.css">
+  </head>
+<body>
+  <script src="katex/katex.min.js"></script>
+  <div id="eqn_div" style="border:solid 2px blue; width:50%;height:100px;display:table;user-select:none;-ms-user-select:none;-webkituser-select:none;-moz-user-select:none;">
+    <div style="#position:absolute;#top:50%;display:table-cell;vertical-align:middle">
+    </div>
+    <br />
+  </div>
+  <div id="raw_div" style="font-family:Courier;font-size:20px;font-weight:bold;color:gray;"></div>
+  <br />
+  <div id="toggle_ref" style="color:blue;text-decoration:underline;cursor:pointer;">Quick reference</div>
+  <br />
+  <div id="help_card" style="float:left;width:100%">
+    <style>td{ padding:2px 10px;}</style>
+    <div style="float:left">
+    <table>
+      <!-- <tr><td colspan="2" style="border-bottom:1px solid black;text-align:center;"><b>Symbols</b></td></tr> -->
+      <tr><td><b>Type...</b></td><td><b>...to create</b></td></tr>
+      <tr><td><font face="monospace">frac or / </font></td><td>Big fraction</td></tr>
+      <tr><td><font face="monospace">shift-/ </font></td><td>Division</td></tr>
+      <tr><td><font face="monospace">abs</font></td><td>Absolute value</td></tr>
+      <tr><td><font face="monospace">sqrt</font></td><td>Square root</td></tr>
+      <tr><td><font face="monospace">pi</font></td><td>pi</td></tr>
+      <tr><td><font face="monospace">sin/cos/tan</font></td><td>Sine/cosine/tangent</td></tr>
+      <tr><td><font face="monospace">log or ln</font></td><td>Natural logarithm</td></tr>
+      <tr><td><font face="monospace">diff or deriv</font></td><td>Derivative</td></tr>
+      <tr><td><font face="monospace">int</font></td><td>Indefinite integral</td></tr>
+      <tr><td><font face="monospace">defi</font></td><td>Definite integral</td></tr>
+      <tr><td><font face="monospace">smi/smd</font></td><td>Small indef/def integral</td></tr>
+      <tr><td><font face="monospace">sum</font></td><td>Summation</td></tr>
+    </table><br />
+    </div>
+    <div style="float:left">
+    <table>
+      <!-- <tr><td colspan="2" style="border-bottom:1px solid black;text-align:center"><b>Navigation</b></td></tr> -->
+      <tr><td><b>Press...</b></td><td><b>...to do</b></td></tr>
+      <tr><td><font face="monospace">left/right arrows</font></td><td>Move cursor</td></tr>
+      <tr><td><font face="monospace">shift + left/right arrows</font></td><td>Select region</td></tr>
+      <tr><td><font face="monospace">ctrl + x/c/v</font></td><td>Cut/copy/paste</td></tr>
+      <tr><td><font face="monospace">ctrl + z/y</font></td><td>Undo/redo</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <br />
+
+  <!-- <br /><script type="math/tex">A | BC</script><br /> -->
+  <!-- <br /><script type="math/tex">A\negthinspace|\negthinspace BC</script><br /> -->
+  <!-- <br /><script type="math/tex">A \negmedspace|\negmedspace BC</script><br /> -->
+  <!-- <br /><script type="math/tex">A |\negthinspace\negthinspace BC</script><br /> -->
+  <!-- <br /><script type="math/tex">A BC</script><br /> -->
+
+  <div id="toggle_tests" style="color:blue;text-decoration:underline;cursor:pointer;">Tests</div>
+  <br />
+  <div id="tests" style="display:inline-block;">
+  </div>
+  <br />
+
+  <div id="toggle_state" style="color:blue;text-decoration:underline;cursor:pointer;">State</div>
+  <div id="state" style="display:none">
+    <textarea cols="100" rows="10" style="border:2px solid black;background-color:#ccc;" id="xml"></textarea>
+  </div>
+  <br />
+  <div id="toggle_docs" style="color:blue;text-decoration:underline;cursor:pointer;">User documentation</div>
+  <div id="help" style="display:none">
+    <h1>Expanded Help</h1>
+
+    <h2>Navigating the equation</h2>
+
+    <p>Every expression is composed of simpler subexpressions.  For example, 1+sin(2x)+sqrt(1+(x+1)^2) has subexpressions sin(2x) and sqrt(1+(x+1)^2).  </p>
+    
+    <p>The left and right arrow keys are used for moving the cursor around.  When navigating an expression, the arrow keys will pass over a subexpression as though it is a single character like a "+" or a "1", except that the cursor can also be "on top of" any subexpression: If you naviagate so the cursor is just before a subexpression as in "1+|sin(2x)" and then press the right arrow key, the cursor then will be "on top of" the sin(2x)--the cursor will disappear and the whole subexpression will turn red.  When this is the case, you may hit the "enter" key or the down arrow to be brought one level down into the subexpression.  In this example, you will then be editing the "2x".  If the subexpression has multiple parts, such as the numerator and denominator of a fraction, "enter" will bring you to the first blank one or, if there are no blanks, will bring you to the beginning of the first part of the subexpression.  shift-enter will bring you to the end of the last part of the subexpression.  </p>
+
+    <p>The arrow keys will move the cursor within the different parts of a subexpression, and if the cursor reaches the end of a part, the right arrow can be used to move the cursor to the next part.  If you navigate to the end of the last part of a subexpression and then press the right arrow, you will be brought back "on top of" that subexpression.  Similarly for if you use the left arrow while at the beginning of the first part of a subexpression.  Within certain subexpressions, the up and down arrows may be used for switching between certain parts, e.g. the denominator and numerator of a fraction, or the upper and lower bounds of a definite integral.</p>
+
+    <p>The mouse does nothing except focus/unfocus the widget.  The widget is greyed out when unfocused.  </p>
+
+    <h2>Editing commands</h2>
+
+    <p>Shift-arrows will select a part of the equation.  A selection will only select expressions on the same level--for example, in an expression like sin(x)+cos(2y) you cannot select just the "(x)+cos(y+1)" since the "x" is inside the "sin", and hence is at a deeper level of the expression tree than the cos(y).  You can, however, select just the 2y or just the y or just the x, as well as just the sin(x) or the cos(2y).  </p>
+
+    <p>Additionally, when you navigate with the arrow keys (not using shift) over a subexpression like sin(x), the whole thing will turn red indicating that the subexpression is currently selected.  </p>
+
+    <p>Ctrl-c will copy the current selection, ctrl-x will cut it, ctrl-v will paste it, and backspace will delete it, all more or less as usual.</p>
+    
+    <h2>Fractions</h2>
+    <p>The / key will give you a forward-slash for convenient representation of fractions inline.  For the stacked style of fraction, use shift-/ or type "frac".  With shift-/, anything you have selected will be placed in the numerator of the resulting fraction.  When editing a fraction (and not, say, a subelement thereof) the up and down arrow keys can be used to switch between numerator and denominator.</p>
+    
+    <h2>Exponents/Subscripts</h2>
+    <p>The ^ key will give you an exponent.  If you have anything selected, it will bracket that thing and put an exponent on it.  If the cursor is immediately following a number or variable name, it will exponentiate that variable name.  When editing an exponential expression (and not, say, a subelement thereof), the up and down arrow keys can be user to switch between exponent and base.  The _ key works exactly analogously for subscripts.</p>
+    
+    <h2>Basic mathematics</h2>
+    <p>The four basic arithmetic operators +, -, *, and / are all treated as simple binary operators.  Number input works as expected.  Further operators such as square-root and absolute value can be obtained by typing "sqrt" and "abs" respectively, and when the last letter of these is typed they will be converted to the appropriate kind of expression.</p>
+
+    <h2>Symbols</h2>
+    <p>The Greek letter pi can be entered by simply entering "pi".  </p>
+    
+    <h2>Parentheses</h2>
+    <p>The ( key will let you create a new expression inside brackets.  The ) key is used to bracket an existing expression, e.g. a selection or a single variable/number.</p>
+    
+    <h2>Trigonometry</h2>
+    <p>The functions sin, cos, and tan are recognised and when you type e.g. "sin" it will be converted to a sine function automatically.</p>
+    
+    <h2>Calculus</h2>
+    <p>To get a derivative, enter "diff" or "deriv" and one will appear.  To get an indefinite integral, "int", and a definite integral, "defi".  </p>
+
+    <h2>Supported functions</h2>
+
+    <p>The following is a list of things that can be typed that will be recognised after they have been entered:</p>
+    
+<pre>abs
+sqrt
+floor
+frac
+int
+defi
+diff
+deriv
+pi
+sin
+cos
+tan
+log
+ln</pre>
+  </div>
+  <script type="text/javascript" src="keyboard.js"></script>
+  <script type="text/javascript" src="guppy.js"></script>
+  
+  <script type="text/javascript" src="page.js"></script>
+</body></html>

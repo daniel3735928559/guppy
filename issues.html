@@ -1,0 +1,79 @@
+<html><body><pre>
+[DONE] Left paren should have current:1, current_type:null
+
+[DONE] Right paren should have current:1, current_type:null, and should
+behave like right arrow
+
+[IGNORED] Maybe do not auto-bracket infinitesimal
+
+[DONE] Make help reference card with shift-arrows and shift-/
+
+[DONE] current_type:token should include if at the beginning and the
+previous thing is an f
+
+[DONE] Enter should take you up a level as well as down a level
+
+[DONE] After right-ing out of an f node, should not be on top of node, but
+rather should be in the next e node
+
+[DONE] Add \left and \right for the grey square brackets
+
+[DONE] cursor needs to be small in exponent even if exponent is complex
+with subexpressions
+
+[DONE] int needs to be small if in an exponent--i.e. no displaystyle.
+This is hard.  Maybe for now, 'smi/smd' for small integral/definite
+integral.
+
+[DONE] home/end go to home/end of current subexpression
+
+[STACK DONE] Undo stack or tree
+
+[DONE] / for big frac, Shift-/ for slash
+
+[DONE] Should have instructions for int/defi on separate lines. Was
+confused about how to do defi and took several readthroughs to figure
+it out
+
+[DONE] Add summation
+
+[DONE] Selecting a region and typing does not overwrite it; it should do so.
+
+[DONE] The keystroke sequence (ac)^2 gives rise to too many
+brackets
+
+[IGNORED] "Typing tan followed by left paren should not add a new
+bracket"
+
+[DONE probably] For (4), [Tester] had lots of trouble getting entire
+numerator above the line (he typed the whole numerator and then typed
+'/'); finally did it after a few tries by typing "frac" at the
+outset. But, then, couldn't figure out how to get back into the
+fraction after finishing the numerator. He expected hitting 'left' to
+move the cursor into the numerator, and then hitting 'down' to move it
+into the denominator.
+
+type a fraction a/b, type undo, undo, ... -- the undo gets stuck at
+removing the fraction
+
+[KaTeX team says cssId PR rebase in the works] Mouse for moving cursor
+and for selection
+
+[DONE] Copy sin(x)cos(x) and paste.  Comes out as cos(x)sin(x)
+
+[DONE] 1+2+3+4, select 2+3, press (, success except cannot render because of
+LaTeX error until you move the cursor some.
+
+[DONE] Deleting * doesn't work
+
+[DONE] Give f nodes types in attribute.
+
+[DONE] Have blacklist for disallowed types.
+
+[DONE] Allow f nodes to have named arguments
+
+Allow keymap for arguments (e.g. if key is pressed when in this
+argument, what to do)
+
+
+</pre></body></html>
