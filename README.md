@@ -1,12 +1,18 @@
 ## Synopsis
 
 Guppy is a Javascript-based WYSIWYG editor for mathematics whose
-content is stored in XML, making Guppy mathematical expressions
-**searchable**, **parseable**, and **renderable**.  
+content is stored in an XML format that makes Guppy mathematical
+expressions **searchable**, **parseable**, and **renderable**.
 
 The content of the editor can easily be extracted in XML format (for
 searching or otherwise manipulating), LaTeX (for rendering), or a
-parseable plaintext format.
+plaintext format (for parsing).
+
+Guppy does **not** store a complete syntax tree for the mathematical
+expression entered, but the XML format is almost a syntax tree: The
+difference is that the leaves are not primitives (numbers or
+variables), but rather are basic arithmetic expressions (those
+involving only the four basic operations as well as primitives).
 
 ## Code Example
 
@@ -20,19 +26,22 @@ The constructor also accepts a dictionary as its second argument
 containing various properties you wish to set on that Guppy instance.
 
 ```
-&lt;html>
-  &lt;head>
-    &lt;link rel="stylesheet" href="katex/katex.min.css">
-    &lt;script src="katex/katex.min.js">&lt;/script>
-    &lt;script type="text/javascript" src="keyboard.js">&lt;/script>
-    &lt;script type="text/javascript" src="guppy.js">&lt;/script>
-  &lt;/head>
-  &lt;body>
-    &lt;div id="guppy_div" style="width:400px;height:100px;">&lt;/div>
+<html>
+  <head>
+    <link rel="stylesheet" href="libguppy/katex/katex.min.css">
+    <script src="libguppy/katex/katex.min.js"></script>
+    <script type="text/javascript" src="libguppy/keyboard.js"></script>
+    <script type="text/javascript" src="libguppy/guppy.js"></script>
+  </head>
+  <body>
+    <div id="guppy_div" style="width:400px;height:100px;"></div>
     
-    &lt;script>new Guppy("guppy_div", {});&lt;/script>
-  &lt;/body>
-&lt;/html>
+    <script>
+        guppy_init("libguppy/transform.xsl");
+        new Guppy("guppy_div", {});
+    </script>
+  </body>
+</html>
 ```
 
 There is a dictionary called guppy_instances that contains alll Guppy
@@ -40,7 +49,8 @@ objects created in this way, indexed by div ID.  So in some other
 Javascript, you can access the Guppy object with
 `guppy_instances['guppy_div']`.
 
-The one function you will need is `content`.
+The one instance function of a Guppy object that you will need is
+`content`.
 
 * To get the raw XML document which comprises the object's internal state, use `content("xml")`
 * To get a LaTeX representation of the content, use `content("latex")`
@@ -52,10 +62,13 @@ instance in `guppy_div`.
 
 ## Installation
 
-Just download the `katex.min.css`, `katex.min.js`, `keyboard.js`, and
-`guppy.js` and place them somewhere accessible from your page and
-include them as above (again, making sure to include keyboard.js
-before guppy.js).  
+* Download the libguppy folder and contents.
+
+* Include the three `.js` and one `.css` files from this folder in
+  your page as in the example above.
+
+* Pass the appropriate path to `libguppy/transform.xsl` to
+  `guppy_init` as in the example above.
 
 ## API Reference
 
