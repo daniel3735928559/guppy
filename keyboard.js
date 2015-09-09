@@ -62,8 +62,6 @@ sk_syms[189] = "sub";
 sk_syms[219] = "curlbrack";
 sk_syms[220] = "abs";
 
-var type_blacklist = [];
-
 var symbols = {
     "norm":
     {"output":{
@@ -248,8 +246,8 @@ var symbols = {
 }
 
 function is_blacklisted(symb_type){
-    for(var i = 0; i < type_blacklist.length; i++)
-	if(symb_type == type_blacklist[i]) return true;
+    for(var i = 0; i < active_guppy.type_blacklist.length; i++)
+	if(symb_type == active_guppy.type_blacklist[i]) return true;
     return false;
 }
 
@@ -281,67 +279,67 @@ function key_up(e){
     else if(keycode == 16) shift_down = false;
 }
 function key_down(e){
-    if(!editor_active){
+    if(active_guppy == null){
 	console.log("INACTIVE");
 	return;
     }
     var keycode = e.keyCode;
     if(ctrl_down){
-	if(keycode == 67){ e.returnValue = false; e.preventDefault(); sel_copy(); }
-	if(keycode == 86){ e.returnValue = false; e.preventDefault(); sel_paste(); }
-	if(keycode == 88){ e.returnValue = false; e.preventDefault(); sel_cut(); }
-	if(keycode == 89){ e.returnValue = false; e.preventDefault(); redo(); }
-	if(keycode == 90){ e.returnValue = false; e.preventDefault(); undo(); }
+	if(keycode == 67){ e.returnValue = false; e.preventDefault(); active_guppy.sel_copy(); }
+	if(keycode == 86){ e.returnValue = false; e.preventDefault(); active_guppy.sel_paste(); }
+	if(keycode == 88){ e.returnValue = false; e.preventDefault(); active_guppy.sel_cut(); }
+	if(keycode == 89){ e.returnValue = false; e.preventDefault(); active_guppy.redo(); }
+	if(keycode == 90){ e.returnValue = false; e.preventDefault(); active_guppy.undo(); }
     }
     else if(shift_down){
 	e.returnValue = false; e.preventDefault(); 
 	console.log(e.keyCode,e.srcElement);
-	if(keycode == UP){ insert_symbol(current,caret,"exp"); }
-	else if(keycode == DOWN){ insert_symbol(current,caret,"sub"); }
-	else if(keycode == LEFT){ sel_left(); }
-	else if(keycode == RIGHT){ sel_right(); }
-	else if(keycode == RPAREN){ console.log("RP"); right_paren(); }
-	else if(keycode in sk_chars){ node_insert(sk_chars[keycode]); }
-	else if(keycode in sk_syms){ insert_symbol(current,caret,sk_syms[keycode]); }
-	else if(65 <= e.keyCode && e.keyCode <= 90){ node_insert(String.fromCharCode(e.keyCode)); }
+	if(keycode == UP){ active_guppy.insert_symbol(active_guppy.current,active_guppy.caret,"exp"); }
+	else if(keycode == DOWN){ active_guppy.insert_symbol(active_guppy.current,active_guppy.caret,"sub"); }
+	else if(keycode == LEFT){ active_guppy.sel_left(); }
+	else if(keycode == RIGHT){ active_guppy.sel_right(); }
+	else if(keycode == RPAREN){ console.log("RP"); active_guppy.right_paren(); }
+	else if(keycode in sk_chars){ active_guppy.node_insert(sk_chars[keycode]); }
+	else if(keycode in sk_syms){ active_guppy.insert_symbol(active_guppy.current,active_guppy.caret,sk_syms[keycode]); }
+	else if(65 <= e.keyCode && e.keyCode <= 90){ active_guppy.node_insert(String.fromCharCode(e.keyCode)); }
     }
     else if(!alt_down){
 	e.returnValue = false; e.preventDefault(); 
 	console.log(e.keyCode,e.srcElement);
-	if(keycode == UP){ e.returnValue = false; e.preventDefault(); up(); }
-	else if(keycode == DOWN){ e.returnValue = false; e.preventDefault(); down(); }
-	else if(keycode == LEFT){ e.returnValue = false; e.preventDefault(); left(); }
-	else if(keycode == RIGHT){ e.returnValue = false; e.preventDefault(); right(); }
-	else if(keycode == HOME){ e.returnValue = false; e.preventDefault(); home(); }
-	else if(keycode == END){ e.returnValue = false; e.preventDefault(); end(); }
-	else if(keycode == BACKSPACE){ e.returnValue = false; e.preventDefault(); console.log("AA"); backspace(); }
+	if(keycode == UP){ e.returnValue = false; e.preventDefault(); active_guppy.up(); }
+	else if(keycode == DOWN){ e.returnValue = false; e.preventDefault(); active_guppy.down(); }
+	else if(keycode == LEFT){ e.returnValue = false; e.preventDefault(); active_guppy.left(); }
+	else if(keycode == RIGHT){ e.returnValue = false; e.preventDefault(); active_guppy.right(); }
+	else if(keycode == HOME){ e.returnValue = false; e.preventDefault(); active_guppy.home(); }
+	else if(keycode == END){ e.returnValue = false; e.preventDefault(); active_guppy.end(); }
+	else if(keycode == BACKSPACE){ e.returnValue = false; e.preventDefault(); console.log("AA"); active_guppy.backspace(); }
 	else if(keycode == 16) shift_down = true;
 	else if(keycode == 17) ctrl_down = true;
 	else if(keycode == 18) alt_down = true;
-	else if(keycode in k_chars){ node_insert(k_chars[keycode]); }
-	else if(keycode in k_syms){ insert_symbol(current,caret,k_syms[keycode]); }
+	else if(keycode in k_chars){ active_guppy.node_insert(k_chars[keycode]); }
+	else if(keycode in k_syms){ active_guppy.insert_symbol(active_guppy.current,active_guppy.caret,k_syms[keycode]); }
 	else if((65 <= e.keyCode && e.keyCode <= 90) || (48 <= e.keyCode && e.keyCode <= 57)){
 	    var ch = String.fromCharCode(e.keyCode).toLowerCase();
-	    node_insert(ch);
+	    active_guppy.node_insert(ch);
 	}
     }
     for(var s in symbols){
 	// console.log(current);
-	if(current.nodeName == 'e' && !is_blank(current) && current.firstChild.nodeValue.search_at(caret,s)){
+	if(active_guppy.current.nodeName == 'e' && !guppy_is_blank(active_guppy.current) && active_guppy.current.firstChild.nodeValue.search_at(active_guppy.caret,s)){
 	    //console.log("INSERTION OF ",s);
 	    //console.log(current.nodeValue);
-	    var temp = current.firstChild.nodeValue;
-	    var temp_caret = caret;
-	    current.firstChild.nodeValue = current.firstChild.nodeValue.slice(0,caret-s.length)+current.firstChild.nodeValue.slice(caret);
+	    var temp = active_guppy.current.firstChild.nodeValue;
+	    var temp_caret = active_guppy.caret;
+	    active_guppy.current.firstChild.nodeValue = active_guppy.current.firstChild.nodeValue.slice(0,active_guppy.caret-s.length)+active_guppy.current.firstChild.nodeValue.slice(active_guppy.caret);
 	    //console.log(current.nodeValue);
-	    caret -= s.length;
-	    var success = insert_symbol(current,caret,s);
+	    active_guppy.caret -= s.length;
+	    var success = active_guppy.insert_symbol(active_guppy.current,active_guppy.caret,s);
 	    if(!success){
-		current.firstChild.nodeValue = temp;
-		caret = temp_caret;
+		active_guppy.current.firstChild.nodeValue = temp;
+		active_guppy.caret = temp_caret;
 	    }
 	    break;
 	}
     }
-    render();
+    active_guppy.render();
 }

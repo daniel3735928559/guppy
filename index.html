@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Guppy</title>
+    <link rel="stylesheet" href="katex/katex.min.css">
+    <script src="katex/katex.min.js"></script>
+    <script type="text/javascript" src="keyboard.js"></script>
+    <script type="text/javascript" src="guppy.js"></script>
+  </head>
+  <body>
+    <div id="guppy1_div" style="width:50%;border:1px solid
+    blue;height:150px;"></div>
+    
+    <div id="help_card" style="float:left;width:100%">
+      <style>td{ padding:2px 10px;}</style>
+      <div style="float:left">
+	<table>
+	  <tr><td><b>Type...</b></td><td><b>...to create</b></td></tr>
+	  <tr><td><font face="monospace">frac or / </font></td><td>Big fraction</td></tr>
+	  <tr><td><font face="monospace">shift-/ </font></td><td>Division</td></tr>
+	  <tr><td><font face="monospace">abs</font></td><td>Absolute value</td></tr>
+	  <tr><td><font face="monospace">sqrt</font></td><td>Square root</td></tr>
+	  <tr><td><font face="monospace">pi</font></td><td>pi</td></tr>
+	  <tr><td><font face="monospace">sin/cos/tan</font></td><td>Sine/cosine/tangent</td></tr>
+	  <tr><td><font face="monospace">log or ln</font></td><td>Natural logarithm</td></tr>
+	  <tr><td><font face="monospace">diff or deriv</font></td><td>Derivative</td></tr>
+	  <tr><td><font face="monospace">int</font></td><td>Indefinite integral</td></tr>
+	  <tr><td><font face="monospace">defi</font></td><td>Definite integral</td></tr>
+	  <tr><td><font face="monospace">smi/smd</font></td><td>Small indef/def integral</td></tr>
+	  <tr><td><font face="monospace">sum</font></td><td>Summation</td></tr>
+	</table><br />
+      </div>
+      <div style="float:left">
+	<table>
+	  <tr><td><b>Press...</b></td><td><b>...to do</b></td></tr>
+	  <tr><td><font face="monospace">left/right arrows</font></td><td>Move cursor</td></tr>
+	  <tr><td><font face="monospace">shift + left/right arrows</font></td><td>Select region</td></tr>
+	  <tr><td><font face="monospace">ctrl + x/c/v</font></td><td>Cut/copy/paste</td></tr>
+	  <tr><td><font face="monospace">ctrl + z/y</font></td><td>Undo/redo</td></tr>
+	</table>
+      </div>
+    </div>
+    
+    <script>
+      var g1 = new Guppy("guppy1_div", {});
+    </script>
+</body></html>
