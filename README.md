@@ -14,6 +14,11 @@ difference is that the leaves are not primitives (numbers or
 variables), but rather are basic arithmetic expressions (those
 involving only the four basic operations as well as primitives).
 
+## Demo
+
+A live demo can be found at 
+[http://daniel3735928559.github.io/guppy/](http://daniel3735928559.github.io/guppy/)
+
 ## Code Example
 
 To include Guppy on a page, you need to include the KaTeX stylesheet
