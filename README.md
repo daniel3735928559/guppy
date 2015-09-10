@@ -98,4 +98,4 @@ here when there are any interesting ones.  For now, nothing.
 
 ## License
 
-This software is licensed under the MIT License
+Guppy is licensed under the [MIT License](http://opensource.org/licenses/MIT)
