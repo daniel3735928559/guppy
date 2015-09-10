@@ -25,7 +25,11 @@ To include Guppy on a page, you need to include the KaTeX stylesheet
 and javascript as well as (in order) keyboard.js and guppy.js.
 
 Then you can turn any div (with whatever styling you choose) into a
-Guppy div with `new Guppy("guppy_div_id")`
+Guppy div with
+
+```
+new Guppy("guppy_div_id")
+```
 
 The constructor also accepts a dictionary as its second argument
 containing various properties you wish to set on that Guppy instance.
@@ -49,10 +53,10 @@ containing various properties you wish to set on that Guppy instance.
 </html>
 ```
 
-There is a dictionary called guppy_instances that contains alll Guppy
+There is a dictionary called guppy_instances that contains all Guppy
 objects created in this way, indexed by div ID.  So in some other
 Javascript, you can access the Guppy object with
-`guppy_instances['guppy_div']`.
+`GUPPY_INSTANCES.guppy_div`.
 
 The one instance function of a Guppy object that you will need is
 `content`.
@@ -61,7 +65,7 @@ The one instance function of a Guppy object that you will need is
 * To get a LaTeX representation of the content, use `content("latex")`
 * To get a parseable ASCII representation of the content, use `content("calc")`
 
-So for example, calling `GUPPY_INSTANCES['guppy_div'].content("calc")`
+So for example, calling `GUPPY_INSTANCES.guppy_div.content("calc")`
 will give the ASCII representation of the current content of the guppy
 instance in `guppy_div`.  
 
