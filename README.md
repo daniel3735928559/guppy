@@ -9,10 +9,10 @@ searching or otherwise manipulating), LaTeX (for rendering), or a
 plaintext format (for parsing).
 
 Guppy does **not** store a complete syntax tree for the mathematical
-expression entered, but the XML format is almost a syntax tree: The
-difference is that the leaves are not primitives (numbers or
-variables), but rather are basic arithmetic expressions (those
-involving only the four basic operations as well as primitives).
+expression entered.  The XML format differs from a syntax tree in that
+the leaves are not primitives (numbers or variables), but rather are
+basic arithmetic expressions (those involving only the four basic
+operations as well as primitives).
 
 ## Demo
 
