@@ -683,11 +683,11 @@ Guppy.prototype.sel_delete = function(){
 	    sel_parent.insertBefore(sel.remnant, sel_parent.firstChild);
     }
     else if(sel_prev.nodeName == 'f'){
-	console.log("PREVF");
-	if(sel_prev.nextNode == null)
+	console.log("PREVF",sel_prev.nextSibling);
+	if(sel_prev.nextSibling == null)
 	    sel_parent.appendChild(sel.remnant);
 	else
-	    sel_parent.insertBefore(sel.remnant, sel_prev.nextNode);
+	    sel_parent.insertBefore(sel.remnant, sel_prev.nextSibling);
     }
     this.current = sel.remnant
     this.caret = this.sel_start.caret;
