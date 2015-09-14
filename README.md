@@ -49,6 +49,9 @@ containing various properties you wish to set on that Guppy instance.
         Guppy.guppy_init("libguppy/transform.xsl");
         new Guppy("guppy_div", {});
     </script>
+    <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
+    <button onclick="alert(Guppy.instances.guppy_div.get_content('latex'))">See LaTeX</button>
+    <button onclick="alert(Guppy.instances.guppy_div.get_content('calc'))">See ASCII</button>
   </body>
 </html>
 ```
@@ -57,17 +60,6 @@ There is a dictionary called Guppy.instances that contains all Guppy
 objects created in this way, indexed by div ID.  So in some other
 Javascript, you can access the Guppy object with
 `Guppy.instances.guppy_div`.
-
-The one instance function of a Guppy object that you will need is
-`content`.
-
-* To get the raw XML document which comprises the object's internal state, use `content("xml")`
-* To get a LaTeX representation of the content, use `content("latex")`
-* To get a parseable ASCII representation of the content, use `content("calc")`
-
-So for example, calling `Guppy.instances.guppy_div.content("calc")`
-will give the ASCII representation of the current content of the guppy
-instance in `guppy_div`.  
 
 ## Installation
 
