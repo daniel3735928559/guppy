@@ -21,18 +21,7 @@ A live demo can be found at
 
 ## Code Example
 
-To include Guppy on a page, you need to include the KaTeX stylesheet
-and javascript as well as (in order) keyboard.js and guppy.js.
-
-Then you can turn any div (with whatever styling you choose) into a
-Guppy div with
-
-```
-new Guppy(document.getElementById("guppy_div_id"))
-```
-
-The constructor also accepts a dictionary as its second argument
-containing various properties you wish to set on that Guppy instance.
+A stripped-down version of the [demo page](http://daniel3735928559.github.io/guppy/) would look like:
 
 ```
 <html>
@@ -62,18 +51,20 @@ containing various properties you wish to set on that Guppy instance.
 
 * Include `guppy/keyboard.js`,`guppy/guppy.js` (in that order) as well
   as `lib/katex-modified.min.js` and `lib/katex.min.css` files in your
-  page as in the example above.
+  page.
 
-* Pass the appropriate path to `guppy/transform.xsl` to `Guppy.guppy_init`
-  as in the example above.  This only needs to happen once per page.
+* Pass the path to `guppy/transform.xsl` to `Guppy.guppy_init` as in
+  the example above.  This only needs to happen once per page.
 
 * For each div that you want turned into a Guppy instance, call `new
   Guppy()` passing in as the first argument either the Element object
   for that div or its ID.
 
-## API Reference
+## Frontend Usage
 
 The use of the editor frontend itself is documented in index.html.  
+
+## API Reference
 
 The primarily useful items in the Guppy object are:
 
