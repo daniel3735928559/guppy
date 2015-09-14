@@ -47,7 +47,7 @@ containing various properties you wish to set on that Guppy instance.
     
     <script>
         Guppy.guppy_init("libguppy/transform.xsl");
-        new Guppy("guppy_div", {});
+        new Guppy("guppy_div");
     </script>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('latex'))">See LaTeX</button>
@@ -56,12 +56,7 @@ containing various properties you wish to set on that Guppy instance.
 </html>
 ```
 
-There is a dictionary called Guppy.instances that contains all Guppy
-objects created in this way, indexed by div ID.  So in some other
-Javascript, you can access the Guppy object with
-`Guppy.instances.guppy_div`.
-
-## Installation
+## Installation and use
 
 * Download the `lib` and `guppy` folders.
 
@@ -80,14 +75,14 @@ Javascript, you can access the Guppy object with
 
 The use of the editor frontend itself is documented in index.html.  
 
-The Guppy object has three functions that you will principally need to
+The primarily useful items in the Guppy object are:
+has three functions that you will principally need to
 interact with:
 
-* `new Guppy(guppy_div, properties)`: `guppy_div` is either the div ID
-  or the actual div object that you want turned into a Guppy editor
-  (e.g. `document.getElementById('my_div1')`).  `properties` currently
-  does not need to contain anything.  This function should be called
-  once per div that you want to turn into a Guppy instance.
+* `new Guppy(guppy_div)`: `guppy_div` is either the div ID or the
+  actual div object that you want turned into a Guppy editor
+  (e.g. `document.getElementById('my_div1')`).  This function should
+  be called once per div that you want to turn into a Guppy instance.
 
 * `Guppy.guppy_init(xsl_path)`: `xsl_path` is the path to
   `guppy/transform.xsl`.  This function should only be called once per
@@ -97,15 +92,17 @@ interact with:
   or `"calc"`, and the function will return (respectively) the XML,
   LaTeX, or ASCII representation of the instance's content.
 
-There are other functions that may be of use in some circumstances
-(e.g. for creating a button-based interface): `left()` and `right()`
-will move the cursor left and right (respectively), `backspace()` will
-do the same thing as hitting the backspace button, `undo()` will undo
-the previous operation, and so on.  More complete documentation will
-eventually be available in this repository.
+* `Guppy.instances`: This is a dictionary that contains all Guppy
+  objects on the page , indexed by div ID.  So you can access the
+  Guppy object with `Guppy.instances.guppy_div`.
 
-The properties that can be passed to the Guppy constructor will go
-here when there are any interesting ones.  For now, nothing.
+There are other instance-level functions that may be of use in some
+circumstances (e.g. for creating a browser-button-based interface):
+`left()` and `right()` will move the cursor left and right
+(respectively), `backspace()` will do the same thing as hitting the
+backspace button, `undo()` will undo the previous operation, and so
+on.  More complete documentation will eventually be available in
+`doc/`.
 
 ## License
 
