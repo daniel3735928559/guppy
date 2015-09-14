@@ -67,7 +67,7 @@ Guppy.guppy_init = function(path){
     Guppy.get_latexify(path);
 }
 
-Guppy.prototype.content = function(t){
+Guppy.prototype.get_content = function(t){
     if(t != "xml") return Guppy.xsltify(t,this.base);
     else return (new XMLSerializer()).serializeToString(this.base);
 }

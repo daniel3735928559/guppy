@@ -10,9 +10,9 @@
   <body>
     <div id="guppy1" style="width:50%;border:2px solid blue;height:150px;padding:10px;"></div>
     <br />
-    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.content('xml')))">XML</button>
-    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.content('calc')))">Calc</button>
-    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.content('latex')))">LaTeX</button>
+    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.get_content('xml')))">XML</button>
+    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.get_content('calc')))">Calc</button>
+    <button onclick="document.getElementById('stuff').appendChild(document.createElement('br'));document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.get_content('latex')))">LaTeX</button>
     <button onclick="document.getElementById('stuff').innerHTML='Press buttons to see text renderings of the editor content: '">Clear</button>
     <br />
     <br />

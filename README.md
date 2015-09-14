@@ -92,9 +92,16 @@ The Guppy object has three functions that you will principally need to
 interact with:
 
 * `new Guppy(guppy_div, properties)`: `guppy_div` is either the div ID
-  or the actual div object that you want turned into a Guppy editor (e.g. 
+  or the actual div object that you want turned into a Guppy editor
+  (e.g. `document.getElementById('my_div1')`).  `properties` currently
+  does not need to contain anything.  This function should be called
+  once per div that you want to turn into a Guppy instance.
 
-* `Guppy.prototype.content(type)`: `type` can be `"xml"`, `"latex"`,
+* `Guppy.guppy_init(xsl_path)`: `xsl_path` is the path to
+  `guppy/transform.xsl`.  This function should only be called once per
+  page.
+
+* `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
   or `"calc"`, and the function will return (respectively) the XML,
   LaTeX, or ASCII representation of the instance's content.
 
