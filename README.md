@@ -76,8 +76,6 @@ containing various properties you wish to set on that Guppy instance.
 The use of the editor frontend itself is documented in index.html.  
 
 The primarily useful items in the Guppy object are:
-has three functions that you will principally need to
-interact with:
 
 * `new Guppy(guppy_div)`: `guppy_div` is either the div ID or the
   actual div object that you want turned into a Guppy editor
