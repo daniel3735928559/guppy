@@ -28,7 +28,7 @@ Then you can turn any div (with whatever styling you choose) into a
 Guppy div with
 
 ```
-new Guppy("guppy_div_id")
+new Guppy(document.getElementById("guppy_div_id"))
 ```
 
 The constructor also accepts a dictionary as its second argument
@@ -37,26 +37,26 @@ containing various properties you wish to set on that Guppy instance.
 ```
 <html>
   <head>
-    <link rel="stylesheet" href="libguppy/katex/katex.min.css">
-    <script src="libguppy/katex/katex.min.js"></script>
-    <script type="text/javascript" src="libguppy/keyboard.js"></script>
-    <script type="text/javascript" src="libguppy/guppy.js"></script>
+    <link rel="stylesheet" href="lib/katex/katex.min.css">
+    <script src="lib/katex/katex-modified.min.js"></script>
+    <script type="text/javascript" src="guppy/keyboard.js"></script>
+    <script type="text/javascript" src="guppy/guppy.js"></script>
   </head>
   <body>
     <div id="guppy_div" style="width:400px;height:100px;"></div>
     
     <script>
-        guppy_init("libguppy/transform.xsl");
+        Guppy.guppy_init("libguppy/transform.xsl");
         new Guppy("guppy_div", {});
     </script>
   </body>
 </html>
 ```
 
-There is a dictionary called guppy_instances that contains all Guppy
+There is a dictionary called Guppy.instances that contains all Guppy
 objects created in this way, indexed by div ID.  So in some other
 Javascript, you can access the Guppy object with
-`GUPPY_INSTANCES.guppy_div`.
+`Guppy.instances.guppy_div`.
 
 The one instance function of a Guppy object that you will need is
 `content`.
@@ -65,30 +65,38 @@ The one instance function of a Guppy object that you will need is
 * To get a LaTeX representation of the content, use `content("latex")`
 * To get a parseable ASCII representation of the content, use `content("calc")`
 
-So for example, calling `GUPPY_INSTANCES.guppy_div.content("calc")`
+So for example, calling `Guppy.instances.guppy_div.content("calc")`
 will give the ASCII representation of the current content of the guppy
 instance in `guppy_div`.  
 
 ## Installation
 
-* Download the libguppy folder and contents.
+* Download the `lib` and `guppy` folders.
 
-* Include the three `.js` and one `.css` files from this folder in
-  your page as in the example above.
+* Include `guppy/keyboard.js`,`guppy/guppy.js` (in that order) as well
+  as `lib/katex-modified.min.js` and `lib/katex.min.css` files in your
+  page as in the example above.
 
-* Pass the appropriate path to `libguppy/transform.xsl` to
-  `guppy_init` as in the example above.
+* Pass the appropriate path to `guppy/transform.xsl` to `Guppy.guppy_init`
+  as in the example above.  This only needs to happen once per page.
+
+* For each div that you want turned into a Guppy instance, call `new
+  Guppy()` passing in as the first argument either the Element object
+  for that div or its ID.
 
 ## API Reference
 
 The use of the editor frontend itself is documented in index.html.  
 
-For interacting with the editor from Javascript, a Guppy object has
-only one function that will really interest most people: 
+The Guppy object has three functions that you will principally need to
+interact with:
 
-* `content(type)`: `type` can be `"xml"`, `"latex"`, or `"calc"`, and
-  the function will return (respectively) the XML, LaTeX, or ASCII
-  representation of the instance's content.
+* `new Guppy(guppy_div, properties)`: `guppy_div` is either the div ID
+  or the actual div object that you want turned into a Guppy editor (e.g. 
+
+* `Guppy.prototype.content(type)`: `type` can be `"xml"`, `"latex"`,
+  or `"calc"`, and the function will return (respectively) the XML,
+  LaTeX, or ASCII representation of the instance's content.
 
 There are other functions that may be of use in some circumstances
 (e.g. for creating a button-based interface): `left()` and `right()`

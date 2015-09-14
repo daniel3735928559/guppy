@@ -8,6 +8,10 @@ window.addEventListener("focus", function(e) { alt_down = false; }, false);
 
 
 var Guppy = function(guppy_div, properties){
+    properties = properties || {};
+    if(typeof guppy_div === 'string' || guppy_div instanceof String){
+	guppy_div = document.getElementById(guppy_div);
+    }
     if(guppy_div.id in Guppy.instances){
 	console.log("There is already a Guppy object with this ID");
 	return;
