@@ -242,6 +242,20 @@ var symbols = {
 	 "down":[1,1,1],
 	 "bracket":[0,0,"yes"],
 	 "name":["lower_limit","upper_limit","summand"]}
+    },
+    
+    "cohom":
+    {"output":{
+        "latex":["H^{",1,"}\\left(",2,"\\right)"],
+	"calc":["cohomology(",2,",",1,")"]},
+     "current":0,
+     "type":"summation",
+     "attrs":{
+	 "up":[2,2],
+	 "down":[1,1],
+	 "bracket":[0,0],
+	 "size":["s",0],
+	 "name":["degree","space"]}
     }
 }
 
