@@ -1,3 +1,7 @@
+## Guppy-specific Modificiations: 
+
+This is a modified version of KaTeX with the \rlap and \llap behaviour slightly changed to get the desired cursor appearance.  Ideally this will not be necessary in future.
+
 # [<img src="https://khan.github.io/KaTeX/katex-logo.svg" width="130" alt="KaTeX">](https://khan.github.io/KaTeX/) [![Build Status](https://travis-ci.org/Khan/KaTeX.svg?branch=master)](https://travis-ci.org/Khan/KaTeX)
 
 KaTeX is a fast, easy-to-use JavaScript library for TeX math rendering on the web.
