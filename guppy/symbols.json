@@ -1,0 +1,196 @@
+{
+    "norm":
+    {"output":{
+        "latex":["||",1,"||"],
+        "calc":["norm(",1,")"]},
+     "current":0,
+     "type":"norm"},
+    
+    "abs":
+    {"output":{
+        "latex":["\\left|",1,"\\right|"],
+	"calc":["abs(",1,")"]},
+     "current":0,
+     "type":"absolute_value"},
+    
+    "sqrt":
+    {"output":{
+        "latex":["\\sqrt{",1,"}"],
+        "calc":["sqrt(",1,")"]},
+     "current":0,
+     "type":"square_root"},
+    
+    "paren":
+    {"output":{
+        "latex":["\\left(",1,"\\right)"],
+	"calc":["(",1,")"]},
+     "current":1,
+     "type":"bracket",
+     "attrs":{
+	 "is_bracket":["yes"]}
+    },
+
+    "floor":
+    {"output":{
+        "latex":["\\lfloor",1,"\\rfloor"],
+	"calc":["floor(",1,")"]},
+     "current":0,
+     "type":"floor"},
+    
+    "exp":
+    {"output":{
+        "latex":["{",1,"}^{",2,"}"],
+	"calc":["(",1,")^(",2,")"]},
+     "current":1,
+     "type":"exponenial",
+     "current_type":"token",
+     "attrs":{
+	 "up":[2,0],
+	 "down":[0,1],
+	 "bracket":["yes",0],
+	 "size":[0,"s"],
+	 "name":["base","exponent"]}
+    },
+    
+    "sub":
+    {"output":{
+        "latex":["{",1,"}_{",2,"}"],
+	"calc":[1,"",2]},
+     "current":1,
+     "type":"subscript",
+     "current_type":"token",
+     "attrs":{
+	 "up":[0,1],
+	 "down":[2,0],
+	 "bracket":["yes",0],
+	 "size":[0,"s"]}
+    },
+    
+    "frac":
+    {"output":{
+        "latex":["\\dfrac{",1,"}{",2,"}"],
+	"calc":["(",1,")/(",2,")"]},
+     "current":0,
+     "type":"fraction",
+     "attrs":{
+	 "up":[1,1],
+	 "down":[2,2],
+	 "name":["numerator","denominator"]}
+    },
+    
+    "slash":
+    {"output":{
+        "latex":["\\dfrac{",1,"}{",2,"}"],
+	"calc":["(",1,")/(",2,")"]},
+     "current":1,
+     "current_type":"token",
+     "type":"fraction",
+     "attrs":{
+	 "up":[1,1],
+	 "down":[2,2],
+	 "name":["numerator","denominator"]}
+    },
+    
+    "int":
+    {"output":{
+        "latex":["\\displaystyle\\int{",1,"}d",2],
+	"calc":["integrate(",1,",",2,")"]},
+     "current":0,
+     "type":"indefinite_integral",
+     "attrs":{
+	 "bracket":[0,"yes"],
+	 "name":["integrand","variable"]}
+    },
+    
+    "defi":
+    {"output":{
+        "latex":["\\displaystyle\\int_{",1,"}^{",2,"}",3,"d",4],
+	"calc":["integrate(",3,",",4,",",1,",",2,")"]},
+     "current":0,
+     "type":"definite_integral",
+     "attrs":{
+	 "up":[2,2,2,2],
+	 "down":[1,1,1,1],
+	 "bracket":[0,0,0,"yes"],
+	 "size":["s","s",0,0],
+	 "name":["integrand","variable","lower_limit","upper_limit"]}
+    },
+    
+    "smi":
+    {"output":{
+        "latex":["\\int{",1,"}d",2],
+	"calc":["integrate(",1,",",2,")"]},
+     "current":0,
+     "type":"indefinite_integral",
+     "attrs":{
+	 "bracket":[0,"yes"],
+	 "name":["integrand","variable"]}
+    },
+    
+    "smd":
+    {"output":{
+        "latex":["\\int_{",1,"}^{",2,"}",3,"d",4],
+	"calc":["integrate(",3,",",4,",",1,",",2,")"]},
+     "current":0,
+     "type":"definite_integral",
+     "attrs":{
+	 "up":[2,2,2,2],
+	 "down":[1,1,1,1],
+	 "bracket":[0,0,0,"yes"],
+	 "size":["s","s",0,0],
+	 "name":["integrand","variable","lower_limit","upper_limit"]}
+    },
+    
+    "diff":
+    {"output":{
+        "latex":["\\frac{d}{d",1,"}",2],
+	"calc":["diff(",2,",",1,")"]},
+     "current":0,
+     "type":"derivative",
+     "attrs":{
+	 "up":[2,2],
+	 "down":[1,1],
+	 "bracket":["yes","yes"],
+	 "name":["function","variable"]}
+    },
+    
+    "deriv":
+    {"output":{
+        "latex":["\\frac{d}{d",1,"}",2],
+	"calc":["diff(",2,",",1,")"]},
+     "current":0,
+     "type":"derivative",
+     "attrs":{
+	 "up":[2,2],
+	 "down":[1,1],
+	 "bracket":["yes","yes"],
+	 "name":["function","variable"]}
+    },
+    
+    "sum":
+    {"output":{
+        "latex":["\\displaystyle\\sum_{",1,"}^{",2,"}",3],
+	"calc":["sum(",3,",",1,",",2,")"]},
+     "current":0,
+     "type":"summation",
+     "attrs":{
+	 "up":[2,2,2],
+	 "down":[1,1,1],
+	 "bracket":[0,0,"yes"],
+	 "name":["lower_limit","upper_limit","summand"]}
+    },
+    
+    "cohom":
+    {"output":{
+        "latex":["H^{",1,"}\\left(",2,"\\right)"],
+	"calc":["cohomology(",2,",",1,")"]},
+     "current":0,
+     "type":"summation",
+     "attrs":{
+	 "up":[2,2],
+	 "down":[1,1],
+	 "bracket":[0,0],
+	 "size":["s",0],
+	 "name":["degree","space"]}
+    }
+}

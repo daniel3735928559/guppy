@@ -28,7 +28,6 @@ A stripped-down version of the [demo page](http://daniel3735928559.github.io/gup
   <head>
     <link rel="stylesheet" href="lib/katex/katex.min.css">
     <script src="lib/katex/katex-modified.min.js"></script>
-    <script type="text/javascript" src="guppy/keyboard.js"></script>
     <script type="text/javascript" src="guppy/guppy.js"></script>
   </head>
   <body>
@@ -49,9 +48,8 @@ A stripped-down version of the [demo page](http://daniel3735928559.github.io/gup
 
 * Download the `lib` and `guppy` folders.
 
-* Include `guppy/keyboard.js`,`guppy/guppy.js` (in that order) as well
-  as `lib/katex-modified.min.js` and `lib/katex.min.css` files in your
-  page.
+* Include `guppy/guppy.js` as well as `lib/katex-modified.min.js` and
+  `lib/katex.min.css` files in your page.
 
 * Pass the path to `guppy/transform.xsl` to `Guppy.guppy_init` as in
   the example above.  This only needs to happen once per page.
