@@ -51,8 +51,9 @@ A stripped-down version of the [demo page](http://daniel3735928559.github.io/gup
 * Include `guppy/guppy.js` as well as `lib/katex-modified.min.js` and
   `lib/katex.min.css` files in your page.
 
-* Pass the path to `guppy/transform.xsl` to `Guppy.guppy_init` as in
-  the example above.  This only needs to happen once per page.
+* Pass the paths to `guppy/transform.xsl` and `guppy/symbols.json` to
+  `Guppy.guppy_init` as in the example above.  This only needs to
+  happen once per page.
 
 * For each div that you want turned into a Guppy instance, call `new
   Guppy()` passing in as the first argument either the Element object
@@ -81,7 +82,10 @@ The primarily useful items in the Guppy object are:
 
 * `Guppy.instances`: This is a dictionary that contains all Guppy
   objects on the page , indexed by div ID.  So you can access the
-  Guppy object with `Guppy.instances.guppy_div`.
+  Guppy object with `Guppy.instances.guppy_div_id`.  If the div did
+  not have an ID, the div will be given one by new Guppy() that is
+  unique on the page, and will be accessible from that object by, for
+  example, `new Guppy(...).editor.id`.  
 
 There are other instance-level functions that may be of use in some
 circumstances (e.g. for creating a browser-button-based interface):
