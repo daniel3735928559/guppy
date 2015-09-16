@@ -4,16 +4,15 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
 
 var Guppy = function(guppy_div, properties){
     properties = properties || {};
-    console.log(guppy_div);
     if(typeof guppy_div === 'string' || guppy_div instanceof String){
 	guppy_div = document.getElementById(guppy_div);
     }
     
     // Set the id on the div if it is not currently set.
     if(!(guppy_div.id)){
-	console.log("no id");
+	Guppy.log("no id");
 	var i = Guppy.max_uid || 0;
-	console.log("III",i);
+	Guppy.log("III",i);
 	while(document.getElementById("guppy_uid_"+i)) i++;
 	Guppy.max_uid = i;
 	guppy_div.id = "guppy_uid_"+i;
@@ -36,22 +35,22 @@ var Guppy = function(guppy_div, properties){
     this.caret = 0;
     this.sel_start = null;
     this.sel_end = null;
+    this.debug_mode = false;
     this.editor = guppy_div;
-    console.log("EDITOR",this.editor);
     
     this.raw = null;
     this.xml_area = null;
     this.type_blacklist = [];
     
-    if('raw_div_id' in properties){
+    if('raw_div_id' in properties)
 	this.raw = document.getElementById(properties.raw_div_id);
-    }
-    if('xml_div_id' in properties){
+    if('xml_div_id' in properties)
 	this.xml_area = document.getElementById(properties.xml_div_id);
-    }
-    if('blacklist' in properties){
+    if('blacklist' in properties)
 	this.type_blacklist = properties.blacklist;
-    }
+    
+    if('debug' in properties)
+	this.debug_mode = properties.debug=="yes" ? true : false;
 
     this.undo_data = [];
     this.undo_now = -1;
@@ -61,7 +60,7 @@ var Guppy = function(guppy_div, properties){
     // this.render();
     this.checkpoint();
     if(Guppy.active_guppy == null) Guppy.active_guppy = this;
-    console.log("ACTIVE",Guppy.active_guppy);
+    Guppy.log("ACTIVE",Guppy.active_guppy);
 }
 
 /* Functions intended for external use */
@@ -105,9 +104,7 @@ Guppy.is_blank = function(n){
 Guppy.get_symbols = function(symbols_path){
     var req = new XMLHttpRequest();
     req.onload = function(){
-	console.log(this.responseText);
 	var syms = JSON.parse(this.responseText);
-	console.log(syms);
 	for(var s in syms){
 	    Guppy.kb.symbols[s] = syms[s];
 	}
@@ -119,15 +116,12 @@ Guppy.get_symbols = function(symbols_path){
 Guppy.get_latexify = function(xsl_path){
     var req = new XMLHttpRequest();
     req.onload = function(){
-	console.log(this.responseText);
 	var latexify = this.responseText;
 	var latexsl = (new window.DOMParser()).parseFromString(latexify, "text/xml");
-	console.log((new XMLSerializer()).serializeToString(latexsl));
 	Guppy.xsltProcessor = new XSLTProcessor();
 	Guppy.xsltProcessor.importStylesheet(latexsl);
 	Guppy.xsltProcessor.setParameter("","blank",Guppy.kb.BLANK);
 	Guppy.xsltProcessor.setParameter("","cblank",Guppy.kb.CURRENT_BLANK);
-	console.log("BLANKS:", Guppy.kb.BLANK,Guppy.kb.CURRENT_BLANK);
     };
     req.open("get", xsl_path, true);
     req.send();
@@ -135,18 +129,17 @@ Guppy.get_latexify = function(xsl_path){
 
 Guppy.xsltify = function(t, base){
     if(Guppy.xsltProcessor == null){
-	console.log("not ready");
+	Guppy.log("not ready");
 	return;
     }
-    console.log("BB",base);
+    Guppy.log("BB",base);
     Guppy.xsltProcessor.setParameter("","type",t);
     var tex_doc = Guppy.xsltProcessor.transformToDocument(base);
-    console.log(tex_doc);
+    Guppy.log(tex_doc);
     return (new XMLSerializer()).serializeToString(tex_doc).replace(/\<.?m\>/g,"");
 }
 
 Guppy.mouse_down = function(e){
-    console.log(e);
     var n = e.target;
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
     else while(n != null){
@@ -173,7 +166,7 @@ Guppy.prototype.render_node = function(n,t){
 
     // All the interesting work is done by xsltify and latexify.xsl.  This function just adds in the cursor and selection-start cursor
     
-    console.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
+    Guppy.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
     var output = "";
     if(t == "latex"){
 	var cleanup = [];
@@ -186,25 +179,25 @@ Guppy.prototype.render_node = function(n,t){
 	cleanup.push(function(){callback_current.removeAttribute("current");});
 	var caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
 	if(this.current.firstChild.nodeValue != "" || this.current.previousSibling != null || this.current.nextSibling != null){
-	    console.log("CARETISING",this.sel_status);
+	    Guppy.log("CARETISING",this.sel_status);
 	    var idx = this.caret;
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) caret_text = "}" + caret_text;
 	    //if(this.sel_status == Guppy.SEL_CURSOR_AT_END && sel_cursor.node == current) idx += SEL_CARET.length;
 	    var prev_val = this.current.firstChild.nodeValue;
-	    console.log("AAAAAAAAAAA",prev_val);
+	    Guppy.log("AAAAAAAAAAA",prev_val);
 	    callback_current = this.current;
 	    cleanup.push(function(){callback_current.firstChild.nodeValue = prev_val;});
 	    this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(idx,caret_text);
-	    console.log((new XMLSerializer()).serializeToString(this.base));
-	    console.log("CP",prev_val);
+	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
+	    Guppy.log("CP",prev_val);
 	}	
 	// Add sel_start
 	if(this.sel_status != Guppy.SEL_NONE) {
 	    var idx = sel_cursor.caret;
 	    if(sel_cursor.node == this.current){
 		if(this.sel_status == Guppy.SEL_CURSOR_AT_START) idx += caret_text.length;
-		console.log("AT_START");
+		Guppy.log("AT_START");
 	    }
 	    else{
 		var prev_val_sel = sel_cursor.node.firstChild.nodeValue;
@@ -213,25 +206,25 @@ Guppy.prototype.render_node = function(n,t){
 	    var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = "}" + sel_caret_text;
-	    console.log("SEL_IDX",idx);
+	    Guppy.log("SEL_IDX",idx);
 	    sel_cursor.node.firstChild.nodeValue = sel_cursor.node.firstChild.nodeValue.splice(idx,sel_caret_text);
-	    console.log((new XMLSerializer()).serializeToString(this.base));
+	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
 
 	}
-	console.log(cleanup.length);
+	Guppy.log(cleanup.length);
 	// Render: 
 	output = Guppy.xsltify(t, this.base);
 	
 	// clean up all the mess we made:
 	for(var i = cleanup.length - 1; i >= 0; i--){ cleanup[i](); }
-	console.log("post cleanup", (new XMLSerializer()).serializeToString(this.base));
+	Guppy.log("post cleanup", (new XMLSerializer()).serializeToString(this.base));
 	this.print_selection();
-	console.log("sel_start_end",this.sel_start,this.sel_end);
+	Guppy.log("sel_start_end",this.sel_start,this.sel_end);
     }
     else{
 	output = Guppy.xsltify(t, this.base);
     }
-    //console.log("cc",caret,"=caret",current.firstChild.nodeValue,current.firstChild.nodeValue.slice(0,caret),"bb",current.firstChild.nodeValue.slice(caret+CARET.length));
+    //Guppy.log("cc",caret,"=caret",current.firstChild.nodeValue,current.firstChild.nodeValue.slice(0,caret),"bb",current.firstChild.nodeValue.slice(caret+CARET.length));
     //if(t == "latex") current.firstChild.nodeValue = (caret == 0 ? "" : current.firstChild.nodeValue.slice(0,caret))+current.firstChild.nodeValue.slice(caret+CARET.length);
     return output
 }
@@ -276,7 +269,7 @@ Guppy.prototype.down_from_f = function(){
 Guppy.prototype.down_from_f_to_blank = function(){
     var nn = this.current.firstChild;
     while(nn != null && !(nn.nodeName == 'c' && nn.children.length == 1 && nn.firstChild.firstChild.nodeValue == "")){
-	console.log("DFFTB",nn);
+	Guppy.log("DFFTB",nn);
 	nn = nn.nextSibling;
     }
     if(nn != null){
@@ -314,7 +307,7 @@ Guppy.prototype.next_node_from_e = function(n){
 	    this.problem('nnfe3');
 	    return null;
 	}
-	console.log("next");
+	Guppy.log("next");
 	var nc = n.nextSibling.firstChild;
 	while(nc != null){
 	    if(nc.nodeName == 'c')
@@ -334,7 +327,7 @@ Guppy.prototype.next_node_from_e = function(n){
 	    this.problem('nnfe1');
 	    return null
 	}
-	console.log("parent.next.child")
+	Guppy.log("parent.next.child")
 	return nn;
     }
     // If we're actually at the top level, then do nothing: 
@@ -348,7 +341,7 @@ Guppy.prototype.next_node_from_e = function(n){
 }
 
 Guppy.prototype.prev_node_from_e = function(n){
-    console.log(n.previousSibling);
+    Guppy.log(n.previousSibling);
     if(n == null || n.nodeName != 'e') return null;
     if(n.previousSibling != null){
 	if(n.previousSibling.nodeName != 'f'){
@@ -400,7 +393,7 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     for(var t in s["output"]){
 	var b = this.base.createElement("b");
 	b.setAttribute("p",t);
-	//console.log(s,t,s["output"][t],s["output"][t].length);
+	//Guppy.log(s,t,s["output"][t],s["output"][t].length);
 	for(var i = 0; i < s["output"][t].length; i++){
 	    if(typeof s["output"][t][i] == 'string' || s["output"][t][i] instanceof String){
 		var nt = this.base.createTextNode(s["output"][t][i]);
@@ -409,7 +402,7 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	    else{
 		var nt = this.base.createElement("r");
 		nt.setAttribute("ref",s["output"][t][i]);
-		//console.log(t,s["output"][t],s["output"][t][i]);
+		//Guppy.log(t,s["output"][t],s["output"][t][i]);
 		if(t == 'latex') {
 		    if(first_ref == -1) first_ref = s["output"][t][i];
 		    refs_count++;
@@ -430,13 +423,13 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	    }
 	}
 	else nc.appendChild(this.make_e(""));
-	//console.log(refs_count,first_ref,i,ne);
+	//Guppy.log(refs_count,first_ref,i,ne);
 	if(i+1 == first_ref) first = nc.lastChild;
 	for(var a in s['attrs'])
 	    if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
 	f.appendChild(nc);
     }
-    console.log("FF",f);
+    Guppy.log("FF",f);
     return {"f":f, "first":first};
 }
 
@@ -454,7 +447,7 @@ Guppy.prototype.is_small = function(nn){
 Guppy.prototype.insert_symbol = function(n,idx,sym_name){
     var s = Guppy.kb.symbols[sym_name];
     if(this.is_blacklisted(s['type'])){
-	console.log("BLACKLISTED");
+	Guppy.log("BLACKLISTED");
 	return false;
     }
     var node_list = {};
@@ -465,24 +458,24 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
     var to_replace = null;
     var replace_f = false;
     
-    console.log("cur",cur);
+    Guppy.log("cur",cur);
     
     if(cur > 0){
 	cur--;
-	console.log(cur);
+	Guppy.log(cur);
 	if(this.sel_status != Guppy.SEL_NONE){
-	    console.log("SEL",this.current);
+	    Guppy.log("SEL",this.current);
 	    var sel = this.sel_get();
 	    sel_parent = sel.involved[0].parentNode;
-	    console.log("SCC", sel, "\nABC", sel.involved[0], sel_parent, sel.node_list, this.current);
+	    Guppy.log("SCC", sel, "\nABC", sel.involved[0], sel_parent, sel.node_list, this.current);
 	    to_remove = sel.involved;
 	    left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
 	    right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
 	    content[cur] = sel.node_list;
-	    console.log("DONE_SEL",left_piece,content,right_piece);
+	    Guppy.log("DONE_SEL",left_piece,content,right_piece);
 	}
 	else if(s['current_type'] == 'token'){
-	    console.log("TOKEN");
+	    Guppy.log("TOKEN");
 	    // If we're at the beginning, then the token is the previous f node
 	    if(this.caret == 0 && this.current.previousSibling != null){
 		content[cur] = [this.make_e(""), this.current.previousSibling, this.make_e("")];
@@ -503,7 +496,7 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
 	}
     }
     if(!replace_f && (left_piece == null || right_piece == null)){
-	console.log("splitting",this.current,this.caret);
+	Guppy.log("splitting",this.current,this.caret);
 	left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));
 	right_piece = this.make_e(this.current.firstChild.nodeValue.slice(this.caret));
 	to_remove = [this.current];
@@ -523,9 +516,9 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
     
     var new_current = null;
     var current_parent = this.current.parentNode;
-    console.log(this.current,this.current.parentNode);
-    console.log("SO",s,s["output"])
-    console.log("TR",this.current,this.current_parent,to_remove);
+    Guppy.log(this.current,this.current.parentNode);
+    Guppy.log("SO",s,s["output"])
+    Guppy.log("TR",this.current,this.current_parent,to_remove);
     
     var sym = this.symbol_to_node(sym_name,content);
     var f = sym.f;
@@ -533,17 +526,17 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
 
     var next = this.current.nextSibling;
 
-    console.log("CSSCS",this.current,this.current.parentNode);
+    Guppy.log("CSSCS",this.current,this.current.parentNode);
 
     if(replace_f){
-	console.log(to_replace,current_parent,f);
+	Guppy.log(to_replace,current_parent,f);
 	current_parent.replaceChild(f,to_replace);
     }
     else{
 	if(to_remove.length == 0) this.current.parentNode.removeChild(this.current);
 	
 	for(var i = 0; i < to_remove.length; i++){
-	    console.log("removing", to_remove[i]," from" , current_parent);
+	    Guppy.log("removing", to_remove[i]," from" , current_parent);
 	    if(next == to_remove[i]) next = next.nextSibling;
 	    current_parent.removeChild(to_remove[i]);
 	}
@@ -552,8 +545,8 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
 	current_parent.insertBefore(right_piece, next);
     }
     
-    console.log((new XMLSerializer()).serializeToString(this.base));
-    console.log(new_current);
+    Guppy.log((new XMLSerializer()).serializeToString(this.base));
+    Guppy.log(new_current);
     this.caret = 0;
     this.current = f;
     if(s['char']){
@@ -574,10 +567,10 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
 }
 
 Guppy.prototype.sel_get = function(){
-    console.log("sel_start_end",this.sel_start,this.sel_end,this.current,this.caret);
+    Guppy.log("sel_start_end",this.sel_start,this.sel_end,this.current,this.caret);
     if(this.sel_status == Guppy.SEL_NONE){
 	if(this.current.nodeName == 'f'){ // This block should be dead
-	    console.log("ABCD",this.current,this.current.previousSibling,this.current.parentNode);
+	    Guppy.log("ABCD",this.current,this.current.previousSibling,this.current.parentNode);
 	    this.sel_start = {"node":this.current, "caret":this.current.previousSibling.firstChild.nodeValue.length};
 	    return {"node_list":[this.make_e(""),this.current,this.make_e("")],
 		    "remnant":this.make_e(this.current.previousSibling.firstChild.nodeValue + this.current.nextSibling.firstChild.nodeValue),
@@ -606,7 +599,7 @@ Guppy.prototype.sel_get = function(){
 	n = n.nextSibling;
     }
     node_list.push(this.make_e(this.sel_end.node.firstChild.nodeValue.substring(0, this.sel_end.caret)));
-    console.log("NL",node_list);
+    Guppy.log("NL",node_list);
     return {"node_list":node_list,
 	    "remnant":remnant,
 	    "involved":involved,
@@ -615,7 +608,7 @@ Guppy.prototype.sel_get = function(){
 
 Guppy.prototype.print_selection = function(){
     var sel = this.sel_get();
-    console.log(sel);
+    Guppy.log(sel);
     if(sel == null) return "[none]";
     var ans = "";
     ans += "node_list: \n";
@@ -630,7 +623,7 @@ Guppy.prototype.print_selection = function(){
     }
     // ans += "\n remnant: \n";
     // ans += (new XMLSerializer()).serializeToString(sel.remnant) + "\n";
-    console.log(ans);
+    Guppy.log(ans);
 }
 
 Guppy.prototype.make_e = function(text){
@@ -644,7 +637,7 @@ Guppy.prototype.node_insert = function(s){
 	this.sel_delete();
 	this.sel_clear();
     }
-    console.log("ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
+    Guppy.log("ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -652,7 +645,7 @@ Guppy.prototype.node_insert = function(s){
 
 Guppy.prototype.render = function(){
     var tex = this.render_node(this.base,"latex");
-    console.log(this.caret,"TEX", tex);
+    Guppy.log(this.caret,"TEX", tex);
     katex.render(tex,this.editor);
     if(this.raw != null) this.raw.innerHTML = render_node(this.base,"calc");
     if(this.xml_area != null) this.xml_area.value = "MX\n" + (new XMLSerializer()).serializeToString(this.base) + "\n\nCALC\n" +render_node(this.base,"calc") + "\n\nTeX\n" + tex;
@@ -671,7 +664,9 @@ Guppy.prototype.deactivate = function(){
 }
 
 Guppy.prototype.sel_copy = function(){
-    this.clipboard = this.sel_get().node_list;
+    var sel = this.sel_get();
+    if(!sel) return;
+    this.clipboard = sel.node_list;
     this.sel_clear();
 }
 
@@ -681,15 +676,16 @@ Guppy.prototype.sel_cut = function(){
 }
 
 Guppy.prototype.sel_paste = function(){
+    if(!(this.clipboard) || this.clipboard.length == 0) return;
     var real_clipboard = [];
     for(var i = 0; i < this.clipboard.length; i++){
 	real_clipboard.push(this.clipboard[i].cloneNode(true));
     }
-    console.log("CLIPBOARD",this.clipboard);
-    console.log("PASTING");
+    Guppy.log("CLIPBOARD",this.clipboard);
+    Guppy.log("PASTING");
     
     if(real_clipboard.length == 1){
-	console.log("wimp");
+	Guppy.log("wimp");
 	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.substring(0,this.caret) + real_clipboard[0].firstChild.nodeValue + this.current.firstChild.nodeValue.substring(this.caret);
 	this.caret += real_clipboard[0].firstChild.nodeValue.length;
     }
@@ -700,7 +696,7 @@ Guppy.prototype.sel_paste = function(){
 	    this.current.parentNode.appendChild(nn)
 	else
 	    this.current.parentNode.insertBefore(nn, this.current.nextSibling)
-	console.log(nn);
+	Guppy.log(nn);
 	for(var i = 1; i < real_clipboard.length - 1; i++)
 	    this.current.parentNode.insertBefore(real_clipboard[i], nn);
 	this.current = nn;
@@ -716,22 +712,23 @@ Guppy.prototype.sel_clear = function(){
 
 Guppy.prototype.sel_delete = function(){
     var sel = this.sel_get();
+    if(!sel) return;
     sel_parent = sel.involved[0].parentNode;
     sel_prev = sel.involved[0].previousSibling;
-    console.log("SD", sel, "\nABC", sel.involved[0], sel_parent, sel_prev);
+    Guppy.log("SD", sel, "\nABC", sel.involved[0], sel_parent, sel_prev);
     for(var i = 0; i < sel.involved.length; i++){
 	var n = sel.involved[i];
 	sel_parent.removeChild(n);
     }
     if(sel_prev == null){
-	console.log("PREVN",sel);
+	Guppy.log("PREVN",sel);
 	if(sel_parent.firstChild == null)
 	    sel_parent.appendChild(sel.remnant);
 	else
 	    sel_parent.insertBefore(sel.remnant, sel_parent.firstChild);
     }
     else if(sel_prev.nodeName == 'f'){
-	console.log("PREVF",sel_prev.nextSibling);
+	Guppy.log("PREVF",sel_prev.nextSibling);
 	if(sel_prev.nextSibling == null)
 	    sel_parent.appendChild(sel.remnant);
 	else
@@ -749,23 +746,23 @@ Guppy.prototype.sel_right = function(){
 	this.set_sel_start();
 	this.sel_status = Guppy.SEL_CURSOR_AT_END;
     }
-    console.log("EEEE");
+    Guppy.log("EEEE");
     if(this.caret >= this.get_length(this.current)){
 	var nn = this.current.nextSibling;
 	if(nn != null){
 	    this.current = nn.nextSibling;
 	    this.caret = 0;
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	    console.log("asda");
+	    Guppy.log("asda");
 	}
-	else console.log("at end while selecting");
+	else Guppy.log("at end while selecting");
     }
     else{
 	this.caret += 1;
 	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	console.log("asdb");
+	Guppy.log("asdb");
     }
-    console.log("SS",this.sel_status, this.sel_start, this.sel_end);
+    Guppy.log("SS",this.sel_status, this.sel_start, this.sel_end);
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
 	this.sel_status = Guppy.SEL_NONE;
     }
@@ -784,23 +781,23 @@ Guppy.prototype.sel_left = function(){
 	this.set_sel_end();
 	this.sel_status = Guppy.SEL_CURSOR_AT_START;
     }
-    console.log("EEEE");
+    Guppy.log("EEEE");
     if(this.caret <= 0){
 	var nn = this.current.previousSibling;
 	if(nn != null){
 	    this.current = nn.previousSibling;
 	    this.caret = this.current.firstChild.nodeValue.length;
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_START);
-	    console.log("asdeee");
+	    Guppy.log("asdeee");
 	}
-	else console.log("at start while selecting");
+	else Guppy.log("at start while selecting");
     }
     else{
 	this.caret -= 1;
 	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_START);
-	console.log("asdb");
+	Guppy.log("asdb");
     }
-    console.log("SS",this.sel_status, this.sel_start, this.sel_end);
+    Guppy.log("SS",this.sel_status, this.sel_start, this.sel_end);
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
 	this.sel_status = Guppy.SEL_NONE;
     }
@@ -808,19 +805,19 @@ Guppy.prototype.sel_left = function(){
 
 Guppy.prototype.right = function(){
     this.sel_clear();
-    console.log("R",this.current,this.caret);
+    Guppy.log("R",this.current,this.caret);
     if(this.caret >= this.get_length(this.current)){
 	var nn = this.next_node_from_e(this.current);
 	if(nn != null){
 	    this.current = nn;
 	    this.caret = 0;
 	}
-	else console.log("at end or problem");
+	else Guppy.log("at end or problem");
     }
     else{
 	this.caret += 1;
     }
-    console.log("R",this.current,this.current.parentNode,this.caret);
+    Guppy.log("R",this.current,this.current.parentNode,this.caret);
 }
 
 Guppy.prototype.get_length = function(n){
@@ -831,26 +828,26 @@ Guppy.prototype.get_length = function(n){
 
 Guppy.prototype.left = function(){
     this.sel_clear();
-    console.log("L",this.current,this.current.firstChild.nodeValue,this.caret);
+    Guppy.log("L",this.current,this.current.firstChild.nodeValue,this.caret);
     if(this.caret <= 0){
 	var pn = this.prev_node_from_e(this.current);
 	if(pn != null){
 	    this.current = pn;
 	    this.caret = this.current.firstChild.nodeValue.length;
 	}
-	else console.log("at beginnning or problem");
+	else Guppy.log("at beginnning or problem");
     }
     else{
 	this.caret -= 1;
     }
-    console.log(this.current,this.caret);
+    Guppy.log(this.current,this.caret);
 }
 
 Guppy.prototype.delete_from_e = function(){
     if(this.caret > 0){
 	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splicen(this.caret-1,"",1);
 	this.caret--;
-	console.log("bk","|"+this.current.firstChild.nodeValue+"|",this.current.firstChild.nodeValue.length);
+	Guppy.log("bk","|"+this.current.firstChild.nodeValue+"|",this.current.firstChild.nodeValue.length);
     }
     else{
 	if(this.current.parentNode.previousSibling != null && this.current.parentNode.previousSibling.nodeName == 'c'){
@@ -873,7 +870,7 @@ Guppy.prototype.delete_from_e = function(){
 	}
 	else{
 	    // We're at the beginning (hopefully!) 
-	    console.log("AT BEGINNING!");
+	    Guppy.log("AT BEGINNING!");
 	}
     }
 }
@@ -895,15 +892,15 @@ Guppy.prototype.up = function(){
     this.sel_clear();
     if(this.current.parentNode.hasAttribute("up")){
 	var t = parseInt(this.current.parentNode.getAttribute("up"));
-	console.log("TTT",t);
+	Guppy.log("TTT",t);
 	var f = this.current.parentNode.parentNode;
-	console.log(f);
+	Guppy.log(f);
 	var n = f.firstChild;
 	while(n != null && t > 0){
 	    if(n.nodeName == 'c') t--;
 	    if(t > 0) n = n.nextSibling;
 	}
-	console.log(n);
+	Guppy.log(n);
 	this.current = n.lastChild;
 	this.caret = this.current.firstChild.nodeValue.length;
     }
@@ -919,15 +916,15 @@ Guppy.prototype.down = function(){
     this.sel_clear();
     if(this.current.parentNode.hasAttribute("down")){
 	var t = parseInt(this.current.parentNode.getAttribute("down"));
-	console.log("TTT",t);
+	Guppy.log("TTT",t);
 	var f = this.current.parentNode.parentNode;
-	console.log(f);
+	Guppy.log(f);
 	var n = f.firstChild;
 	while(n != null && t > 0){
 	    if(n.nodeName == 'c') t--;
 	    if(t > 0) n = n.nextSibling;
 	}
-	console.log(n);
+	Guppy.log(n);
 	this.current = n.lastChild;
 	this.caret = this.current.firstChild.nodeValue.length;
     }
@@ -955,9 +952,9 @@ Guppy.prototype.checkpoint = function(){
 }
 
 Guppy.prototype.restore = function(t){
-    console.log("TTT",t);
+    Guppy.log("TTT",t);
     this.base = this.undo_data[t].cloneNode(true);
-    console.log((new XMLSerializer()).serializeToString(this.base));
+    Guppy.log((new XMLSerializer()).serializeToString(this.base));
     find_current();
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
@@ -969,35 +966,35 @@ Guppy.prototype.find_current = function(){
 }
 
 Guppy.prototype.undo = function(){
-    console.log("UNDO");
+    Guppy.log("UNDO");
     print_undo_data();
     if(this.undo_now <= 0) return;
-    console.log("UNDOING");
+    Guppy.log("UNDOING");
     this.undo_now--;
     restore(this.undo_now);
 }
 
 Guppy.prototype.redo = function(){
-    console.log("REDO");
+    Guppy.log("REDO");
     print_undo_data();
     if(this.undo_now >= this.undo_data.length-1) return;
-    console.log("REDOING");
+    Guppy.log("REDOING");
     this.undo_now++;
     restore(this.undo_now);
 }
 
 Guppy.prototype.print_undo_data = function(){
-    console.log("UNDO DATA");
-    console.log(this.undo_now, this.undo_data.length);
+    Guppy.log("UNDO DATA");
+    Guppy.log(this.undo_now, this.undo_data.length);
     for(var i = 0; i < this.undo_data.length; i++){
-	console.log(i, (new XMLSerializer()).serializeToString(this.undo_data[i]));
+	Guppy.log(i, (new XMLSerializer()).serializeToString(this.undo_data[i]));
     }
 }
 
 Guppy.prototype.problem = function(s){
-    console.log(s);
-    console.log('b',(new XMLSerializer()).serializeToString(this.base));
-    console.log('c',(new XMLSerializer()).serializeToString(this.current));
+    Guppy.log(s);
+    Guppy.log('b',(new XMLSerializer()).serializeToString(this.base));
+    Guppy.log('c',(new XMLSerializer()).serializeToString(this.current));
 }
 
 
@@ -1096,9 +1093,8 @@ Guppy.key_up = function(e){
     else if(keycode == 16) Guppy.kb.shift_down = false;
 }
 Guppy.key_down = function(e){
-    console.log(e);
     if(Guppy.active_guppy == null){
-	console.log("INACTIVE");
+	Guppy.log("INACTIVE");
 	return;
     }
     var keycode = e.keyCode;
@@ -1111,26 +1107,26 @@ Guppy.key_down = function(e){
     }
     else if(Guppy.kb.shift_down){
 	e.returnValue = false; e.preventDefault(); 
-	console.log(e.keyCode,e.srcElement);
+	Guppy.log(e.keyCode,e.srcElement);
 	if(keycode == Guppy.kb.UP){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,"exp"); }
 	else if(keycode == Guppy.kb.DOWN){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,"sub"); }
 	else if(keycode == Guppy.kb.LEFT){ Guppy.active_guppy.sel_left(); }
 	else if(keycode == Guppy.kb.RIGHT){ Guppy.active_guppy.sel_right(); }
-	else if(keycode == Guppy.kb.RPAREN){ console.log("RP"); Guppy.active_guppy.right_paren(); }
+	else if(keycode == Guppy.kb.RPAREN){ Guppy.active_guppy.right_paren(); }
 	else if(keycode in Guppy.kb.sk_chars){ Guppy.active_guppy.node_insert(Guppy.kb.sk_chars[keycode]); }
 	else if(keycode in Guppy.kb.sk_syms){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,Guppy.kb.sk_syms[keycode]); }
 	else if(65 <= e.keyCode && e.keyCode <= 90){ Guppy.active_guppy.node_insert(String.fromCharCode(e.keyCode)); }
     }
     else if(!Guppy.kb.alt_down){
 	e.returnValue = false; e.preventDefault(); 
-	console.log(e.keyCode,e.srcElement);
+	Guppy.log(e.keyCode,e.srcElement);
 	if(keycode == Guppy.kb.UP){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.up(); }
 	else if(keycode == Guppy.kb.DOWN){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.down(); }
 	else if(keycode == Guppy.kb.LEFT){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.left(); }
 	else if(keycode == Guppy.kb.RIGHT){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.right(); }
 	else if(keycode == Guppy.kb.HOME){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.home(); }
 	else if(keycode == Guppy.kb.END){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.end(); }
-	else if(keycode == Guppy.kb.BACKSPACE){ e.returnValue = false; e.preventDefault(); console.log("AA"); Guppy.active_guppy.backspace(); }
+	else if(keycode == Guppy.kb.BACKSPACE){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.backspace(); }
 	else if(keycode == 16) Guppy.kb.shift_down = true;
 	else if(keycode == 17) Guppy.kb.ctrl_down = true;
 	else if(keycode == 18) Guppy.kb.alt_down = true;
@@ -1142,14 +1138,14 @@ Guppy.key_down = function(e){
 	}
     }
     for(var s in Guppy.kb.symbols){
-	// console.log(current);
+	// Guppy.log(current);
 	if(Guppy.active_guppy.current.nodeName == 'e' && !(Guppy.is_blank(Guppy.active_guppy.current)) && Guppy.active_guppy.current.firstChild.nodeValue.search_at(Guppy.active_guppy.caret,s)){
-	    //console.log("INSERTION OF ",s);
-	    //console.log(current.nodeValue);
+	    //Guppy.log("INSERTION OF ",s);
+	    //Guppy.log(current.nodeValue);
 	    var temp = Guppy.active_guppy.current.firstChild.nodeValue;
 	    var temp_caret = Guppy.active_guppy.caret;
 	    Guppy.active_guppy.current.firstChild.nodeValue = Guppy.active_guppy.current.firstChild.nodeValue.slice(0,Guppy.active_guppy.caret-s.length)+Guppy.active_guppy.current.firstChild.nodeValue.slice(Guppy.active_guppy.caret);
-	    //console.log(current.nodeValue);
+	    //Guppy.log(current.nodeValue);
 	    Guppy.active_guppy.caret -= s.length;
 	    var success = Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,s);
 	    if(!success){
@@ -1165,3 +1161,13 @@ Guppy.key_down = function(e){
 window.addEventListener("keydown",Guppy.key_down, false);
 window.addEventListener("keyup",Guppy.key_up, false);
 window.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; }, false);
+
+Guppy.log = function(){
+    if(!(Guppy.active_guppy) || Guppy.active_guppy.debug_mode == false) return;
+    var s = "";
+    for(var i = 0; i < arguments.length; i++){
+	s = s + arguments[i];
+	if(i < arguments.length - 1) s = s + " ";
+    }
+    
+}
