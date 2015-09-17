@@ -67,7 +67,7 @@ The use of the editor frontend itself is documented in index.html.
 
 The primarily useful items in the Guppy object are:
 
-* `new Guppy(guppy_div, `properties`)`: `guppy_div` is either the div
+* `new Guppy(guppy_div, properties)`: `guppy_div` is either the div
   ID or the actual div object that you want turned into a Guppy editor
   (e.g. `document.getElementById('my_div1')`).  `properties` is a
   dictionary that can be null or empty, but may contain the following
