@@ -24,7 +24,7 @@ var Guppy = function(guppy_div, properties){
     
     Guppy.instances[guppy_div.id] = this;
     this.editor_active = true;
-    this.debug_mode = true//false;
+    this.debug_mode = false;
     this.editor = guppy_div;
     this.type_blacklist = [];
     

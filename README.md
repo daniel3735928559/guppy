@@ -80,6 +80,9 @@ The primarily useful items in the Guppy object are:
     symbols from `symbols.json` that should not be allowed in this
     instance of the editor.  Defaults to `[]` (nothing blacklisted).
 
+  * `ready_callback`: A function to be called when the instance is
+    ready to render things.  
+
   * `debug`: A boolean saying whether guppy should log debug data to
     the console.  Defaults to `false`.
 
