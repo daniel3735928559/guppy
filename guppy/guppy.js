@@ -17,10 +17,15 @@ var Guppy = function(guppy_div, properties){
 	Guppy.max_uid = i;
 	guppy_div.id = "guppy_uid_"+i;
     }
+    var i = Guppy.max_tabIndex || 0;
+    console.log("III",i);
+    guppy_div.tabIndex = i;
+    Guppy.max_tabIndex = i+1;
+    
     
     Guppy.instances[guppy_div.id] = this;
     this.editor_active = true;
-    this.debug_mode = false;
+    this.debug_mode = true//false;
     this.editor = guppy_div;
     this.type_blacklist = [];
     
@@ -37,9 +42,8 @@ var Guppy = function(guppy_div, properties){
     if('debug' in properties)
 	this.debug_mode = properties.debug=="yes" ? true : false;
     
-    if(Guppy.active_guppy == null) Guppy.active_guppy = this;
     Guppy.log("ACTIVE",Guppy.active_guppy);
-
+    this.deactivate();
     this.clipboard = null;
     this.current = this.base.documentElement.firstChild;
     if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
@@ -50,13 +54,17 @@ var Guppy = function(guppy_div, properties){
     this.undo_now = -1;
     this.sel_status = Guppy.SEL_NONE;
     this.checkpoint();
+    this.editor.addEventListener("keydown",Guppy.key_down, false);
+    this.editor.addEventListener("keyup",Guppy.key_up, false);
+    this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; }, false);
+    this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
 }
 
 /* Functions intended for external use */
 
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
-    Guppy.get_symbols(sympath, function(){ Guppy.active_guppy.render()} );
+    Guppy.get_symbols(sympath, function(){ for(var i = 0; i < Guppy.instances.length; i++) Guppy.instances[i].render()} );
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
     Guppy.symb_func("sin");
@@ -659,13 +667,13 @@ Guppy.prototype.render = function(){
 Guppy.prototype.activate = function(){
     this.editor_active = true;
     this.editor.style.backgroundColor='white';
-    this.editor.style.border='2px solid blue';
+    this.editor.style.border='1px solid gray';
 }
 
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
     this.editor.style.backgroundColor='#eee';
-    this.editor.style.border='2px solid black';
+    this.editor.style.border='1px solid black';
 }
 
 Guppy.prototype.sel_copy = function(){
@@ -1163,9 +1171,6 @@ Guppy.key_down = function(e){
     Guppy.active_guppy.render();
 }
 
-window.addEventListener("keydown",Guppy.key_down, false);
-window.addEventListener("keyup",Guppy.key_up, false);
-window.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; }, false);
 
 Guppy.log = function(){
     if(!(Guppy.active_guppy) || Guppy.active_guppy.debug_mode == false) return;
