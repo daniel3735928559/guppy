@@ -20,54 +20,43 @@ var Guppy = function(guppy_div, properties){
     
     Guppy.instances[guppy_div.id] = this;
     this.editor_active = true;
-    this.clipboard = null;
+    this.debug_mode = false;
+    this.editor = guppy_div;
+    this.type_blacklist = [];
     
     if('xml_content' in properties){
 	this.base = (new window.DOMParser()).parseFromString(properties.xml_content, "text/xml");
     }
     else {
-	this.base = (new window.DOMParser()).parseFromString("<m></m>", "text/xml");
+	this.base = (new window.DOMParser()).parseFromString("<m><e></e></m>", "text/xml");
     }
     
-    this.current = this.base.documentElement;
-    this.current.appendChild(this.make_e(""));
-    this.current = this.current.firstChild;
-    this.caret = 0;
-    this.sel_start = null;
-    this.sel_end = null;
-    this.debug_mode = false;
-    this.editor = guppy_div;
-    
-    this.raw = null;
-    this.xml_area = null;
-    this.type_blacklist = [];
-    
-    if('raw_div_id' in properties)
-	this.raw = document.getElementById(properties.raw_div_id);
-    if('xml_div_id' in properties)
-	this.xml_area = document.getElementById(properties.xml_div_id);
     if('blacklist' in properties)
 	this.type_blacklist = properties.blacklist;
     
     if('debug' in properties)
 	this.debug_mode = properties.debug=="yes" ? true : false;
-
-    this.undo_data = [];
-    this.undo_now = -1;
     
-    this.sel_status = Guppy.SEL_NONE;
-    
-    // this.render();
-    this.checkpoint();
     if(Guppy.active_guppy == null) Guppy.active_guppy = this;
     Guppy.log("ACTIVE",Guppy.active_guppy);
+
+    this.clipboard = null;
+    this.current = this.base.documentElement.firstChild;
+    if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
+    this.caret = 0;
+    this.sel_start = null;
+    this.sel_end = null;
+    this.undo_data = [];
+    this.undo_now = -1;
+    this.sel_status = Guppy.SEL_NONE;
+    this.checkpoint();
 }
 
 /* Functions intended for external use */
 
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
-    Guppy.get_symbols(sympath);
+    Guppy.get_symbols(sympath, function(){ Guppy.active_guppy.render()} );
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
     Guppy.symb_func("sin");
@@ -86,6 +75,22 @@ Guppy.prototype.get_content = function(t){
     else return (new XMLSerializer()).serializeToString(this.base);
 }
 
+Guppy.prototype.set_content = function(xml_data){
+    this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
+    this.clipboard = null;
+    this.current = this.base.documentElement;
+    this.current.appendChild(this.make_e(""));
+    this.current = this.current.firstChild;
+    this.caret = 0;
+    this.sel_start = null;
+    this.sel_end = null;
+    this.undo_data = [];
+    this.undo_now = -1;
+    this.sel_status = Guppy.SEL_NONE;
+    this.checkpoint();
+}
+
+
 Guppy.instances = {};
 
 /* -------------------- */
@@ -101,19 +106,20 @@ Guppy.is_blank = function(n){
     return n.firstChild == null || n.firstChild.nodeValue == '';
 }
 
-Guppy.get_symbols = function(symbols_path){
+Guppy.get_symbols = function(symbols_path, callback){
     var req = new XMLHttpRequest();
     req.onload = function(){
 	var syms = JSON.parse(this.responseText);
 	for(var s in syms){
 	    Guppy.kb.symbols[s] = syms[s];
 	}
+	if(callback){ callback(); }
     };
     req.open("get", symbols_path, true);
     req.send();
 }
 
-Guppy.get_latexify = function(xsl_path){
+Guppy.get_latexify = function(xsl_path, callback){
     var req = new XMLHttpRequest();
     req.onload = function(){
 	var latexify = this.responseText;
@@ -122,6 +128,7 @@ Guppy.get_latexify = function(xsl_path){
 	Guppy.xsltProcessor.importStylesheet(latexsl);
 	Guppy.xsltProcessor.setParameter("","blank",Guppy.kb.BLANK);
 	Guppy.xsltProcessor.setParameter("","cblank",Guppy.kb.CURRENT_BLANK);
+	if(callback){ callback(); }
     };
     req.open("get", xsl_path, true);
     req.send();
@@ -555,7 +562,7 @@ Guppy.prototype.insert_symbol = function(n,idx,sym_name){
     else this.down_from_f_to_blank();
 
     this.sel_clear();
-    this.checkpoint();
+    this.checkpoint(true);
     // if(new_current != null) {
     // 	if(new_current.firstChild == null) new_current.appendChild(this.base.createTextNode(""));
     // 	current = new_current;
@@ -647,8 +654,6 @@ Guppy.prototype.render = function(){
     var tex = this.render_node(this.base,"latex");
     Guppy.log(this.caret,"TEX", tex);
     katex.render(tex,this.editor);
-    if(this.raw != null) this.raw.innerHTML = render_node(this.base,"calc");
-    if(this.xml_area != null) this.xml_area.value = "MX\n" + (new XMLSerializer()).serializeToString(this.base) + "\n\nCALC\n" +render_node(this.base,"calc") + "\n\nTeX\n" + tex;
 }
 
 Guppy.prototype.activate = function(){
@@ -942,10 +947,10 @@ Guppy.prototype.end = function(){
     this.caret = this.current.firstChild.nodeValue.length;
 }
 
-Guppy.prototype.checkpoint = function(){
+Guppy.prototype.checkpoint = function(overwrite){
     this.current.setAttribute("current","yes");
     this.current.setAttribute("caret",this.caret.toString());
-    this.undo_now++;
+    if(!overwrite) this.undo_now++;
     this.undo_data[this.undo_now] = this.base.cloneNode(true);
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
@@ -955,7 +960,7 @@ Guppy.prototype.restore = function(t){
     Guppy.log("TTT",t);
     this.base = this.undo_data[t].cloneNode(true);
     Guppy.log((new XMLSerializer()).serializeToString(this.base));
-    find_current();
+    this.find_current();
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
 }
@@ -967,20 +972,20 @@ Guppy.prototype.find_current = function(){
 
 Guppy.prototype.undo = function(){
     Guppy.log("UNDO");
-    print_undo_data();
+    this.print_undo_data();
     if(this.undo_now <= 0) return;
     Guppy.log("UNDOING");
     this.undo_now--;
-    restore(this.undo_now);
+    this.restore(this.undo_now);
 }
 
 Guppy.prototype.redo = function(){
     Guppy.log("REDO");
-    print_undo_data();
+    this.print_undo_data();
     if(this.undo_now >= this.undo_data.length-1) return;
     Guppy.log("REDOING");
     this.undo_now++;
-    restore(this.undo_now);
+    this.restore(this.undo_now);
 }
 
 Guppy.prototype.print_undo_data = function(){
@@ -1166,8 +1171,6 @@ Guppy.log = function(){
     if(!(Guppy.active_guppy) || Guppy.active_guppy.debug_mode == false) return;
     var s = "";
     for(var i = 0; i < arguments.length; i++){
-	s = s + arguments[i];
-	if(i < arguments.length - 1) s = s + " ";
+	console.log(arguments[i]);
     }
-    
 }

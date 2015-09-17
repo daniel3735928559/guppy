@@ -67,10 +67,24 @@ The use of the editor frontend itself is documented in index.html.
 
 The primarily useful items in the Guppy object are:
 
-* `new Guppy(guppy_div)`: `guppy_div` is either the div ID or the
-  actual div object that you want turned into a Guppy editor
-  (e.g. `document.getElementById('my_div1')`).  This function should
-  be called once per div that you want to turn into a Guppy instance.
+* `new Guppy(guppy_div, `properties`)`: `guppy_div` is either the div
+  ID or the actual div object that you want turned into a Guppy editor
+  (e.g. `document.getElementById('my_div1')`).  `properties` is a
+  dictionary that can be null or empty, but may contain the following
+  keys:
+
+  * `xml_content`: An XML string with which to initialise the editor's
+  state.  Defaults to `<m><e/></m>` (the blank expression).
+  
+  * `blacklist`: A list of string symbol names, corresponding to
+    symbols from `symbols.json` that should not be allowed in this
+    instance of the editor.  Defaults to `[]` (nothing blacklisted).
+
+  * `debug`: A boolean saying whether guppy should log debug data to
+    the console.  Defaults to `false`.
+
+  This function should be called for each div that you want to turn
+  into a Guppy instance.
 
 * `Guppy.guppy_init(xsl_path, symbols_path)`: `xsl_path` is the path
   to `guppy/transform.xsl`, `symbols_path` is the path to
@@ -80,6 +94,11 @@ The primarily useful items in the Guppy object are:
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
   or `"calc"`, and the function will return (respectively) the XML,
   LaTeX, or ASCII representation of the instance's content.
+  
+* `Guppy.prototype.set_content(xml_data)`: `xml_data` is a string
+  containing XML that describes a valid Guppy editor state (e.g. one
+  returned by `get_content("xml")`).  This resets the state of the
+  editor.
 
 * `Guppy.instances`: This is a dictionary that contains all Guppy
   objects on the page , indexed by div ID.  So you can access the
