@@ -117,4 +117,4 @@ on.  More complete documentation will eventually be available in
 
 ## License
 
-Guppy is licensed under the [MIT License](http://opensource.org/licenses/MIT)
+Guppy is licensed under the [MIT License](http://opensource.org/licenses/MIT).
