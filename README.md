@@ -34,7 +34,7 @@ A stripped-down version of the [demo page](http://daniel3735928559.github.io/gup
     <div id="guppy_div" style="width:400px;height:100px;"></div>
     
     <script>
-        Guppy.guppy_init("libguppy/transform.xsl");
+        Guppy.guppy_init("guppy/transform.xsl","guppy/symbols.json");
         new Guppy("guppy_div");
     </script>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
@@ -72,8 +72,9 @@ The primarily useful items in the Guppy object are:
   (e.g. `document.getElementById('my_div1')`).  This function should
   be called once per div that you want to turn into a Guppy instance.
 
-* `Guppy.guppy_init(xsl_path)`: `xsl_path` is the path to
-  `guppy/transform.xsl`.  This function should only be called once per
+* `Guppy.guppy_init(xsl_path, symbols_path)`: `xsl_path` is the path
+  to `guppy/transform.xsl`, `symbols_path` is the path to
+  `guppy/symbols.json`.  This function should only be called once per
   page.
 
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
