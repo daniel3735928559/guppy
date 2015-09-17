@@ -18,7 +18,6 @@ var Guppy = function(guppy_div, properties){
 	guppy_div.id = "guppy_uid_"+i;
     }
     var i = Guppy.max_tabIndex || 0;
-    console.log("III",i);
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;
     
@@ -38,6 +37,9 @@ var Guppy = function(guppy_div, properties){
     
     if('blacklist' in properties)
 	this.type_blacklist = properties.blacklist;
+    
+    if('ready_callback' in properties)
+	this.ready_callback = properties.ready_callback;
     
     if('debug' in properties)
 	this.debug_mode = properties.debug=="yes" ? true : false;
@@ -64,7 +66,14 @@ var Guppy = function(guppy_div, properties){
 
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
-    Guppy.get_symbols(sympath, function(){ for(var i = 0; i < Guppy.instances.length; i++) Guppy.instances[i].render()} );
+    Guppy.get_symbols(sympath, function(){
+	for(var i in Guppy.instances){
+	    Guppy.instances[i].render();
+	    if(Guppy.instances[i].ready_callback){
+		Guppy.instances[i].ready_callback();
+	    }
+	}
+    });
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
     Guppy.symb_func("sin");
@@ -86,9 +95,8 @@ Guppy.prototype.get_content = function(t){
 Guppy.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.clipboard = null;
-    this.current = this.base.documentElement;
-    this.current.appendChild(this.make_e(""));
-    this.current = this.current.firstChild;
+    this.current = this.base.documentElement.firstChild;
+    if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
     this.caret = 0;
     this.sel_start = null;
     this.sel_end = null;
@@ -665,9 +673,11 @@ Guppy.prototype.render = function(){
 }
 
 Guppy.prototype.activate = function(){
+    Guppy.active_guppy = this;
     this.editor_active = true;
     this.editor.style.backgroundColor='white';
     this.editor.style.border='1px solid gray';
+    this.editor.focus();
 }
 
 Guppy.prototype.deactivate = function(){
@@ -1111,6 +1121,7 @@ Guppy.key_down = function(e){
 	return;
     }
     var keycode = e.keyCode;
+    console.log(keycode);
     if(Guppy.kb.ctrl_down){
 	if(keycode == 67){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_copy(); }
 	if(keycode == 86){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_paste(); }

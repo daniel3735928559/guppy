@@ -99,6 +99,10 @@ The primarily useful items in the Guppy object are:
   containing XML that describes a valid Guppy editor state (e.g. one
   returned by `get_content("xml")`).  This resets the state of the
   editor.
+  
+* `Guppy.prototype.activate()`: Gives the editor focus.
+
+* `Guppy.prototype.deactivate()`: Unfocuses the editor.
 
 * `Guppy.instances`: This is a dictionary that contains all Guppy
   objects on the page , indexed by div ID.  So you can access the
