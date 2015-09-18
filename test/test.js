@@ -94,7 +94,23 @@ var tests = [
 	}
     },
     {
-	"description":"F/E/F cut/paste test",
+	"description":"f-char delete test",
+	"content":'<m><e></e></m>',
+	"type":"calc",
+	"expected":"(2)^(x)",
+	"run":function(g){
+	    key_do('2');
+	    Guppy.kb.shift_down = true;
+	    key_do('6');
+	    Guppy.kb.shift_down = false;
+	    key_do('x');
+	    key_do('p');
+	    key_do('i');
+	    g.backspace();
+	}
+    },
+    {
+	"description":"f-char cut/paste test",
 	"content":'<m><e></e><f><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="calc">sin(<r ref="1"/>)</b><c><e>x</e></c></f><e>+</e><f c="yes"><b p="latex">{\\pi}</b><b p="calc"> PI </b></f><e>+</e><f><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="calc">cos(<r ref="1"/>)</b><c><e>x</e></c></f><e></e></m>',
 	"type":"calc",
 	"expected":"sin(x)+cos(x)+ PI ",
