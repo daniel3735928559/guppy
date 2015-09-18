@@ -95,8 +95,12 @@ Guppy.prototype.get_content = function(t){
 Guppy.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.clipboard = null;
+    var l = this.base.getElementsByTagName("e");
+    console.log(l);
+    for(var i = 0; i < l.length; i++){
+	if(!(l[i].firstChild)) l[i].appendChild(this.base.createTextNode(""));
+    }
     this.current = this.base.documentElement.firstChild;
-    if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
     this.caret = 0;
     this.sel_start = null;
     this.sel_end = null;

@@ -12,6 +12,6 @@
     <div id="results" style="width:50%;border:1px solid black;padding:10px;"><b>Test results: </b></div>
     <script>
       Guppy.guppy_init("../guppy/transform.xsl","../guppy/symbols.json");
-      var g = new Guppy("guppy1", {"debug":true,"ready_callback":function(){console.log("hi");start_tests(this)}});
+      var g = new Guppy("guppy1", {"debug":"yes","ready_callback":function(){console.log("hi");start_tests(this)}});
     </script>
 </body></html>

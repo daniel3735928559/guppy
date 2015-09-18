@@ -1,5 +1,5 @@
-var tests = {
-    "basic":{
+var tests = [
+    {
 	"description":"Basic test",
 	"content":"<m><e>x+1</e></m>",
 	"type":"calc",
@@ -9,7 +9,19 @@ var tests = {
 	    g.backspace();
 	}
     },
-    "ftest":{
+    {
+	"description":"Basic undo test",
+	"content":"<m><e></e></m>",
+	"type":"calc",
+	"expected":"xy",
+	"run":function(g){
+	    key_do('x');
+	    key_do('y');
+	    key_do('z');
+	    g.undo();
+	}
+    },
+    {
 	"description":"Sine test",
 	"content":"<m><e></e></m>",
 	"type":"calc",
@@ -20,8 +32,87 @@ var tests = {
 	    key_do('n');
 	    key_do('x');
 	}
-    }
-}
+    },
+    {
+	"description":"Sine undo test",
+	"content":"<m><e></e></m>",
+	"type":"calc",
+	"expected":"si",
+	"run":function(g){
+	    key_do('s');
+	    key_do('i');
+	    key_do('n');
+	    g.undo();
+	}
+    },
+    {
+	"description":"Basic select delete test",
+	"content":"<m><e>x+1</e></m>",
+	"type":"calc",
+	"expected":"1",
+	"run":function(g){
+	    g.sel_right();
+	    g.sel_right();
+	    g.backspace();
+	}
+    },
+    {
+	"description":"Basic select replace test",
+	"content":"<m><e>x+1</e></m>",
+	"type":"calc",
+	"expected":"a1",
+	"run":function(g){
+	    g.sel_right();
+	    g.sel_right();
+	    key_do('a');
+	}
+    },
+    {
+	"description":"Basic cut/paste test",
+	"content":"<m><e>x+1</e></m>",
+	"type":"calc",
+	"expected":"1x+",
+	"run":function(g){
+	    g.sel_right();
+	    g.sel_right();
+	    g.sel_cut();
+	    g.right();
+	    g.sel_paste();
+	}
+    },
+    {
+	"description":"Basic copy/paste test",
+	"content":"<m><e>x+1</e></m>",
+	"type":"calc",
+	"expected":"x+1x+",
+	"run":function(g){
+	    g.sel_right();
+	    g.sel_right();
+	    g.sel_copy();
+	    g.right();
+	    g.sel_paste();
+	}
+    },
+    {
+	"description":"F/E/F cut/paste test",
+	"content":'<m><e></e><f><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="calc">sin(<r ref="1"/>)</b><c><e>x</e></c></f><e>+</e><f c="yes"><b p="latex">{\\pi}</b><b p="calc"> PI </b></f><e>+</e><f><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="calc">cos(<r ref="1"/>)</b><c><e>x</e></c></f><e></e></m>',
+	"type":"calc",
+	"expected":"sin(x)+cos(x)+ PI ",
+	"run":function(g){
+	    g.right();
+	    g.right();
+	    g.right();
+	    g.sel_right();
+	    g.sel_right();
+	    g.sel_cut();
+	    g.right();
+	    g.right();
+	    g.right();
+	    g.right();
+	    g.sel_paste();
+	}
+    },
+];
 
 function key_do(ch){
     Guppy.key_down({'keyCode':ch.toUpperCase().charCodeAt(0),'preventDefault':function(){}});
