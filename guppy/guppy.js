@@ -315,9 +315,7 @@ Guppy.prototype.delete_from_f = function(){
     var p = n.parentNode;
     var prev = n.previousSibling;
     var next = n.nextSibling;
-    var new_text = prev.firstChild.textContent + next.firstChild.textContent;
-    var new_node = this.base.createElement("e");
-    new_node.appendChild(this.base.createTextNode(new_text));
+    var new_node = this.make_e(prev.firstChild.textContent + next.firstChild.textContent);
     this.current = new_node;
     this.caret = prev.firstChild.textContent.length;
     p.insertBefore(new_node, prev);
@@ -877,17 +875,18 @@ Guppy.prototype.delete_from_e = function(){
 	Guppy.log("bk","|"+this.current.firstChild.nodeValue+"|",this.current.firstChild.nodeValue.length);
     }
     else{
-	if(this.current.parentNode.previousSibling != null && this.current.parentNode.previousSibling.nodeName == 'c'){
-	    // We're in a c child of an f node, but not the first one.  Go to the previous c
-	    this.left();
-	}
-	else if(this.current.previousSibling != null && this.current.previousSibling.getAttribute("c") == "yes"){
+	// The order of these is important
+	if(this.current.previousSibling != null && this.current.previousSibling.getAttribute("c") == "yes"){
 	    // The previous node is an f node but is really just a character.  Delete it.
 	    this.current = this.current.previousSibling;
 	    this.delete_from_f();
 	}
 	else if(this.current.previousSibling != null && this.current.previousSibling.nodeName == 'f'){
 	    // We're in an e node just after an f node.  Move back into the f node (delete it?)
+	    this.left();
+	}
+	else if(this.current.parentNode.previousSibling != null && this.current.parentNode.previousSibling.nodeName == 'c'){
+	    // We're in a c child of an f node, but not the first one.  Go to the previous c
 	    this.left();
 	}
 	else if(this.current.previousSibling == null && this.current.parentNode.nodeName == 'c' && (this.current.parentNode.previousSibling == null || this.current.parentNode.previousSibling.nodeName != 'c')){
