@@ -469,7 +469,7 @@ Guppy.prototype.is_small = function(nn){
     return false;
 }
 
-Guppy.prototype.insert_symbol = function(n,idx,sym_name){
+Guppy.prototype.insert_symbol = function(sym_name){
     var s = Guppy.kb.symbols[sym_name];
     if(this.is_blacklisted(s['type'])){
 	Guppy.log("BLACKLISTED");
@@ -657,7 +657,7 @@ Guppy.prototype.make_e = function(text){
     return new_node;
 }
 
-Guppy.prototype.node_insert = function(s){
+Guppy.prototype.insert_string = function(s){
     if(this.sel_status != Guppy.SEL_NONE){
 	this.sel_delete();
 	this.sel_clear();
@@ -1135,14 +1135,14 @@ Guppy.key_down = function(e){
     else if(Guppy.kb.shift_down){
 	e.returnValue = false; e.preventDefault(); 
 	Guppy.log(e.keyCode,e.srcElement);
-	if(keycode == Guppy.kb.UP){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,"exp"); }
-	else if(keycode == Guppy.kb.DOWN){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,"sub"); }
+	if(keycode == Guppy.kb.UP){ Guppy.active_guppy.insert_symbol("exp"); }
+	else if(keycode == Guppy.kb.DOWN){ Guppy.active_guppy.insert_symbol("sub"); }
 	else if(keycode == Guppy.kb.LEFT){ Guppy.active_guppy.sel_left(); }
 	else if(keycode == Guppy.kb.RIGHT){ Guppy.active_guppy.sel_right(); }
 	else if(keycode == Guppy.kb.RPAREN){ Guppy.active_guppy.right_paren(); }
-	else if(keycode in Guppy.kb.sk_chars){ Guppy.active_guppy.node_insert(Guppy.kb.sk_chars[keycode]); }
-	else if(keycode in Guppy.kb.sk_syms){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,Guppy.kb.sk_syms[keycode]); }
-	else if(65 <= e.keyCode && e.keyCode <= 90){ Guppy.active_guppy.node_insert(String.fromCharCode(e.keyCode)); }
+	else if(keycode in Guppy.kb.sk_chars){ Guppy.active_guppy.insert_string(Guppy.kb.sk_chars[keycode]); }
+	else if(keycode in Guppy.kb.sk_syms){ Guppy.active_guppy.insert_symbol(Guppy.kb.sk_syms[keycode]); }
+	else if(65 <= e.keyCode && e.keyCode <= 90){ Guppy.active_guppy.insert_string(String.fromCharCode(e.keyCode)); }
     }
     else if(!Guppy.kb.alt_down){
 	e.returnValue = false; e.preventDefault(); 
@@ -1157,11 +1157,11 @@ Guppy.key_down = function(e){
 	else if(keycode == 16) Guppy.kb.shift_down = true;
 	else if(keycode == 17) Guppy.kb.ctrl_down = true;
 	else if(keycode == 18) Guppy.kb.alt_down = true;
-	else if(keycode in Guppy.kb.k_chars){ Guppy.active_guppy.node_insert(Guppy.kb.k_chars[keycode]); }
-	else if(keycode in Guppy.kb.k_syms){ Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,Guppy.kb.k_syms[keycode]); }
+	else if(keycode in Guppy.kb.k_chars){ Guppy.active_guppy.insert_string(Guppy.kb.k_chars[keycode]); }
+	else if(keycode in Guppy.kb.k_syms){ Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[keycode]); }
 	else if((65 <= e.keyCode && e.keyCode <= 90) || (48 <= e.keyCode && e.keyCode <= 57)){
 	    var ch = String.fromCharCode(e.keyCode).toLowerCase();
-	    Guppy.active_guppy.node_insert(ch);
+	    Guppy.active_guppy.insert_string(ch);
 	}
     }
     for(var s in Guppy.kb.symbols){
@@ -1174,7 +1174,7 @@ Guppy.key_down = function(e){
 	    Guppy.active_guppy.current.firstChild.nodeValue = Guppy.active_guppy.current.firstChild.nodeValue.slice(0,Guppy.active_guppy.caret-s.length)+Guppy.active_guppy.current.firstChild.nodeValue.slice(Guppy.active_guppy.caret);
 	    //Guppy.log(current.nodeValue);
 	    Guppy.active_guppy.caret -= s.length;
-	    var success = Guppy.active_guppy.insert_symbol(Guppy.active_guppy.current,Guppy.active_guppy.caret,s);
+	    var success = Guppy.active_guppy.insert_symbol(s);
 	    if(!success){
 		Guppy.active_guppy.current.firstChild.nodeValue = temp;
 		Guppy.active_guppy.caret = temp_caret;

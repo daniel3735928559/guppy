@@ -66,7 +66,7 @@ see the demo).
 
 ## API Reference
 
-The primarily useful items in the Guppy object are:
+The primary useful items in the Guppy object are:
 
 * `new Guppy(guppy_div, properties)`: `guppy_div` is either the div
   ID or the actual div object that you want turned into a Guppy editor
@@ -117,11 +117,18 @@ The primarily useful items in the Guppy object are:
 
 There are other instance-level functions that may be of use in some
 circumstances (e.g. for creating a browser-button-based interface):
-`left()` and `right()` will move the cursor left and right
-(respectively), `backspace()` will do the same thing as hitting the
-backspace button, `undo()` will undo the previous operation, and so
-on.  More complete documentation will eventually be available in
-`doc/`.
+
+* `left()` and `right()` will move the cursor left and right
+(respectively).
+
+* `backspace()` will do the same thing as hitting the backspace button.
+
+* `undo()` will undo the previous operation,
+
+* `insert_string(s)` will insert the string `s` it at the current cursor position.
+  
+* `insert_symbol(sym_name)` will take the string name of a symbol from
+  `symbols.json` and insert it at the current cursor position.
 
 ## Tests
 
