@@ -21,7 +21,7 @@ A live demo can be found at
 
 ## Code Example
 
-A stripped-down version of the [demo page](http://daniel3735928559.github.io/guppy/) would look like:
+A stripped-down version of the demo page would look like:
 
 ```
 <html>
@@ -61,7 +61,8 @@ A stripped-down version of the [demo page](http://daniel3735928559.github.io/gup
 
 ## Frontend Usage
 
-The use of the editor frontend itself is documented in index.html.  
+The use of the editor frontend itself is documented in index.html (or 
+see the demo).
 
 ## API Reference
 
@@ -121,6 +122,10 @@ circumstances (e.g. for creating a browser-button-based interface):
 backspace button, `undo()` will undo the previous operation, and so
 on.  More complete documentation will eventually be available in
 `doc/`.
+
+## Tests
+
+The tests can be run by opening /test/test.html in a browser, for example, by going to [http://daniel3735928559.github.io/guppy/test/test.html](http://daniel3735928559.github.io/guppy/test/test.html)
 
 ## License
 
