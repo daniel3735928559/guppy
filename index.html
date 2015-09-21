@@ -51,6 +51,9 @@
     
     <script>
       Guppy.guppy_init("guppy/transform.xsl","guppy/symbols.json");
-      var g1 = new Guppy("guppy1");
+      var g1 = new Guppy("guppy1",{'done_callback':function(){
+      document.getElementById('stuff').appendChild(document.createElement('br'));
+      document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.get_content('calc')));
+      }});
     </script>
 </body></html>

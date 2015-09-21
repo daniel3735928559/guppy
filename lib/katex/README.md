@@ -1,6 +1,22 @@
 ## Guppy-specific Modificiations: 
 
-This is a modified version of KaTeX with the \rlap and \llap behaviour slightly changed to get the desired cursor appearance.  Ideally this will not be necessary in future.
+This is a modified version of KaTeX with the \rule style slightly
+changed to get the desired cursor appearance.  Specifically, the
+following lines were added to buildHTML.js under groupTypes.rule:
+
+````
+rule.style.padding = "0px";
+rule.style.marginRight = "-1px";
+rule.style.borderLeftWidth = "1px";
+````
+
+This gets close to but does not evoke quite the desired behaviour.
+For instance, in an equation such as `1+sin(x)` moving the cursor
+between `+` and `sin` causes the `sin` to shift to the right slightly.
+
+A future project will be to explore implementing some KaTeX command
+like `\cursor` which is a 1px line of zero width and and the normal
+character height for whatever container it is within.
 
 # [<img src="https://khan.github.io/KaTeX/katex-logo.svg" width="130" alt="KaTeX">](https://khan.github.io/KaTeX/) [![Build Status](https://travis-ci.org/Khan/KaTeX.svg?branch=master)](https://travis-ci.org/Khan/KaTeX)
 

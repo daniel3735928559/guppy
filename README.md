@@ -84,6 +84,9 @@ The primary useful items in the Guppy object are:
   * `ready_callback`: A function to be called when the instance is
     ready to render things.  
 
+  * `done_callback`: A function to be called when Ctrl-Enter is
+    pressed in the instance.
+
   * `debug`: A boolean saying whether guppy should log debug data to
     the console.  Defaults to `false`.
 

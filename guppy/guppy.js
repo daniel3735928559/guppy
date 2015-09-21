@@ -27,6 +27,7 @@ var Guppy = function(guppy_div, properties){
     this.debug_mode = false;
     this.editor = guppy_div;
     this.type_blacklist = [];
+    this.done_callback = this;
     
     if('xml_content' in properties){
 	this.base = (new window.DOMParser()).parseFromString(properties.xml_content, "text/xml");
@@ -37,6 +38,9 @@ var Guppy = function(guppy_div, properties){
     
     if('blacklist' in properties)
 	this.type_blacklist = properties.blacklist;
+
+    if('done_callback' in properties)
+	this.done_callback = properties.done_callback;
     
     if('ready_callback' in properties)
 	this.ready_callback = properties.ready_callback;
@@ -1017,6 +1021,10 @@ Guppy.prototype.print_undo_data = function(){
     }
 }
 
+Guppy.prototype.done = function(s){
+    this.done_callback();
+}
+
 Guppy.prototype.problem = function(s){
     Guppy.log(s);
     Guppy.log('b',(new XMLSerializer()).serializeToString(this.base));
@@ -1131,6 +1139,7 @@ Guppy.key_down = function(e){
 	if(keycode == 88){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_cut(); }
 	if(keycode == 89){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.redo(); }
 	if(keycode == 90){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.undo(); }
+	if(keycode == Guppy.kb.ENTER){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.done(); }
     }
     else if(Guppy.kb.shift_down){
 	e.returnValue = false; e.preventDefault(); 
