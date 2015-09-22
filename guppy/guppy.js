@@ -62,7 +62,7 @@ var Guppy = function(guppy_div, properties){
     this.checkpoint();
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
-    this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; }, false);
+    this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; this.activate();}, false);
     this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
 }
 
