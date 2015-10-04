@@ -5,14 +5,28 @@ changed to get the desired cursor appearance.  Specifically, the
 following lines were added to buildHTML.js under groupTypes.rule:
 
 ````
-rule.style.padding = "0px";
 rule.style.marginRight = "-1px";
+rule.style.marginLeft = "0px";
 rule.style.borderLeftWidth = "1px";
 ````
 
-This gets close to but does not evoke quite the desired behaviour.
-For instance, in an equation such as `1+sin(x)` moving the cursor
-between `+` and `sin` causes the `sin` to shift to the right slightly.
+Further, since we don't want the cursor to modify the appearance of
+anything else, we give `\rule` elements a `cursor` class add a lot of
+CSS rules like:
+
+```
+.mbin + .cursor + .mop {/* Same stuff as for .mbin + .mop */}
+```
+
+Finally, the type of a given element can be influenced by the type of
+the element immediately before this.  When the cursor is right before
+an element, we want that element's type to be influenced by the
+element that is normally immediately before it.  In this case, that's
+the element that is two elements prior.  So we plumb through the code
+the element that is two elements prior as well as the previous one and
+include logic that says "If the previous element is the cursor, ignore
+it and consider instead the element preceeding it for making these
+decisions".
 
 A future project will be to explore implementing some KaTeX command
 like `\cursor` which is a 1px line of zero width and and the normal
