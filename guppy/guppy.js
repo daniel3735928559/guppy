@@ -702,6 +702,7 @@ Guppy.prototype.sel_copy = function(){
 Guppy.prototype.sel_cut = function(){
     this.clipboard = this.sel_delete();
     this.sel_clear();
+    this.checkpoint();
 }
 
 Guppy.prototype.sel_paste = function(){
@@ -731,7 +732,8 @@ Guppy.prototype.sel_paste = function(){
 	this.current = nn;
 	this.caret = real_clipboard[real_clipboard.length-1].firstChild.nodeValue.length
     }
-}    
+    this.checkpoint();
+}
 
 Guppy.prototype.sel_clear = function(){
     this.sel_start = null;    
@@ -911,6 +913,7 @@ Guppy.prototype.backspace = function(){
 	this.sel_status = Guppy.SEL_NONE;
     }
     else this.delete_from_e();
+    this.checkpoint();
 }
 
 Guppy.prototype.right_paren = function(){
