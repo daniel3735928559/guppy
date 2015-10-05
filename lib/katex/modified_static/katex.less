@@ -67,7 +67,7 @@
     @thickspace: 0.27778em;
 
     .textstyle {
-        > .mord {
+        > .mord, .mord + .cursor {
             & + .mord {}
             & + .mop { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
@@ -76,17 +76,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner { margin-left: @thinspace; }
-            & + .cursor + .mord {}
-            & + .cursor + .mop { margin-left: @thinspace; }
-            & + .cursor + .mbin { margin-left: @mediumspace; }
-            & + .cursor + .mrel { margin-left: @thickspace; }
-            & + .cursor + .mopen {}
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner { margin-left: @thinspace; }
         }
 
-        > .mop {
+        > .mop, .mop + .cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin {}
@@ -95,17 +87,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner { margin-left: @thinspace; }
-            & + .cursor + .mord { margin-left: @thinspace; }
-            & + .cursor + .mop { margin-left: @thinspace; }
-            & + .cursor + .mbin {}
-            & + .cursor + .mrel { margin-left: @thickspace; }
-            & + .cursor + .mopen {}
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner { margin-left: @thinspace; }
         }
 
-        > .mbin {
+        > .mbin, .mbin + .cursor {
             & + .mord { margin-left: @mediumspace; }
             & + .mop { margin-left: @mediumspace; }
             & + .mbin {}
@@ -114,17 +98,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner { margin-left: @mediumspace; }
-            & + .cursor + .mord { margin-left: @mediumspace; }
-            & + .cursor + .mop { margin-left: @mediumspace; }
-            & + .cursor + .mbin {}
-            & + .cursor + .mrel {}
-            & + .cursor + .mopen { margin-left: @mediumspace; }
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner { margin-left: @mediumspace; }
         }
 
-        > .mrel {
+        > .mrel, .mrel + .cursor {
             & + .mord { margin-left: @thickspace; }
             & + .mop { margin-left: @thickspace; }
             & + .mbin {}
@@ -133,17 +109,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner { margin-left: @thickspace; }
-            & + .cursor + .mord { margin-left: @thickspace; }
-            & + .cursor + .mop { margin-left: @thickspace; }
-            & + .cursor + .mbin {}
-            & + .cursor + .mrel {}
-            & + .cursor + .mopen { margin-left: @thickspace; }
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner { margin-left: @thickspace; }
         }
 
-        > .mopen {
+        > .mopen, .mopen + .cursor {
             & + .mord {}
             & + .mop {}
             & + .mbin {}
@@ -152,17 +120,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner {}
-            & + .cursor + .mord {}
-            & + .cursor + .mop {}
-            & + .cursor + .mbin {}
-            & + .cursor + .mrel {}
-            & + .cursor + .mopen {}
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner {}
         }
 
-        > .mclose {
+        > .mclose, .mclose + .cursor {
             & + .mord {}
             & + .mop { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
@@ -171,17 +131,9 @@
             & + .mclose {}
             & + .mpunct {}
             & + .minner { margin-left: @thinspace; }
-            & + .cursor + .mord {}
-            & + .cursor + .mop { margin-left: @thinspace; }
-            & + .cursor + .mbin { margin-left: @mediumspace; }
-            & + .cursor + .mrel { margin-left: @thickspace; }
-            & + .cursor + .mopen {}
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct {}
-            & + .cursor + .minner { margin-left: @thinspace; }
         }
 
-        > .mpunct {
+        > .mpunct, .mpunct + .cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin {}
@@ -192,7 +144,7 @@
             & + .minner { margin-left: @thinspace; }
         }
 
-        > .minner {
+        > .minner, .minner  +.cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
@@ -201,14 +153,6 @@
             & + .mclose {}
             & + .mpunct { margin-left: @thinspace; }
             & + .minner { margin-left: @thinspace; }
-            & + .cursor + .mord { margin-left: @thinspace; }
-            & + .cursor + .mop { margin-left: @thinspace; }
-            & + .cursor + .mbin { margin-left: @mediumspace; }
-            & + .cursor + .mrel { margin-left: @thickspace; }
-            & + .cursor + .mopen { margin-left: @thinspace; }
-            & + .cursor + .mclose {}
-            & + .cursor + .mpunct { margin-left: @thinspace; }
-            & + .cursor + .minner { margin-left: @thinspace; }
         }
     }
 
