@@ -695,12 +695,19 @@ Guppy.prototype.deactivate = function(){
 Guppy.prototype.sel_copy = function(){
     var sel = this.sel_get();
     if(!sel) return;
-    this.clipboard = sel.node_list;
+    this.clipboard = [];
+    for(var i = 0; i < sel.node_list.length; i++){
+	this.clipboard.push(sel.node_list[i].cloneNode(true));
+    }
     this.sel_clear();
 }
 
 Guppy.prototype.sel_cut = function(){
-    this.clipboard = this.sel_delete();
+    var node_list = this.sel_delete();
+    this.clipboard = [];
+    for(var i = 0; i < node_list.length; i++){
+	this.clipboard.push(node_list[i].cloneNode(true));
+    }
     this.sel_clear();
     this.checkpoint();
 }
@@ -875,6 +882,7 @@ Guppy.prototype.left = function(){
 }
 
 Guppy.prototype.delete_from_e = function(){
+    // return false if we deleted something, and true otherwise.
     if(this.caret > 0){
 	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splicen(this.caret-1,"",1);
 	this.caret--;
@@ -890,10 +898,12 @@ Guppy.prototype.delete_from_e = function(){
 	else if(this.current.previousSibling != null && this.current.previousSibling.nodeName == 'f'){
 	    // We're in an e node just after an f node.  Move back into the f node (delete it?)
 	    this.left();
+	    return false;
 	}
 	else if(this.current.parentNode.previousSibling != null && this.current.parentNode.previousSibling.nodeName == 'c'){
 	    // We're in a c child of an f node, but not the first one.  Go to the previous c
 	    this.left();
+	    return false;
 	}
 	else if(this.current.previousSibling == null && this.current.parentNode.nodeName == 'c' && (this.current.parentNode.previousSibling == null || this.current.parentNode.previousSibling.nodeName != 'c')){
 	    // We're in the first c child of an f node and at the beginning--delete the f node
@@ -903,17 +913,21 @@ Guppy.prototype.delete_from_e = function(){
 	else{
 	    // We're at the beginning (hopefully!) 
 	    Guppy.log("AT BEGINNING!");
+	    return false;
 	}
     }
+    return true;
 }
 
 Guppy.prototype.backspace = function(){
     if(this.sel_status != Guppy.SEL_NONE){
 	this.sel_delete();
 	this.sel_status = Guppy.SEL_NONE;
+	this.checkpoint();
     }
-    else this.delete_from_e();
-    this.checkpoint();
+    else if(this.delete_from_e()){
+	this.checkpoint();
+    }
 }
 
 Guppy.prototype.right_paren = function(){
@@ -980,6 +994,7 @@ Guppy.prototype.checkpoint = function(overwrite){
     this.current.setAttribute("caret",this.caret.toString());
     if(!overwrite) this.undo_now++;
     this.undo_data[this.undo_now] = this.base.cloneNode(true);
+    this.undo_data.splice(this.undo_now+1, this.undo_data.length);
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
 }
