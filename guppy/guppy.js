@@ -1071,6 +1071,7 @@ Guppy.kb.DOWN = 40;
 Guppy.kb.LEFT = 37;
 Guppy.kb.RIGHT = 39;
 Guppy.kb.RPAREN = 48;
+Guppy.kb.SPACE = 32;
 Guppy.kb.BACKSPACE = 8;
 Guppy.kb.ENTER = 13;
 Guppy.kb.HOME = 36;
@@ -1178,7 +1179,7 @@ Guppy.key_down = function(e){
 	if(keycode == Guppy.kb.UP){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.up(); }
 	else if(keycode == Guppy.kb.DOWN){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.down(); }
 	else if(keycode == Guppy.kb.LEFT){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.left(); }
-	else if(keycode == Guppy.kb.RIGHT){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.right(); }
+	else if(keycode == Guppy.kb.RIGHT || keycode == Guppy.kb.SPACE){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.right(); }
 	else if(keycode == Guppy.kb.HOME){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.home(); }
 	else if(keycode == Guppy.kb.END){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.end(); }
 	else if(keycode == Guppy.kb.BACKSPACE){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.backspace(); }
