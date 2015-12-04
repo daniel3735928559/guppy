@@ -58,18 +58,43 @@
 
   <xsl:template match="c">
     <xsl:choose>
-      <!-- We need to add brackets if:
+      <!-- We need to add brackets if the following three conditions
+	   are met:
 	   - type is latex
 	   - bracket is "yes"
-	   - Either:
-	   == We have more than one child and not:
-	   ===== three children, e's are empty, and f has is_bracket="yes"
+	   - Any of:
+	   == We have more than one child and not all of the following:
+	   ==== three children: 2 e and 1 f
+	   ==== e's are empty
+	   ==== f has one c with is_bracket="yes" OR the f has c="yes"
 	   == We have one child but not a variable and not a number
       -->
       <!-- <xsl:when test="$type='latex' and @bracket = 'yes' and ((count(./*) != 1) or (count(./*) = 1 and string-length(./e/text()) != 1 and number(./e/text()) != ./e/text()))">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when> -->
       <xsl:when test="$type='latex' and @bracket = 'yes' and
-      		      ((count(./*) != 1 and not ((count(./e)=2) and count(./e[string-length(text())=0])=2 and (count(./f)=1) and count(./f/c)=1 and count(./f/c[@is_bracket='yes'])=1)
-      		      or (count(./*) = 1 and string-length(./e/text()) != 1 and number(./e/text()) != ./e/text())))">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when>
+      		      (
+		        (
+		          count(./*) != 1 and not
+		          (
+                            count(./e)=2 and
+			    count(./f)=1 and 
+			    count(./e[string-length(text())=0])=2 and
+			    (
+			      (
+                                count(./f/c)=1 and
+			        count(./f/c[@is_bracket='yes'])=1
+			      )
+			      or f/@c='yes'
+			    )
+			  )
+			)  
+			or
+		        (
+			  count(./*) = 1 and
+			  string-length(./e/text()) != 1 and
+			  number(./e/text()) != ./e/text()
+			)
+                      )
+                      ">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when>
       <xsl:otherwise><xsl:apply-templates select="@*|node()"/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
