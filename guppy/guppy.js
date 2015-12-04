@@ -3,6 +3,7 @@ String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + 
 String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.length,idx) == s); };
 
 var Guppy = function(guppy_div, properties){
+    var self = this;
     properties = properties || {};
     if(typeof guppy_div === 'string' || guppy_div instanceof String){
 	guppy_div = document.getElementById(guppy_div);
@@ -62,7 +63,7 @@ var Guppy = function(guppy_div, properties){
     this.checkpoint();
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
-    this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; this.activate();}, false);
+    this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
 }
 
