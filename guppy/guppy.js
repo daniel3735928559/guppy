@@ -110,7 +110,7 @@ Guppy.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.clipboard = null;
     var l = this.base.getElementsByTagName("e");
-    console.log(l);
+    Guppy.log(l);
     for(var i = 0; i < l.length; i++){
 	if(!(l[i].firstChild)) l[i].appendChild(this.base.createTextNode(""));
     }
@@ -1165,7 +1165,6 @@ Guppy.key_down = function(e){
 	return;
     }
     var keycode = e.keyCode;
-    console.log(keycode);
     if(Guppy.kb.ctrl_down){
 	if(keycode == 67){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_copy(); }
 	if(keycode == 86){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_paste(); }
