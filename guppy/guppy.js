@@ -691,6 +691,9 @@ Guppy.prototype.deactivate = function(){
     this.editor_active = false;
     this.editor.style.backgroundColor='#eee';
     this.editor.style.border='1px solid black';
+    Guppy.kb.shift_down = false;
+    Guppy.kb.ctrl_down = false;
+    Guppy.kb.alt_down = false;
 }
 
 Guppy.prototype.sel_copy = function(){
