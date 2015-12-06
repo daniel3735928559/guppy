@@ -23,12 +23,12 @@ var Guppy = function(guppy_div, properties){
     Guppy.max_tabIndex = i+1;
     
     
-    Guppy.instances[guppy_div.id] = this;
     this.editor_active = true;
     this.debug_mode = false;
     this.editor = guppy_div;
     this.type_blacklist = [];
     this.done_callback = this;
+    this.ready = false;
     
     if('xml_content' in properties){
 	this.base = (new window.DOMParser()).parseFromString(properties.xml_content, "text/xml");
@@ -48,7 +48,14 @@ var Guppy = function(guppy_div, properties){
     
     if('debug' in properties)
 	this.debug_mode = properties.debug=="yes" ? true : false;
+
     
+    Guppy.instances[guppy_div.id] = this;
+    
+    if(Guppy.ready && !this.ready){
+	this.ready_callback();
+	this.ready = true;
+    }
     Guppy.log("ACTIVE",Guppy.active_guppy);
     this.deactivate();
     this.clipboard = null;
@@ -72,9 +79,11 @@ var Guppy = function(guppy_div, properties){
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
     Guppy.get_symbols(sympath, function(){
+	Guppy.ready = true;
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].render();
 	    if(Guppy.instances[i].ready_callback){
+		Guppy.instances[i].ready = true;
 		Guppy.instances[i].ready_callback();
 	    }
 	}
@@ -117,6 +126,7 @@ Guppy.prototype.set_content = function(xml_data){
 
 
 Guppy.instances = {};
+Guppy.ready = false;
 
 /* -------------------- */
 
