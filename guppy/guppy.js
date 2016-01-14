@@ -53,7 +53,7 @@ var Guppy = function(guppy_div, properties){
     Guppy.instances[guppy_div.id] = this;
     
     if(Guppy.ready && !this.ready){
-	this.ready_callback();
+	if(this.ready_callback) this.ready_callback();
 	this.ready = true;
     }
     Guppy.log("ACTIVE",Guppy.active_guppy);
