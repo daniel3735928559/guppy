@@ -219,6 +219,7 @@ Guppy.prototype.render_node = function(n,t){
     if(t == "latex"){
 	var cleanup = [];
 	var sel_cursor;
+	var text_node = this.is_text(this.current);
 	if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
 	if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
 	// Add cursor
@@ -226,12 +227,12 @@ Guppy.prototype.render_node = function(n,t){
 	var callback_current = this.current;
 	cleanup.push(function(){callback_current.removeAttribute("current");});
 	var caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
-	if(this.is_text(this.current)) caret_text = "|";
+	if(text_node) caret_text = "[]";
 	if(this.current.firstChild.nodeValue != "" || this.current.previousSibling != null || this.current.nextSibling != null){
 	    Guppy.log("CARETISING",this.sel_status);
 	    var idx = this.caret;
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) caret_text = "}" + caret_text;
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) caret_text = text_node ? "[" : caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) caret_text = text_node ? "]" : "}" + caret_text;
 	    //if(this.sel_status == Guppy.SEL_CURSOR_AT_END && sel_cursor.node == current) idx += SEL_CARET.length;
 	    var prev_val = this.current.firstChild.nodeValue;
 	    Guppy.log("AAAAAAAAAAA",prev_val);
@@ -253,8 +254,8 @@ Guppy.prototype.render_node = function(n,t){
 		cleanup.push(function(){sel_cursor.node.firstChild.nodeValue = prev_val_sel;});
 	    }
 	    var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = "}" + sel_caret_text;
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
 	    Guppy.log("SEL_IDX",idx);
 	    sel_cursor.node.firstChild.nodeValue = sel_cursor.node.firstChild.nodeValue.splice(idx,sel_caret_text);
 	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
