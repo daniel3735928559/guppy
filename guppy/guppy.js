@@ -43,6 +43,12 @@ var Guppy = function(guppy_div, properties){
     if('done_callback' in properties)
 	this.done_callback = properties.done_callback;
     
+    if('right_callback' in properties)
+	this.right_callback = properties.right_callback;
+    
+    if('left_callback' in properties)
+	this.left_callback = properties.left_callback;
+    
     if('ready_callback' in properties)
 	this.ready_callback = properties.ready_callback;
     
@@ -53,7 +59,7 @@ var Guppy = function(guppy_div, properties){
     Guppy.instances[guppy_div.id] = this;
     
     if(Guppy.ready && !this.ready){
-	this.ready_callback();
+	if(this.ready_callback) this.ready_callback();
 	this.ready = true;
     }
     Guppy.log("ACTIVE",Guppy.active_guppy);
@@ -220,6 +226,7 @@ Guppy.prototype.render_node = function(n,t){
 	var callback_current = this.current;
 	cleanup.push(function(){callback_current.removeAttribute("current");});
 	var caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+	if(this.is_text(this.current)) caret_text = "|";
 	if(this.current.firstChild.nodeValue != "" || this.current.previousSibling != null || this.current.nextSibling != null){
 	    Guppy.log("CARETISING",this.sel_status);
 	    var idx = this.caret;
@@ -473,6 +480,10 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     return {"f":f, "first":first};
 }
 
+Guppy.prototype.is_text = function(nn){
+    return (nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "text")
+}
+
 Guppy.prototype.is_small = function(nn){
     var n = nn.parentNode;
     while(n != null){
@@ -692,15 +703,15 @@ Guppy.prototype.render = function(){
 Guppy.prototype.activate = function(){
     Guppy.active_guppy = this;
     this.editor_active = true;
-    this.editor.style.backgroundColor='white';
-    this.editor.style.border='1px solid gray';
+    this.editor.style.backgroundColor='#ffffff';
+    //this.editor.style.border='1px solid gray';
     this.editor.focus();
 }
 
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
-    this.editor.style.backgroundColor='#eee';
-    this.editor.style.border='1px solid black';
+    this.editor.style.backgroundColor='#fafafa';
+    //this.editor.style.border='1px solid black';
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
@@ -864,7 +875,10 @@ Guppy.prototype.right = function(){
 	    this.current = nn;
 	    this.caret = 0;
 	}
-	else Guppy.log("at end or problem");
+	else{
+	    this.right_callback();
+	    Guppy.log("at end or problem");
+	}
     }
     else{
 	this.caret += 1;
@@ -887,7 +901,10 @@ Guppy.prototype.left = function(){
 	    this.current = pn;
 	    this.caret = this.current.firstChild.nodeValue.length;
 	}
-	else Guppy.log("at beginnning or problem");
+	else{
+	    this.left_callback();
+	    Guppy.log("at beginnning or problem");
+	}
     }
     else{
 	this.caret -= 1;

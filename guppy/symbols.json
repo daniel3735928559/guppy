@@ -6,6 +6,15 @@
      "current":0,
      "type":"norm"},
     
+    "text":
+    {"output":{
+        "latex":["\\text{",1,"}"],
+        "calc":["text(",1,")"]},
+     "current":0,
+     "type":"text",
+     "attrs":{
+	 "mode":["text"]}},
+    
     "abs":
     {"output":{
         "latex":["\\left|",1,"\\right|"],
