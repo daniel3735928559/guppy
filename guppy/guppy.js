@@ -87,9 +87,9 @@ Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_symbols(sympath, function(){
 	Guppy.ready = true;
 	for(var i in Guppy.instances){
+	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render();
 	    if(Guppy.instances[i].ready_callback){
-		Guppy.instances[i].ready = true;
 		Guppy.instances[i].ready_callback();
 	    }
 	}
@@ -237,13 +237,15 @@ Guppy.prototype.render_node = function(n,t){
 	    var prev_val = this.current.firstChild.nodeValue;
 	    Guppy.log("AAAAAAAAAAA",prev_val);
 	    callback_current = this.current;
-	    cleanup.push(function(){callback_current.firstChild.nodeValue = prev_val;});
-	    this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(idx,caret_text);
+	    if(this.editor_active){
+		cleanup.push(function(){callback_current.firstChild.nodeValue = prev_val;});
+		this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(idx,caret_text);
+	    }
 	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
 	    Guppy.log("CP",prev_val);
 	}	
 	// Add sel_start
-	if(this.sel_status != Guppy.SEL_NONE) {
+	if(this.sel_status != Guppy.SEL_NONE && this.editor_active) {
 	    var idx = sel_cursor.caret;
 	    if(sel_cursor.node == this.current){
 		if(this.sel_status == Guppy.SEL_CURSOR_AT_START) idx += caret_text.length;
@@ -707,6 +709,7 @@ Guppy.prototype.activate = function(){
     this.editor.style.backgroundColor='#ffffff';
     //this.editor.style.border='1px solid gray';
     this.editor.focus();
+    if(this.ready) this.render();
 }
 
 Guppy.prototype.deactivate = function(){
@@ -716,6 +719,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
+    if(this.ready) this.render();
 }
 
 Guppy.prototype.sel_copy = function(){
