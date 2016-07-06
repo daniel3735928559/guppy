@@ -84,6 +84,14 @@ The primary useful items in the Guppy object are:
   * `ready_callback`: A function to be called when the instance is
     ready to render things.  
 
+  * `right_callback`: A function to be called when the cursor is at
+    the right-most point and a command is received to move the cursor
+    to the right (e.g., via the right arrow key).
+
+  * `left_callback`: A function to be called when the cursor is at
+    the left-most point and a command is received to move the cursor
+    to the right (e.g., via the left arrow key).
+
   * `done_callback`: A function to be called when Ctrl-Enter is
     pressed in the instance.
 
