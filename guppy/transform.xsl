@@ -23,7 +23,8 @@
   </xsl:template>
 
   <xsl:template match="b">
-    <xsl:if test="@p=$type">
+    <xsl:variable name="size"><xsl:if test="ancestor::c[@size='s'] and ../b[@p='small_latex']">small_</xsl:if></xsl:variable>
+    <xsl:if test="@p=concat($size,$type)">
       <xsl:apply-templates select="@*|node()"/>
     </xsl:if>
   </xsl:template>

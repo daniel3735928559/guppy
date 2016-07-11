@@ -142,9 +142,6 @@ function append_result(name, result){
 }
 
 function start_tests(g){
-    // g.activate();
-    // key_do('x');
-    run_test(tests[2], g);
     for(var t in tests){
     	run_test(tests[t], g);
     }

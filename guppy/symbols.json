@@ -78,6 +78,7 @@
     "frac":
     {"output":{
         "latex":["\\dfrac{",1,"}{",2,"}"],
+        "small_latex":["\\frac{",1,"}{",2,"}"],
 	"calc":["(",1,")/(",2,")"]},
      "current":0,
      "type":"fraction",
@@ -90,6 +91,7 @@
     "slash":
     {"output":{
         "latex":["\\dfrac{",1,"}{",2,"}"],
+        "small_latex":["\\frac{",1,"}{",2,"}"],
 	"calc":["(",1,")/(",2,")"]},
      "current":1,
      "current_type":"token",
@@ -103,6 +105,7 @@
     "int":
     {"output":{
         "latex":["\\displaystyle\\int{",1,"}d",2],
+        "small_latex":["\\int{",1,"}d",2],
 	"calc":["integrate(",1,",",2,")"]},
      "current":0,
      "type":"indefinite_integral",
@@ -114,6 +117,7 @@
     "defi":
     {"output":{
         "latex":["\\displaystyle\\int_{",1,"}^{",2,"}",3,"d",4],
+        "small_latex":["\\int_{",1,"}^{",2,"}",3,"d",4],
 	"calc":["integrate(",3,",",4,",",1,",",2,")"]},
      "current":0,
      "type":"definite_integral",
@@ -179,6 +183,7 @@
     "sum":
     {"output":{
         "latex":["\\displaystyle\\sum_{",1,"}^{",2,"}",3],
+        "small_latex":["\\sum_{",1,"}^{",2,"}",3],
 	"calc":["sum(",3,",",1,",",2,")"]},
      "current":0,
      "type":"summation",

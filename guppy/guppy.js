@@ -438,7 +438,6 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     var first_ref = -1;
     var refs_count = 0;
     var first;
-
     // Make the b nodes for rendering each output
     for(var t in s["output"]){
 	var b = this.base.createElement("b");
@@ -711,7 +710,6 @@ Guppy.prototype.activate = function(){
     //this.editor.style.border='1px solid gray';
     this.editor.focus();
     if(this.ready) this.render();
-    console.log("setting scope");
     key.setScope('guppy_scope');
 }
 
@@ -723,7 +721,6 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
     if(this.ready) this.render();
-    console.log("deleting scope");
     key.setScope('all');
 }
 
@@ -1118,6 +1115,7 @@ Guppy.prototype.is_blacklisted = function(symb_type){
 Guppy.symb_raw = function(symb_name,latex_symb,calc_symb){
     Guppy.kb.symbols[symb_name] = {"output":{"latex":[latex_symb],
 					     "calc":[calc_symb]},"char":true};
+    
 }
 
 Guppy.symb_func = function(func_name){
