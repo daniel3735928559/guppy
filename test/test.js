@@ -100,9 +100,7 @@ var tests = [
 	"expected":"(2)^(x)",
 	"run":function(g){
 	    key_do('2');
-	    Guppy.kb.shift_down = true;
-	    key_do('6');
-	    Guppy.kb.shift_down = false;
+	    sym_do('exp');
 	    key_do('x');
 	    key_do('p');
 	    key_do('i');
@@ -130,23 +128,11 @@ var tests = [
     },
 ];
 
+function sym_do(s){
+    g.insert_symbol(s);
+}
 function key_do(ch){
-    var e = document.createEvent("KeyboardEvent");
-    e.initKeyboardEvent(
-        "keypress", // event type : keydown, keyup, keypress
-        true, // bubbles
-        true, // cancelable
-        window, // viewArg: should be window
-        false, // ctrlKeyArg
-        false, // altKeyArg
-        false, // shiftKeyArg
-        false, // metaKeyArg
-        ch.charCodeAt(0) // keyCodeArg : unsigned long the virtual key code, else 0
-//        ch.toUpperCase().charCodeAt(0) // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-    );
-    document.dispatchEvent(e);
-    console.log("EE",e,ch.charCodeAt(0));
-    //Guppy.key_down({'keyCode':ch.toUpperCase().charCodeAt(0),'preventDefault':function(){}});
+    g.insert_string(ch);
 }
 
 function append_result(name, result){
@@ -156,7 +142,6 @@ function append_result(name, result){
 }
 
 function start_tests(g){
-
     // g.activate();
     // key_do('x');
     run_test(tests[2], g);
@@ -169,6 +154,7 @@ function run_test(t, g){
     g.activate();
     g.set_content(t.content);
     t.run(g);
+    g.render();
     var observed = g.get_content(t.type);
     if(t.expected == observed){
 	append_result(t.description,"PASS");

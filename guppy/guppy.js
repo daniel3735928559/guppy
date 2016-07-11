@@ -694,8 +694,8 @@ Guppy.prototype.insert_string = function(s){
     Guppy.log("ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
-    this.check_for_symbol();
     this.checkpoint();
+    this.check_for_symbol();
 }
 
 Guppy.prototype.render = function(){
