@@ -1204,7 +1204,7 @@ for(var i = 48; i <= 57; i++)
     Guppy.kb.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
 
 Guppy.register_keyboard_handlers = function(){
-
+    Mousetrap.addKeycodes({173: '-'}); // Firefox's special minus (needed for _ = sub binding)
     for(var i in Guppy.kb.k_chars)
     	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(); return false; }}(i));  
     for(var i in Guppy.kb.k_syms)
