@@ -93,6 +93,7 @@ Guppy.guppy_init = function(xslpath, sympath){
 		Guppy.instances[i].ready_callback();
 	    }
 	}
+	Guppy.register_keyboard_handlers();
     });
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
@@ -709,8 +710,9 @@ Guppy.prototype.activate = function(){
     this.editor.style.backgroundColor='#ffffff';
     //this.editor.style.border='1px solid gray';
     this.editor.focus();
-    if(this.ready) this.render();
-    key.setScope('guppy_scope');
+    if(this.ready){
+	this.render();
+    }
 }
 
 Guppy.prototype.deactivate = function(){
@@ -720,8 +722,9 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
-    if(this.ready) this.render();
-    key.setScope('all');
+    if(this.ready){
+	this.render();
+    }
 }
 
 Guppy.prototype.sel_copy = function(){
@@ -1147,8 +1150,13 @@ Guppy.prototype.check_for_symbol = function(){
 /* keyboard behaviour definitions */
 
 // keys aside from 0-9,a-z,A
-Guppy.kb.k_chars = ["=","+","-","*",".",","];
-Guppy.kb.sk_chars = {
+Guppy.kb.k_chars = {
+    "=":"=",
+    "+":"+",
+    "-":"-",
+    "*":"*",
+    ".":".",
+    ",":",",
     "shift+/":"/",
     "shift+=":"+",
     "shift+1":"!"
@@ -1160,8 +1168,7 @@ Guppy.kb.k_syms = {
     "shift+9":"paren",
     "shift+,":"angle",
     "shift+-":"sub",
-    "shift+[":"curlbrack",
-    "shift+|":"abs",
+    "shift+\\":"abs",
     "shift+up":"exp",
     "shift+down":"sub"
 };
@@ -1173,37 +1180,39 @@ Guppy.kb.k_controls = {
     "home":"home",
     "end":"end",
     "backspace":"backspace",
-    "ctrl+c":"sel_copy",
-    "ctrl+x":"sel_cut",
-    "ctrl+v":"sel_paste",
-    "ctrl+z":"undo",
-    "ctrl+y":"redo",
+    "meta+c":"sel_copy",
+    "meta+x":"sel_cut",
+    "meta+v":"sel_paste",
+    "meta+z":"undo",
+    "meta+y":"redo",
     "enter":"done",
     "shift+left":"sel_left",
     "shift+right":"sel_right",
     "shift+0":"right_paren"
 };
 
-/* keymaster keyboard handlers */
-
-for(var i in Guppy.kb.k_chars)
-    key(Guppy.kb.k_chars[i], 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(); return false; }}(i));    
-for(var i in Guppy.kb.sk_chars)
-    key('shift+'+i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(Guppy.kb.sk_chars[i]); Guppy.active_guppy.render(); return false; }}(i));
-
-for(var i in Guppy.kb.k_syms)
-    key(i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(); return false; }}(i));
-for(var i in Guppy.kb.k_controls)
-    key(i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(); return false; }}(i));
+// letters
 
 for(var i = 65; i <= 90; i++){
-    key(String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toLowerCase()); Guppy.active_guppy.render(); return false; }}(i));
-    key('shift+'+String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toUpperCase()); Guppy.active_guppy.render(); return false; }}(i));
+    Guppy.kb.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    Guppy.kb.k_chars['shift+'+String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
 }
 
-for(var i = 48; i <= 57; i++)
-    key(String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toLowerCase()); Guppy.active_guppy.render(); return false; }}(i));
+// numbers
 
+for(var i = 48; i <= 57; i++)
+    Guppy.kb.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+
+Guppy.register_keyboard_handlers = function(){
+
+    for(var i in Guppy.kb.k_chars)
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(); return false; }}(i));  
+    for(var i in Guppy.kb.k_syms)
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(); return false; }}(i));
+    for(var i in Guppy.kb.k_controls)
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(); return false; }}(i));
+    
+}
 
 Guppy.log = function(){
     if(!(Guppy.active_guppy) || Guppy.active_guppy.debug_mode == false) return;
