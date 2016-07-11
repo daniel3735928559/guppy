@@ -4,6 +4,7 @@
     <title>Guppy</title>
     <link rel="stylesheet" href="lib/katex/katex-modified.min.css">
     <script src="lib/katex/katex-modified.min.js"></script>
+    <script src="lib/keymaster/keymaster.js"></script>
     <script type="text/javascript" src="guppy/guppy.js"></script>
   </head>
   <body>
@@ -51,7 +52,7 @@
     
     <script>
       Guppy.guppy_init("guppy/transform.xsl","guppy/symbols.json");
-      var g1 = new Guppy("guppy1",{'done_callback':function(){
+      var g1 = new Guppy("guppy1",{'right_callback':function(){},'left_callback':function(){},'done_callback':function(){
       document.getElementById('stuff').appendChild(document.createElement('br'));
       document.getElementById('stuff').appendChild(document.createTextNode(Guppy.instances.guppy1.get_content('calc')));
       }});

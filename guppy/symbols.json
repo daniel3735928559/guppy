@@ -38,7 +38,7 @@
      "attrs":{
 	 "is_bracket":["yes"]}
     },
-
+    
     "floor":
     {"output":{
         "latex":["\\lfloor",1,"\\rfloor"],

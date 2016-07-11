@@ -694,6 +694,7 @@ Guppy.prototype.insert_string = function(s){
     Guppy.log("ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
+    this.check_for_symbol();
     this.checkpoint();
 }
 
@@ -710,6 +711,8 @@ Guppy.prototype.activate = function(){
     //this.editor.style.border='1px solid gray';
     this.editor.focus();
     if(this.ready) this.render();
+    console.log("setting scope");
+    key.setScope('guppy_scope');
 }
 
 Guppy.prototype.deactivate = function(){
@@ -720,6 +723,8 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
     if(this.ready) this.render();
+    console.log("deleting scope");
+    key.setScope('all');
 }
 
 Guppy.prototype.sel_copy = function(){
@@ -1101,61 +1106,6 @@ Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\rule[0em]{0em}{0.3em}}"
 Guppy.kb.SEL_COLOR = "red"
 Guppy.kb.CURRENT_BLANK = "\\color{red}{[?]}"
 Guppy.kb.BLANK = "\\color{blue}{[?]}"
-Guppy.kb.UP = 38;
-Guppy.kb.DOWN = 40;
-Guppy.kb.LEFT = 37;
-Guppy.kb.RIGHT = 39;
-Guppy.kb.RPAREN = 48;
-Guppy.kb.SPACE = 32;
-Guppy.kb.BACKSPACE = 8;
-Guppy.kb.ENTER = 13;
-Guppy.kb.HOME = 36;
-Guppy.kb.END = 35;
-Guppy.kb.shift_down = false;
-Guppy.kb.ctrl_down = false;
-Guppy.kb.alt_down = false;
-
-Guppy.kb.k_syms = [];
-Guppy.kb.sk_syms = []
-
-Guppy.kb.k_chars = [];
-Guppy.kb.sk_chars = [];
-
-Guppy.kb.k_chars[107] = "+";
-Guppy.kb.k_chars[108] = "-";
-Guppy.kb.k_chars[109] = "*";
-Guppy.kb.k_chars[110] = ".";
-Guppy.kb.k_chars[111] = "/";
-
-//Chrome
-
-Guppy.kb.k_chars[187] = "=";
-Guppy.kb.k_chars[188] = ",";
-Guppy.kb.k_chars[189] = "-";
-Guppy.kb.k_chars[190] = ".";
-Guppy.kb.sk_chars[191] = "/";
-
-// Firefox
-
-Guppy.kb.k_chars[61] = "=";
-Guppy.kb.k_chars[173] = "-";
-
-Guppy.kb.k_syms[219] = "sqbrack";
-
-Guppy.kb.sk_chars[61] = "+"; // Firefox
-Guppy.kb.sk_chars[187] = "+"; // Chrome
-Guppy.kb.sk_chars[49] = "!";
-
-Guppy.kb.k_syms[191] = "slash";
-
-Guppy.kb.sk_syms[54] = "exp";
-Guppy.kb.sk_syms[56] = "*";
-Guppy.kb.sk_syms[57] = "paren";
-Guppy.kb.sk_syms[188] = "angle";
-Guppy.kb.sk_syms[173] = "sub";
-Guppy.kb.sk_syms[189] = "sub";
-Guppy.kb.sk_syms[219] = "curlbrack";
-Guppy.kb.sk_syms[220] = "abs";
 
 Guppy.kb.symbols = {};
 
@@ -1175,58 +1125,7 @@ Guppy.symb_func = function(func_name){
 					     "calc":[func_name+"(",1,")"]}};
 }
 
-Guppy.key_up = function(e){
-    var keycode = e.keyCode;
-    if(keycode == 18) Guppy.kb.alt_down = false;
-    else if(keycode == 17) Guppy.kb.ctrl_down = false;
-    else if(keycode == 16) Guppy.kb.shift_down = false;
-}
-Guppy.key_down = function(e){
-    if(Guppy.active_guppy == null){
-	Guppy.log("INACTIVE");
-	return;
-    }
-    var keycode = e.keyCode;
-    if(Guppy.kb.ctrl_down){
-	if(keycode == 67){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_copy(); }
-	if(keycode == 86){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_paste(); }
-	if(keycode == 88){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.sel_cut(); }
-	if(keycode == 89){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.redo(); }
-	if(keycode == 90){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.undo(); }
-	if(keycode == Guppy.kb.ENTER){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.done(); }
-    }
-    else if(Guppy.kb.shift_down){
-	e.returnValue = false; e.preventDefault(); 
-	Guppy.log(e.keyCode,e.srcElement);
-	if(keycode == Guppy.kb.UP){ Guppy.active_guppy.insert_symbol("exp"); }
-	else if(keycode == Guppy.kb.DOWN){ Guppy.active_guppy.insert_symbol("sub"); }
-	else if(keycode == Guppy.kb.LEFT){ Guppy.active_guppy.sel_left(); }
-	else if(keycode == Guppy.kb.RIGHT){ Guppy.active_guppy.sel_right(); }
-	else if(keycode == Guppy.kb.RPAREN){ Guppy.active_guppy.right_paren(); }
-	else if(keycode in Guppy.kb.sk_chars){ Guppy.active_guppy.insert_string(Guppy.kb.sk_chars[keycode]); }
-	else if(keycode in Guppy.kb.sk_syms){ Guppy.active_guppy.insert_symbol(Guppy.kb.sk_syms[keycode]); }
-	else if(65 <= e.keyCode && e.keyCode <= 90){ Guppy.active_guppy.insert_string(String.fromCharCode(e.keyCode)); }
-    }
-    else if(!Guppy.kb.alt_down){
-	e.returnValue = false; e.preventDefault(); 
-	Guppy.log(e.keyCode,e.srcElement);
-	if(keycode == Guppy.kb.UP){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.up(); }
-	else if(keycode == Guppy.kb.DOWN){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.down(); }
-	else if(keycode == Guppy.kb.LEFT){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.left(); }
-	else if(keycode == Guppy.kb.RIGHT || keycode == Guppy.kb.SPACE){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.right(); }
-	else if(keycode == Guppy.kb.HOME){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.home(); }
-	else if(keycode == Guppy.kb.END){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.end(); }
-	else if(keycode == Guppy.kb.BACKSPACE){ e.returnValue = false; e.preventDefault(); Guppy.active_guppy.backspace(); }
-	else if(keycode == 16) Guppy.kb.shift_down = true;
-	else if(keycode == 17) Guppy.kb.ctrl_down = true;
-	else if(keycode == 18) Guppy.kb.alt_down = true;
-	else if(keycode in Guppy.kb.k_chars){ Guppy.active_guppy.insert_string(Guppy.kb.k_chars[keycode]); }
-	else if(keycode in Guppy.kb.k_syms){ Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[keycode]); }
-	else if((65 <= e.keyCode && e.keyCode <= 90) || (48 <= e.keyCode && e.keyCode <= 57)){
-	    var ch = String.fromCharCode(e.keyCode).toLowerCase();
-	    Guppy.active_guppy.insert_string(ch);
-	}
-    }
+Guppy.prototype.check_for_symbol = function(){
     for(var s in Guppy.kb.symbols){
 	// Guppy.log(current);
 	if(Guppy.active_guppy.current.nodeName == 'e' && !(Guppy.is_blank(Guppy.active_guppy.current)) && Guppy.active_guppy.current.firstChild.nodeValue.search_at(Guppy.active_guppy.caret,s)){
@@ -1245,8 +1144,67 @@ Guppy.key_down = function(e){
 	    break;
 	}
     }
-    Guppy.active_guppy.render();
 }
+
+/* keyboard behaviour definitions */
+
+// keys aside from 0-9,a-z,A
+Guppy.kb.k_chars = ["=","+","-","*",".",","];
+Guppy.kb.sk_chars = {
+    "shift+/":"/",
+    "shift+=":"+",
+    "shift+1":"!"
+};
+Guppy.kb.k_syms = {
+    "/":"slash",
+    "shift+6":"exp",
+    "shift+8":"*",
+    "shift+9":"paren",
+    "shift+,":"angle",
+    "shift+-":"sub",
+    "shift+[":"curlbrack",
+    "shift+|":"abs",
+    "shift+up":"exp",
+    "shift+down":"sub"
+};
+Guppy.kb.k_controls = {
+    "up":"up",
+    "down":"down",
+    "right":"right",
+    "left":"left",
+    "home":"home",
+    "end":"end",
+    "backspace":"backspace",
+    "ctrl+c":"sel_copy",
+    "ctrl+x":"sel_cut",
+    "ctrl+v":"sel_paste",
+    "ctrl+z":"undo",
+    "ctrl+y":"redo",
+    "enter":"done",
+    "shift+left":"sel_left",
+    "shift+right":"sel_right",
+    "shift+0":"right_paren"
+};
+
+/* keymaster keyboard handlers */
+
+for(var i in Guppy.kb.k_chars)
+    key(Guppy.kb.k_chars[i], 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(); return false; }}(i));    
+for(var i in Guppy.kb.sk_chars)
+    key('shift+'+i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(Guppy.kb.sk_chars[i]); Guppy.active_guppy.render(); return false; }}(i));
+
+for(var i in Guppy.kb.k_syms)
+    key(i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(); return false; }}(i));
+for(var i in Guppy.kb.k_controls)
+    key(i, 'guppy_scope', function(i){ return function(){ Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(); return false; }}(i));
+
+for(var i = 65; i <= 90; i++){
+    key(String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toLowerCase()); Guppy.active_guppy.render(); return false; }}(i));
+    key('shift+'+String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toUpperCase()); Guppy.active_guppy.render(); return false; }}(i));
+}
+
+for(var i = 48; i <= 57; i++)
+    key(String.fromCharCode(i).toLowerCase(), 'guppy_scope', function(i){ return function(){ Guppy.active_guppy.insert_string(String.fromCharCode(i).toLowerCase()); Guppy.active_guppy.render(); return false; }}(i));
 
 
 Guppy.log = function(){
