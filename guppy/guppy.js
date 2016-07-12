@@ -453,7 +453,6 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	b.setAttribute("p",t);
 		
 	var out = s["output"][t];
-	console.log(out);
 	if(typeof out == 'string'){
 	    out = out.split(/(\{\$[0-9]+\})/g);
 	    for(var i = 0; i < out.length; i++){
@@ -461,7 +460,6 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 		if(m) out[i] = parseInt(m[1]);
 	    }
 	}
-	console.log(out);
 	//Guppy.log(s,t,s["output"][t],s["output"][t].length);
 	for(var i = 0; i < out.length; i++){
 	    if(typeof out[i] == 'string' || out[i] instanceof String){
