@@ -8,11 +8,11 @@ The content of the editor can easily be extracted in XML format (for
 searching or otherwise manipulating), LaTeX (for rendering), or a
 plaintext format (for parsing).
 
-Guppy does **not** store a complete syntax tree for the mathematical
-expression entered.  The XML format differs from a syntax tree in that
-the leaves are not primitives (numbers or variables), but rather are
-basic arithmetic expressions (those involving only the four basic
-operations as well as primitives).
+Guppy does not store a complete syntax tree for the mathematical
+expression entered, however the XML format differs from a syntax tree
+in that the leaves are not primitives (numbers or variables), but
+rather are basic arithmetic expressions (those involving only the four
+basic operations as well as primitives).
 
 ## Demo
 
@@ -224,6 +224,36 @@ editor) and whose values are dictionaries with the following keys:
     exponent) is marked as being small.  Thus, for instance, fractions
     and integrals (to name two) that appear inside that exponent will
     not render at their normal, large size.
+
+## Storage format
+
+The XML format by which mathematical expressions are internally
+represented is specified as follows:
+
+* The document is `<m>component</m>`
+
+* A `component` consists of alternating `<e>` and `<f>` nodes, always
+  starting and ending with `<e>` nodes.
+
+* `<e>` nodes represent expressions and contain only text, such as
+  `<e>x+1</e>`
+
+* `<f>` nodes represent symbols and look like
+  ```<f type="symbol_type">[sequence of b nodes][sequence of c nodes]</f>```
+
+* `<b>` nodes represent methods for rendering a symbol, specified in
+  the `p` attribute.  They contain text interspersed with `<r>` nodes
+  which determine where the components go.  For example, a square root
+  symbol will have `<b p="latex">\sqrt{<r ref="1" />}</b>`, indicating
+  that it should be rendered as `\sqrt{first component goes here}`.
+
+* `<r>` nodes are references to components and only a `ref` attribute,
+  whose value is the index of the component that should be rendered in
+  place of that `<r>` node.
+
+* `<c>` nodes are the components of a symbol.  They have whatever
+  attributes are specified in the `attrs` key for this symbol in
+  `symbols.json`, and they look like `<c attrs...>component</c>`.
 
 ## Tests
 
