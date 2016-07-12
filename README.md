@@ -255,6 +255,44 @@ represented is specified as follows:
   attributes are specified in the `attrs` key for this symbol in
   `symbols.json`, and they look like `<c attrs...>component</c>`.
 
+So, for example, the square root of x+1 would be represented as:
+
+```
+<m>
+  <e></e>
+  <f>
+    <b p="latex">\sqrt{<r ref="1"/>}</b>
+    <b p="calc">sqrt(<r ref="1"/>)</b>
+    <c><e>x+1</e></c>
+  </f>
+  <e></e>
+</m>
+```
+
+Whereas the fraction `1+(1-x)/sin(x) would be represented as:
+
+```
+<m>
+  <e>1+</e>
+  <f>
+    <b p="latex">\dfrac{<r ref="1"/>}{<r ref="2"/>}</b>
+    <b p="small_latex">\frac{<r ref="1"/>}{<r ref="2"/>}</b>
+    <b p="calc">(<r ref="1"/>)/(<r ref="2"/>)</b>
+    <c up="1" down="2" name="numerator"><e>1-x</e></c>
+    <c up="1" down="2" name="denominator">
+      <e></e>
+      <f>
+        <b p="latex">\sin\left(<r ref="1"/>\right)</b>
+        <b p="calc">sin(<r ref="1"/>)</b>
+        <c><e>x</e></c>
+      </f>
+      <e></e>
+    </c>
+  </f>
+  <e></e>
+</m>
+```
+
 ## Tests
 
 The tests can be run by opening /test/test.html in a browser, for
