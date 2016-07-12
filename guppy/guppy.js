@@ -447,22 +447,33 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     var first_ref = -1;
     var refs_count = 0;
     var first;
-    // Make the b nodes for rendering each output
+    // Make the b nodes for rendering each output    
     for(var t in s["output"]){
 	var b = this.base.createElement("b");
 	b.setAttribute("p",t);
+		
+	var out = s["output"][t];
+	console.log(out);
+	if(typeof out == 'string'){
+	    out = out.split(/(\{\$[0-9]+\})/g);
+	    for(var i = 0; i < out.length; i++){
+		m = out[i].match(/^\{\$([0-9]+)\}$/);
+		if(m) out[i] = parseInt(m[1]);
+	    }
+	}
+	console.log(out);
 	//Guppy.log(s,t,s["output"][t],s["output"][t].length);
-	for(var i = 0; i < s["output"][t].length; i++){
-	    if(typeof s["output"][t][i] == 'string' || s["output"][t][i] instanceof String){
-		var nt = this.base.createTextNode(s["output"][t][i]);
+	for(var i = 0; i < out.length; i++){
+	    if(typeof out[i] == 'string' || out[i] instanceof String){
+		var nt = this.base.createTextNode(out[i]);
 		b.appendChild(nt);
 	    }
 	    else{
 		var nt = this.base.createElement("r");
-		nt.setAttribute("ref",s["output"][t][i]);
+		nt.setAttribute("ref",out[i]);
 		//Guppy.log(t,s["output"][t],s["output"][t][i]);
 		if(t == 'latex') {
-		    if(first_ref == -1) first_ref = s["output"][t][i];
+		    if(first_ref == -1) first_ref = out[i];
 		    refs_count++;
 		}
 		b.appendChild(nt);
