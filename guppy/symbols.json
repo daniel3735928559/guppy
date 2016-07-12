@@ -105,7 +105,7 @@
     "int":
     {"output":{
         "latex":"\\displaystyle\\int{{$1}}d{$2}",
-        "small_latex":"\\int{{$1}}d{2}",
+        "small_latex":"\\int{{$1}}d{$2}",
 	"calc":"integrate({$1},{$2})"},
      "current":0,
      "type":"indefinite_integral",
