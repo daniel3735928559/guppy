@@ -5,8 +5,7 @@ var tests = [
 	"type":"calc",
 	"expected":"+1",
 	"run":function(g){
-	    g.right();
-	    g.backspace();
+	    do_keys(['right','backspace']);
 	}
     },
     {
@@ -15,10 +14,7 @@ var tests = [
 	"type":"calc",
 	"expected":"xy",
 	"run":function(g){
-	    key_do('x');
-	    key_do('y');
-	    key_do('z');
-	    g.undo();
+	    do_keys(['x','y','z','mod+z']);
 	}
     },
     {
@@ -27,10 +23,7 @@ var tests = [
 	"type":"calc",
 	"expected":"sin(x)",
 	"run":function(g){
-	    key_do('s');
-	    key_do('i');
-	    key_do('n');
-	    key_do('x');
+	    do_keys(['s','i','n','x']);
 	}
     },
     {
@@ -39,10 +32,7 @@ var tests = [
 	"type":"calc",
 	"expected":"si",
 	"run":function(g){
-	    key_do('s');
-	    key_do('i');
-	    key_do('n');
-	    g.undo();
+	    do_keys(['s','i','n','mod+z']);
 	}
     },
     {
@@ -51,9 +41,7 @@ var tests = [
 	"type":"calc",
 	"expected":"1",
 	"run":function(g){
-	    g.sel_right();
-	    g.sel_right();
-	    g.backspace();
+	    do_keys(['shift+right','shift+right','backspace']);
 	}
     },
     {
@@ -62,9 +50,7 @@ var tests = [
 	"type":"calc",
 	"expected":"a1",
 	"run":function(g){
-	    g.sel_right();
-	    g.sel_right();
-	    key_do('a');
+	    do_keys(['shift+right','shift+right','a']);
 	}
     },
     {
@@ -73,11 +59,7 @@ var tests = [
 	"type":"calc",
 	"expected":"1x+",
 	"run":function(g){
-	    g.sel_right();
-	    g.sel_right();
-	    g.sel_cut();
-	    g.right();
-	    g.sel_paste();
+	    do_keys(['shift+right','shift+right','mod+x','right','mod+v']);
 	}
     },
     {
@@ -86,11 +68,7 @@ var tests = [
 	"type":"calc",
 	"expected":"x+1x+",
 	"run":function(g){
-	    g.sel_right();
-	    g.sel_right();
-	    g.sel_copy();
-	    g.right();
-	    g.sel_paste();
+	    do_keys(['shift+right','shift+right','mod+c','right','mod+v']);
 	}
     },
     {
@@ -99,12 +77,7 @@ var tests = [
 	"type":"calc",
 	"expected":"(2)^(x)",
 	"run":function(g){
-	    key_do('2');
-	    sym_do('exp');
-	    key_do('x');
-	    key_do('p');
-	    key_do('i');
-	    g.backspace();
+	    do_keys(['2','shift+6','x','p','i','backspace']);
 	}
     },
     {
@@ -113,28 +86,16 @@ var tests = [
 	"type":"calc",
 	"expected":"sin(x)+cos(x)+ PI ",
 	"run":function(g){
-	    g.right();
-	    g.right();
-	    g.right();
-	    g.sel_right();
-	    g.sel_right();
-	    g.sel_cut();
-	    g.right();
-	    g.right();
-	    g.right();
-	    g.right();
-	    g.sel_paste();
+	    do_keys(['right','right','right','shift+right','shift+right','mod+x','right','right','right','right','mod+v']);
 	}
     },
 ];
 
-function sym_do(s){
-    g.insert_symbol(s);
+function do_keys(chs){
+    g.activate();
+    for(var i = 0; i < chs.length; i++)
+	Mousetrap.trigger(chs[i]);
 }
-function key_do(ch){
-    g.insert_string(ch);
-}
-
 function append_result(name, result){
     var res = document.getElementById("results");
     res.appendChild(document.createElement("br"));
@@ -148,8 +109,8 @@ function start_tests(g){
 }
 
 function run_test(t, g){
-    g.activate();
     g.set_content(t.content);
+    g.render();
     t.run(g);
     g.render();
     var observed = g.get_content(t.type);

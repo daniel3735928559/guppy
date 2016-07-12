@@ -58,10 +58,10 @@ var Guppy = function(guppy_div, properties){
     
     Guppy.instances[guppy_div.id] = this;
     
-    if(Guppy.ready && !this.ready){
-	if(this.ready_callback) this.ready_callback();
-	this.ready = true;
-    }
+    // if(Guppy.ready && !this.ready){
+    // 	if(this.ready_callback) this.ready_callback();
+    // 	this.ready = true;
+    // }
     Guppy.log("ACTIVE",Guppy.active_guppy);
     this.deactivate();
     this.clipboard = null;
@@ -85,23 +85,22 @@ var Guppy = function(guppy_div, properties){
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
     var all_ready = function(){
+	Guppy.register_keyboard_handlers();
 	Guppy.ready = true;
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render();
 	    if(Guppy.instances[i].ready_callback){
 		Guppy.instances[i].ready_callback();
+		Guppy.instances[i].ready_callback = null;
 	    }
 	}
-	Guppy.register_keyboard_handlers();
     }
     Guppy.get_symbols(sympath, function(){
-	if(document.readyState === "complete")
+	if(document.readyState == "complete")
 	    all_ready();
-	else {
-	    //window.addEventListener("onload", function () {prep_guppies()}, false);
-	    document.addEventListener("DOMContentLoaded", function(){all_ready()}, false);
-	}
+	else
+	    document.addEventListener("DOMContentLoaded", all_ready, false);
     });
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
@@ -273,9 +272,8 @@ Guppy.prototype.render_node = function(n,t){
 
 	}
 	Guppy.log(cleanup.length);
-	// Render: 
+	// Render:
 	output = Guppy.xsltify(t, this.base);
-	
 	// clean up all the mess we made:
 	for(var i = cleanup.length - 1; i >= 0; i--){ cleanup[i](); }
 	Guppy.log("post cleanup", (new XMLSerializer()).serializeToString(this.base));
@@ -903,7 +901,7 @@ Guppy.prototype.right = function(){
 	    this.caret = 0;
 	}
 	else{
-	    this.right_callback();
+	    if(this.right_callback) this.right_callback();
 	    Guppy.log("at end or problem");
 	}
     }
@@ -929,7 +927,7 @@ Guppy.prototype.left = function(){
 	    this.caret = this.current.firstChild.nodeValue.length;
 	}
 	else{
-	    this.left_callback();
+	    if(this.left_callback) this.left_callback();
 	    Guppy.log("at beginnning or problem");
 	}
     }
