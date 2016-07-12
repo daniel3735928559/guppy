@@ -84,7 +84,7 @@ var Guppy = function(guppy_div, properties){
 
 Guppy.guppy_init = function(xslpath, sympath){
     Guppy.get_latexify(xslpath);
-    Guppy.get_symbols(sympath, function(){
+    var all_ready = function(){
 	Guppy.ready = true;
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
@@ -94,6 +94,14 @@ Guppy.guppy_init = function(xslpath, sympath){
 	    }
 	}
 	Guppy.register_keyboard_handlers();
+    }
+    Guppy.get_symbols(sympath, function(){
+	if(document.readyState === "complete")
+	    all_ready();
+	else {
+	    //window.addEventListener("onload", function () {prep_guppies()}, false);
+	    document.addEventListener("DOMContentLoaded", function(){all_ready()}, false);
+	}
     });
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
