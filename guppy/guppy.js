@@ -1176,6 +1176,7 @@ Guppy.kb.k_controls = {
     "up":"up",
     "down":"down",
     "right":"right",
+    "space":"right",
     "left":"left",
     "home":"home",
     "end":"end",
