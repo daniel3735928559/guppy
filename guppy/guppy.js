@@ -58,10 +58,10 @@ var Guppy = function(guppy_div, properties){
     
     Guppy.instances[guppy_div.id] = this;
     
-    // if(Guppy.ready && !this.ready){
-    // 	if(this.ready_callback) this.ready_callback();
-    // 	this.ready = true;
-    // }
+    if(Guppy.ready && !this.ready){
+    	if(this.ready_callback) this.ready_callback();
+    	this.ready = true;
+    }
     Guppy.log("ACTIVE",Guppy.active_guppy);
     this.deactivate();
     this.clipboard = null;
@@ -83,10 +83,8 @@ var Guppy = function(guppy_div, properties){
 /* Functions intended for external use */
 
 Guppy.guppy_init = function(xslpath, sympath){
-    Guppy.get_latexify(xslpath);
     var all_ready = function(){
 	Guppy.register_keyboard_handlers();
-	Guppy.ready = true;
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render();
@@ -95,12 +93,15 @@ Guppy.guppy_init = function(xslpath, sympath){
 		Guppy.instances[i].ready_callback = null;
 	    }
 	}
+	Guppy.ready = true;
     }
-    Guppy.get_symbols(sympath, function(){
-	if(document.readyState == "complete")
-	    all_ready();
-	else
-	    document.addEventListener("DOMContentLoaded", all_ready, false);
+    Guppy.get_latexify(xslpath, function(){
+	Guppy.get_symbols(sympath, function(){
+	    if(document.readyState == "complete")
+		all_ready();
+	    else
+		document.addEventListener("DOMContentLoaded", all_ready, false);
+	});
     });
     Guppy.symb_raw("*","\\cdot ","*");
     Guppy.symb_raw("pi","{\\pi}"," PI ");
