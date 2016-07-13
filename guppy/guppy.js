@@ -437,6 +437,7 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     
     var s = Guppy.kb.symbols[sym_name];
     var f = this.base.createElement("f");
+    if("type" in s) f.setAttribute("type",s["type"])
     if(s['char']) f.setAttribute("c","yes");
     
     var first_ref = -1;
@@ -619,7 +620,7 @@ Guppy.prototype.insert_symbol = function(sym_name){
     else this.down_from_f_to_blank();
 
     this.sel_clear();
-    this.checkpoint(true);
+    this.checkpoint();
     // if(new_current != null) {
     // 	if(new_current.firstChild == null) new_current.appendChild(this.base.createTextNode(""));
     // 	current = new_current;
@@ -1040,10 +1041,11 @@ Guppy.prototype.end = function(){
     this.caret = this.current.firstChild.nodeValue.length;
 }
 
-Guppy.prototype.checkpoint = function(overwrite){
+Guppy.prototype.checkpoint = function(){
     this.current.setAttribute("current","yes");
     this.current.setAttribute("caret",this.caret.toString());
-    if(!overwrite) this.undo_now++;
+    //if(!overwrite) this.undo_now++;
+    this.undo_now++;
     this.undo_data[this.undo_now] = this.base.cloneNode(true);
     this.undo_data.splice(this.undo_now+1, this.undo_data.length);
     this.current.removeAttribute("current");
@@ -1127,13 +1129,16 @@ Guppy.prototype.is_blacklisted = function(symb_type){
 
 Guppy.symb_raw = function(symb_name,latex_symb,calc_symb){
     Guppy.kb.symbols[symb_name] = {"output":{"latex":[latex_symb],
-					     "calc":[calc_symb]},"char":true};
-    
+					     "calc":[calc_symb]},
+				   "char":true,
+				   "type":symb_name};
 }
 
 Guppy.symb_func = function(func_name){
     Guppy.kb.symbols[func_name] = {"output":{"latex":["\\"+func_name+"\\left(",1,"\\right)"],
-					     "calc":[func_name+"(",1,")"]}};
+					     "calc":[func_name+"(",1,")"]},
+				   "type":func_name
+				  };
 }
 
 Guppy.prototype.check_for_symbol = function(){

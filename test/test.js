@@ -30,9 +30,18 @@ var tests = [
 	"description":"Sine undo test",
 	"content":"<m><e></e></m>",
 	"type":"calc",
-	"expected":"si",
+	"expected":"sin",
 	"run":function(g){
 	    do_keys(['s','i','n','mod+z']);
+	}
+    },
+    {
+	"description":"Exponent undo test",
+	"content":"<m><e></e></m>",
+	"type":"calc",
+	"expected":"2x",
+	"run":function(g){
+	    do_keys(['2','x','shift+6','mod+z']);
 	}
     },
     {
