@@ -392,7 +392,7 @@ We outline here the basic flow of two of the cursor-related functions:
     node, and that `<f>` node, then we need to move the `<e>` node
     immediately preceding that `<f>` node.
 
-## Editing functions
+### Editing functions
 
 * `backspace`: Again, if the cursor is in the middle of an `<e>` node,
   this is easy.  If the cursor is at the beginning of an `<e>` node,
