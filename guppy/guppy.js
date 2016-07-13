@@ -368,7 +368,6 @@ Guppy.prototype.next_node_from_e = function(n){
 	var nc = n.nextSibling.firstChild;
 	while(nc != null){
 	    if(nc.nodeName == 'c')
-		//return n.nextSibling; //TEST
 		return nc.firstChild;
 	    nc = nc.nextSibling
 	}
@@ -432,7 +431,7 @@ Guppy.prototype.prev_node_from_e = function(n){
 }
 
 Guppy.prototype.symbol_to_node = function(sym_name, content){
-    // syn_name is a key in the symbols dictionary
+    // sym_name is a key in the symbols dictionary
     //
     // content is a list of nodes to insert
     
@@ -456,7 +455,6 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 		if(m) out[i] = parseInt(m[1]);
 	    }
 	}
-	//Guppy.log(s,t,s["output"][t],s["output"][t].length);
 	for(var i = 0; i < out.length; i++){
 	    if(typeof out[i] == 'string' || out[i] instanceof String){
 		var nt = this.base.createTextNode(out[i]);
@@ -465,7 +463,6 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	    else{
 		var nt = this.base.createElement("r");
 		nt.setAttribute("ref",out[i]);
-		//Guppy.log(t,s["output"][t],s["output"][t][i]);
 		if(t == 'latex') {
 		    if(first_ref == -1) first_ref = out[i];
 		    refs_count++;
