@@ -186,7 +186,7 @@ Guppy.get_latexify = function(xsl_path, callback){
 Guppy.xsltify = function(t, base){
     if(Guppy.xsltProcessor == null){
 	Guppy.log("not ready");
-	return;
+	return "";
     }
     Guppy.log("BB",base);
     Guppy.xsltProcessor.setParameter("","type",t);
@@ -408,7 +408,6 @@ Guppy.prototype.prev_node_from_e = function(n){
 	var nc = n.previousSibling.lastChild;
 	while(nc != null){
 	    if(nc.nodeName == 'c')
-		// return n.previousSibling; //TEST
 		return nc.lastChild;
 	    nc = nc.previousSibling
 	}
@@ -429,7 +428,6 @@ Guppy.prototype.prev_node_from_e = function(n){
 	this.problem('pnfe2');
 	return null;
     }
-    // return n.parentNode.parentNode; //TEST
     return n.parentNode.parentNode.previousSibling;
 }
 
