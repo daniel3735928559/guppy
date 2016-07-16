@@ -1112,10 +1112,10 @@ Guppy.prototype.problem = function(s){
 
 Guppy.kb = {};
 
-Guppy.kb.CARET = "\\color{red}{\\cursor[-0.3ex]{0.8em}}"
+Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.7em}}"
-Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.3ex]{0.7em}}"
-Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\cursor[0em]{0.8em}}"
+Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
+Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\cursor[0em]{0.7em}}"
 Guppy.kb.SEL_COLOR = "red"
 Guppy.kb.CURRENT_BLANK = "\\color{red}{[?]}"
 Guppy.kb.BLANK = "\\color{blue}{[?]}"
