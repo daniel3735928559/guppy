@@ -10,6 +10,7 @@
 
     > .katex {
         display: inline-block;
+        text-align: initial;
     }
 }
 
@@ -53,8 +54,47 @@
         font-style: italic;
     }
 
+    .mathbf {
+        font-family: KaTeX_Main;
+        font-weight: bold;
+    }
+
     .amsrm {
         font-family: KaTeX_AMS;
+    }
+
+    .mathbb {
+        font-family: KaTeX_AMS;
+    }
+
+    .mathcal {
+        font-family: KaTeX_Caligraphic;
+    }
+
+    .mathfrak {
+        font-family: KaTeX_Fraktur;
+    }
+
+    .mathtt {
+        font-family: KaTeX_Typewriter;
+    }
+
+    .mathscr {
+        font-family: KaTeX_Script;
+    }
+
+    .mathsf {
+        font-family: KaTeX_SansSerif;
+    }
+
+    .mainit {
+        font-family: KaTeX_Main;
+        font-style: italic;
+    }
+
+    .cursor {
+      display:inline-block;
+      min-height:2px;
     }
 
     // This value is also used in fontMetrics.js, if you change it make sure the
@@ -67,9 +107,9 @@
     @thickspace: 0.27778em;
 
     .textstyle {
-        > .mord, .mord + .cursor {
+        > .mord, > .mord + .cursor {
             & + .mord {}
-            & + .mop { margin-left: @thinspace; }
+            & + .mop  { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
             & + .mrel { margin-left: @thickspace; }
             & + .mopen {}
@@ -78,7 +118,7 @@
             & + .minner { margin-left: @thinspace; }
         }
 
-        > .mop, .mop + .cursor {
+        > .mop, > .mop + .cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin {}
@@ -89,7 +129,7 @@
             & + .minner { margin-left: @thinspace; }
         }
 
-        > .mbin, .mbin + .cursor {
+        > .mbin, > .mbin + .cursor {
             & + .mord { margin-left: @mediumspace; }
             & + .mop { margin-left: @mediumspace; }
             & + .mbin {}
@@ -100,7 +140,7 @@
             & + .minner { margin-left: @mediumspace; }
         }
 
-        > .mrel, .mrel + .cursor {
+        > .mrel, > .mrel + .cursor {
             & + .mord { margin-left: @thickspace; }
             & + .mop { margin-left: @thickspace; }
             & + .mbin {}
@@ -111,7 +151,7 @@
             & + .minner { margin-left: @thickspace; }
         }
 
-        > .mopen, .mopen + .cursor {
+        > .mopen, > .mopen + .cursor {
             & + .mord {}
             & + .mop {}
             & + .mbin {}
@@ -122,7 +162,7 @@
             & + .minner {}
         }
 
-        > .mclose, .mclose + .cursor {
+        > .mclose, > .mclose + .cursor {
             & + .mord {}
             & + .mop { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
@@ -133,7 +173,7 @@
             & + .minner { margin-left: @thinspace; }
         }
 
-        > .mpunct, .mpunct + .cursor {
+        > .mpunct, > .mpunct + .cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin {}
@@ -144,7 +184,7 @@
             & + .minner { margin-left: @thinspace; }
         }
 
-        > .minner, .minner  +.cursor {
+        > .minner, > .minner + .cursor {
             & + .mord { margin-left: @thinspace; }
             & + .mop { margin-left: @thinspace; }
             & + .mbin { margin-left: @mediumspace; }
@@ -158,19 +198,24 @@
 
     .mord {
         & + .mop { margin-left: @thinspace; }
+        & + .cursor + .mop { margin-left: @thinspace; }
     }
 
     .mop {
         & + .mord { margin-left: @thinspace; }
         & + .mop { margin-left: @thinspace; }
+        & + .cursor + .mord { margin-left: @thinspace; }
+        & + .cursor + .mop { margin-left: @thinspace; }
     }
 
     .mclose {
         & + .mop { margin-left: @thinspace; }
+        & + .cursor + .mop { margin-left: @thinspace; }
     }
 
     .minner {
         & + .mop { margin-left: @thinspace; }
+        & + .cursor + .mop { margin-left: @thinspace; }
     }
 
     .reset-textstyle.textstyle { font-size: 1em; }
@@ -313,29 +358,27 @@
 
     .rule {
         display: inline-block;
-        border-style: solid;
+        border: solid 0;
         position: relative;
     }
 
-    .overline {
+    .overline .overline-line,
+    .underline .underline-line {
+        width: 100%;
 
-        .overline-line {
-            width: 100%;
+        &:before {
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            content: "";
+            display: block;
+        }
 
-            &:before {
-                border-bottom-style: solid;
-                border-bottom-width: 1px;
-                content: "";
-                display: block;
-            }
-
-            &:after {
-                border-bottom-style: solid;
-                border-bottom-width: 0.04em;
-                content: "";
-                display: block;
-                margin-top: -1px;
-            }
+        &:after {
+            border-bottom-style: solid;
+            border-bottom-width: 0.04em;
+            content: "";
+            display: block;
+            margin-top: -1px;
         }
     }
 
@@ -463,20 +506,28 @@
         }
     }
 
-    .arraycolsep {
-        display: inline-block;
-    }
+    .mtable {
+        .vertical-separator {
+            display: inline-block;
+            margin: 0 -0.025em;
+            border-right: 0.05em solid black;
+        }
 
-    .col-align-c > .vlist {
-        text-align: center;
-    }
+        .arraycolsep {
+            display: inline-block;
+        }
 
-    .col-align-l > .vlist {
-        text-align: left;
-    }
+        .col-align-c > .vlist {
+            text-align: center;
+        }
 
-    .col-align-r > .vlist {
-        text-align: right;
+        .col-align-l > .vlist {
+            text-align: left;
+        }
+
+        .col-align-r > .vlist {
+            text-align: right;
+        }
     }
 
 }
