@@ -63,7 +63,6 @@ var Guppy = function(guppy_div, properties){
     	this.ready = true;
     }
     Guppy.log("ACTIVE",Guppy.active_guppy);
-    this.deactivate();
     this.clipboard = null;
     this.current = this.base.documentElement.firstChild;
     if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
@@ -78,6 +77,7 @@ var Guppy = function(guppy_div, properties){
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
+    this.deactivate();
 }
 
 /* Functions intended for external use */
