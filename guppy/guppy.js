@@ -198,6 +198,18 @@ Guppy.xsltify = function(t, base){
 
 Guppy.mouse_down = function(e){
     var n = e.target;
+    var cl = n.classList;
+    console.log("CL",cl);
+    for(var i = 0; i < cl.length; i++){
+	console.log("B",cl[i]);
+	if(cl[i].startsWith("guppy_loc")){
+	    var loc = cl[i].substring(11);
+	    loc = loc.replace(/_/g,"/");
+	    loc = loc.replace(/([0-9]+)/g,"[$1]");
+	    console.log("LOC",loc);
+	}
+    }
+    
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
     else while(n != null){
 	if(n.id in Guppy.instances){
@@ -237,15 +249,15 @@ Guppy.prototype.add_paths = function(n,path){
 }
 
 Guppy.prototype.add_classes_cursors = function(n,path){
-    console.log("B",n.nodeName,n.firstChild.nodeName)
+    //console.log("B",n.nodeName,n.firstChild.nodeName)
     if(n.nodeName == "e"){
 	var text = n.firstChild.nodeValue;
-	console.log("T",text);
+	//console.log("T",text);
 	ans = "";
 	for(var i = 0; i < text.length; i++){
-	    ans += "\\xmlClass{"+n.getAttribute("path")+"}{"+text[i]+"}";
 	    if(n == this.current && i == this.caret)
 		ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+	    ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
 	}
 	if(n == this.current && text.length == this.caret)
 	    ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
@@ -262,11 +274,14 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 Guppy.prototype.render_node = function(n,t){
 
     // All the interesting work is done by xsltify and latexify.xsl.  This function just adds in the cursor and selection-start cursor
+    //*
     //console.log("BEFORE",(new XMLSerializer()).serializeToString(this.base));
-    //this.add_paths(this.base.documentElement,"m");
+    this.add_paths(this.base.documentElement,"m");
     //console.log("MID",(new XMLSerializer()).serializeToString(this.base));
-    //this.add_classes_cursors(this.base.documentElement);
+    this.add_classes_cursors(this.base.documentElement);
     //console.log("AFTER",(new XMLSerializer()).serializeToString(this.base));
+    return Guppy.xsltify(t, this.base);
+    //*/
     Guppy.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
     var output = "";
     if(t == "latex"){

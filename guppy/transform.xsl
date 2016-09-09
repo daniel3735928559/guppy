@@ -43,7 +43,8 @@
 	  </xsl:choose>
 	  <!-- <xsl:value-of select="$blank" /> -->
 	</xsl:if>
-	<xsl:copy-of select="./text()"/>
+	<!--<xsl:copy-of select="./text()"/>-->
+	<xsl:value-of select="@render" />
       </xsl:when>
       <xsl:otherwise>
 	<xsl:copy-of select="./text()"/>
