@@ -200,15 +200,6 @@ Guppy.mouse_down = function(e){
     var n = e.target;
     var cl = n.classList;
     console.log("CL",cl);
-    for(var i = 0; i < cl.length; i++){
-	console.log("B",cl[i]);
-	if(cl[i].startsWith("guppy_loc")){
-	    var loc = cl[i].substring(11);
-	    loc = loc.replace(/_/g,"/");
-	    loc = loc.replace(/([0-9]+)/g,"[$1]");
-	    console.log("LOC",loc);
-	}
-    }
     
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
     else while(n != null){
@@ -217,6 +208,19 @@ Guppy.mouse_down = function(e){
 	    Guppy.active_guppy.activate();
 	    for(var i in Guppy.instances){
 		if(i != n.id) Guppy.instances[i].deactivate();
+	    }
+	    for(var i = 0; i < cl.length; i++){
+		console.log("B",cl[i]);
+		if(cl[i].startsWith("guppy_loc")){
+		    var loc = cl[i].substring("guppy_loc".length);
+		    loc = loc.replace(/_/g,"/");
+		    loc = loc.replace(/([0-9]+)(?=.*?[0-9])/g,"[$1]");
+		    console.log("LOC",loc);
+		    Guppy.active_guppy.current = Guppy.active_guppy.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), Guppy.active_guppy.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		    Guppy.active_guppy.caret = parseInt(loc.substring(loc.lastIndexOf("/")+1));
+		    Guppy.active_guppy.render();
+		    break;
+		}
 	    }
 	    return;
 	}
@@ -238,7 +242,7 @@ Guppy.prototype.add_paths = function(n,path){
     }
     else{
 	//console.log("NOT DONE");
-	var es = 0, fs = 0, cs = 0;
+	var es = 1, fs = 1, cs = 1;
 	for(var c = n.firstChild; c != null; c = c.nextSibling){
 	    //console.log("C",c)
 	    if(c.nodeName == "c"){ this.add_paths(c, path+"_c"+cs); cs++; }
@@ -262,6 +266,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	if(n == this.current && text.length == this.caret)
 	    ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
 	n.setAttribute("render", ans);
+	n.removeAttribute("path");
     }
     else{
 	//console.log("NOT DONE");
@@ -271,8 +276,21 @@ Guppy.prototype.add_classes_cursors = function(n,path){
     }
 }
 
-Guppy.prototype.render_node = function(n,t){
+Guppy.prototype.post_render_cleanup = function(n){
+    if(n.nodeName == "e"){
+	n.removeAttribute("path");
+	n.removeAttribute("render");
+    }
+    else{
+	for(var c = n.firstChild; c != null; c = c.nextSibling){
+	    if(c.nodeType == 1){ this.post_render_cleanup(c); }
+	}
+    }
+    
+}
 
+Guppy.prototype.render_node = function(n,t){
+    //console.log(this.current,this.caret);
     // All the interesting work is done by xsltify and latexify.xsl.  This function just adds in the cursor and selection-start cursor
     //*
     //console.log("BEFORE",(new XMLSerializer()).serializeToString(this.base));
@@ -280,7 +298,9 @@ Guppy.prototype.render_node = function(n,t){
     //console.log("MID",(new XMLSerializer()).serializeToString(this.base));
     this.add_classes_cursors(this.base.documentElement);
     //console.log("AFTER",(new XMLSerializer()).serializeToString(this.base));
-    return Guppy.xsltify(t, this.base);
+    output = Guppy.xsltify(t, this.base);
+    this.post_render_cleanup(this.base.documentElement);
+    return output;
     //*/
     Guppy.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
     var output = "";
