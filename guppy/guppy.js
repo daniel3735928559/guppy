@@ -199,15 +199,40 @@ Guppy.xsltify = function(t, base){
 Guppy.mouse_down = function(e){
     var n = e.target;
     var cl = n.classList;
+    var min_dist = -1;
+    var mid_x_dist = 0;
+    var opt = null;
     console.log("CL",cl);
-    
+        
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
     else while(n != null){
 	if(n.id in Guppy.instances){
+	    e.preventDefault();
 	    Guppy.active_guppy = Guppy.instances[n.id];
 	    Guppy.active_guppy.activate();
 	    for(var i in Guppy.instances){
 		if(i != n.id) Guppy.instances[i].deactivate();
+	    }
+	    var g = Guppy.active_guppy;
+	    
+	    if((' '+n.className+' ').indexOf(' guppy_elt ') < 0){
+		console.log("searching");
+		elts = g.editor.getElementsByClassName("guppy_elt");
+		for(var i = 0; i < elts.length; i++){
+		    var elt = elts[i];
+		    var rect = elt.getBoundingClientRect();
+		    console.log("R",elt,rect,e.clientX,e.clientY);
+		    var xdist = Math.max(rect.left - e.clientX, e.clientX - rect.right, 0)
+		    var ydist = Math.max(rect.top - e.clientY, e.clientY - rect.bottom, 0)
+		    var dist = Math.sqrt(xdist*xdist + ydist*ydist);
+		    if(min_dist == -1 || dist < min_dist){
+			min_dist = dist;
+			mid_dist = e.clientX - (rect.left + rect.right)/2;
+			opt = elt;
+		    }
+		}
+		console.log("OPT",opt);
+		cl = opt.classList;
 	    }
 	    for(var i = 0; i < cl.length; i++){
 		console.log("B",cl[i]);
@@ -216,9 +241,14 @@ Guppy.mouse_down = function(e){
 		    loc = loc.replace(/_/g,"/");
 		    loc = loc.replace(/([0-9]+)(?=.*?[0-9])/g,"[$1]");
 		    console.log("LOC",loc);
-		    Guppy.active_guppy.current = Guppy.active_guppy.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), Guppy.active_guppy.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-		    Guppy.active_guppy.caret = parseInt(loc.substring(loc.lastIndexOf("/")+1));
-		    Guppy.active_guppy.render();
+		    g.current = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		    var rect = e.target.getBoundingClientRect();
+		    g.caret = parseInt(loc.substring(loc.lastIndexOf("/")+1));
+		    // Check if we want the cursor before or after the element
+		    if(mid_dist > 0){
+			g.caret++;
+		    }
+		    g.render();
 		    break;
 		}
 	    }
