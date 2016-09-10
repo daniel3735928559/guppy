@@ -288,7 +288,7 @@ Guppy.get_loc = function(x,y,current_level){
 	for(var i = 0; i < boxes.length; i++){
 	    var box = boxes[i];
 	    if(box.path == "all") continue;
-	    //console.log("BOX",box);
+	    console.log("BOX",box);
 	    var xdist = Math.max(box.left - x, x - box.right, 0)
 	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
 	    var dist = Math.sqrt(xdist*xdist + ydist*ydist);
@@ -425,11 +425,16 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		caret_text = "[]";
 	}
 	else {
-	    if(text.length == 0 && n.parentNode.childElementCount == 1){
-		if(this.current == n)
-		    ans = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
-		else
-		    ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	    if(text.length == 0){
+		if(n.parentNode.childElementCount == 1){
+		    if(this.current == n)
+			ans = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		    else
+			ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		}
+		else{
+		    ans = "\\color{white}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\rule{0.001ex}{0.001ex}}}";
+		}
 	    }
 	    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
@@ -482,7 +487,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.current.setAttribute("current","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	//console.log("OUT",output);
+	console.log("OUT",output);
 	return output;
     }
     else{
@@ -1327,6 +1332,7 @@ Guppy.kb = {};
 
 Guppy.kb.is_mouse_down = false;
 
+Guppy.kb.VBLANK = "\\color{white}{\\cursor[-0.2ex]{0.2em}}"
 Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.6em}}"
 Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
