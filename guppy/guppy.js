@@ -238,7 +238,7 @@ Guppy.prototype.recompute_locations_paths = function(){
 	}
     }
     this.boxes = ans;
-    console.log(JSON.stringify(this.boxes));
+    //console.log(JSON.stringify(this.boxes));
 }
 
 Guppy.get_loc = function(x,y,current_level){
@@ -278,17 +278,17 @@ Guppy.get_loc = function(x,y,current_level){
 		var loc = boxes[i].path.substring(0,boxes[i].path.lastIndexOf("_"));
 		loc = loc.replace(/e[0-9]+$/,"e");
 		if(loc == current_path){
-		    console.log("CL",loc);
+		    //console.log("CL",loc);
 		    boxes2.push(boxes[i]);
 		}
 	    }
 	    boxes = boxes2;
 	}
-	console.log("BOXES",boxes);
+	//console.log("BOXES",boxes);
 	for(var i = 0; i < boxes.length; i++){
 	    var box = boxes[i];
 	    if(box.path == "all") continue;
-	    console.log("BOX",box);
+	    //console.log("BOX",box);
 	    var xdist = Math.max(box.left - x, x - box.right, 0)
 	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
 	    var dist = Math.sqrt(xdist*xdist + ydist*ydist);
@@ -298,15 +298,15 @@ Guppy.get_loc = function(x,y,current_level){
 		opt = box;
 	    }
 	}
-	console.log("OPT",opt);
+	//console.log("OPT",opt);
 	var loc = opt.path.substring("guppy_loc".length);
 	loc = loc.replace(/_/g,"/");
 	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
-	console.log("LOC",loc);
+	//console.log("LOC",loc);
 	cur = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
 	// Check if we want the cursor before or after the element
-	console.log("MD",mid_dist);
+	//console.log("MD",mid_dist);
 	if(mid_dist > 0 && !(opt.blank)){
 	    //console.log("RIGHT")
 	    car++;
@@ -322,7 +322,7 @@ Guppy.get_loc = function(x,y,current_level){
 	else if(opt_pos > current_pos) pos = "right";
 	else if(car < g.caret) pos = "left";
 	else if(car > g.caret) pos = "right";
-	console.log("POS",current_path,current_pos,opt_pos,car,g.caret);
+	Guppy.log("POS",current_path,current_pos,opt_pos,car,g.caret);
 	if(pos) ans['pos'] = pos;
     }
     return ans;
@@ -363,7 +363,7 @@ Guppy.mouse_down = function(e){
 Guppy.mouse_move = function(e){
     if(!Guppy.kb.is_mouse_down) return;
     var loc = Guppy.get_loc(e.clientX,e.clientY,true);
-    console.log("MLOC",loc);
+    Guppy.log("MLOC",loc);
     var g = Guppy.active_guppy;
     if(loc.pos == "right"){
 	g.sel_end = {"node": loc.current, "caret": loc.caret};
@@ -374,7 +374,7 @@ Guppy.mouse_move = function(e){
 	g.sel_status = Guppy.SEL_CURSOR_AT_END;
     }
     else g.sel_status = Guppy.SEL_NONE;
-    console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
+    Guppy.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
     g.render();
 }
 
@@ -487,7 +487,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.current.setAttribute("current","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	console.log("OUT",output);
+	Guppy.log("OUT",output);
 	return output;
     }
     else{
