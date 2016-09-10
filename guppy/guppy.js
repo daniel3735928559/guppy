@@ -210,6 +210,7 @@ Guppy.prototype.path_to = function(n){
 Guppy.prototype.recompute_locations_paths = function(){
     ans = [];
     var bb = this.editor.getElementsByClassName("katex")[0];
+    if(!bb) return;
     var rect = bb.getBoundingClientRect();
     ans.push({'path':'all',
 	      'top':rect.top,
