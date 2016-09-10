@@ -78,6 +78,7 @@ var Guppy = function(guppy_div, properties){
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
     this.deactivate();
+    this.recompute_locations_paths();
 }
 
 /* Functions intended for external use */
@@ -197,18 +198,62 @@ Guppy.xsltify = function(t, base, r){
     return (new XMLSerializer()).serializeToString(tex_doc).replace(/\<.?m\>/g,"");
 }
 
+Guppy.prototype.path_to = function(n){
+    var name = n.nodeName;
+    if(name == "m") return "guppy_loc_m";
+    var ns = 0;
+    for(var nn = n; nn != null; nn = nn.previousSibling) if(nn.nodeType == 1 && nn.nodeName == name) ns++;
+    return this.path_to(n.parentNode)+"_"+name+""+ns;
+}
 
-Guppy.get_loc = function(x,y){
+Guppy.prototype.recompute_locations_paths = function(){
+    ans = [];
+    var bb = this.editor.getElementsByClassName("katex")[0];
+    var rect = bb.getBoundingClientRect();
+    ans.push({'path':'all',
+	      'top':rect.top,
+	      'bottom':rect.bottom,
+	      'left':rect.left,
+	      'right':rect.right});
+    var elts = this.editor.getElementsByClassName("guppy_elt");
+    for(var i = 0; i < elts.length; i++){
+	var elt = elts[i];
+	var rect = elt.getBoundingClientRect();
+	if(rect.top == 0 && rect.bottom == 0 && rect.left == 0 && rect.right == 0) continue;
+	var cl = elt.classList;
+	for(var j = 0; j < cl.length; j++){
+	    if(cl[j].startsWith("guppy_loc")){
+		ans.push({'path':cl[j],
+			  'top':rect.top,
+			  'bottom':rect.bottom,
+			  'left':rect.left,
+			  'right':rect.right,
+			  'mid_x':(rect.left+rect.right)/2,
+			  'mid_y':(rect.bottom+rect.top)/2,
+			  'blank':(' '+elt.className+' ').indexOf(' guppy_blank ') >= 0});
+		break;
+	    }
+	}
+    }
+    this.boxes = ans;
+    console.log(JSON.stringify(this.boxes));
+}
+
+Guppy.get_loc = function(x,y,current_level){
     var g = Guppy.active_guppy;
     var min_dist = -1;
     var mid_x_dist = 0;
     var opt = null;
     var cur = null;
     var car = null;
-    console.log("searching");
+    //console.log("searching");
     // check if we go to first or last element
     var bb = g.editor.getElementsByClassName("katex")[0];
     var rect = bb.getBoundingClientRect();
+    if(current_level){
+	var current_path = g.path_to(g.current);
+	//console.log("CP",current_path);
+    }
     if(x < rect.left){
 	cur = g.base.documentElement.firstChild;
 	car = 0;
@@ -219,48 +264,112 @@ Guppy.get_loc = function(x,y){
     }
     else{
 	// We are inside expression
-	elts = g.editor.getElementsByClassName("guppy_elt");
-	for(var i = 0; i < elts.length; i++){
-	    var elt = elts[i];
-	    var rect = elt.getBoundingClientRect();
-	    console.log("R",elt,rect,x,y);
-	    var xdist = Math.max(rect.left - x, x - rect.right, 0)
-	    var ydist = Math.max(rect.top - y, y - rect.bottom, 0)
+	//var elts = g.editor.getElementsByClassName("guppy_elt");
+
+	// if(current_level){
+	//     var elts2 = [];
+	//     for(var i = 0; i < elts.length; i++){
+	// 	var elt = elts[i];
+	// 	var cl = elt.classList;
+	// 	for(var i = 0; i < cl.length; i++){
+	// 	    //console.log("B",cl[i]);
+	// 	    if(cl[i].startsWith("guppy_loc")){
+	// 		var loc = cl[i].substring(0,cl[i].lastIndexOf("_"));
+	// 		//console.log("CLLOC",loc);
+	// 		if(loc == current_path){
+	// 		    elts2.push(elt);
+	// 		}
+	// 	    }
+	// 	}
+	//     }
+	//     elts = elts2;
+	// }
+	// for(var i = 0; i < elts.length; i++){
+	//     var elt = elts[i];
+	//     var rect = elt.getBoundingClientRect();
+	//     //console.log("R",elt,rect,x,y);
+	//     var xdist = Math.max(rect.left - x, x - rect.right, 0)
+	//     var ydist = Math.max(rect.top - y, y - rect.bottom, 0)
+	//     var dist = Math.sqrt(xdist*xdist + ydist*ydist);
+	//     if(min_dist == -1 || dist < min_dist){
+	// 	min_dist = dist;
+	// 	mid_dist = x - (rect.left + rect.right)/2;
+	// 	opt = elt;
+	//     }
+	// }
+	// //console.log("OPT",opt);
+	// var cl = opt.classList;
+	// for(var i = 0; i < cl.length; i++){
+	//     //console.log("B",cl[i]);
+	//     if(cl[i].startsWith("guppy_loc")){
+	// 	var loc = cl[i].substring("guppy_loc".length);
+	// 	loc = loc.replace(/_/g,"/");
+	// 	loc = loc.replace(/([0-9]+)(?=.*?[0-9])/g,"[$1]");
+	// 	//console.log("LOC",loc);
+	// 	cur = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	// 	car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
+	// 	// Check if we want the cursor before or after the element
+	// 	//console.log("MD",mid_dist);
+	// 	if(mid_dist > 0 && (' '+opt.className+' ').indexOf(' guppy_blank ') < 0){
+	// 	    //console.log("RIGHT")
+	// 	    car++;
+	// 	}
+	// 	g.render();
+	// 	break;
+	//     }
+	// }
+	var boxes = g.boxes;
+	if(current_level){
+	    var boxes2 = [];
+	    for(var i = 0; i < boxes.length; i++){
+		if(boxes[i].path == "all") continue;
+		var loc = boxes[i].path.substring(0,boxes[i].path.lastIndexOf("_"));
+		if(loc == current_path){
+		    boxes2.push(boxes[i]);
+		}
+	    }
+	    boxes = boxes2;
+	}
+	console.log("BOXES",g.boxes);
+	for(var i = 0; i < g.boxes.length; i++){
+	    var box = g.boxes[i];
+	    if(box.path == "all") continue;
+	    console.log("BOX",box);
+	    var xdist = Math.max(box.left - x, x - box.right, 0)
+	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
 	    var dist = Math.sqrt(xdist*xdist + ydist*ydist);
 	    if(min_dist == -1 || dist < min_dist){
+		console.log(JSON.stringify(box));
 		min_dist = dist;
-		mid_dist = x - (rect.left + rect.right)/2;
-		opt = elt;
+		mid_dist = x - box.mid_x;
+		opt = box;
 	    }
 	}
 	console.log("OPT",opt);
-	var cl = opt.classList;
-	for(var i = 0; i < cl.length; i++){
-	    console.log("B",cl[i]);
-	    if(cl[i].startsWith("guppy_loc")){
-		var loc = cl[i].substring("guppy_loc".length);
-		loc = loc.replace(/_/g,"/");
-		loc = loc.replace(/([0-9]+)(?=.*?[0-9])/g,"[$1]");
-		console.log("LOC",loc);
-		cur = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-		car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
-		// Check if we want the cursor before or after the element
-		console.log("MD",mid_dist);
-		if(mid_dist > 0 && (' '+opt.className+' ').indexOf(' guppy_blank ') < 0){
-		    console.log("RIGHT")
-		    car++;
-		}
-		g.render();
-		break;
-	    }
+	var loc = opt.path.substring("guppy_loc".length);
+	loc = loc.replace(/_/g,"/");
+	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
+	console.log("LOC",loc);
+	cur = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+	car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
+	// Check if we want the cursor before or after the element
+	console.log("MD",mid_dist);
+	if(mid_dist > 0 && !(opt.blank)){
+	    //console.log("RIGHT")
+	    car++;
 	}
+	g.render();
     }
     return {"current":cur,"caret":car};
 }
 
+Guppy.mouse_up = function(e){
+    Guppy.kb.is_mouse_down = false;
+}
+
 Guppy.mouse_down = function(e){
     var n = e.target;
-        
+    Guppy.kb.is_mouse_down = true;
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
     else while(n != null){
 	if(n.id in Guppy.instances){
@@ -285,7 +394,17 @@ Guppy.mouse_down = function(e){
     }
 }
 
+Guppy.mouse_move = function(e){
+    if(!Guppy.kb.is_mouse_down) return;
+    var loc = Guppy.get_loc(e.clientX,e.clientY,true);
+    Guppy.active_guppy.sel_end = {"node": loc.current, "caret": loc.caret};
+    Guppy.active_guppy.sel_status = Guppy.SEL_CURSOR_AT_START;
+    Guppy.active_guppy.render();
+}
+
 window.addEventListener("mousedown",Guppy.mouse_down, false);
+window.addEventListener("mouseup",Guppy.mouse_up, false);
+window.addEventListener("mousemove",Guppy.mouse_move, false);
 
 Guppy.prototype.add_paths = function(n,path){
     //console.log("B",n.nodeName,n.firstChild.nodeName)
@@ -342,7 +461,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
 		caret_text = "}" + caret_text;
 	}
-	console.log("SEL",sel_cursor,sel_caret_text);
+	//console.log("SEL",sel_cursor,sel_caret_text);
 	for(var i = 0; i < text.length+1; i++){
 	    if(n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
 		ans += caret_text;
@@ -374,7 +493,6 @@ Guppy.prototype.post_render_cleanup = function(n){
 	    if(c.nodeType == 1){ this.post_render_cleanup(c); }
 	}
     }
-    
 }
 
 Guppy.prototype.render_node = function(n,t){
@@ -388,7 +506,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.current.setAttribute("current","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	console.log("OUT",output);
+	//console.log("OUT",output);
 	return output;
     }
     else{
@@ -820,10 +938,13 @@ Guppy.prototype.insert_string = function(s){
     this.check_for_symbol();
 }
 
-Guppy.prototype.render = function(){
+Guppy.prototype.render = function(updated){
     var tex = this.render_node(this.base,"latex");
     Guppy.log(this.caret,"TEX", tex);
     katex.render(tex,this.editor);
+    if(updated){
+	this.recompute_locations_paths();
+    }
 }
 
 Guppy.prototype.activate = function(){
@@ -941,26 +1062,26 @@ Guppy.prototype.sel_right = function(){
 	this.set_sel_start();
 	this.sel_status = Guppy.SEL_CURSOR_AT_END;
     }
-    console.log("EEEE",this.caret,this.get_length(this.current));
+    //console.log("EEEE",this.caret,this.get_length(this.current));
     if(this.caret >= this.get_length(this.current)){
 	var nn = this.current.nextSibling;
 	if(nn != null){
 	    this.current = nn.nextSibling;
 	    this.caret = 0;
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	    console.log("asda");
+	    //console.log("asda");
 	}
 	else{
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	    console.log("at end while selecting");
+	    //console.log("at end while selecting");
 	}
     }
     else{
 	this.caret += 1;
 	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	console.log("asdb");
+	//console.log("asdb");
     }
-    console.log("SS",this.sel_status, this.sel_start, this.sel_end);
+    //console.log("SS",this.sel_status, this.sel_start, this.sel_end);
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
 	this.sel_status = Guppy.SEL_NONE;
     }
@@ -1228,6 +1349,8 @@ Guppy.prototype.problem = function(s){
 
 Guppy.kb = {};
 
+Guppy.kb.is_mouse_down = false;
+
 Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.6em}}"
 Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
@@ -1339,11 +1462,11 @@ for(var i = 48; i <= 57; i++)
 Guppy.register_keyboard_handlers = function(){
     Mousetrap.addKeycodes({173: '-'}); // Firefox's special minus (needed for _ = sub binding)
     for(var i in Guppy.kb.k_chars)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(); return false; }}(i));  
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(true); return false; }}(i));  
     for(var i in Guppy.kb.k_syms)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(true); return false; }}(i));
     for(var i in Guppy.kb.k_controls)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(true); return false; }}(i));
     
 }
 
