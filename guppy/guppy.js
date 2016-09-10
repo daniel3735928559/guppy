@@ -310,20 +310,60 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	var text = n.firstChild.nodeValue;
 	//console.log("T",text);
 	ans = "";
-	for(var i = 0; i < text.length; i++){
-	    if(n == this.current && i == this.caret)
-		ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
-	    ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
+	var sel_cursor;
+	var text_node = this.is_text(this.current);
+	if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
+	if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
+	if(this.sel_status != Guppy.SEL_NONE){
+	    var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
 	}
-	if(n == this.current && text.length == this.caret){
-	    if(text.length == 0 && n.parentNode.childElementCount == 1)
-		ans += "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	var caret_text = "";
+	if(text_node){
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
+		caret_text = "[";
+	    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
+		caret_text = "]";
 	    else
-		ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+		caret_text = "[]";
 	}
-	else if(text.length == 0 && n.parentNode.childElementCount == 1){
-	    ans += "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	else {
+	    if(text.length == 0 && n.parentNode.childElementCount == 1){
+		if(this.current == n)
+		    ans = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		else
+		    ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	    }
+	    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
+		caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+	    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
+		caret_text = "}" + caret_text;
 	}
+	console.log("SEL",sel_cursor,sel_caret_text);
+	for(var i = 0; i < text.length+1; i++){
+	    if(n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
+		ans += caret_text;
+	    }
+	    if(this.sel_status != Guppy.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
+		ans += sel_caret_text;
+	    }
+	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
+	}
+	// if(n == this.current && text.length == this.caret){
+	//     if(this.is_text(this.current))
+	// 	ans += "[]";
+	//     else{
+	// 	if(text.length == 0 && n.parentNode.childElementCount == 1)
+	// 	    ans += "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	// 	else
+	// 	    ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+	//     }
+	// }
+	// else if(text.length == 0 && n.parentNode.childElementCount == 1){
+	//     ans += "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+	// }
 	n.setAttribute("render", ans);
 	n.removeAttribute("path");
     }
@@ -353,20 +393,21 @@ Guppy.prototype.render_node = function(n,t){
     //console.log(this.current,this.caret);
     // All the interesting work is done by xsltify and latexify.xsl.  This function just adds in the cursor and selection-start cursor
     //*
-    //console.log("BEFORE",(new XMLSerializer()).serializeToString(this.base));
-    this.add_paths(this.base.documentElement,"m");
-    //console.log("MID",(new XMLSerializer()).serializeToString(this.base));
-    this.add_classes_cursors(this.base.documentElement);
-    //console.log("AFTER",(new XMLSerializer()).serializeToString(this.base));
-    this.current.setAttribute("current","yes");
-    output = Guppy.xsltify(t, this.base);
-    this.post_render_cleanup(this.base.documentElement);
-    //console.log("OUT",output);
-    return output;
     //*/
     Guppy.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
     var output = "";
     if(t == "latex"){
+	//console.log("BEFORE",(new XMLSerializer()).serializeToString(this.base));
+	this.add_paths(this.base.documentElement,"m");
+	//console.log("MID",(new XMLSerializer()).serializeToString(this.base));
+	this.add_classes_cursors(this.base.documentElement);
+	//console.log("AFTER",(new XMLSerializer()).serializeToString(this.base));
+	this.current.setAttribute("current","yes");
+	output = Guppy.xsltify(t, this.base);
+	this.post_render_cleanup(this.base.documentElement);
+	console.log("OUT",output);
+	return output;
+	
 	var cleanup = [];
 	var sel_cursor;
 	var text_node = this.is_text(this.current);
@@ -988,7 +1029,7 @@ Guppy.prototype.sel_right = function(){
 	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
 	Guppy.log("asdb");
     }
-    Guppy.log("SS",this.sel_status, this.sel_start, this.sel_end);
+    console.log("SS",this.sel_status, this.sel_start, this.sel_end);
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
 	this.sel_status = Guppy.SEL_NONE;
     }
