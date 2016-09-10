@@ -252,6 +252,7 @@ Guppy.get_loc = function(x,y,current_level){
     var rect = bb.getBoundingClientRect();
     if(current_level){
 	var current_path = g.path_to(g.current);
+	var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
 	//console.log("CP",current_path);
     }
     if(x < rect.left){
@@ -320,26 +321,28 @@ Guppy.get_loc = function(x,y,current_level){
 	// }
 	var boxes = g.boxes;
 	if(current_level){
+	    current_path = current_path.replace(/e[0-9]+$/,"e");
 	    var boxes2 = [];
 	    for(var i = 0; i < boxes.length; i++){
 		if(boxes[i].path == "all") continue;
 		var loc = boxes[i].path.substring(0,boxes[i].path.lastIndexOf("_"));
+		loc = loc.replace(/e[0-9]+$/,"e");
 		if(loc == current_path){
+		    console.log("CL",loc);
 		    boxes2.push(boxes[i]);
 		}
 	    }
 	    boxes = boxes2;
 	}
-	console.log("BOXES",g.boxes);
-	for(var i = 0; i < g.boxes.length; i++){
-	    var box = g.boxes[i];
+	console.log("BOXES",boxes);
+	for(var i = 0; i < boxes.length; i++){
+	    var box = boxes[i];
 	    if(box.path == "all") continue;
-	    console.log("BOX",box);
+	    //console.log("BOX",box);
 	    var xdist = Math.max(box.left - x, x - box.right, 0)
 	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
 	    var dist = Math.sqrt(xdist*xdist + ydist*ydist);
 	    if(min_dist == -1 || dist < min_dist){
-		console.log(JSON.stringify(box));
 		min_dist = dist;
 		mid_dist = x - box.mid_x;
 		opt = box;
@@ -360,7 +363,19 @@ Guppy.get_loc = function(x,y,current_level){
 	}
 	g.render();
     }
-    return {"current":cur,"caret":car};
+    ans = {"current":cur,"caret":car};
+    if(current_level){
+	var pos = null;
+	var opt_pos = parseInt(opt.path.substring(opt.path.lastIndexOf("e")+1,opt.path.lastIndexOf("_")));
+	//var opt_caret = parseInt(opt.path.substring(opt.path.lastIndexOf("_")+1));
+	if(opt_pos < current_pos) pos = "left";
+	else if(opt_pos > current_pos) pos = "right";
+	else if(car < g.caret) pos = "left";
+	else if(car > g.caret) pos = "right";
+	console.log("POS",current_path,current_pos,opt_pos,car,g.caret);
+	if(pos) ans['pos'] = pos;
+    }
+    return ans;
 }
 
 Guppy.mouse_up = function(e){
@@ -383,6 +398,7 @@ Guppy.mouse_down = function(e){
 	    var loc = Guppy.get_loc(e.clientX,e.clientY);
 	    g.current = loc.current;
 	    g.caret = loc.caret;
+	    g.sel_status = Guppy.SEL_NONE;
 	    g.render();
 	    return;
 	}
@@ -397,9 +413,19 @@ Guppy.mouse_down = function(e){
 Guppy.mouse_move = function(e){
     if(!Guppy.kb.is_mouse_down) return;
     var loc = Guppy.get_loc(e.clientX,e.clientY,true);
-    Guppy.active_guppy.sel_end = {"node": loc.current, "caret": loc.caret};
-    Guppy.active_guppy.sel_status = Guppy.SEL_CURSOR_AT_START;
-    Guppy.active_guppy.render();
+    console.log("MLOC",loc);
+    var g = Guppy.active_guppy;
+    if(loc.pos == "right"){
+	g.sel_end = {"node": loc.current, "caret": loc.caret};
+	g.sel_status = Guppy.SEL_CURSOR_AT_START;
+    }
+    else if(loc.pos == "left"){
+	g.sel_start = {"node": loc.current, "caret": loc.caret};
+	g.sel_status = Guppy.SEL_CURSOR_AT_END;
+    }
+    else g.sel_status = Guppy.SEL_NONE;
+    console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
+    g.render();
 }
 
 window.addEventListener("mousedown",Guppy.mouse_down, false);
