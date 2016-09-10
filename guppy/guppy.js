@@ -184,12 +184,13 @@ Guppy.get_latexify = function(xsl_path, callback){
     req.send();
 }
 
-Guppy.xsltify = function(t, base){
+Guppy.xsltify = function(t, base, r){
     if(Guppy.xsltProcessor == null){
 	Guppy.log("not ready");
 	return "";
     }
     Guppy.log("BB",base);
+    Guppy.xsltProcessor.setParameter("","render",r ? "yes" : "no");
     Guppy.xsltProcessor.setParameter("","type",t);
     var tex_doc = Guppy.xsltProcessor.transformToDocument(base);
     Guppy.log(tex_doc);
@@ -351,19 +352,6 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    }
 	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
 	}
-	// if(n == this.current && text.length == this.caret){
-	//     if(this.is_text(this.current))
-	// 	ans += "[]";
-	//     else{
-	// 	if(text.length == 0 && n.parentNode.childElementCount == 1)
-	// 	    ans += "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
-	// 	else
-	// 	    ans += this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
-	//     }
-	// }
-	// else if(text.length == 0 && n.parentNode.childElementCount == 1){
-	//     ans += "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
-	// }
 	n.setAttribute("render", ans);
 	n.removeAttribute("path");
     }
@@ -392,76 +380,16 @@ Guppy.prototype.post_render_cleanup = function(n){
 Guppy.prototype.render_node = function(n,t){
     //console.log(this.current,this.caret);
     // All the interesting work is done by xsltify and latexify.xsl.  This function just adds in the cursor and selection-start cursor
-    //*
-    //*/
     Guppy.log("cc",this.caret,"=caret",this.current,this.current.firstChild.nodeValue.slice(0,this.caret),"bb",this.current.firstChild.nodeValue.slice(this.caret+Guppy.kb.CARET.length));
     var output = "";
     if(t == "latex"){
-	//console.log("BEFORE",(new XMLSerializer()).serializeToString(this.base));
 	this.add_paths(this.base.documentElement,"m");
-	//console.log("MID",(new XMLSerializer()).serializeToString(this.base));
 	this.add_classes_cursors(this.base.documentElement);
-	//console.log("AFTER",(new XMLSerializer()).serializeToString(this.base));
 	this.current.setAttribute("current","yes");
-	output = Guppy.xsltify(t, this.base);
+	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
 	console.log("OUT",output);
 	return output;
-	
-	var cleanup = [];
-	var sel_cursor;
-	var text_node = this.is_text(this.current);
-	if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
-	if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
-	// Add cursor
-	this.current.setAttribute("current","yes");
-	var callback_current = this.current;
-	cleanup.push(function(){callback_current.removeAttribute("current");});
-	var caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
-	if(text_node) caret_text = "[]";
-	if(this.current.firstChild.nodeValue != "" || this.current.previousSibling != null || this.current.nextSibling != null){
-	    Guppy.log("CARETISING",this.sel_status);
-	    var idx = this.caret;
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) caret_text = text_node ? "[" : caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) caret_text = text_node ? "]" : "}" + caret_text;
-	    //if(this.sel_status == Guppy.SEL_CURSOR_AT_END && sel_cursor.node == current) idx += SEL_CARET.length;
-	    var prev_val = this.current.firstChild.nodeValue;
-	    Guppy.log("AAAAAAAAAAA",prev_val);
-	    callback_current = this.current;
-	    if(this.editor_active){
-		cleanup.push(function(){callback_current.firstChild.nodeValue = prev_val;});
-		this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(idx,caret_text);
-	    }
-	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
-	    Guppy.log("CP",prev_val);
-	}	
-	// Add sel_start
-	if(this.sel_status != Guppy.SEL_NONE && this.editor_active) {
-	    var idx = sel_cursor.caret;
-	    if(sel_cursor.node == this.current){
-		if(this.sel_status == Guppy.SEL_CURSOR_AT_START) idx += caret_text.length;
-		Guppy.log("AT_START");
-	    }
-	    else{
-		var prev_val_sel = sel_cursor.node.firstChild.nodeValue;
-		cleanup.push(function(){sel_cursor.node.firstChild.nodeValue = prev_val_sel;});
-	    }
-	    var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
-	    Guppy.log("SEL_IDX",idx);
-	    sel_cursor.node.firstChild.nodeValue = sel_cursor.node.firstChild.nodeValue.splice(idx,sel_caret_text);
-	    Guppy.log((new XMLSerializer()).serializeToString(this.base));
-
-	}
-	Guppy.log(cleanup.length);
-	// Render:
-	output = Guppy.xsltify(t, this.base);
-	// clean up all the mess we made:
-	for(var i = cleanup.length - 1; i >= 0; i--){ cleanup[i](); }
-	Guppy.log("post cleanup", (new XMLSerializer()).serializeToString(this.base));
-	this.print_selection();
-	Guppy.log("sel_start_end",this.sel_start,this.sel_end);
     }
     else{
 	output = Guppy.xsltify(t, this.base);
@@ -1013,21 +941,24 @@ Guppy.prototype.sel_right = function(){
 	this.set_sel_start();
 	this.sel_status = Guppy.SEL_CURSOR_AT_END;
     }
-    Guppy.log("EEEE");
+    console.log("EEEE",this.caret,this.get_length(this.current));
     if(this.caret >= this.get_length(this.current)){
 	var nn = this.current.nextSibling;
 	if(nn != null){
 	    this.current = nn.nextSibling;
 	    this.caret = 0;
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	    Guppy.log("asda");
+	    console.log("asda");
 	}
-	else Guppy.log("at end while selecting");
+	else{
+	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
+	    console.log("at end while selecting");
+	}
     }
     else{
 	this.caret += 1;
 	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
-	Guppy.log("asdb");
+	console.log("asdb");
     }
     console.log("SS",this.sel_status, this.sel_start, this.sel_end);
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
@@ -1057,7 +988,10 @@ Guppy.prototype.sel_left = function(){
 	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_START);
 	    Guppy.log("asdeee");
 	}
-	else Guppy.log("at start while selecting");
+	else{
+	    this.set_sel_boundary(Guppy.SEL_CURSOR_AT_START);
+	    Guppy.log("at start while selecting");
+	}
     }
     else{
 	this.caret -= 1;

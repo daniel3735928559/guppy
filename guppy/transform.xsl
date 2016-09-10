@@ -2,6 +2,7 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes" />
+  <xsl:param name="render" select="'yes'" />
   <xsl:param name="cursor">\\color{red}{\\cdot}</xsl:param>
   <xsl:param name="cblank">\\color{red}{[?]}</xsl:param>
   <xsl:param name="blank">\\color{blue}{[?]}</xsl:param>
@@ -35,15 +36,7 @@
 
   <xsl:template match="e">
     <xsl:choose>
-      <xsl:when test="$type='latex'">
-	<!-- <xsl:if test=".='' and count(../*)=1"> -->
-	<!--   <xsl:choose> -->
-	<!--     <xsl:when test="@current='yes'"><xsl:value-of select="$cblank" /></xsl:when> -->
-	<!--     <xsl:otherwise><xsl:value-of select="$blank" /></xsl:otherwise> -->
-	<!--   </xsl:choose> -->
-	  <!-- <xsl:value-of select="$blank" /> -->
-	<!-- </xsl:if> -->
-	<!--<xsl:copy-of select="./text()"/>-->
+      <xsl:when test="$type='latex' and $render='yes'">
 	<xsl:value-of select="@render" />
       </xsl:when>
       <xsl:otherwise>
