@@ -60,7 +60,8 @@ A stripped-down version of the demo page would look like:
 The editor has many of the usual keyboard text-editing features:
 Navigation with the arrow keys, backspace, home, end, selection with
 shift-left/right, mod-z/x/c/v for undo, cut, copy, paste
-(respectively)).  The mouse is not yet supported in any way.
+(respectively)).  Using the mouse to navigate and select is supported
+in a rudimentary way.
 
 It will automatically insert mathematical objects if you type their
 names.  For example, if you type `sqrt`, this will be replaced by a
