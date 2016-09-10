@@ -2,6 +2,7 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes" />
+  <xsl:param name="render" select="'yes'" />
   <xsl:param name="cursor">\\color{red}{\\cdot}</xsl:param>
   <xsl:param name="cblank">\\color{red}{[?]}</xsl:param>
   <xsl:param name="blank">\\color{blue}{[?]}</xsl:param>
@@ -35,15 +36,8 @@
 
   <xsl:template match="e">
     <xsl:choose>
-      <xsl:when test="$type='latex'">
-	<xsl:if test=".='' and count(../*)=1">
-	  <xsl:choose>
-	    <xsl:when test="@current='yes'"><xsl:value-of select="$cblank" /></xsl:when>
-	    <xsl:otherwise><xsl:value-of select="$blank" /></xsl:otherwise>
-	  </xsl:choose>
-	  <!-- <xsl:value-of select="$blank" /> -->
-	</xsl:if>
-	<xsl:copy-of select="./text()"/>
+      <xsl:when test="$type='latex' and $render='yes'">
+	<xsl:value-of select="@render" />
       </xsl:when>
       <xsl:otherwise>
 	<xsl:copy-of select="./text()"/>
@@ -68,7 +62,9 @@
 	   ==== three children: 2 e and 1 f
 	   ==== e's are empty
 	   ==== f has one c with is_bracket="yes" OR the f has c="yes"
-	   == We have one child but not a variable and not a number
+	   == We have one child and either of the following:
+	   ==== it is not a variable and not a number
+	   ==== we are current
       -->
       <!-- <xsl:when test="$type='latex' and @bracket = 'yes' and ((count(./*) != 1) or (count(./*) = 1 and string-length(./e/text()) != 1 and number(./e/text()) != ./e/text()))">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when> -->
       <xsl:when test="$type='latex' and @bracket = 'yes' and
@@ -93,6 +89,11 @@
 			  count(./*) = 1 and
 			  string-length(./e/text()) != 1 and
 			  number(./e/text()) != ./e/text()
+			)  
+			or
+		        (
+			  count(./*) = 1 and
+			  ./e/@current = 'yes'
 			)
                       )
                       ">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when>

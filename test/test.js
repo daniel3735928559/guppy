@@ -101,7 +101,7 @@ var tests = [
 ];
 
 function do_keys(chs){
-    g.activate();
+    test_guppy.activate();
     for(var i = 0; i < chs.length; i++)
 	Mousetrap.trigger(chs[i]);
 }
@@ -118,11 +118,11 @@ function start_tests(g){
 }
 
 function run_test(t, g){
-    g.set_content(t.content);
-    g.render();
-    t.run(g);
-    g.render();
-    var observed = g.get_content(t.type);
+    test_guppy.set_content(t.content);
+    test_guppy.render();
+    t.run(test_guppy);
+    test_guppy.render();
+    var observed = test_guppy.get_content(t.type);
     if(t.expected == observed){
 	append_result(t.description,"PASS");
     }
