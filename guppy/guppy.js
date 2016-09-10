@@ -77,6 +77,7 @@ var Guppy = function(guppy_div, properties){
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
+    this.editor.style.cursor = "text";
     this.deactivate();
     this.recompute_locations_paths();
 }
@@ -267,58 +268,6 @@ Guppy.get_loc = function(x,y,current_level){
 	// We are inside expression
 	//var elts = g.editor.getElementsByClassName("guppy_elt");
 
-	// if(current_level){
-	//     var elts2 = [];
-	//     for(var i = 0; i < elts.length; i++){
-	// 	var elt = elts[i];
-	// 	var cl = elt.classList;
-	// 	for(var i = 0; i < cl.length; i++){
-	// 	    //console.log("B",cl[i]);
-	// 	    if(cl[i].startsWith("guppy_loc")){
-	// 		var loc = cl[i].substring(0,cl[i].lastIndexOf("_"));
-	// 		//console.log("CLLOC",loc);
-	// 		if(loc == current_path){
-	// 		    elts2.push(elt);
-	// 		}
-	// 	    }
-	// 	}
-	//     }
-	//     elts = elts2;
-	// }
-	// for(var i = 0; i < elts.length; i++){
-	//     var elt = elts[i];
-	//     var rect = elt.getBoundingClientRect();
-	//     //console.log("R",elt,rect,x,y);
-	//     var xdist = Math.max(rect.left - x, x - rect.right, 0)
-	//     var ydist = Math.max(rect.top - y, y - rect.bottom, 0)
-	//     var dist = Math.sqrt(xdist*xdist + ydist*ydist);
-	//     if(min_dist == -1 || dist < min_dist){
-	// 	min_dist = dist;
-	// 	mid_dist = x - (rect.left + rect.right)/2;
-	// 	opt = elt;
-	//     }
-	// }
-	// //console.log("OPT",opt);
-	// var cl = opt.classList;
-	// for(var i = 0; i < cl.length; i++){
-	//     //console.log("B",cl[i]);
-	//     if(cl[i].startsWith("guppy_loc")){
-	// 	var loc = cl[i].substring("guppy_loc".length);
-	// 	loc = loc.replace(/_/g,"/");
-	// 	loc = loc.replace(/([0-9]+)(?=.*?[0-9])/g,"[$1]");
-	// 	//console.log("LOC",loc);
-	// 	cur = g.base.evaluate(loc.substring(0,loc.lastIndexOf("/")), g.base.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-	// 	car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
-	// 	// Check if we want the cursor before or after the element
-	// 	//console.log("MD",mid_dist);
-	// 	if(mid_dist > 0 && (' '+opt.className+' ').indexOf(' guppy_blank ') < 0){
-	// 	    //console.log("RIGHT")
-	// 	    car++;
-	// 	}
-	// 	g.render();
-	// 	break;
-	//     }
-	// }
 	var boxes = g.boxes;
 	if(current_level){
 	    current_path = current_path.replace(/e[0-9]+$/,"e");
