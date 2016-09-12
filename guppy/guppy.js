@@ -65,6 +65,7 @@ var Guppy = function(guppy_div, properties){
     Guppy.log("ACTIVE",Guppy.active_guppy);
     this.clipboard = null;
     this.current = this.base.documentElement.firstChild;
+    this.temp_cursor = {"node":null,"caret":0}
     if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
     this.caret = 0;
     this.sel_start = null;
@@ -241,10 +242,11 @@ Guppy.prototype.recompute_locations_paths = function(){
     //console.log(JSON.stringify(this.boxes));
 }
 
-Guppy.get_loc = function(x,y,current_level){
+Guppy.get_loc = function(x,y,current_node){
     var g = Guppy.active_guppy;
     var min_dist = -1;
     var mid_x_dist = 0;
+    var pos = "";
     var opt = null;
     var cur = null;
     var car = null;
@@ -252,25 +254,27 @@ Guppy.get_loc = function(x,y,current_level){
     // check if we go to first or last element
     var bb = g.editor.getElementsByClassName("katex")[0];
     var rect = bb.getBoundingClientRect();
-    if(current_level){
-	var current_path = g.path_to(g.current);
+    if(current_node){
+	var current_path = g.path_to(current_node);
 	var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
 	//console.log("CP",current_path);
     }
     if(x < rect.left){
 	cur = g.base.documentElement.firstChild;
 	car = 0;
+	pos = "left";
     }
     else if(x > rect.right){
 	cur = g.base.documentElement.lastChild;
 	car = cur.firstChild.nodeValue.length;
+	pos = "right";
     }
     else{
 	// We are inside expression
 	//var elts = g.editor.getElementsByClassName("guppy_elt");
 
 	var boxes = g.boxes;
-	if(current_level){
+	if(current_node){
 	    current_path = current_path.replace(/e[0-9]+$/,"e");
 	    var boxes2 = [];
 	    for(var i = 0; i < boxes.length; i++){
@@ -298,7 +302,7 @@ Guppy.get_loc = function(x,y,current_level){
 		opt = box;
 	    }
 	}
-	//console.log("OPT",opt);
+	console.log("OPT",opt);
 	var loc = opt.path.substring("guppy_loc".length);
 	loc = loc.replace(/_/g,"/");
 	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
@@ -313,9 +317,8 @@ Guppy.get_loc = function(x,y,current_level){
 	}
 	g.render();
     }
-    ans = {"current":cur,"caret":car};
-    if(current_level){
-	var pos = null;
+    ans = {"current":cur,"caret":car,"pos":pos};
+    if(current_node && opt){
 	var opt_pos = parseInt(opt.path.substring(opt.path.lastIndexOf("e")+1,opt.path.lastIndexOf("_")));
 	//var opt_caret = parseInt(opt.path.substring(opt.path.lastIndexOf("_")+1));
 	if(opt_pos < current_pos) pos = "left";
@@ -324,6 +327,7 @@ Guppy.get_loc = function(x,y,current_level){
 	else if(car > g.caret) pos = "right";
 	Guppy.log("POS",current_path,current_pos,opt_pos,car,g.caret);
 	if(pos) ans['pos'] = pos;
+	else ans['pos'] = "none";
     }
     return ans;
 }
@@ -361,20 +365,36 @@ Guppy.mouse_down = function(e){
 }
 
 Guppy.mouse_move = function(e){
-    if(!Guppy.kb.is_mouse_down) return;
-    var loc = Guppy.get_loc(e.clientX,e.clientY,true);
-    Guppy.log("MLOC",loc);
     var g = Guppy.active_guppy;
-    if(loc.pos == "right"){
-	g.sel_end = {"node": loc.current, "caret": loc.caret};
-	g.sel_status = Guppy.SEL_CURSOR_AT_START;
+    if(!g) return;
+    if(!Guppy.kb.is_mouse_down){
+	var bb = g.editor.getElementsByClassName("katex")[0];
+	var rect = bb.getBoundingClientRect();
+	if((e.clientX < rect.left || e.clientX > rect.right) || (e.clientY > rect.bottom || e.clientY < rect.top)){
+	    console.log("R",rect);
+	    g.temp_cursor = {"node":null,"caret":0};
+	}
+	else{
+	    var loc = Guppy.get_loc(e.clientX,e.clientY);
+	    g.temp_cursor = {"node":loc.current,"caret":loc.caret};
+	}
     }
-    else if(loc.pos == "left"){
-	g.sel_start = {"node": loc.current, "caret": loc.caret};
-	g.sel_status = Guppy.SEL_CURSOR_AT_END;
+    else{
+	var loc = Guppy.get_loc(e.clientX,e.clientY,g.current);
+	//console.log("MLOC",loc);
+	if(loc.current == g.current && loc.caret == g.caret || loc.pos == "none"){
+	    g.sel_status = Guppy.SEL_NONE;
+	}
+	else if(loc.pos == "right"){
+	    g.sel_end = {"node": loc.current, "caret": loc.caret};
+	    g.sel_status = Guppy.SEL_CURSOR_AT_START;
+	}
+	else if(loc.pos == "left"){
+	    g.sel_start = {"node": loc.current, "caret": loc.caret};
+	    g.sel_status = Guppy.SEL_CURSOR_AT_END;
+	}
+	//console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
     }
-    else g.sel_status = Guppy.SEL_NONE;
-    Guppy.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
     g.render();
 }
 
@@ -416,7 +436,9 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
 	}
 	var caret_text = "";
+	var temp_caret_text = "";
 	if(text_node){
+	    temp_caret_text = ".";
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
 		caret_text = "[";
 	    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
@@ -432,11 +454,12 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		    else
 			ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		}
-		else{
-		    ans = "\\color{white}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\rule{0.001ex}{0.001ex}}}";
+		else if(this.temp_cursor.node != n && this.current != n && (!(this.sel_cursor) || this.sel_cursor.node != n)){
+		    ans = "\\color{white}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\cursor[0.001ex]{2ex}}}";
 		}
 	    }
 	    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+	    temp_caret_text = this.is_small(this.current) ? Guppy.kb.TEMP_SMALL_CARET : Guppy.kb.TEMP_CARET;
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
 		caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
 	    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
@@ -447,8 +470,11 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    if(n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
 		ans += caret_text;
 	    }
-	    if(this.sel_status != Guppy.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
+	    else if(this.sel_status != Guppy.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
 		ans += sel_caret_text;
+	    }
+	    else if(this.temp_cursor.node == n && i == this.temp_cursor.caret){
+		ans += temp_caret_text;
 	    }
 	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
 	}
@@ -487,7 +513,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.current.setAttribute("current","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	Guppy.log("OUT",output);
+	//console.log("OUT",output);
 	return output;
     }
     else{
@@ -1334,6 +1360,8 @@ Guppy.kb.is_mouse_down = false;
 
 Guppy.kb.VBLANK = "\\color{white}{\\cursor[-0.2ex]{0.2em}}"
 Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
+Guppy.kb.TEMP_SMALL_CARET = "\\color{gray}{\\cursor[0em]{0.6em}}"
+Guppy.kb.TEMP_CARET = "\\color{gray}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.6em}}"
 Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\cursor[0em]{0.6em}}"
