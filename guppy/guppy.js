@@ -473,10 +473,18 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		if(n.parentNode.childElementCount == 1){
 		    if(this.current == n)
 			ans = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		    else if(this.temp_cursor.node == n)
+			ans = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		    else
 			ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		}
 		else if(this.temp_cursor.node != n && this.current != n && (!(this.sel_cursor) || this.sel_cursor.node != n)){
+		    // These are the empty e elements at either end of
+		    // a c or m node, such as the space before and
+		    // after both the sin and x^2 in sin(x^2)
+		    //
+		    // Here, we add in a small element so that we can
+		    // use the mouse to select these areas
 		    ans = "\\color{white}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\cursor[0.001ex]{2ex}}}";
 		}
 	    }
@@ -495,7 +503,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    else if(this.sel_status != Guppy.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
 		ans += sel_caret_text;
 	    }
-	    else if(this.temp_cursor.node == n && i == this.temp_cursor.caret){
+	    else if(this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
 		ans += temp_caret_text;
 	    }
 	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
