@@ -302,7 +302,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 		opt = box;
 	    }
 	}
-	console.log("OPT",opt);
+	//console.log("OPT",opt);
 	var loc = opt.path.substring("guppy_loc".length);
 	loc = loc.replace(/_/g,"/");
 	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
