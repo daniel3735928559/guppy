@@ -516,6 +516,7 @@ Guppy.prototype.post_render_cleanup = function(n){
 	n.removeAttribute("path");
 	n.removeAttribute("render");
 	n.removeAttribute("current");
+	n.removeAttribute("temp");
     }
     else{
 	for(var c = n.firstChild; c != null; c = c.nextSibling){
@@ -533,6 +534,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.add_paths(this.base.documentElement,"m");
 	this.add_classes_cursors(this.base.documentElement);
 	this.current.setAttribute("current","yes");
+	if(this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
 	//console.log("OUT",output);

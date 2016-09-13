@@ -65,6 +65,7 @@
 	   == We have one child and either of the following:
 	   ==== it is not a variable and not a number
 	   ==== we are current
+	   ==== we are temp
       -->
       <!-- <xsl:when test="$type='latex' and @bracket = 'yes' and ((count(./*) != 1) or (count(./*) = 1 and string-length(./e/text()) != 1 and number(./e/text()) != ./e/text()))">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when> -->
       <xsl:when test="$type='latex' and @bracket = 'yes' and
@@ -94,6 +95,11 @@
 		        (
 			  count(./*) = 1 and
 			  ./e/@current = 'yes'
+			)
+			or
+		        (
+			  count(./*) = 1 and
+			  ./e/@temp = 'yes'
 			)
                       )
                       ">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when>
