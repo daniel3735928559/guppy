@@ -331,6 +331,36 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
     return ans;
 }
 
+Guppy.prototype.select_to = function(x,y){
+	var sel_caret = this.caret;
+	var sel_cursor = this.current;
+	if(this.sel_status == Guppy.SEL_CURSOR_AT_START){
+	    sel_cursor = this.sel_end.node;
+	    sel_caret = this.sel_end.caret;
+	}
+	else if(this.sel_status == Guppy.SEL_CURSOR_AT_END){
+	    sel_cursor = this.sel_start.node;
+	    sel_caret = this.sel_start.caret;
+	}
+    var loc = Guppy.get_loc(x,y,sel_cursor,sel_caret);
+	//console.log("MLOC",loc,sel_cursor,sel_caret);
+	if(loc.current == sel_cursor && loc.caret == sel_caret){
+	    this.caret = loc.caret
+	    this.sel_status = Guppy.SEL_NONE;
+	}
+	else if(loc.pos == "left"){
+	    this.sel_end = {"node":sel_cursor,"caret":sel_caret};
+	    this.sel_status = Guppy.SEL_CURSOR_AT_START;
+	}
+	else if(loc.pos == "right"){
+	    this.sel_start = {"node":sel_cursor,"caret":sel_caret};
+	    this.sel_status = Guppy.SEL_CURSOR_AT_END;
+	}
+	this.current = loc.current;
+	this.caret = loc.caret;
+    
+}
+
 Guppy.mouse_up = function(e){
     Guppy.kb.is_mouse_down = false;
 }
@@ -348,10 +378,15 @@ Guppy.mouse_down = function(e){
 		if(i != n.id) Guppy.instances[i].deactivate();
 	    }
 	    var g = Guppy.active_guppy;
-	    var loc = Guppy.get_loc(e.clientX,e.clientY);
-	    g.current = loc.current;
-	    g.caret = loc.caret;
-	    g.sel_status = Guppy.SEL_NONE;
+	    if(e.shiftKey){
+		g.select_to(e.clientX,e.clientY);
+	    }
+	    else {
+		var loc = Guppy.get_loc(e.clientX,e.clientY);
+		g.current = loc.current;
+		g.caret = loc.caret;
+		g.sel_status = Guppy.SEL_NONE;
+	    }
 	    g.render();
 	    return;
 	}
@@ -379,32 +414,7 @@ Guppy.mouse_move = function(e){
 	}
     }
     else{
-	var sel_caret = g.caret;
-	var sel_cursor = g.current;
-	if(g.sel_status == Guppy.SEL_CURSOR_AT_START){
-	    sel_cursor = g.sel_end.node;
-	    sel_caret = g.sel_end.caret;
-	}
-	else if(g.sel_status == Guppy.SEL_CURSOR_AT_END){
-	    sel_cursor = g.sel_start.node;
-	    sel_caret = g.sel_start.caret;
-	}
-	var loc = Guppy.get_loc(e.clientX,e.clientY,sel_cursor,sel_caret);
-	//console.log("MLOC",loc,sel_cursor,sel_caret);
-	if(loc.current == sel_cursor && loc.caret == sel_caret){
-	    g.caret = loc.caret
-	    g.sel_status = Guppy.SEL_NONE;
-	}
-	else if(loc.pos == "left"){
-	    g.sel_end = {"node":sel_cursor,"caret":sel_caret};
-	    g.sel_status = Guppy.SEL_CURSOR_AT_START;
-	}
-	else if(loc.pos == "right"){
-	    g.sel_start = {"node":sel_cursor,"caret":sel_caret};
-	    g.sel_status = Guppy.SEL_CURSOR_AT_END;
-	}
-	g.current = loc.current;
-	g.caret = loc.caret;
+	g.select_to(e.clientX,e.clientY);
 	//console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
     }
     g.render();
@@ -525,7 +535,7 @@ Guppy.prototype.render_node = function(n,t){
 	this.current.setAttribute("current","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	console.log("OUT",output);
+	//console.log("OUT",output);
 	return output;
     }
     else{
