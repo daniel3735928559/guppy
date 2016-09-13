@@ -483,7 +483,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		    //
 		    // Here, we add in a small element so that we can
 		    // use the mouse to select these areas
-		    ans = "\\color{white}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\cursor[0.001ex]{2ex}}}";
+		    ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\cursor[0.001ex]{1ex}}}";
 		}
 	    }
 	    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
