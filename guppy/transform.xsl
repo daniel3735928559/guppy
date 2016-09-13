@@ -15,11 +15,6 @@
   </xsl:template>
 
   <xsl:template match="f">
-    <!-- <xsl:choose> -->
-    <!--   <xsl:when test="$type='latex' and @current='yes'">\color{#f00}{<xsl:apply-templates select="./b" />}</xsl:when> -->
-    <!--   <xsl:when test="$type='latex' and count(./c/e[@current='yes']) > 0">\color{#ccc}{\left[\color{#000}{<xsl:apply-templates select="./b" />}\right]}</xsl:when> -->
-    <!--   <xsl:otherwise><xsl:apply-templates select="./b" /></xsl:otherwise> -->
-    <!-- </xsl:choose> -->
     <xsl:apply-templates select="./b" />
   </xsl:template>
 
@@ -58,16 +53,15 @@
 	   - type is latex
 	   - bracket is "yes"
 	   - Any of:
-	   == We have more than one child and not all of the following:
+	   == We have more than one child and not all of the following (to avoid bracketing things like the pi in pi^2 unless the cursor is around it):
 	   ==== three children: 2 e and 1 f
 	   ==== e's are empty
-	   ==== f has one c with is_bracket="yes" OR the f has c="yes"
-	   == We have one child and either of the following:
+	   ==== f has one c with is_bracket="yes" OR (the f has c="yes" and the neighbouring es are not current or temp)
+	   == We have one child and any of the following:
 	   ==== it is not a variable and not a number
-	   ==== we are current
-	   ==== we are temp
+	   ==== it is current
+	   ==== it is temp
       -->
-      <!-- <xsl:when test="$type='latex' and @bracket = 'yes' and ((count(./*) != 1) or (count(./*) = 1 and string-length(./e/text()) != 1 and number(./e/text()) != ./e/text()))">\left(<xsl:apply-templates select="@*|node()"/>\right)</xsl:when> -->
       <xsl:when test="$type='latex' and @bracket = 'yes' and
       		      (
 		        (
@@ -81,7 +75,12 @@
                                 count(./f/c)=1 and
 			        count(./f/c[@is_bracket='yes'])=1
 			      )
-			      or f/@c='yes'
+			      or
+			      (
+			        f/@c='yes' and 
+				count(./e[@current='yes'])=0 and
+				count(./e[@temp='yes'])=0
+			      )
 			    )
 			  )
 			)  
