@@ -179,8 +179,6 @@ Guppy.get_latexify = function(xsl_path, callback){
 	var latexsl = (new window.DOMParser()).parseFromString(latexify, "text/xml");
 	Guppy.xsltProcessor = new XSLTProcessor();
 	Guppy.xsltProcessor.importStylesheet(latexsl);
-	Guppy.xsltProcessor.setParameter("","blank",Guppy.kb.BLANK);
-	Guppy.xsltProcessor.setParameter("","cblank",Guppy.kb.CURRENT_BLANK);
 	if(callback){ callback(); }
     };
     req.open("get", xsl_path, true);
@@ -1390,7 +1388,6 @@ Guppy.kb = {};
 
 Guppy.kb.is_mouse_down = false;
 
-Guppy.kb.VBLANK = "\\color{white}{\\cursor[-0.2ex]{0.2em}}"
 Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.TEMP_SMALL_CARET = "\\color{gray}{\\cursor[0em]{0.6em}}"
 Guppy.kb.TEMP_CARET = "\\color{gray}{\\cursor[-0.2ex]{0.7em}}"
@@ -1398,8 +1395,6 @@ Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.6em}}"
 Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
 Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\cursor[0em]{0.6em}}"
 Guppy.kb.SEL_COLOR = "red"
-Guppy.kb.CURRENT_BLANK = "\\color{red}{[?]}"
-Guppy.kb.BLANK = "\\color{blue}{[?]}"
 
 Guppy.kb.symbols = {};
 
@@ -1508,7 +1503,7 @@ Guppy.register_keyboard_handlers = function(){
     for(var i in Guppy.kb.k_syms)
     	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(true); return false; }}(i));
     for(var i in Guppy.kb.k_controls)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.render(true); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));
     
 }
 
