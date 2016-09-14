@@ -285,10 +285,10 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 	    }
 	    boxes = boxes2;
 	}
-	console.log("BOXES",boxes);
+	//console.log("BOXES",boxes);
 	for(var i = 0; i < boxes.length; i++){
 	    var box = boxes[i];
-	    console.log("BOX",box,x,y);
+	    //console.log("BOX",box,x,y);
 	    if(box.path == "all") continue;
 	    var xdist = Math.max(box.left - x, x - box.right, 0)
 	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
@@ -299,7 +299,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 		opt = box;
 	    }
 	}
-	console.log("OPT",opt,x,y);
+	//console.log("OPT",opt,x,y);
 	var loc = opt.path.substring("guppy_loc".length);
 	loc = loc.replace(/_/g,"/");
 	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
@@ -340,18 +340,18 @@ Guppy.prototype.select_to = function(x,y){
 	sel_caret = this.sel_start.caret;
     }
     var loc = Guppy.get_loc(x,y,sel_cursor,sel_caret);
-    console.log("MLOC",loc,sel_cursor,sel_caret);
+    //console.log("MLOC",loc,sel_cursor,sel_caret);
     if(loc.current == sel_cursor && loc.caret == sel_caret){
 	this.caret = loc.caret
 	this.sel_status = Guppy.SEL_NONE;
     }
     else if(loc.pos == "left"){
 	this.sel_end = {"node":sel_cursor,"caret":sel_caret};
-	this.sel_status = Guppy.SEL_CURSOR_AT_START;
+	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_START);
     }
     else if(loc.pos == "right"){
 	this.sel_start = {"node":sel_cursor,"caret":sel_caret};
-	this.sel_status = Guppy.SEL_CURSOR_AT_END;
+	this.set_sel_boundary(Guppy.SEL_CURSOR_AT_END);
     }
     this.current = loc.current;
     this.caret = loc.caret;
@@ -494,7 +494,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 			caret_text = "[]";
 		}
 		else{
-		    console.log("HERE");
+		    //console.log("HERE");
 		    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
 		    if(text.length == 0)
 			caret_text = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
@@ -520,7 +520,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		else{
 		    temp_caret_text = this.is_small(this.current) ? Guppy.kb.TEMP_SMALL_CARET : Guppy.kb.TEMP_CARET;
 		    if(text.length == 0){
-			console.log("THERE")
+			//console.log("THERE")
 			temp_caret_text = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
 		    }
 		    else
@@ -543,8 +543,8 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 
 Guppy.prototype.post_render_cleanup = function(n){
     if(n.nodeName == "e"){
-	//n.removeAttribute("path");
-	//n.removeAttribute("render");
+	n.removeAttribute("path");
+	n.removeAttribute("render");
 	n.removeAttribute("current");
 	n.removeAttribute("temp");
     }
@@ -567,7 +567,7 @@ Guppy.prototype.render_node = function(n,t){
 	if(this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp","yes");
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
-	console.log("OUT",output);
+	//console.log("OUT",output);
 	return output;
     }
     else{
@@ -922,16 +922,18 @@ Guppy.prototype.insert_symbol = function(sym_name){
 }
 
 Guppy.prototype.sel_get = function(){
-    Guppy.log("sel_start_end",this.sel_start,this.sel_end,this.current,this.caret);
+    //console.log("sel_start_end",this.sel_start,this.sel_end,this.current,this.caret,this.sel_status);
     if(this.sel_status == Guppy.SEL_NONE){
-	if(this.current.nodeName == 'f'){ // This block should be dead
-	    Guppy.log("ABCD",this.current,this.current.previousSibling,this.current.parentNode);
-	    this.sel_start = {"node":this.current, "caret":this.current.previousSibling.firstChild.nodeValue.length};
-	    return {"node_list":[this.make_e(""),this.current,this.make_e("")],
-		    "remnant":this.make_e(this.current.previousSibling.firstChild.nodeValue + this.current.nextSibling.firstChild.nodeValue),
-		    "involved":[this.current.previousSibling, this.current, this.current.nextSibling]}
-	}
-	else return null;
+	// if(this.current.nodeName == 'f'){ // This block should be dead
+	//     console.log("THIS SHOULD NEVER HAPPEN");
+	//     Guppy.log("ABCD",this.current,this.current.previousSibling,this.current.parentNode);
+	//     this.sel_start = {"node":this.current, "caret":this.current.previousSibling.firstChild.nodeValue.length};
+	//     return {"node_list":[this.make_e(""),this.current,this.make_e("")],
+	// 	    "remnant":this.make_e(this.current.previousSibling.firstChild.nodeValue + this.current.nextSibling.firstChild.nodeValue),
+	// 	    "involved":[this.current.previousSibling, this.current, this.current.nextSibling]}
+	// }
+	// else
+	return null;
     }
     var involved = [];
     var node_list = [];
