@@ -523,6 +523,8 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 			console.log("THERE")
 			temp_caret_text = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
 		    }
+		    else
+			temp_caret_text = "\\color{gray}{"+temp_caret_text+"}";
 		}
 		ans += temp_caret_text;
 	    }
