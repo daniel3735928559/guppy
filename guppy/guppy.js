@@ -451,6 +451,12 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
 	if(this.sel_status != Guppy.SEL_NONE){
 	    var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
+	    if(!text_node && text.length == 0 && n.parentNode.childElementCount > 1){
+		sel_caret_text = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
+	    }
+	    else{
+		sel_caret_text = "\\color{blue}{"+sel_caret_text+"}";
+	    }
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
 	    if(this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
 	}
@@ -488,7 +494,13 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 			caret_text = "[]";
 		}
 		else{
+		    console.log("HERE");
 		    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+		    if(text.length == 0)
+			caret_text = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
+		    else{
+			caret_text = "\\color{red}{"+caret_text+"}"
+		    }
 		    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
 			caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
 		    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
@@ -505,8 +517,13 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    else if(this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
 		if(text_node) 
 		    temp_caret_text = ".";
-		else
+		else{
 		    temp_caret_text = this.is_small(this.current) ? Guppy.kb.TEMP_SMALL_CARET : Guppy.kb.TEMP_CARET;
+		    if(text.length == 0){
+			console.log("THERE")
+			temp_caret_text = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
+		    }
+		}
 		ans += temp_caret_text;
 	    }
 	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
@@ -1393,12 +1410,12 @@ Guppy.kb = {};
 
 Guppy.kb.is_mouse_down = false;
 
-Guppy.kb.CARET = "\\color{red}{\\cursor[-0.2ex]{0.7em}}"
-Guppy.kb.TEMP_SMALL_CARET = "\\color{gray}{\\cursor[0em]{0.6em}}"
-Guppy.kb.TEMP_CARET = "\\color{gray}{\\cursor[-0.2ex]{0.7em}}"
-Guppy.kb.SMALL_CARET = "\\color{red}{\\cursor[0em]{0.6em}}"
-Guppy.kb.SEL_CARET = "\\color{blue}{\\cursor[-0.2ex]{0.7em}}"
-Guppy.kb.SMALL_SEL_CARET = "\\color{blue}{\\cursor[0em]{0.6em}}"
+Guppy.kb.CARET = "\\cursor[-0.2ex]{0.7em}"
+Guppy.kb.TEMP_SMALL_CARET = "\\cursor[0em]{0.6em}"
+Guppy.kb.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"
+Guppy.kb.SMALL_CARET = "\\cursor[0em]{0.6em}"
+Guppy.kb.SEL_CARET = "\\cursor[-0.2ex]{0.7em}"
+Guppy.kb.SMALL_SEL_CARET = "\\cursor[0em]{0.6em}"
 Guppy.kb.SEL_COLOR = "red"
 
 Guppy.kb.symbols = {};
