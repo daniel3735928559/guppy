@@ -206,6 +206,18 @@ Guppy.prototype.path_to = function(n){
     return this.path_to(n.parentNode)+"_"+name+""+ns;
 }
 
+Guppy.prototype.is_changed = function(){
+    var bb = this.editor.getElementsByClassName("katex")[0];
+    if(!bb) return;
+    var rect = bb.getBoundingClientRect();
+    if(this.bounding_box)
+	ans = this.bounding_box.top != rect.top || this.bounding_box.bottom != rect.bottom || this.bounding_box.right != rect.right || this.bounding_box.left != rect.left;
+    else
+	ans = true;
+    this.bounding_box = rect;
+    return ans;
+}
+
 Guppy.prototype.recompute_locations_paths = function(){
     ans = [];
     var bb = this.editor.getElementsByClassName("katex")[0];
@@ -410,12 +422,12 @@ Guppy.mouse_move = function(e){
 	    var loc = Guppy.get_loc(e.clientX,e.clientY);
 	    g.temp_cursor = {"node":loc.current,"caret":loc.caret};
 	}
-	g.render();
+	g.render(g.is_changed());
     }
     else{
 	g.select_to(e.clientX,e.clientY);
 	//console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
-	g.render();
+	g.render(g.is_changed());
     }
 }
 
@@ -1527,9 +1539,9 @@ for(var i = 48; i <= 57; i++)
 Guppy.register_keyboard_handlers = function(){
     Mousetrap.addKeycodes({173: '-'}); // Firefox's special minus (needed for _ = sub binding)
     for(var i in Guppy.kb.k_chars)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.render(true); return false; }}(i));  
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));  
     for(var i in Guppy.kb.k_syms)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(true); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));
     for(var i in Guppy.kb.k_controls)
     	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0); return false; }}(i));
     
