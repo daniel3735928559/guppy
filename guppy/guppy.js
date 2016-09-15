@@ -372,7 +372,7 @@ Guppy.prototype.select_to = function(x,y){
 Guppy.mouse_up = function(e){
     Guppy.kb.is_mouse_down = false;
     var g = Guppy.active_guppy;
-    g.render(true);
+    if(g) g.render(true);
 }
 
 Guppy.mouse_down = function(e){
