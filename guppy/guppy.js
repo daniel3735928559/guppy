@@ -359,6 +359,8 @@ Guppy.prototype.select_to = function(x,y){
 
 Guppy.mouse_up = function(e){
     Guppy.kb.is_mouse_down = false;
+    var g = Guppy.active_guppy;
+    g.render(true);
 }
 
 Guppy.mouse_down = function(e){
@@ -413,7 +415,7 @@ Guppy.mouse_move = function(e){
     else{
 	g.select_to(e.clientX,e.clientY);
 	//console.log("SSS",g.sel_status,g.sel_start,g.sel_end,g.caret);
-	g.render(true);
+	g.render();
     }
 }
 
@@ -472,7 +474,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		else
 		    ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 	    }
-	    else if(this.temp_cursor.node != n && this.current != n && (!(this.sel_cursor) || this.sel_cursor.node != n)){
+	    else if(this.temp_cursor.node != n && this.current != n && (!(sel_cursor) || sel_cursor.node != n)){
 		// These are the empty e elements at either end of
 		// a c or m node, such as the space before and
 		// after both the sin and x^2 in sin(x^2)
@@ -1467,7 +1469,7 @@ Guppy.prototype.check_for_symbol = function(){
 
 /* keyboard behaviour definitions */
 
-// keys aside from 0-9,a-z,A
+// keys aside from 0-9,a-z,A-Z
 Guppy.kb.k_chars = {
     "=":"=",
     "+":"+",
@@ -1529,7 +1531,7 @@ Guppy.register_keyboard_handlers = function(){
     for(var i in Guppy.kb.k_syms)
     	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.render(true); return false; }}(i));
     for(var i in Guppy.kb.k_controls)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0); return false; }}(i));
     
 }
 
