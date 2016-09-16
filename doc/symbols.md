@@ -4,7 +4,7 @@
 (i.e. the strings that will get auto-replaced by the symbol in the
 editor) and whose values are dictionaries with the following keys:
 
-* `output`: A dictionary with keys `latex`, `calc`, and an optional
+* `output`: A dictionary with keys `latex`, `text`, and an optional
   `small_latex`.  The values are strings which will comprise the
   LaTeX, ASCII, or small LaTeX (respectively) representations of the
   symbol.  A symbol may have editable components, the ith of which is

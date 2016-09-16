@@ -23,18 +23,18 @@ A stripped-down version of the demo page would look like:
     <link rel="stylesheet" href="lib/katex/katex.min.css">
     <script src="lib/katex/katex-modified.min.js"></script>
     <script src="lib/mousetrap/mousetrap.min.js"></script>
-    <script type="text/javascript" src="guppy/guppy.js"></script>
+    <script type="text/javascript" src="src/guppy.js"></script>
   </head>
   <body>
     <div id="guppy_div" style="width:400px;height:100px;"></div>
     
     <script>
-        Guppy.guppy_init("guppy/transform.xsl","guppy/symbols.json");
+        Guppy.guppy_init("src/transform.xsl","src/symbols.json");
         new Guppy("guppy_div");
     </script>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('latex'))">See LaTeX</button>
-    <button onclick="alert(Guppy.instances.guppy_div.get_content('calc'))">See ASCII</button>
+    <button onclick="alert(Guppy.instances.guppy_div.get_content('text'))">See ASCII</button>
   </body>
 </html>
 ```
@@ -43,11 +43,11 @@ A stripped-down version of the demo page would look like:
 
 * Download the `lib` and `guppy` folders.
 
-* Include `guppy/guppy.js` after `lib/katex/katex-modified.min.js`,
+* Include `src/guppy.js` after `lib/katex/katex-modified.min.js`,
   `lib/katex/katex.min.css`, and `lib/mousetrap/mousetrap.min.js`
   files in your page.
 
-* Pass the paths to `guppy/transform.xsl` and `guppy/symbols.json` to
+* Pass the paths to `src/transform.xsl` and `src/symbols.json` to
   `Guppy.guppy_init` as in the example above.  This only needs to
   happen once per page.
 

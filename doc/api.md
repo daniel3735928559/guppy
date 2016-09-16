@@ -36,12 +36,12 @@ The primary useful items in the Guppy object are:
   into a Guppy instance.
 
 * `Guppy.guppy_init(xsl_path, symbols_path)`: `xsl_path` is the path
-  to `guppy/transform.xsl`, `symbols_path` is the path to
-  `guppy/symbols.json`.  This function should only be called once per
+  to `src/transform.xsl`, `symbols_path` is the path to
+  `src/symbols.json`.  This function should only be called once per
   page.
 
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
-  or `"calc"`, and the function will return (respectively) the XML,
+  or `"text"`, and the function will return (respectively) the XML,
   LaTeX, or ASCII representation of the instance's content.
   
 * `Guppy.prototype.set_content(xml_data)`: `xml_data` is a string

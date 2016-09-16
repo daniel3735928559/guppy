@@ -2,14 +2,14 @@
     "norm":
     {"output":{
         "latex":"||{$1}||",
-        "calc":"norm({$1})"},
+        "text":"norm({$1})"},
      "current":0,
      "type":"norm"},
     
     "text":
     {"output":{
         "latex":"\\text{{$1}}",
-        "calc":"text({$1})"},
+        "text":"text({$1})"},
      "current":0,
      "type":"text",
      "attrs":{
@@ -18,21 +18,21 @@
     "abs":
     {"output":{
         "latex":"\\left|{$1}\\right|",
-	"calc":"abs({$1})"},
+	"text":"abs({$1})"},
      "current":0,
      "type":"absolute_value"},
     
     "sqrt":
     {"output":{
         "latex":"\\sqrt{{$1}}",
-        "calc":"sqrt({$1})"},
+        "text":"sqrt({$1})"},
      "current":0,
      "type":"square_root"},
     
     "paren":
     {"output":{
         "latex":"\\left({$1}\\right)",
-	"calc":"({$1})"},
+	"text":"({$1})"},
      "current":1,
      "type":"bracket",
      "attrs":{
@@ -42,14 +42,14 @@
     "floor":
     {"output":{
         "latex":"\\lfloor{$1}\\rfloor",
-	"calc":"floor({$1})"},
+	"text":"floor({$1})"},
      "current":0,
      "type":"floor"},
     
     "exp":
     {"output":{
         "latex":"{{$1}}^{{$2}}",
-	"calc":"({$1})^({$2})"},
+	"text":"({$1})^({$2})"},
      "current":1,
      "type":"exponenial",
      "current_type":"token",
@@ -64,7 +64,7 @@
     "sub":
     {"output":{
         "latex":"{{$1}}_{{$2}}",
-	"calc":"{$1}{$2}"},
+	"text":"{$1}{$2}"},
      "current":1,
      "type":"subscript",
      "current_type":"token",
@@ -79,7 +79,7 @@
     {"output":{
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
-	"calc":"({$1})/({$2})"},
+	"text":"({$1})/({$2})"},
      "current":0,
      "type":"fraction",
      "attrs":{
@@ -92,7 +92,7 @@
     {"output":{
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
-	"calc":"({$1})/({$2})"},
+	"text":"({$1})/({$2})"},
      "current":1,
      "current_type":"token",
      "type":"fraction",
@@ -106,7 +106,7 @@
     {"output":{
         "latex":"\\displaystyle\\int{{$1}}d{$2}",
         "small_latex":"\\int{{$1}}d{$2}",
-	"calc":"integrate({$1},{$2})"},
+	"text":"integrate({$1},{$2})"},
      "current":0,
      "type":"indefinite_integral",
      "attrs":{
@@ -118,7 +118,7 @@
     {"output":{
         "latex":"\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
         "small_latex":"\\int_{{$1}}^{{$2}}{$3}d{$4}",
-	"calc":"integrate({$3},{$4},{$1},{$2})"},
+	"text":"integrate({$3},{$4},{$1},{$2})"},
      "current":0,
      "type":"definite_integral",
      "attrs":{
@@ -132,7 +132,7 @@
     "smi":
     {"output":{
         "latex":"\\int{{$1}}d{$2}",
-	"calc":"integrate({$1},{$2})"},
+	"text":"integrate({$1},{$2})"},
      "current":0,
      "type":"indefinite_integral",
      "attrs":{
@@ -143,7 +143,7 @@
     "smd":
     {"output":{
         "latex":"\\int_{{$1}}^{{$2}}{$3}d{$4}",
-	"calc":"integrate({$3},{$4},{$1},{$2})"},
+	"text":"integrate({$3},{$4},{$1},{$2})"},
      "current":0,
      "type":"definite_integral",
      "attrs":{
@@ -157,7 +157,7 @@
     "diff":
     {"output":{
         "latex":"\\frac{d}{d{$1}}{$2}",
-	"calc":"diff({$2},{$1})"},
+	"text":"diff({$2},{$1})"},
      "current":0,
      "type":"derivative",
      "attrs":{
@@ -170,7 +170,7 @@
     "deriv":
     {"output":{
         "latex":"\\frac{d}{d{$1}}{$2}",
-	"calc":"diff({$2},{$1})"},
+	"text":"diff({$2},{$1})"},
      "current":0,
      "type":"derivative",
      "attrs":{
@@ -184,7 +184,7 @@
     {"output":{
         "latex":"\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
         "small_latex":"\\sum_{{$1}}^{{$2}}{$3}",
-	"calc":"sum({$3},{$1},{$2})"},
+	"text":"sum({$3},{$1},{$2})"},
      "current":0,
      "type":"summation",
      "attrs":{
@@ -197,7 +197,7 @@
     "cohom":
     {"output":{
         "latex":"H^{{$1}}\\left({$2}\\right)",
-	"calc":"cohomology({$2},{$1})"},
+	"text":"cohomology({$2},{$1})"},
      "current":0,
      "type":"cohomology",
      "attrs":{

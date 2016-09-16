@@ -2,7 +2,7 @@ var tests = [
     {
 	"description":"Basic test",
 	"content":"<m><e>x+1</e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"+1",
 	"run":function(g){
 	    do_keys(['right','backspace']);
@@ -11,7 +11,7 @@ var tests = [
     {
 	"description":"Basic undo test",
 	"content":"<m><e></e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"xy",
 	"run":function(g){
 	    do_keys(['x','y','z','mod+z']);
@@ -20,7 +20,7 @@ var tests = [
     {
 	"description":"Sine test",
 	"content":"<m><e></e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"sin(x)",
 	"run":function(g){
 	    do_keys(['s','i','n','x']);
@@ -29,7 +29,7 @@ var tests = [
     {
 	"description":"Sine undo test",
 	"content":"<m><e></e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"sin",
 	"run":function(g){
 	    do_keys(['s','i','n','mod+z']);
@@ -38,7 +38,7 @@ var tests = [
     {
 	"description":"Exponent undo test",
 	"content":"<m><e></e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"2x",
 	"run":function(g){
 	    do_keys(['2','x','shift+6','mod+z']);
@@ -47,7 +47,7 @@ var tests = [
     {
 	"description":"Basic select delete test",
 	"content":"<m><e>x+1</e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"1",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','backspace']);
@@ -56,7 +56,7 @@ var tests = [
     {
 	"description":"Basic select replace test",
 	"content":"<m><e>x+1</e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"a1",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','a']);
@@ -65,7 +65,7 @@ var tests = [
     {
 	"description":"Basic cut/paste test",
 	"content":"<m><e>x+1</e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"1x+",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','mod+x','right','mod+v']);
@@ -74,7 +74,7 @@ var tests = [
     {
 	"description":"Basic copy/paste test",
 	"content":"<m><e>x+1</e></m>",
-	"type":"calc",
+	"type":"text",
 	"expected":"x+1x+",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','mod+c','right','mod+v']);
@@ -83,7 +83,7 @@ var tests = [
     {
 	"description":"f-char delete test",
 	"content":'<m><e></e></m>',
-	"type":"calc",
+	"type":"text",
 	"expected":"(2)^(x)",
 	"run":function(g){
 	    do_keys(['2','shift+6','x','p','i','backspace']);
@@ -91,8 +91,8 @@ var tests = [
     },
     {
 	"description":"f-char cut/paste test",
-	"content":'<m><e></e><f><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="calc">sin(<r ref="1"/>)</b><c><e>x</e></c></f><e>+</e><f c="yes"><b p="latex">{\\pi}</b><b p="calc"> PI </b></f><e>+</e><f><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="calc">cos(<r ref="1"/>)</b><c><e>x</e></c></f><e></e></m>',
-	"type":"calc",
+	"content":'<m><e></e><f><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="text">sin(<r ref="1"/>)</b><c><e>x</e></c></f><e>+</e><f c="yes"><b p="latex">{\\pi}</b><b p="text"> PI </b></f><e>+</e><f><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="text">cos(<r ref="1"/>)</b><c><e>x</e></c></f><e></e></m>',
+	"type":"text",
 	"expected":"sin(x)+cos(x)+ PI ",
 	"run":function(g){
 	    do_keys(['right','right','right','shift+right','shift+right','mod+x','right','right','right','right','mod+v']);

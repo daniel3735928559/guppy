@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="../lib/katex/katex-modified.min.css">
     <script src="../lib/katex/katex-modified.min.js"></script>
     <script type="text/javascript" src="../lib/mousetrap/mousetrap.min.js"></script>
-    <script type="text/javascript" src="../guppy/guppy.js"></script>
+    <script type="text/javascript" src="../src/guppy.js"></script>
   </head>
   <body>
     <div id="guppy1" style="width:50%;border:2px solid
@@ -13,7 +13,7 @@
     <div id="tests">
     </div>
     <script>
-     Guppy.guppy_init("../guppy/transform.xsl","../guppy/symbols.json");
+     Guppy.guppy_init("../src/transform.xsl","../src/symbols.json");
      var test_guppy = new Guppy("guppy1", {});
      exprs =
      [

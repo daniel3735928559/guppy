@@ -40,7 +40,7 @@ So, for example, the square root of x+1 would be represented as:
   <e></e>
   <f>
     <b p="latex">\sqrt{<r ref="1"/>}</b>
-    <b p="calc">sqrt(<r ref="1"/>)</b>
+    <b p="text">sqrt(<r ref="1"/>)</b>
     <c><e>x+1</e></c>
   </f>
   <e></e>
@@ -55,13 +55,13 @@ Whereas the fraction `1+(1-x)/sin(x) would be represented as:
   <f>
     <b p="latex">\dfrac{<r ref="1"/>}{<r ref="2"/>}</b>
     <b p="small_latex">\frac{<r ref="1"/>}{<r ref="2"/>}</b>
-    <b p="calc">(<r ref="1"/>)/(<r ref="2"/>)</b>
+    <b p="text">(<r ref="1"/>)/(<r ref="2"/>)</b>
     <c up="1" down="2" name="numerator"><e>1-x</e></c>
     <c up="1" down="2" name="denominator">
       <e></e>
       <f>
         <b p="latex">\sin\left(<r ref="1"/>\right)</b>
-        <b p="calc">sin(<r ref="1"/>)</b>
+        <b p="text">sin(<r ref="1"/>)</b>
         <c><e>x</e></c>
       </f>
       <e></e>
