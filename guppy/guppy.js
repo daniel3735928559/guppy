@@ -231,7 +231,9 @@ Guppy.prototype.recompute_locations_paths = function(){
     var elts = this.editor.getElementsByClassName("guppy_elt");
     for(var i = 0; i < elts.length; i++){
 	var elt = elts[i];
+	if(elt.nodeName == "mstyle") continue;
 	var rect = elt.getBoundingClientRect();
+	//console.log("rect BTLR",rect.bottom,rect.top,rect.left,rect.right,elt.classList);
 	if(rect.top == 0 && rect.bottom == 0 && rect.left == 0 && rect.right == 0) continue;
 	var cl = elt.classList;
 	for(var j = 0; j < cl.length; j++){
@@ -300,7 +302,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 	//console.log("BOXES",boxes);
 	for(var i = 0; i < boxes.length; i++){
 	    var box = boxes[i];
-	    //console.log("BOX",box,x,y);
+	    //console.log("BOX",JSON.stringify(box),x,y);
 	    if(box.path == "all") continue;
 	    var xdist = Math.max(box.left - x, x - box.right, 0)
 	    var ydist = Math.max(box.top - y, y - box.bottom, 0)
@@ -311,7 +313,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 		opt = box;
 	    }
 	}
-	//console.log("OPT",opt,x,y);
+        //console.log("OPT",JSON.stringify(opt),x,y);
 	var loc = opt.path.substring("guppy_loc".length);
 	loc = loc.replace(/_/g,"/");
 	loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
