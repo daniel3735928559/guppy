@@ -41,7 +41,7 @@ A stripped-down version of the demo page would look like:
 
 ## Installation and deployment
 
-* Download the `lib` and `guppy` folders.
+* Download the `lib` and `src` folders.
 
 * Include `src/guppy.js` after `lib/katex/katex-modified.min.js`,
   `lib/katex/katex.min.css`, and `lib/mousetrap/mousetrap.min.js`

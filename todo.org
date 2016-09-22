@@ -1,0 +1,5 @@
+* TODO Add "Delete" key functionality
+* TODO Create (optional) interface with buttons
+* TODO Use bower for mousetrap etc instead of including them in /lib
+* TODO Include all greek letters and common symbols
+* TODO Use LaTeX parser to allow some pasting in of LaTeX
