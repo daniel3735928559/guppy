@@ -1070,6 +1070,8 @@ Guppy.prototype.sel_cut = function(){
 }
 
 Guppy.prototype.sel_paste = function(){
+    this.sel_delete();
+    this.sel_clear();
     if(!(this.clipboard) || this.clipboard.length == 0) return;
     var real_clipboard = [];
     for(var i = 0; i < this.clipboard.length; i++){
