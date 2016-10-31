@@ -7,14 +7,25 @@ body {
 }
 
 #guppy1 {
-    width: 80%;
+    width: 800px;
     border: 2px solid black;
-    height: 150px;
+    height: 100px;
+    padding: 10px;
+}
+
+#result {
+    width: 800px;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+#help_card {
+    width: 800px;
+    float: left;
+    border: 1px solid black;
     padding: 10px;
 }
 
 #stuff {
-    width: 80%;
-    border: 1px solid black;
-    padding: 10px;
+    padding-top:10px;
 }

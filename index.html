@@ -25,22 +25,24 @@
 </head>
 
 <body>
-    <div>a WYSIWYG math editor with structured, searchable, LaTeX-compatible, and parseable output</div>
-    <br/>
+    <div>Click below to start typing a mathematical expression
+    (<a href="#" onclick="flash_help()">help</a>)</div> <br/>
 
     <div id="guppy1"></div>
     <br />
-    <button class="btn btn-default" id="xml_btn" onclick="">XML</button>
-    <button class="btn btn-default" id="text_btn">Text</button>
-    <button class="btn btn-default" id="latex_btn">LaTeX</button>
-    <button class="btn btn-default btn-danger" id="clear_btn">Clear</button>
 
-    <br />
-    <br />
-    <div id="stuff">Press buttons to see text renderings of the editor content: </div>
-    <br />
-    <br /> Reference:
-    <div id="help_card" style="float:left;width:100%">
+    <div>Click the buttons to render the expression in various
+      plaintext formats</div> <br/>
+    
+    <div id="result">
+      <button class="btn btn-default" id="xml_btn" onclick="">XML</button>
+      <button class="btn btn-default" id="text_btn">Text</button>
+      <button class="btn btn-default" id="latex_btn">LaTeX</button>
+      <button class="btn btn-default btn-danger" id="clear_btn">Clear</button>
+      <div id="stuff"></div>
+    </div><br />
+    <div>Commands for editor: </div><br />
+    <div id="help_card">
         <style>
             td {
                 padding: 2px 10px;
@@ -51,6 +53,18 @@
                 <tr>
                     <td><b>Type...</b></td>
                     <td><b>...to create</b></td>
+                </tr>
+                <tr>
+                    <td>
+                        <font face="monospace">exp or ^</font>
+                    </td>
+                    <td>Exponent</td>
+                </tr>
+                <tr>
+                    <td>
+                        <font face="monospace">sub or _</font>
+                    </td>
+                    <td>Subscript</td>
                 </tr>
                 <tr>
                     <td>

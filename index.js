@@ -9,7 +9,7 @@ $('document').ready(function() {
         createText('latex');
     });
     $('#clear_btn').on('click', function() {
-        $('#stuff')[0].innerHTML = 'Press buttons to see text renderings of the editor content: ';
+        $('#stuff')[0].innerHTML = '';
     });
 
     Guppy.guppy_init("src/transform.xsl", "src/symbols.json");
@@ -21,6 +21,10 @@ $('document').ready(function() {
         }
     });
 });
+
+function flash_help(){
+    $("#help_card").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+}
 
 function createText(texttype) {
     //clear screen
