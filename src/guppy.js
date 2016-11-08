@@ -482,7 +482,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	    if(text_node) caret_text = "[]";
 	    else if(n.parentNode.childElementCount == 1){
 		if(this.current == n)
-		    ans = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		    ans = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		else if(this.temp_cursor.node == n)
 		    ans = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		else
@@ -513,9 +513,10 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		    //console.log("HERE");
 		    caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
 		    if(text.length == 0)
-			caret_text = "\\color{red}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
+			caret_text = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
 		    else{
-			caret_text = "\\color{red}{"+caret_text+"}"
+			console.log('ASD');
+			caret_text = "\\color{red}{\\xmlClass{main_cursor}{"+caret_text+"}}"
 		    }
 		    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
 			caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
@@ -1029,7 +1030,7 @@ Guppy.prototype.render = function(updated){
 Guppy.prototype.activate = function(){
     Guppy.active_guppy = this;
     this.editor_active = true;
-    this.editor.style.backgroundColor='#ffffff';
+    this.editor.className = this.editor.className.replace(new RegExp('(\\s|^)guppy_inactive(\\s|$)'),' guppy_active ');
     //this.editor.style.border='1px solid gray';
     this.editor.focus();
     if(this.ready){
@@ -1039,7 +1040,15 @@ Guppy.prototype.activate = function(){
 
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
-    this.editor.style.backgroundColor='#fafafa';
+    //this.editor.style.backgroundColor='#fafafa';
+    console.log('asd');
+    var r = new RegExp('(\\s|^)guppy_active(\\s|$)');
+    if(this.editor.className.match(r,' guppy_inactive ')){
+	this.editor.className = this.editor.className.replace(r,' guppy_inactive ');
+    }
+    else{
+	this.editor.className += ' guppy_inactive ';
+    }
     //this.editor.style.border='1px solid black';
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
