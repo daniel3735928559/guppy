@@ -515,7 +515,6 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		    if(text.length == 0)
 			caret_text = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
 		    else{
-			console.log('ASD');
 			caret_text = "\\color{red}{\\xmlClass{main_cursor}{"+caret_text+"}}"
 		    }
 		    if(this.sel_status == Guppy.SEL_CURSOR_AT_START)
@@ -935,6 +934,7 @@ Guppy.prototype.insert_symbol = function(sym_name){
     // else{ // WHEN COULD THIS HAPPEN--no children of an f?
     // 	current = right_piece;
     // }
+    this.render(true);
     return true;
 }
 
@@ -1016,6 +1016,7 @@ Guppy.prototype.insert_string = function(s){
     this.caret += s.length;
     this.checkpoint();
     this.check_for_symbol();
+    this.render(true);
 }
 
 Guppy.prototype.render = function(updated){
@@ -1041,7 +1042,6 @@ Guppy.prototype.activate = function(){
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
     //this.editor.style.backgroundColor='#fafafa';
-    console.log('asd');
     var r = new RegExp('(\\s|^)guppy_active(\\s|$)');
     if(this.editor.className.match(r,' guppy_inactive ')){
 	this.editor.className = this.editor.className.replace(r,' guppy_inactive ');
@@ -1472,20 +1472,21 @@ Guppy.symb_func = function(func_name){
 }
 
 Guppy.prototype.check_for_symbol = function(){
+    var instance = this;
     for(var s in Guppy.kb.symbols){
 	// Guppy.log(current);
-	if(Guppy.active_guppy.current.nodeName == 'e' && !(Guppy.is_blank(Guppy.active_guppy.current)) && Guppy.active_guppy.current.firstChild.nodeValue.search_at(Guppy.active_guppy.caret,s)){
+	if(instance.current.nodeName == 'e' && !(Guppy.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
 	    //Guppy.log("INSERTION OF ",s);
 	    //Guppy.log(current.nodeValue);
-	    var temp = Guppy.active_guppy.current.firstChild.nodeValue;
-	    var temp_caret = Guppy.active_guppy.caret;
-	    Guppy.active_guppy.current.firstChild.nodeValue = Guppy.active_guppy.current.firstChild.nodeValue.slice(0,Guppy.active_guppy.caret-s.length)+Guppy.active_guppy.current.firstChild.nodeValue.slice(Guppy.active_guppy.caret);
+	    var temp = instance.current.firstChild.nodeValue;
+	    var temp_caret = instance.caret;
+	    instance.current.firstChild.nodeValue = instance.current.firstChild.nodeValue.slice(0,instance.caret-s.length)+instance.current.firstChild.nodeValue.slice(instance.caret);
 	    //Guppy.log(current.nodeValue);
-	    Guppy.active_guppy.caret -= s.length;
-	    var success = Guppy.active_guppy.insert_symbol(s);
+	    instance.caret -= s.length;
+	    var success = instance.insert_symbol(s);
 	    if(!success){
-		Guppy.active_guppy.current.firstChild.nodeValue = temp;
-		Guppy.active_guppy.caret = temp_caret;
+		instance.current.firstChild.nodeValue = temp;
+		instance.caret = temp_caret;
 	    }
 	    break;
 	}
@@ -1552,11 +1553,29 @@ for(var i = 48; i <= 57; i++)
 Guppy.register_keyboard_handlers = function(){
     Mousetrap.addKeycodes({173: '-'}); // Firefox's special minus (needed for _ = sub binding)
     for(var i in Guppy.kb.k_chars)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));  
+    	Mousetrap.bind(i,function(i){ return function(){
+	    if(!Guppy.active_guppy) return true;
+	    Guppy.active_guppy.temp_cursor.node = null;
+	    Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]);
+	    //Guppy.active_guppy.render(true);
+	    return false;
+	}}(i));  
     for(var i in Guppy.kb.k_syms)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(true); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){
+	    if(!Guppy.active_guppy) return true;
+	    Guppy.active_guppy.temp_cursor.node = null;
+	    Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]);
+	    //Guppy.active_guppy.render(true);
+	    return false;
+	}}(i));
     for(var i in Guppy.kb.k_controls)
-    	Mousetrap.bind(i,function(i){ return function(){ if(!Guppy.active_guppy) return true; Guppy.active_guppy[Guppy.kb.k_controls[i]](); Guppy.active_guppy.temp_cursor.node = null; Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0); return false; }}(i));
+    	Mousetrap.bind(i,function(i){ return function(){
+	    if(!Guppy.active_guppy) return true;
+	    Guppy.active_guppy[Guppy.kb.k_controls[i]]();
+	    Guppy.active_guppy.temp_cursor.node = null;
+	    Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0);
+	    return false;
+	}}(i));
     
 }
 
