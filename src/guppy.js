@@ -584,6 +584,7 @@ Guppy.prototype.render_node = function(n,t){
 	output = Guppy.xsltify(t, this.base, true);
 	this.post_render_cleanup(this.base.documentElement);
 	//console.log("OUT",output);
+	output = output.replace(new RegExp('&amp;','g'), '&');
 	return output;
     }
     else{
