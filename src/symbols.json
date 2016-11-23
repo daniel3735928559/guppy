@@ -205,7 +205,19 @@
 	 "down":[3,4,3,4],
 	 "name":["tl","tr","bl","br"]}
     },
-    
+
+    "root":
+    {"output":{
+        "latex":"\\sqrt[{$1}]{{$2}}",
+	"text":"nroot({$1},{$2})"},
+     "current":0,
+     "type":"root",
+     "attrs":{
+	 "up":[1,1],
+	 "down":[2,2],
+	 "name":["index","radicand"]}
+    },
+        
     "cohom":
     {"output":{
         "latex":"H^{{$1}}\\left({$2}\\right)",
