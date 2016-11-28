@@ -14,10 +14,14 @@ $('document').ready(function() {
 
     Guppy.guppy_init("src/transform.xsl", "src/symbols.json");
     var g1 = new Guppy("guppy1", {
+	'debug': 'yes',
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() {
             createText('text');
+        },
+        'ready_callback': function() {
+            Guppy.get_symbols('src/extra_symbols.json');
         }
     });
 });
