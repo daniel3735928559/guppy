@@ -38,7 +38,8 @@ The primary useful items in the Guppy object are:
 * `Guppy.guppy_init(xsl_path, symbols_path)`: `xsl_path` is the path
   to `src/transform.xsl`, `symbols_path` is the path to
   `src/symbols.json`.  This function should only be called once per
-  page.
+  page.  If `xsl_path` is `null`, then Guppy will default to a
+  non-XSLT rendering method.
 
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
   or `"text"`, and the function will return (respectively) the XML,
