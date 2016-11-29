@@ -98,16 +98,18 @@ Guppy.guppy_init = function(xslpath, sympath){
 	}
 	Guppy.ready = true;
     }
-    Guppy.get_latexify(xslpath, function(){
-	Guppy.get_symbols(sympath, function(){
-	    if(document.readyState == "complete")
-		all_ready();
-	    else
-		document.addEventListener("DOMContentLoaded", all_ready, false);
-	});
-    });
+    var greek_syms = ["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"];
+    var raw_syms = ["leq","geq"];
+
+    for(var i = 0; i < greek_syms.length; i++){
+	Guppy.symb_raw(greek_syms[i],"{\\"+greek_syms[i]+"}"," $"+greek_syms[i]+" ");
+    }
+    
+    for(var i = 0; i < raw_syms.length; i++){
+	Guppy.symb_raw(raw_syms[i],"{\\"+raw_syms[i]+"}"," "+raw_syms[i]+" ");
+    }
+    
     Guppy.symb_raw("*","\\cdot ","*");
-    Guppy.symb_raw("pi","{\\pi}"," PI ");
     Guppy.symb_func("sin");
     Guppy.symb_func("cos");
     Guppy.symb_func("tan");
@@ -117,6 +119,14 @@ Guppy.guppy_init = function(xslpath, sympath){
     Guppy.symb_func("log");
     Guppy.symb_func("ln");
 
+    Guppy.get_latexify(xslpath, function(){
+	Guppy.get_symbols(sympath, function(){
+	    if(document.readyState == "complete")
+		all_ready();
+	    else
+		document.addEventListener("DOMContentLoaded", all_ready, false);
+	});
+    });
 }
 
 Guppy.prototype.get_content = function(t){
