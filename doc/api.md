@@ -41,6 +41,15 @@ The primary useful items in the Guppy object are:
   page.  If `xsl_path` is `null`, then Guppy will default to a
   non-XSLT rendering method.
 
+* `Guppy.get_symbols(symbols_path, callback)`: `symbols_path` is the
+  path to a JSON file of further symbols that should be accepted by
+  Guppy.  This function should only be called once Guppy is
+  initialised (e.g. inside the `ready_callback` function passed to the
+  Guppy constructor).  Any symbols defined by this file with the same
+  name as symbols already defined will override those older
+  definitions.  Once the file is loaded, `callback` will be called if
+  it was passed.
+
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
   or `"text"`, and the function will return (respectively) the XML,
   LaTeX, or ASCII representation of the instance's content.
