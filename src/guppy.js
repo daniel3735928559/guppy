@@ -1586,9 +1586,9 @@ Guppy.kb.is_mouse_down = false;
 Guppy.kb.CARET = "\\cursor[-0.2ex]{0.7em}"
 Guppy.kb.TEMP_SMALL_CARET = "\\cursor[0em]{0.6em}"
 Guppy.kb.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"
-Guppy.kb.SMALL_CARET = "\\cursor[0em]{0.6em}"
+Guppy.kb.SMALL_CARET = "\\cursor[-0.05em]{0.5em}"
 Guppy.kb.SEL_CARET = "\\cursor[-0.2ex]{0.7em}"
-Guppy.kb.SMALL_SEL_CARET = "\\cursor[0em]{0.6em}"
+Guppy.kb.SMALL_SEL_CARET = "\\cursor[-0.05em]{0.5em}"
 Guppy.kb.SEL_COLOR = "red"
 
 Guppy.kb.symbols = {};
