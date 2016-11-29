@@ -359,6 +359,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
     //console.log("searching");
     // check if we go to first or last element
     var bb = g.editor.getElementsByClassName("katex")[0];
+    if(!bb) return;
     var rect = bb.getBoundingClientRect();
     if(current_node){
 	var current_path = g.path_to(current_node);
@@ -448,6 +449,7 @@ Guppy.prototype.select_to = function(x,y){
 	sel_caret = this.sel_start.caret;
     }
     var loc = Guppy.get_loc(x,y,sel_cursor,sel_caret);
+    if(!loc) return;
     //console.log("MLOC",loc,sel_cursor,sel_caret);
     if(loc.current == sel_cursor && loc.caret == sel_caret){
 	this.caret = loc.caret
@@ -489,6 +491,7 @@ Guppy.mouse_down = function(e){
 	    }
 	    else {
 		var loc = Guppy.get_loc(e.clientX,e.clientY);
+		if(!loc) return;
 		g.current = loc.current;
 		g.caret = loc.caret;
 		g.sel_status = Guppy.SEL_NONE;
@@ -516,6 +519,7 @@ Guppy.mouse_move = function(e){
 	}
 	else{
 	    var loc = Guppy.get_loc(e.clientX,e.clientY);
+	    if(!loc) return;
 	    g.temp_cursor = {"node":loc.current,"caret":loc.caret};
 	}
 	g.render(g.is_changed());
