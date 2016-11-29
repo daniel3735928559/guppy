@@ -12,9 +12,15 @@ $('document').ready(function() {
         $('#stuff')[0].innerHTML = '';
     });
 
-    Guppy.guppy_init("src/transform.xsl", "src/symbols.json");
+    Guppy.guppy_init(
+	//*
+	  null,
+	  /*/
+	  "src/transform.xsl",
+	//*/
+	"src/symbols.json");
     var g1 = new Guppy("guppy1", {
-	'debug': 'yes',
+	//"debug":"yes",
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() {

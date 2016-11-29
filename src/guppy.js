@@ -173,6 +173,14 @@ Guppy.get_symbols = function(symbols_path, callback){
 }
 
 Guppy.get_latexify = function(xsl_path, callback){
+    if(xsl_path == null){
+	Guppy.noXSLT = true;
+	if(callback) callback();
+	return;
+    }
+    
+    Guppy.noXSLT = false;
+
     var req = new XMLHttpRequest();
     req.onload = function(){
 	var latexify = this.responseText;
@@ -186,16 +194,102 @@ Guppy.get_latexify = function(xsl_path, callback){
 }
 
 Guppy.xsltify = function(t, base, r){
-    if(Guppy.xsltProcessor == null){
+    if(Guppy.xsltProcessor == null && !(Guppy.noXSLT)){
 	Guppy.log("not ready");
 	return "";
+    }
+    if(Guppy.noXSLT){
+	ans = Guppy.manual_render(base,t,base.documentElement,r);
+	return ans;
     }
     Guppy.log("BB",base);
     Guppy.xsltProcessor.setParameter("","render",r ? "yes" : "no");
     Guppy.xsltProcessor.setParameter("","type",t);
+    Guppy.log("rendering",(new XMLSerializer()).serializeToString(base));
     var tex_doc = Guppy.xsltProcessor.transformToDocument(base);
+    Guppy.log("rendered",tex_doc);
     Guppy.log(tex_doc);
     return (new XMLSerializer()).serializeToString(tex_doc).replace(/\<.?m\>/g,"");
+}
+
+Guppy.bracket_xpath = "(count(./*) != 1 and not \
+		          ( \
+                            count(./e)=2 and \
+			    count(./f)=1 and \
+			    count(./e[string-length(text())=0])=2 and \
+			    ( \
+			      (\
+                                count(./f/c)=1 and\
+			        count(./f/c[@is_bracket='yes'])=1\
+			      )\
+			      or\
+			      (\
+			        f/@c='yes' and \
+				count(./e[@current='yes'])=0 and \
+				count(./e[@temp='yes'])=0 \
+			      )\
+			    )\
+			  )\
+			)  \
+			or\
+		        (\
+			  count(./*) = 1 and \
+			  string-length(./e/text()) != 1 and \
+			  number(./e/text()) != ./e/text() \
+			) \
+			or \
+		        ( \
+			  count(./*) = 1 and \
+			  ./e/@current = 'yes' \
+			) \
+			or \
+		        ( \
+			  count(./*) = 1 and \
+			  ./e/@temp = 'yes' \
+			)"
+
+Guppy.manual_render = function(base,t,n,r){
+    var ans = "";
+    Guppy.log("NN",n);
+    if(n.nodeName == "e"){
+	if(t == "latex" && r){
+	    ans = n.getAttribute("render");
+	}
+	else{
+	    ans = n.firstChild.textContent;
+	}
+    }
+    else if(n.nodeName == "f"){
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+	    if(nn.nodeName == "b" && nn.getAttribute("p") == t){
+		ans = Guppy.manual_render(base,t,nn,r);
+		break;
+	    }
+	}
+    }
+    else if(n.nodeName == "b"){
+	var cs = []
+	var i = 1;
+	var par = n.parentNode;
+	for(var nn = par.firstChild; nn != null; nn = nn.nextSibling)
+	    if(nn.nodeName == "c") cs[i++] = Guppy.manual_render(base,t,nn,r);
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+	    if(nn.nodeType == 3) ans += nn.textContent;
+	    else if(nn.nodeType == 1) ans += cs[parseInt(nn.getAttribute("ref"))];
+	}
+    }
+    else if(n.nodeName == "c" || n.nodeName == "m"){
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling)
+	    ans += Guppy.manual_render(base,t,nn,r);
+	if(t == "latex" &&
+           n.getAttribute("bracket") == "yes" &&
+	   base.evaluate(Guppy.bracket_xpath, n, null,
+			 XPathResult.BOOLEAN_TYPE, null).booleanValue){ 
+	    ans = "\\left("+ans+"\\right)";
+	}
+    }
+    Guppy.log("ANS: ",ans)
+    return ans;
 }
 
 Guppy.prototype.path_to = function(n){
@@ -750,11 +844,12 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     var first_ref = -1;
     var refs_count = 0;
     var first;
+
     // Make the b nodes for rendering each output    
     for(var t in s["output"]){
 	var b = this.base.createElement("b");
 	b.setAttribute("p",t);
-		
+
 	var out = s["output"][t];
 	if(typeof out == 'string'){
 	    out = out.split(/(\{\$[0-9]+\})/g);
