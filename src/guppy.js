@@ -1409,6 +1409,27 @@ Guppy.prototype.delete_from_e = function(){
     return true;
 }
 
+Guppy.prototype.delete_forward_from_e = function(){
+    // return false if we deleted something, and true otherwise.
+    if(this.caret < this.current.firstChild.nodeValue.length){
+	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splicen(this.caret,"",1);
+	Guppy.log("del","|"+this.current.firstChild.nodeValue+"|",this.current.firstChild.nodeValue.length);
+    }
+    else{
+	//We're at the end
+	if(this.current.nextSibling != null){
+	    // The next node is an f node.  Delete it.
+	    this.current = this.current.nextSibling;
+	    this.delete_from_f();
+	}
+	else if(this.current.parentNode.nodeName == 'c'){
+	    // We're in a c child of an f node.  Do nothing
+	    return false;
+	}
+    }
+    return true;
+}
+
 Guppy.prototype.backspace = function(){
     if(this.sel_status != Guppy.SEL_NONE){
 	this.sel_delete();
@@ -1416,6 +1437,17 @@ Guppy.prototype.backspace = function(){
 	this.checkpoint();
     }
     else if(this.delete_from_e()){
+	this.checkpoint();
+    }
+}
+
+Guppy.prototype.delete_key = function(){
+    if(this.sel_status != Guppy.SEL_NONE){
+	this.sel_delete();
+	this.sel_status = Guppy.SEL_NONE;
+	this.checkpoint();
+    }
+    else if(this.delete_forward_from_e()){
 	this.checkpoint();
     }
 }
@@ -1637,6 +1669,7 @@ Guppy.kb.k_controls = {
     "home":"home",
     "end":"end",
     "backspace":"backspace",
+    "del":"delete_key",
     "mod+c":"sel_copy",
     "mod+x":"sel_cut",
     "mod+v":"sel_paste",
