@@ -12,22 +12,13 @@ $('document').ready(function() {
         $('#stuff')[0].innerHTML = '';
     });
 
-    Guppy.guppy_init(
-	//*
-	  null,
-	  /*/
-	  "src/transform.xsl",
-	//*/
-	"src/symbols.json");
+    Guppy.get_symbols(["builtins","sym/symbols.json","sym/extra_symbols.json"]);
     var g1 = new Guppy("guppy1", {
 	//"debug":"yes",
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() {
             createText('text');
-        },
-        'ready_callback': function() {
-            Guppy.get_symbols('src/extra_symbols.json');
         }
     });
 });
