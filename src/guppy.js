@@ -1,3 +1,6 @@
+Mousetrap = require('mousetrap');
+katex = require('../lib/katex/katex-modified.min.js');
+
 String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this.slice(idx)); };
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
 String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.length,idx) == s); };
@@ -1729,3 +1732,5 @@ Guppy.log = function(){
 	console.log(arguments[i]);
     }
 }
+
+module.exports = Guppy;
