@@ -27,7 +27,7 @@ A stripped-down version of the demo page would look like:
     <div id="guppy_div" style="width:400px;height:100px;"></div>
     
     <script>
-        Guppy.guppy_init(null,"src/symbols.json");
+        Guppy.get_symbols(["builtins","sym/symbols.json"]);
         new Guppy("guppy_div");
     </script>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
@@ -39,14 +39,17 @@ A stripped-down version of the demo page would look like:
 
 ## Installation and deployment
 
-* Download the `build` folder.
+* Download the `build` and `sym` folders.
 
 * Include the `build/guppy.min.js` and `build/guppy.min.css` files in
   your page.
 
-* Pass the paths to `src/transform.xsl` (or, optionally, `null`) and
-  `src/symbols.json` to `Guppy.guppy_init` as in the example above.
-  This only needs to happen once per page.
+* Pass a list of paths to various symbol definition files (several of
+  which are in `sym/`) as well as the string `"builtins"` (if you want
+  the built-in symbols, such as Greek letters) to `Guppy.get_symbols`
+  as in the example above.  This only needs to happen once per page.
+  Symbol names from files that appear later in the list will override
+  symbol names from files earlier in the list.
 
 * For each div that you want turned into a Guppy instance, call `new
   Guppy()` passing in as the first argument either the Element object

@@ -35,20 +35,18 @@ The primary useful items in the Guppy object are:
   This function should be called for each div that you want to turn
   into a Guppy instance.
 
-* `Guppy.guppy_init(xsl_path, symbols_path)`: `xsl_path` is the path
-  to `src/transform.xsl`, `symbols_path` is the path to
-  `src/symbols.json`.  This function should only be called once per
-  page.  If `xsl_path` is `null`, then Guppy will default to a
-  non-XSLT rendering method.
+* `Guppy.get_symbols(symbol_files, callback)`: `symbol_files` is a
+  list of paths to JSON files of further symbols that should be
+  accepted by Guppy.  The special string `"builtins"` may also be
+  included in the list to get Guppy's built-in symbol definitions
+  (Greek letters, etc.).
 
-* `Guppy.get_symbols(symbols_path, callback)`: `symbols_path` is the
-  path to a JSON file of further symbols that should be accepted by
-  Guppy.  This function should only be called once Guppy is
-  initialised (e.g. inside the `ready_callback` function passed to the
-  Guppy constructor).  Any symbols defined by this file with the same
-  name as symbols already defined will override those older
-  definitions.  Once the file is loaded, `callback` will be called if
-  it was passed.
+  This function should only be called once per page.
+
+  If the same symbol is defined in multiple files in the list, the
+  definition that is used is from whichever file appears later in the
+  `symbol_files` list. Once all files are loaded, `callback` will be
+  called if it was passed.
 
 * `Guppy.prototype.get_content(type)`: `type` can be `"xml"`, `"latex"`,
   or `"text"`, and the function will return (respectively) the XML,
