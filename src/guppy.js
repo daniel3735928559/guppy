@@ -81,8 +81,6 @@ var Guppy = function(guppy_div, properties){
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
-    this.editor.style.boxShadow = "1px 1px 1px 0 lightgray inset";
-    this.editor.style.cursor = "text";
     this.deactivate();
     this.recompute_locations_paths();
 }
@@ -1130,7 +1128,6 @@ Guppy.prototype.activate = function(){
     Guppy.active_guppy = this;
     this.editor_active = true;
     this.editor.className = this.editor.className.replace(new RegExp('(\\s|^)guppy_inactive(\\s|$)'),' guppy_active ');
-    //this.editor.style.border='1px solid gray';
     this.editor.focus();
     if(this.ready){
 	this.render();
@@ -1139,7 +1136,6 @@ Guppy.prototype.activate = function(){
 
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
-    //this.editor.style.backgroundColor='#fafafa';
     var r = new RegExp('(\\s|^)guppy_active(\\s|$)');
     if(this.editor.className.match(r,' guppy_inactive ')){
 	this.editor.className = this.editor.className.replace(r,' guppy_inactive ');
@@ -1147,7 +1143,6 @@ Guppy.prototype.deactivate = function(){
     else{
 	this.editor.className += ' guppy_inactive ';
     }
-    //this.editor.style.border='1px solid black';
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;

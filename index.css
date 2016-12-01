@@ -11,6 +11,8 @@ body {
     border: 2px solid black;
     height: 100px;
     padding: 10px;
+    box-shadow: 1px 1px 1px 0 lightgray inset;
+    cursor: text;
 }
 
 #result {
