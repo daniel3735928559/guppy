@@ -141,7 +141,7 @@ Guppy.get_symbols = function(symbols, callback){
     }
     var get_builtins = function(callback){
 	var greek_syms = ["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"];
-	var raw_syms = ["leq","geq"];
+	var raw_syms = ["leq","geq","infty"];
 	var func_syms = ["sin","cos","tan","sec","csc","cot","log","ln"]
 	
 	for(var i = 0; i < greek_syms.length; i++){
