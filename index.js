@@ -19,7 +19,7 @@ $('document').ready(function() {
         'left_callback': function() {},
         'done_callback': function() { createText('text'); },
         'blank_caret': "[?]",
-        'blank_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
+        'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
     });
 });
 
