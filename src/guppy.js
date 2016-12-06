@@ -28,6 +28,7 @@ var Guppy = function(guppy_div, properties){
     
     this.editor_active = true;
     this.debug = 0;
+    this.blank_content = "\\color{red}{[?]}"
     this.editor = guppy_div;
     this.type_blacklist = [];
     this.done_callback = this;
@@ -39,28 +40,12 @@ var Guppy = function(guppy_div, properties){
     else {
 	this.base = (new window.DOMParser()).parseFromString("<m><e></e></m>", "text/xml");
     }
-    
-    if('blacklist' in properties)
-	this.type_blacklist = properties.blacklist;
 
-    if('done_callback' in properties)
-	this.done_callback = properties.done_callback;
-    
-    if('right_callback' in properties)
-	this.right_callback = properties.right_callback;
-    
-    if('left_callback' in properties)
-	this.left_callback = properties.left_callback;
-    
-    if('ready_callback' in properties)
-	this.ready_callback = properties.ready_callback;
-
-    if('blank_caret' in properties)
-	this.blank_caret = properties.blank_caret;
-    
-    if('debug' in properties)
-	this.debug = properties.debug;
-
+    var props = ['blacklist','done_callback','right_callback','left_callback','ready_callback','blank_caret','debug','blank_content']
+    for(var i = 0; i < props.length; i++){
+	var p = props[i];
+	if(p in properties) this[p] = properties[p];
+    }
     
     Guppy.instances[guppy_div.id] = this;
     
@@ -1101,6 +1086,10 @@ Guppy.prototype.make_e = function(text){
     return new_node;
 }
 
+Guppy.prototype.is_blank = function(){
+    return this.base.documentElement.firstChild == this.base.documentElement.lastChild && this.base.documentElement.firstChild.firstChild.textContent == "";
+}
+
 Guppy.prototype.insert_string = function(s){
     if(this.sel_status != Guppy.SEL_NONE){
 	this.sel_delete();
@@ -1115,6 +1104,10 @@ Guppy.prototype.insert_string = function(s){
 }
 
 Guppy.prototype.render = function(updated){
+    if(!this.editor_active && this.is_blank()){
+	katex.render(this.blank_content,this.editor);
+	return;
+    }
     var tex = this.render_node(this.base,"latex");
     Guppy.log(3,this.caret,"TEX", tex);
     katex.render(tex,this.editor);

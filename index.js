@@ -18,7 +18,8 @@ $('document').ready(function() {
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() { createText('text'); },
-        'blank_caret': "[?]"
+        'blank_caret': "[?]",
+        'blank_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
     });
 });
 
