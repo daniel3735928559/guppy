@@ -57,6 +57,20 @@ editor) and whose values are dictionaries with the following keys:
   * `down`: Which component to jump to when the down arrow key is
     pressed (or 0 for the default behaviour).
   
+  * `delete`: The index of which component should be used to replace
+    the entire symbol if the backspace key is pressed when the cursor
+    is at the start of this component.  If 0 or absent, then the
+    default backspace behaviour will be used (namely, that it behaves
+    like the left arrow when at the start of any component except the
+    first, where it deletes the entire symbol).  For example, in an
+    exponent such as `x^2`, we want a backspace from just before the 2
+    to delete just the exponent, leaving the base.  That is, we want
+    component number 1 to be left.  However, if backspace is used in
+    the base, we want the default behaviour.  So we use
+    `"delete":[0,1]` to get the default behaviour in the first
+    component, and deleting the second component to leave us with the
+    first only.  
+
   * `bracket`: If `bracket` is `"yes"`, then this component will be
     surrounded in parentheses if it contains more than one character
     in it.  For example, the first component of an exponent has
