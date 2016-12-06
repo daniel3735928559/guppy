@@ -29,9 +29,20 @@ The primary useful items in the Guppy object are:
   * `done_callback`: A function to be called when Ctrl-Enter is
     pressed in the instance.
 
-  * `debug`: A boolean saying whether guppy should log debug data to
-    the console.  Defaults to `false`.
-
+  * `debug`: Specifies what debug messages you want logged.  Can be
+    any of `Guppy.logging.NONE`, `Guppy.logging.ERROR`,
+    `Guppy.logging.WARN`, `Guppy.logging.INFO`, `Guppy.logging.DEBUG`.
+    A later value implies all earlier values.  Defaults to
+    `Guppy.logging.NONE`.
+    
+  * `blank_caret`: A LaTeX string that specifies what the caret should
+    look like when in a blank spot.  If left unspecified, defaults to
+    the normal vertical bar caret.
+    
+  * `empty_content`: A LaTeX string that will be displayed when the
+    editor is both inactive and blank.  Defaults to
+    `\color{red}{[?]}`.
+    
   This function should be called for each div that you want to turn
   into a Guppy instance.
 
