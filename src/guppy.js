@@ -54,6 +54,9 @@ var Guppy = function(guppy_div, properties){
     
     if('ready_callback' in properties)
 	this.ready_callback = properties.ready_callback;
+
+    if('blank_caret' in properties)
+	this.blank_caret = properties.blank_caret;
     
     if('debug' in properties)
 	this.debug_mode = properties.debug=="yes" ? true : false;
@@ -575,8 +578,10 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	if(text.length == 0){
 	    if(text_node) caret_text = "[]";
 	    else if(n.parentNode.childElementCount == 1){
-		if(this.current == n)
-		    ans = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		if(this.current == n){
+		    var blank_caret = this.blank_caret || (this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET);
+		    ans = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
+		}
 		else if(this.temp_cursor.node == n)
 		    ans = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		else

@@ -17,9 +17,8 @@ $('document').ready(function() {
 	//"debug":"yes",
         'right_callback': function() {},
         'left_callback': function() {},
-        'done_callback': function() {
-            createText('text');
-        }
+        'done_callback': function() { createText('text'); },
+        'blank_caret': "[?]"
     });
 });
 
