@@ -14,7 +14,7 @@ $('document').ready(function() {
 
     Guppy.get_symbols(["builtins","sym/symbols.json","sym/extra_symbols.json"]);
     var g1 = new Guppy("guppy1", {
-	//"debug":"yes",
+	//'debug':10,
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() { createText('text'); },
