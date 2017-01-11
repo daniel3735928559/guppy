@@ -256,11 +256,33 @@ Guppy.manual_render = function(base,t,n,r){
 	var i = 1;
 	var par = n.parentNode;
 	for(var nn = par.firstChild; nn != null; nn = nn.nextSibling)
-	    if(nn.nodeName == "c") cs[i++] = Guppy.manual_render(base,t,nn,r);
+	    if(nn.nodeName == "c" || nn.nodeName == "l") cs[i++] = Guppy.manual_render(base,t,nn,r);
 	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
 	    if(nn.nodeType == 3) ans += nn.textContent;
-	    else if(nn.nodeType == 1) ans += cs[parseInt(nn.getAttribute("ref"))];
+	    else if(nn.nodeType == 1){
+		if(nn.hasAttribute("d")){
+		    var dim = parseInt(nn.getAttribute("d"));
+		    console.log(nn);
+		    var joiner = function(d,l){
+			console.log("DL",d,l);
+			if(d > 1) for(var k = 0; k < l.length; k++) l[k] = joiner(d-1,l[k]);
+			return l.join(nn.getAttribute('sep'+d));
+		    }
+		    ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]);
+		}
+		else ans += cs[parseInt(nn.getAttribute("ref"))];
+	    }
 	}
+	console.log(ans);
+    }
+    else if(n.nodeName == "l"){
+	ans = [];
+	var i = 0;
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+	    console.log(nn);
+	    ans[i++] = Guppy.manual_render(base,t,nn,r);
+	}
+	console.log("CS",ans);
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
 	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling)
@@ -273,6 +295,7 @@ Guppy.manual_render = function(base,t,n,r){
 	}
     }
     Guppy.log(4,"rendered",ans)
+    //console.log("AAA",n,ans);
     return ans;
 }
 
@@ -523,11 +546,12 @@ Guppy.prototype.add_paths = function(n,path){
     }
     else{
 	//Guppy.log(3,"NOT DONE");
-	var es = 1, fs = 1, cs = 1;
+	var es = 1, fs = 1, cs = 1, ls = 1;
 	for(var c = n.firstChild; c != null; c = c.nextSibling){
 	    //Guppy.log(3,"C",c)
 	    if(c.nodeName == "c"){ this.add_paths(c, path+"_c"+cs); cs++; }
 	    else if(c.nodeName == "f"){ this.add_paths(c, path+"_f"+fs); fs++; }
+	    else if(c.nodeName == "l"){ this.add_paths(c, path+"_l"+ls); ls++; }
 	    else if(c.nodeName == "e"){ this.add_paths(c, path+"_e"+es); es++; }
 	}
     }
@@ -631,7 +655,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
     }
     else{
 	for(var c = n.firstChild; c != null; c = c.nextSibling){
-	    if(c.nodeName == "c" || c.nodeName == "f" || c.nodeName == "e"){ this.add_classes_cursors(c); }
+	    if(c.nodeName == "c" || c.nodeName == "l" || c.nodeName == "f" || c.nodeName == "e"){ this.add_classes_cursors(c); }
 	}
     }
 }
@@ -699,13 +723,9 @@ Guppy.prototype.prev_sibling = function(n){
 
 Guppy.prototype.down_from_f = function(){
     var nn = this.current.firstChild;
-    while(nn != null && nn.nodeName != 'c') nn = nn.nextSibling;
+    while(nn != null && nn.nodeName != 'c' && nn.nodeName != 'l') nn = nn.nextSibling;
     if(nn != null){
-	//Sanity check:
-	if(nn.nodeName != 'c' || nn.firstChild.nodeName != 'e'){
-	    this.problem('dff');
-	    return;
-	}
+	while(nn.nodeName == 'l') nn = nn.firstChild;
 	this.current = nn.firstChild;
     }
 }
@@ -718,6 +738,8 @@ Guppy.prototype.down_from_f_to_blank = function(){
     }
     if(nn != null){
 	//Sanity check:
+	
+	while(nn.nodeName == 'l') nn = nn.firstChild;
 	if(nn.nodeName != 'c' || nn.firstChild.nodeName != 'e'){
 	    this.problem('dfftb');
 	    return;
@@ -755,12 +777,16 @@ Guppy.prototype.next_node_from_e = function(n){
 	while(nc != null){
 	    if(nc.nodeName == 'c')
 		return nc.firstChild;
+	    else if(nc.nodeName == 'l'){
+		while(nc.nodeName == 'l') nc = nc.firstChild;
+		return nc.firstChild;
+	    }
 	    nc = nc.nextSibling
 	}
 	return n.nextSibling.nextSibling;
     }
     // If not, then we're either at the top level or our parent is a c
-    // child of an f node, at which point we should look to see our
+    // child of an f or l node, at which point we should look to see our
     // parent has a next sibling c node: 
     if(n.parentNode.nextSibling != null && n.parentNode.nextSibling.nodeName == 'c'){
 	var nn = n.parentNode.nextSibling.firstChild;
@@ -828,6 +854,7 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
     
     var first_ref = -1;
     var refs_count = 0;
+    var lists = {}
     var first;
 
     // Make the b nodes for rendering each output    
@@ -837,10 +864,20 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 
 	var out = s["output"][t];
 	if(typeof out == 'string'){
-	    out = out.split(/(\{\$[0-9]+\})/g);
+	    out = out.split(/(\{\$[0-9]+(?:\{[^}]\})*\})/g);
 	    for(var i = 0; i < out.length; i++){
-		m = out[i].match(/^\{\$([0-9]+)\}$/);
-		if(m) out[i] = parseInt(m[1]);
+		m = out[i].match(/^\{\$([0-9]+)((?:\{[^}]\})*)\}$/);
+		if(m){
+		    console.log("O",out);
+		    out[i] = {'ref':parseInt(m[1])};
+		    if(m[2].length > 0){
+			mm = m[2].match(/\{[^}]*\}/g);
+			out[i]['d'] = mm.length;
+			for(var j = 0; j < mm.length; j++){
+			    out[i]['sep'+j] = mm[j].substring(1,mm[j].length-1);
+			}
+		    }
+		}
 	    }
 	}
 	for(var i = 0; i < out.length; i++){
@@ -849,10 +886,14 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 		b.appendChild(nt);
 	    }
 	    else{
+		console.log(out[i]);
 		var nt = this.base.createElement("r");
-		nt.setAttribute("ref",out[i]);
+		for(var attr in out[i]){
+		    nt.setAttribute(attr,out[i][attr]);
+		}
 		if(t == 'latex') {
-		    if(first_ref == -1) first_ref = out[i];
+		    if(first_ref == -1) first_ref = out[i]['ref'];
+		    if('d' in out[i]) lists[refs_count] = out[i]['d']
 		    refs_count++;
 		}
 		b.appendChild(nt);
@@ -860,7 +901,7 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	}
 	f.appendChild(b);
     }
-
+    console.log("L",lists);
     // Now make the c nodes for storing the content
     for(var i = 0; i < refs_count; i++){
 	var nc = this.base.createElement("c");
@@ -875,7 +916,16 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	if(i+1 == first_ref) first = nc.lastChild;
 	for(var a in s['attrs'])
 	    if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
-	f.appendChild(nc);
+	if(i in lists){
+	    var nl = this.base.createElement("l");
+	    nl.setAttribute('d',lists[i]);
+	    for(var j = 0; j < lists[i]; j++){
+		nl.setAttribute('d'+j,"1");
+	    }
+	    nl.appendChild(nc);
+	    f.appendChild(nl);
+	}
+	else f.appendChild(nc);
     }
     Guppy.log(3,"FF",f);
     return {"f":f, "first":first};
@@ -887,11 +937,14 @@ Guppy.prototype.is_text = function(nn){
 
 Guppy.prototype.is_small = function(nn){
     var n = nn.parentNode;
-    while(n != null){
+    while(n != null && n.nodeName != 'm'){
+	console.log("IS",n);
 	if(n.getAttribute("size") == "s"){
 	    return true;
 	}
-	n = n.parentNode.parentNode;
+	n = n.parentNode
+	while(n != null && n.nodeName != 'c')
+	    n = n.parentNode;
     }
     return false;
 }
@@ -1097,6 +1150,7 @@ Guppy.prototype.insert_string = function(s){
 	this.sel_clear();
     }
     Guppy.log(3,"ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
+    console.log(3,"ASD",this.caret,this.current,this.current.firstChild.nodeValue,s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -1646,8 +1700,8 @@ Guppy.symb_raw = function(symb_name,latex_symb,text_symb){
 }
 
 Guppy.symb_func = function(func_name){
-    Guppy.kb.symbols[func_name] = {"output":{"latex":["\\"+func_name+"\\left(",1,"\\right)"],
-					     "text":[func_name+"(",1,")"]},
+    Guppy.kb.symbols[func_name] = {"output":{"latex":"\\"+func_name+"\\left({$1}\\right)",
+					     "text":func_name+"({$1})"},
 				   "type":func_name,
 				   "attrs":{
 				       "delete":[1]

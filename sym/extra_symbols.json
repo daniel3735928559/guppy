@@ -1,4 +1,12 @@
 {
+    "vec":
+    {"output":{
+        "latex":"\\left\\langle {$1{,}} \\right\\rangle",
+	"text":"vec({$1{,}})"},
+     "current":0,
+     "type":"vector"
+    },
+
     "mat2":
     {"output":{
         "latex":"\\left(\\begin{matrix}{$1} & {$2} \\\\{$3} & {$4}\\end{matrix}\\right)",
