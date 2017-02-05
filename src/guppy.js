@@ -1189,11 +1189,12 @@ Guppy.prototype.activate = function(){
 
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
-    var r = new RegExp('(\\s|^)guppy_active(\\s|$)');
-    if(this.editor.className.match(r,' guppy_inactive ')){
-	this.editor.className = this.editor.className.replace(r,' guppy_inactive ');
+    var r1 = new RegExp('(?:\\s|^)guppy_active(?:\\s|$)');
+    var r2 = new RegExp('(?:\\s|^)guppy_inactive(?:\\s|$)');
+    if(this.editor.className.match(r1)){
+	this.editor.className = this.editor.className.replace(r1,' guppy_inactive ');
     }
-    else{
+    else if(!this.editor.className.match(r2)){
 	this.editor.className += ' guppy_inactive ';
     }
     Guppy.kb.shift_down = false;
