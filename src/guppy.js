@@ -488,27 +488,22 @@ Guppy.mouse_down = function(e){
 	if(n.id in Guppy.instances){
 	    e.preventDefault();
 	    for(var i in Guppy.instances){
-		Guppy.instances[i].deactivate();
-	    }
-	    var g = Guppy.active_guppy;
-	    if(g){
-		if(e.shiftKey){
-		    g.select_to(e.clientX, e.clientY, true);
-		}
-		else {
-		    var loc = Guppy.get_loc(e.clientX,e.clientY);
-		    if(!loc) return;
-		g.current = loc.current;
-		    g.caret = loc.caret;
-		    g.sel_status = Guppy.SEL_NONE;
-		}
-		g.render(true);
-	    }
-	    else{
+		if(i != n.id) Guppy.instances[i].deactivate();
 		Guppy.active_guppy = Guppy.instances[n.id];
 		Guppy.active_guppy.activate();
-		Guppy.active_guppy.render(true);
 	    }
+	    var g = Guppy.active_guppy;	    
+	    if(e.shiftKey){
+		g.select_to(e.clientX, e.clientY, true);
+	    }
+	    else {
+		var loc = Guppy.get_loc(e.clientX,e.clientY);
+		if(!loc) return;
+		g.current = loc.current;
+		g.caret = loc.caret;
+		g.sel_status = Guppy.SEL_NONE;
+	    }
+	    g.render(true);
 	    return;
 	}
 	n = n.parentNode;
@@ -1185,7 +1180,7 @@ Guppy.prototype.activate = function(){
     this.editor.className = this.editor.className.replace(new RegExp('(\\s|^)guppy_inactive(\\s|$)'),' guppy_active ');
     this.editor.focus();
     if(this.ready){
-	this.render();
+	this.render(true);
     }
 }
 
