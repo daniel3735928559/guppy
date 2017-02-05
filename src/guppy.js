@@ -487,23 +487,26 @@ Guppy.mouse_down = function(e){
     else while(n != null){
 	if(n.id in Guppy.instances){
 	    e.preventDefault();
+	    var prev_active = Guppy.active_guppy;
 	    for(var i in Guppy.instances){
 		if(i != n.id) Guppy.instances[i].deactivate();
 		Guppy.active_guppy = Guppy.instances[n.id];
 		Guppy.active_guppy.activate();
 	    }
-	    var g = Guppy.active_guppy;	    
-	    if(e.shiftKey){
-		g.select_to(e.clientX, e.clientY, true);
+	    var g = Guppy.active_guppy;
+	    if(prev_active == g){
+		if(e.shiftKey){
+		    g.select_to(e.clientX, e.clientY, true);
+		}
+		else {
+		    var loc = Guppy.get_loc(e.clientX,e.clientY);
+		    if(!loc) return;
+		    g.current = loc.current;
+		    g.caret = loc.caret;
+		    g.sel_status = Guppy.SEL_NONE;
+		}
+		g.render(true);
 	    }
-	    else {
-		var loc = Guppy.get_loc(e.clientX,e.clientY);
-		if(!loc) return;
-		g.current = loc.current;
-		g.caret = loc.caret;
-		g.sel_status = Guppy.SEL_NONE;
-	    }
-	    g.render(true);
 	    return;
 	}
 	n = n.parentNode;
