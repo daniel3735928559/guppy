@@ -130,7 +130,8 @@ Guppy.get_symbols = function(symbols, callback){
     var get_builtins = function(callback){
 	var greek_syms = ["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"];
 	var raw_syms = ["leq","geq","infty"];
-	var func_syms = ["sin","cos","tan","sec","csc","cot","log","ln"]
+	var func_syms = ["sin","cos","tan","sec","csc","cot","log","ln"];
+	var other_syms = {"less":["<","<"],"greater":[">",">"]};
 	
 	for(var i = 0; i < greek_syms.length; i++){
 	    Guppy.symb_raw(greek_syms[i],"{\\"+greek_syms[i]+"}"," $"+greek_syms[i]+" ");
@@ -142,6 +143,10 @@ Guppy.get_symbols = function(symbols, callback){
 	
 	for(var i = 0; i < func_syms.length; i++){
 	    Guppy.symb_func(func_syms[i]);
+	}
+	
+	for(var i in other_syms){
+	    Guppy.symb_raw(i, other_syms[i][0], other_syms[i][1]);
 	}
     
 	Guppy.symb_raw("*","\\cdot ","*");
@@ -1753,7 +1758,8 @@ Guppy.kb.k_syms = {
     "shift+6":"exp",
     "shift+8":"*",
     "shift+9":"paren",
-    "shift+,":"angle",
+    "shift+,":"less",
+    "shift+.":"greater",
     "shift+-":"sub",
     "shift+\\":"abs",
     "shift+up":"exp",
