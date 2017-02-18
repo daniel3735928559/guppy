@@ -494,6 +494,7 @@ Guppy.mouse_down = function(e){
 		Guppy.active_guppy.activate();
 	    }
 	    var g = Guppy.active_guppy;
+	    g.space_caret = 0;
 	    if(prev_active == g){
 		if(e.shiftKey){
 		    g.select_to(e.clientX, e.clientY, true);
