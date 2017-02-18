@@ -1327,6 +1327,15 @@ Guppy.prototype.sel_delete = function(){
 
 //Functions for handling navigation and editing commands: 
 
+Guppy.prototype.sel_all = function(){
+    this.home();
+    this.set_sel_start();
+    this.end();
+    this.set_sel_end();
+    if(this.sel_start.node != this.sel_end.node || this.sel_start.caret != this.sel_end.caret)
+	this.sel_status = Guppy.SEL_CURSOR_AT_END;
+}
+
 Guppy.prototype.sel_right = function(){
     if(this.sel_status == Guppy.SEL_NONE){
 	this.set_sel_start();
@@ -1773,12 +1782,17 @@ Guppy.kb.k_controls = {
     "up":"up",
     "down":"down",
     "right":"right",
-    "space":"spacebar",
     "left":"left",
+    "alt+k":"up",
+    "alt+j":"down",
+    "alt+l":"right",
+    "alt+h":"left",
+    "space":"spacebar",
     "home":"home",
     "end":"end",
     "backspace":"backspace",
     "del":"delete_key",
+    "mod+a":"sel_all",
     "mod+c":"sel_copy",
     "mod+x":"sel_cut",
     "mod+v":"sel_paste",
