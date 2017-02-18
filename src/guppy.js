@@ -55,6 +55,7 @@ var Guppy = function(guppy_div, properties){
     this.temp_cursor = {"node":null,"caret":0}
     if(!this.current.firstChild) this.current.appendChild(this.base.createTextNode(""));
     this.caret = 0;
+    this.space_caret = 0;
     this.sel_start = null;
     this.sel_end = null;
     this.undo_data = [];
@@ -295,7 +296,6 @@ Guppy.manual_render = function(base,t,n,r){
 	}
     }
     Guppy.log(4,"rendered",ans)
-    //console.log("AAA",n,ans);
     return ans;
 }
 
@@ -1414,6 +1414,10 @@ Guppy.prototype.right = function(){
     Guppy.log(3,"R",this.current,this.current.parentNode,this.caret);
 }
 
+Guppy.prototype.spacebar = function(){
+    this.space_caret = this.caret;
+}
+
 Guppy.prototype.get_length = function(n){
     if(Guppy.is_blank(n) || n.nodeName == 'f') return 0
     return n.firstChild.nodeValue.length;
@@ -1720,7 +1724,7 @@ Guppy.prototype.check_for_symbol = function(){
     var instance = this;
     for(var s in Guppy.kb.symbols){
 	// Guppy.log(3,current);
-	if(instance.current.nodeName == 'e' && !(Guppy.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
+	if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(Guppy.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
 	    //Guppy.log(3,"INSERTION OF ",s);
 	    //Guppy.log(3,current.nodeValue);
 	    var temp = instance.current.firstChild.nodeValue;
@@ -1768,7 +1772,7 @@ Guppy.kb.k_controls = {
     "up":"up",
     "down":"down",
     "right":"right",
-    "space":"right",
+    "space":"spacebar",
     "left":"left",
     "home":"home",
     "end":"end",
@@ -1811,6 +1815,7 @@ Guppy.register_keyboard_handlers = function(){
     	Mousetrap.bind(i,function(i){ return function(){
 	    if(!Guppy.active_guppy) return true;
 	    Guppy.active_guppy.temp_cursor.node = null;
+	    Guppy.active_guppy.space_caret = 0;
 	    Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]);
 	    //Guppy.active_guppy.render(true);
 	    return false;
@@ -1818,6 +1823,7 @@ Guppy.register_keyboard_handlers = function(){
     for(var i in Guppy.kb.k_controls)
     	Mousetrap.bind(i,function(i){ return function(){
 	    if(!Guppy.active_guppy) return true;
+	    Guppy.active_guppy.space_caret = 0;
 	    Guppy.active_guppy[Guppy.kb.k_controls[i]]();
 	    Guppy.active_guppy.temp_cursor.node = null;
 	    Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0);
