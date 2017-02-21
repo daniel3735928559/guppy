@@ -1764,17 +1764,17 @@ Guppy.kb.k_chars = {
     ",":",",
     "shift+/":"/",
     "shift+=":"+",
-    "shift+1":"!"
+    "!":"!"
 };
 Guppy.kb.k_syms = {
     "/":"slash",
-    "shift+6":"exp",
-    "shift+8":"*",
-    "shift+9":"paren",
-    "shift+,":"less",
-    "shift+.":"greater",
-    "shift+-":"sub",
-    "shift+\\":"abs",
+    "^":"exp",
+    "*":"*",
+    "(":"paren",
+    "<":"less",
+    ">":"greater",
+    "_":"sub",
+    "|":"abs",
     "shift+up":"exp",
     "shift+down":"sub"
 };
@@ -1801,7 +1801,7 @@ Guppy.kb.k_controls = {
     "enter":"done",
     "shift+left":"sel_left",
     "shift+right":"sel_right",
-    "shift+0":"right_paren"
+    ")":"right_paren"
 };
 
 // letters
