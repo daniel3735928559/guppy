@@ -127,6 +127,7 @@ Guppy.get_symbols = function(symbols, callback){
 	    }
 	}
 	Guppy.ready = true;
+	if(callback) callback();
     }
     var get_builtins = function(callback){
 	var greek_syms = ["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"];

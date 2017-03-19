@@ -41,7 +41,7 @@ var tests = [
 	"type":"text",
 	"expected":"2x",
 	"run":function(g){
-	    do_keys(['2','x','shift+6','mod+z']);
+	    do_keys(['2','x','^','mod+z']);
 	}
     },
     {
@@ -86,7 +86,7 @@ var tests = [
 	"type":"text",
 	"expected":"(2)^(x)",
 	"run":function(g){
-	    do_keys(['2','shift+6','x','p','i','backspace']);
+	    do_keys(['2','^','x','p','i','backspace']);
 	}
     },
     {
