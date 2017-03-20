@@ -13,7 +13,7 @@ represented is specified as follows:
 
 * `<f>` nodes represent symbols and have one attribute: `type`, whose
   value comes from the `type` field in `symbols.json`.  They look like
-  ```<f type="symbol_type">[sequence of b nodes][sequence of c nodes]</f>```
+  ```<f type="symbol_type">[sequence of b nodes][sequence of c or l nodes]</f>```
 
 * `<b>` nodes represent methods for rendering a symbol, specified in
   the `p` attribute.  They contain text interspersed with `<r>` nodes
@@ -28,10 +28,17 @@ represented is specified as follows:
 
 * `<c>` nodes are the editable components of a symbol, appearing under
   an `<f>` node after the `<b>` nodes, and in order of index (as
-  referenced in the `<r>` nodes).  They have whatever attributes are
-  specified in the `attrs` key for this symbol in `symbols.json`, and
-  they look like `<c attrs...>[component]</c>`, where a `[component]`
-  is as defined above.
+  referenced in the `<r>` nodes).  They can also appear as children of
+  `<l>` nodes, representing the elements of the array.  They have
+  whatever attributes are specified in the `attrs` key for this symbol
+  in `symbols.json`, and they look like `<c attrs...>[component]</c>`,
+  where a `[component]` is as defined above.
+  
+* `<l>` nodes are arrays, and may appear as children of `<f>` nodes or
+  of other `<l>` nodes (in the case of a multi-dimensional array).  An
+  `<l>` node always has an `s` attribute indicating how many immediate
+  children it has (e.g., in the case of a 1D array, how many elements
+  the array has, represented by the number of `<c>` nodes).
 
 So, for example, the square root of x+1 would be represented as:
 
