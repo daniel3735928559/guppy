@@ -271,7 +271,7 @@ Guppy.manual_render = function(base,t,n,r){
 		    var dim = parseInt(nn.getAttribute("d"));
 		    var joiner = function(d,l){
 			if(d > 1) for(var k = 0; k < l.length; k++) l[k] = joiner(d-1,l[k]);
-			return l.join(nn.getAttribute('sep'+d));
+			return l.join(nn.getAttribute('sep'+(d-1)));
 		    }
 		    ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]);
 		}
@@ -1327,6 +1327,44 @@ Guppy.prototype.sel_left = function(){
     }
 }
 
+Guppy.prototype.list_extend_right = function(){
+    var n = this.current;
+    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+	n = n.parentNode;
+    }
+    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
+    var c = n.cloneNode(true);
+    n.parentNode.insertBefore(c, n.nextSibling);
+}
+
+Guppy.prototype.list_extend_left = function(){
+    var n = this.current;
+    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+	n = n.parentNode;
+    }
+    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
+    var c = n.cloneNode(true);
+    n.parentNode.insertBefore(c, n);
+}
+
+Guppy.prototype.list_remove = function(){
+    var n = this.current;
+    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+	n = n.parentNode;
+    }
+    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
+    if(n.previousSibling != null){
+	this.current = n.previousSibling.lastChild;
+	this.caret = n.previousSibling.lastChild.firstChild.textContent.length;
+    }
+    else if(n.nextSibling != null){
+	this.current = n.nextSibling.firstChild;
+	this.caret = 0;
+    }
+    else return;
+    n.parentNode.removeChild(n);
+}
+
 Guppy.prototype.right = function(){
     this.sel_clear();
     Guppy.log(3,"R",this.current,this.caret);
@@ -1726,6 +1764,9 @@ Guppy.kb.k_controls = {
     "mod+z":"undo",
     "mod+y":"redo",
     "enter":"done",
+    "mod+right":"list_extend_right",
+    "mod+left":"list_extend_left",
+    "mod+backspace":"list_remove",
     "shift+left":"sel_left",
     "shift+right":"sel_right",
     ")":"right_paren"
