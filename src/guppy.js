@@ -1426,11 +1426,15 @@ Guppy.prototype.delete_from_e = function(){
 	}
 	else if(this.current.previousSibling == null && this.current.parentNode.nodeName == 'c' && (this.current.parentNode.previousSibling == null || this.current.parentNode.previousSibling.nodeName != 'c')){
 	    // We're in the first c child of an f node and at the beginning--delete the f node
-	    if(this.current.parentNode.hasAttribute("delete")){
+	    var par = this.current.parentNode;
+	    while(par.parentNode.nodeName == 'l' || par.parentNode.nodeName == 'c'){
+		par = par.parentNode;
+	    }
+	    if(par.hasAttribute("delete")){
 		this.delete_from_c();
 	    }
 	    else{
-		this.current = this.current.parentNode.parentNode;
+		this.current = par.parentNode;
 		this.delete_from_f();
 	    }
 	}
