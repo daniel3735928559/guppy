@@ -848,13 +848,14 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 	for(var a in s['attrs'])
 	    if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
 	if(i in lists){
-	    var nl = this.base.createElement("l");
-	    nl.setAttribute('d',lists[i]);
+	    var par = f;
 	    for(var j = 0; j < lists[i]; j++){
-		nl.setAttribute('d'+j,"1");
+		var nl = this.base.createElement("l");
+		nl.setAttribute("s","1");
+		par.appendChild(nl);
+		par = nl;
+		if(j == lists[i]-1) nl.appendChild(nc);
 	    }
-	    nl.appendChild(nc);
-	    f.appendChild(nl);
 	}
 	else f.appendChild(nc);
     }
@@ -1327,13 +1328,34 @@ Guppy.prototype.sel_left = function(){
     }
 }
 
+Guppy.prototype.list_extend_copy_right = function(){
+    var n = this.current;
+    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+	n = n.parentNode;
+    }
+    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
+    var c = n.cloneNode(true);
+    n.parentNode.insertBefore(c, n.nextSibling);
+}
+
+Guppy.prototype.list_extend_copy_left = function(){
+    var n = this.current;
+    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+	n = n.parentNode;
+    }
+    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
+    var c = n.cloneNode(true);
+    n.parentNode.insertBefore(c, n);
+}
+
 Guppy.prototype.list_extend_right = function(){
     var n = this.current;
     while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
 	n = n.parentNode;
     }
-    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
-    var c = n.cloneNode(true);
+    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
+    var c = this.base.createElement("c");
+    c.appendChild(this.make_e(""));
     n.parentNode.insertBefore(c, n.nextSibling);
 }
 
@@ -1342,8 +1364,9 @@ Guppy.prototype.list_extend_left = function(){
     while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
 	n = n.parentNode;
     }
-    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
-    var c = n.cloneNode(true);
+    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
+    var c = this.base.createElement("c");
+    c.appendChild(this.make_e(""));
     n.parentNode.insertBefore(c, n);
 }
 
@@ -1352,7 +1375,6 @@ Guppy.prototype.list_remove = function(){
     while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
 	n = n.parentNode;
     }
-    n.parentNode.setAttribute("d",parseInt(n.parentNode.getAttribute("d"))+1);
     if(n.previousSibling != null){
 	this.current = n.previousSibling.lastChild;
 	this.caret = n.previousSibling.lastChild.firstChild.textContent.length;
@@ -1362,6 +1384,7 @@ Guppy.prototype.list_remove = function(){
 	this.caret = 0;
     }
     else return;
+    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))-1);
     n.parentNode.removeChild(n);
 }
 
@@ -1764,6 +1787,8 @@ Guppy.kb.k_controls = {
     "mod+z":"undo",
     "mod+y":"redo",
     "enter":"done",
+    "mod+shift+right":"list_extend_copy_right",
+    "mod+shift+left":"list_extend_copy_left",
     "mod+right":"list_extend_right",
     "mod+left":"list_extend_left",
     "mod+backspace":"list_remove",
