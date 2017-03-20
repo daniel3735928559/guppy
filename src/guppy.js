@@ -1329,45 +1329,63 @@ Guppy.prototype.sel_left = function(){
 }
 
 Guppy.prototype.list_extend_copy_right = function(){
-    var n = this.current;
-    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
-	n = n.parentNode;
-    }
-    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
-    var c = n.cloneNode(true);
-    n.parentNode.insertBefore(c, n.nextSibling);
+    this.list_extend("right", true);
 }
 
 Guppy.prototype.list_extend_copy_left = function(){
-    var n = this.current;
-    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
-	n = n.parentNode;
-    }
-    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
-    var c = n.cloneNode(true);
-    n.parentNode.insertBefore(c, n);
+    this.list_extend("left", true);
 }
 
 Guppy.prototype.list_extend_right = function(){
-    var n = this.current;
-    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
-	n = n.parentNode;
-    }
-    n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
-    var c = this.base.createElement("c");
-    c.appendChild(this.make_e(""));
-    n.parentNode.insertBefore(c, n.nextSibling);
+    this.list_extend("right", false);
 }
 
 Guppy.prototype.list_extend_left = function(){
+    this.list_extend("left", false);
+}
+
+Guppy.prototype.list_extend_up = function(){
+    this.list_extend("up", false);
+}
+
+Guppy.prototype.list_extend_down = function(){
+    this.list_extend("down", false);
+}
+
+Guppy.prototype.list_extend = function(direction, copy){
+    var vertical = direction == "up" || direction == "down";
+    var before = direction == "up" || direction == "left";
+    var this_name = vertical ? "l" : "c";
     var n = this.current;
-    while(!(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
+    while(n.parentNode && !(n.nodeName == this_name && n.parentNode.nodeName == 'l')){
 	n = n.parentNode;
     }
+    if(!n.parentNode) return;
     n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
-    var c = this.base.createElement("c");
-    c.appendChild(this.make_e(""));
-    n.parentNode.insertBefore(c, n);
+    var to_insert;
+    if(copy){
+	to_insert = n.cloneNode(true);
+    }
+    else{
+	if(vertical){
+	    to_insert = this.base.createElement("l");
+	    for(var i = 0; i < parseInt(n.getAttribute("s")); i++){
+		var c = this.base.createElement("c");
+		c.appendChild(this.make_e(""));
+		to_inesrt.appendChild(c);
+	    }
+	}
+	else{
+	    to_insert = this.base.createElement("c");
+	    to_insert.appendChild(this.make_e(""));
+	}
+    }
+    n.parentNode.insertBefore(to_insert, before ? n : n.nextSibling);
+    this.checkpoint();
+}
+
+Guppy.prototype.list_extend_down = function(){
+    return;
 }
 
 Guppy.prototype.list_remove = function(){
@@ -1791,6 +1809,8 @@ Guppy.kb.k_controls = {
     "mod+shift+left":"list_extend_copy_left",
     "mod+right":"list_extend_right",
     "mod+left":"list_extend_left",
+    "mod+up":"list_extend_up",
+    "mod+down":"list_extend_down",
     "mod+backspace":"list_remove",
     "shift+left":"sel_left",
     "shift+right":"sel_right",
