@@ -773,84 +773,6 @@ Guppy.prototype.delete_from_f = function(to_insert){
     p.removeChild(next);
 }
 
-Guppy.prototype.next_node_from_e = function(n){
-    if(n == null || n.nodeName != 'e') return null;
-    // If we have a next sibling f node, use that:
-    if(n.nextSibling != null){
-	if(n.nextSibling.nodeName != 'f'){
-	    this.problem('nnfe3');
-	    return null;
-	}
-	Guppy.log(3,"next");
-	var nc = n.nextSibling.firstChild;
-	while(nc != null){
-	    if(nc.nodeName == 'c')
-		return nc.firstChild;
-	    else if(nc.nodeName == 'l'){
-		while(nc.nodeName == 'l') nc = nc.firstChild;
-		return nc.firstChild;
-	    }
-	    nc = nc.nextSibling
-	}
-	return n.nextSibling.nextSibling;
-    }
-    // If not, then we're either at the top level or our parent is a c
-    // child of an f or l node, at which point we should look to see our
-    // parent has a next sibling c node: 
-    if(n.parentNode.nextSibling != null && n.parentNode.nextSibling.nodeName == 'c'){
-	var nn = n.parentNode.nextSibling.firstChild;
-	//Another sanity check:
-	if(nn.nodeName != 'e'){
-	    this.problem('nnfe1');
-	    return null
-	}
-	Guppy.log(3,"parent.next.child")
-	return nn;
-    }
-    // If we're actually at the top level, then do nothing: 
-    if(n.parentNode.parentNode == null) return null;
-    //Another sanity check: 
-    if(n.parentNode.parentNode.nodeName != 'f'){
-	this.problem('nnfe2');
-	return null;
-    }
-    return n.parentNode.parentNode.nextSibling;
-}
-
-Guppy.prototype.prev_node_from_e = function(n){
-    Guppy.log(3,n.previousSibling);
-    if(n == null || n.nodeName != 'e') return null;
-    if(n.previousSibling != null){
-	if(n.previousSibling.nodeName != 'f'){
-	    this.problem('pnfe3');
-	    return null;
-	}
-	var nc = n.previousSibling.lastChild;
-	while(nc != null){
-	    if(nc.nodeName == 'c')
-		return nc.lastChild;
-	    nc = nc.previousSibling
-	}
-	return n.previousSibling.previousSibling;
-    }
-    else if(n.parentNode.previousSibling != null && n.parentNode.previousSibling.nodeName == 'c'){
-	var nn = n.parentNode.previousSibling.lastChild;
-	//Another sanity check:
-	if(nn.nodeName != 'e'){
-	    this.problem('pnfe1');
-	    return null
-	}
-	return nn;
-    }
-    else if(n.parentNode.parentNode == null) return null;
-    //Another sanity check: 
-    if(n.parentNode.parentNode.nodeName != 'f'){
-	this.problem('pnfe2');
-	return null;
-    }
-    return n.parentNode.parentNode.previousSibling;
-}
-
 Guppy.prototype.symbol_to_node = function(sym_name, content){
     // sym_name is a key in the symbols dictionary
     //
@@ -1409,7 +1331,7 @@ Guppy.prototype.right = function(){
     this.sel_clear();
     Guppy.log(3,"R",this.current,this.caret);
     if(this.caret >= this.get_length(this.current)){
-	var nn = this.next_node_from_e(this.current);
+	var nn = this.base.evaluate("following::e[1]", this.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if(nn != null){
 	    this.current = nn;
 	    this.caret = 0;
@@ -1439,7 +1361,7 @@ Guppy.prototype.left = function(){
     this.sel_clear();
     Guppy.log(3,"L",this.current,this.current.firstChild.nodeValue,this.caret);
     if(this.caret <= 0){
-	var pn = this.prev_node_from_e(this.current);
+	var pn = this.base.evaluate("preceding::e[1]", this.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 	if(pn != null){
 	    this.current = pn;
 	    this.caret = this.current.firstChild.nodeValue.length;
