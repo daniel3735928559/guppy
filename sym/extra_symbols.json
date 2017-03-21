@@ -7,24 +7,12 @@
      "type":"vector"
     },
 
-    "mx":
+    "mat":
     {"output":{
         "latex":"\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
 	"text":"matrix({$1{,}{;}})"},
      "current":0,
      "type":"matrix"
-    },
-
-    "mat2":
-    {"output":{
-        "latex":"\\left(\\begin{matrix}{$1} & {$2} \\\\{$3} & {$4}\\end{matrix}\\right)",
-	"text":"matrix({$1},{$2},{$3},{$4})"},
-     "current":0,
-     "type":"matrix",
-     "attrs":{
-	 "up":[1,2,1,2],
-	 "down":[3,4,3,4],
-	 "name":["tl","tr","bl","br"]}
     },
         
     "cohom":

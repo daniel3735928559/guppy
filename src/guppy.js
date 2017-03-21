@@ -5,9 +5,14 @@ String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
 String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.length,idx) == s); };
 
-var Guppy = function(guppy_div, properties){
+var Guppy = function(guppy_div, config){
     var self = this;
-    properties = properties || {};
+    var config = config || {};
+    var events = config['events'] || {}
+    var options = config['options'] || {};
+
+    console.log(config, events, options);
+    
     if(typeof guppy_div === 'string' || guppy_div instanceof String){
 	guppy_div = document.getElementById(guppy_div);
     }
@@ -25,27 +30,30 @@ var Guppy = function(guppy_div, properties){
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;
     
-    
     this.editor_active = true;
     this.debug = 0;
     this.empty_content = "\\color{red}{[?]}"
     this.editor = guppy_div;
     this.type_blacklist = [];
-    this.done_callback = this;
     this.ready = false;
+
+    this.events = {};
     
-    if('xml_content' in properties){
-	this.base = (new window.DOMParser()).parseFromString(properties.xml_content, "text/xml");
-    }
-    else {
-	this.base = (new window.DOMParser()).parseFromString("<m><e></e></m>", "text/xml");
+    var evts = ["ready", "change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
+    
+    for(var i = 0; i < evts.length; i++){
+	var e = evts[i];
+	if(e in events) this.events[e] = e in events ? events[e] : null;
     }
 
-    var props = ['blacklist','done_callback','right_callback','left_callback','ready_callback','info_callback','blank_caret','debug','empty_content']
-    for(var i = 0; i < props.length; i++){
-	var p = props[i];
-	if(p in properties) this[p] = properties[p];
+    var opts = ["blank_caret", "empty_content", "blacklist"];
+    
+    for(var i = 0; i < opts.length; i++){
+	var p = opts[i];
+	if(p in options) this[p] = options[p];
     }
+	
+    this.base =  (new window.DOMParser()).parseFromString('xml_content' in options ? options.xml_content : "<m><e></e></m>", "text/xml");
     
     Guppy.instances[guppy_div.id] = this;
     
@@ -66,8 +74,8 @@ var Guppy = function(guppy_div, properties){
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     if(Guppy.ready && !this.ready){
-    	if(this.ready_callback) this.ready_callback();
     	this.ready = true;
+    	this.fire_event("ready");
 	this.render(true);
     }
     this.deactivate();
@@ -121,10 +129,8 @@ Guppy.get_symbols = function(symbols, callback){
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render(true);
-	    if(Guppy.instances[i].ready_callback){
-		Guppy.instances[i].ready_callback();
-		Guppy.instances[i].ready_callback = null;
-	    }
+	    Guppy.instances[i].fire_event("ready")
+	    Guppy.instances[i].events["ready"] = null;
 	}
 	Guppy.ready = true;
 	if(callback) callback();
@@ -298,6 +304,10 @@ Guppy.manual_render = function(base,t,n,r){
     }
     Guppy.log(4,"rendered",ans)
     return ans;
+}
+
+Guppy.prototype.fire_event = function(event, args){
+    if(this.events[event]) this.events[event](args);
 }
 
 Guppy.prototype.path_to = function(n){
@@ -1113,6 +1123,7 @@ Guppy.prototype.activate = function(){
     this.editor.focus();
     if(this.ready){
 	this.render(true);
+	this.fire_event("focus",{"focused":true});
     }
 }
 
@@ -1131,6 +1142,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.alt_down = false;
     if(this.ready){
 	this.render();
+	this.fire_event("focus",{"focused":false});
     }
 }
 
@@ -1519,7 +1531,7 @@ Guppy.prototype.right = function(){
 	    this.caret = 0;
 	}
 	else{
-	    if(this.right_callback) this.right_callback();
+	    this.fire_event("right_end");
 	    Guppy.log(3,"at end or problem");
 	}
     }
@@ -1549,7 +1561,7 @@ Guppy.prototype.left = function(){
 	    this.caret = this.current.firstChild.nodeValue.length;
 	}
 	else{
-	    if(this.left_callback) this.left_callback();
+	    this.fire_event("left_end");
 	    Guppy.log(3,"at beginnning or problem");
 	}
     }
@@ -1687,7 +1699,7 @@ Guppy.prototype.tab = function(){
 	this.current.firstChild.textContent = candidates[0];
     }
     else {
-	if(this.info_callback) this.info_callback(candidates.join(" "));
+	this.fire_event("completion",{"candidates":candidates});
     }
 }
 
@@ -1759,6 +1771,7 @@ Guppy.prototype.checkpoint = function(){
     this.undo_now++;
     this.undo_data[this.undo_now] = this.base.cloneNode(true);
     this.undo_data.splice(this.undo_now+1, this.undo_data.length);
+    this.fire_event("change",{"old":this.undo_data[this.undo_now-1],"new":this.undo_data[this.undo_now]});
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
 }
@@ -1805,7 +1818,7 @@ Guppy.prototype.print_undo_data = function(){
 
 Guppy.prototype.done = function(s){
     if(this.is_symbol(this.current)) this.complete_symbol();
-    else this.done_callback();
+    else this.fire_event("done");
 }
 
 Guppy.prototype.complete_symbol = function(){
@@ -1817,8 +1830,8 @@ Guppy.prototype.complete_symbol = function(){
     this.insert_symbol(sym_name);
 }
 
-Guppy.prototype.problem = function(s){
-    Guppy.log(3,s);
+Guppy.prototype.problem = function(message){
+    this.fire_event("error",{"message":message});
     Guppy.log(3,'b',(new XMLSerializer()).serializeToString(this.base));
     Guppy.log(3,'c',(new XMLSerializer()).serializeToString(this.current));
 }
