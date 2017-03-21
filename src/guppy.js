@@ -11,8 +11,6 @@ var Guppy = function(guppy_div, config){
     var events = config['events'] || {}
     var options = config['options'] || {};
 
-    console.log(config, events, options);
-    
     if(typeof guppy_div === 'string' || guppy_div instanceof String){
 	guppy_div = document.getElementById(guppy_div);
     }
@@ -1401,7 +1399,7 @@ Guppy.prototype.list_extend = function(direction, copy){
 	var to_modify = [];
 	var iterator = this.base.evaluate("./l/c[position()="+pos+"]", n.parentNode.parentNode, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 	try{ for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){ to_modify.push(nn); }}
-	catch(e) { console.log('XML modified during iteration ' + e); }
+	catch(e) { this.fire_event("error",{"message":'XML modified during iteration? ' + e}); }
 	for(var j = 0; j < to_modify.length; j++){
 	    var nn = to_modify[j];
 	    if(copy) nn.parentNode.insertBefore(nn.cloneNode(true), before ? nn : nn.nextSibling);
@@ -1468,7 +1466,7 @@ Guppy.prototype.list_remove_col = function(){
     var to_modify = [];
     var iterator = this.base.evaluate("./l/c[position()="+pos+"]", n.parentNode.parentNode, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
     try{ for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){ to_modify.push(nn); }}
-    catch(e) { console.log('XML modified during iteration ' + e); }
+    catch(e) { this.fire_event("error",{"message":'XML modified during iteration? ' + e}); }
     for(var j = 0; j < to_modify.length; j++){
 	var nn = to_modify[j];
 	nn.parentNode.setAttribute("s",parseInt(nn.parentNode.getAttribute("s"))-1);
@@ -1824,7 +1822,6 @@ Guppy.prototype.done = function(s){
 Guppy.prototype.complete_symbol = function(){
     var sym_name = this.current.firstChild.textContent;
     if(!(Guppy.kb.symbols[sym_name])) return;
-    console.log(sym_name);
     this.current = this.current.parentNode.parentNode;
     this.delete_from_f();
     this.insert_symbol(sym_name);
