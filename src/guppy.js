@@ -1805,7 +1805,7 @@ Guppy.prototype.print_undo_data = function(){
 
 Guppy.prototype.done = function(s){
     if(this.is_symbol(this.current)) this.complete_symbol();
-    this.done_callback();
+    else this.done_callback();
 }
 
 Guppy.prototype.complete_symbol = function(){
