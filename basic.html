@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Guppy</title>
+
+    <link rel="stylesheet" href="build/guppy.min.css">
+    <script type="text/javascript" src="build/guppy.min.js"></script>
+    <script type="text/javascript">
+     window.onload = function(){
+         Guppy.get_symbols(["builtins","sym/symbols.json","sym/extra_symbols.json"]);
+	  var g1 = new Guppy("guppy1", {
+	      "events":{
+		  'done': function(event) { console.log(g1.get_content('xml')); },
+		  'completion': console.log
+	      },
+	      "options":{
+		  //'blank_caret': "[?]",
+		  'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
+	      }
+	  });
+
+      }
+    </script>
+</head>
+
+<body>
+    <div id="guppy1" style="width: 800px; border: 2px solid black; height: 100px; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text;"></div>
+</body>
+
+</html>
