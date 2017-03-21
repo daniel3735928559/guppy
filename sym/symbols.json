@@ -17,6 +17,15 @@
      "attrs":{
 	 "mode":["text"]}},
     
+    "sym_name":
+    {"output":{
+        "latex":"\\backslash\\text{{$1}}",
+        "text":"SYMBOL({$1})"},
+     "current":0,
+     "type":"symbol",
+     "attrs":{
+	 "mode":["symbol"]}},
+    
     "abs":
     {"output":{
         "latex":"\\left|{$1}\\right|",

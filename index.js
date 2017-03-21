@@ -18,6 +18,7 @@ $('document').ready(function() {
         'right_callback': function() {},
         'left_callback': function() {},
         'done_callback': function() { createText('text'); },
+        'info_callback': information,
         //'blank_caret': "[?]",
         'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
     });
@@ -25,6 +26,10 @@ $('document').ready(function() {
 
 function flash_help(){
     $("#help_card").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+}
+
+function information(text) {
+    $('#stuff')[0].innerHTML = "INFO: <br />"+text;
 }
 
 function createText(texttype) {

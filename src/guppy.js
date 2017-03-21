@@ -41,7 +41,7 @@ var Guppy = function(guppy_div, properties){
 	this.base = (new window.DOMParser()).parseFromString("<m><e></e></m>", "text/xml");
     }
 
-    var props = ['blacklist','done_callback','right_callback','left_callback','ready_callback','blank_caret','debug','empty_content']
+    var props = ['blacklist','done_callback','right_callback','left_callback','ready_callback','info_callback','blank_caret','debug','empty_content']
     for(var i = 0; i < props.length; i++){
 	var p = props[i];
 	if(p in properties) this[p] = properties[p];
@@ -864,7 +864,11 @@ Guppy.prototype.symbol_to_node = function(sym_name, content){
 }
 
 Guppy.prototype.is_text = function(nn){
-    return (nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "text")
+    return nn.parentNode.getAttribute("mode") && (nn.parentNode.getAttribute("mode") == "text" || nn.parentNode.getAttribute("mode") == "symbol");
+}
+
+Guppy.prototype.is_symbol = function(nn){
+    return nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "symbol";
 }
 
 Guppy.prototype.is_small = function(nn){
@@ -1668,6 +1672,25 @@ Guppy.prototype.delete_key = function(){
     }
 }
 
+Guppy.prototype.backslash = function(){
+    this.insert_symbol("sym_name");
+}
+
+Guppy.prototype.tab = function(){
+    if(!this.is_symbol(this.current)) return;
+    var sym_name = this.current.firstChild.textContent;
+    var candidates = [];
+    for(var n in Guppy.kb.symbols){
+	if(n.startsWith(sym_name)) candidates.push(n);
+    }
+    if(candidates.length == 1){
+	this.current.firstChild.textContent = candidates[0];
+    }
+    else {
+	if(this.info_callback) this.info_callback(candidates.join(" "));
+    }
+}
+
 Guppy.prototype.right_paren = function(){
     if(this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;
     else this.right();
@@ -1781,7 +1804,17 @@ Guppy.prototype.print_undo_data = function(){
 }
 
 Guppy.prototype.done = function(s){
+    if(this.is_symbol(this.current)) this.complete_symbol();
     this.done_callback();
+}
+
+Guppy.prototype.complete_symbol = function(){
+    var sym_name = this.current.firstChild.textContent;
+    if(!(Guppy.kb.symbols[sym_name])) return;
+    console.log(sym_name);
+    this.current = this.current.parentNode.parentNode;
+    this.delete_from_f();
+    this.insert_symbol(sym_name);
 }
 
 Guppy.prototype.problem = function(s){
@@ -1839,6 +1872,7 @@ Guppy.symb_func = function(func_name){
 
 Guppy.prototype.check_for_symbol = function(){
     var instance = this;
+    if(this.is_text(this.current)) return;
     for(var s in Guppy.kb.symbols){
 	// Guppy.log(3,current);
 	if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(Guppy.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
@@ -1918,7 +1952,9 @@ Guppy.kb.k_controls = {
     "mod+shift+backspace":"list_remove_row",
     "shift+left":"sel_left",
     "shift+right":"sel_right",
-    ")":"right_paren"
+    ")":"right_paren",
+    "\\":"backslash",
+    "tab":"tab"
 };
 
 // letters
