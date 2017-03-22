@@ -14,13 +14,18 @@ $('document').ready(function() {
 
     Guppy.get_symbols(["builtins","sym/symbols.json","sym/extra_symbols.json"]);
     var g1 = new Guppy("guppy1", {
-	//'debug':10,
-        'right_callback': function() {},
-        'left_callback': function() {},
-        'done_callback': function() { createText('text'); },
-        'info_callback': information,
-        //'blank_caret': "[?]",
-        'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
+	"events":{
+	    //'debug':10,
+            'right_end': function() {},
+            'left_end': function() {},
+            'done': function() { createText('text'); },
+            'completion': completion,
+	},
+	"options":
+	{
+            //'blank_caret': "[?]",
+            'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
+	}
     });
 });
 
@@ -28,7 +33,7 @@ function flash_help(){
     $("#help_card").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 }
 
-function information(text) {
+function completion(text) {
     $('#stuff')[0].innerHTML = "INFO: <br />"+text;
 }
 
