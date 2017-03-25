@@ -599,7 +599,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 	var caret_text = "";
 	var temp_caret_text = "";
 	if(text.length == 0){
-	    if(text_node) caret_text = "[]";
+	    if(text_node) caret_text = "\\_";
 	    else if(n.parentNode.childElementCount == 1){
 		if(this.current == n){
 		    var blank_caret = this.blank_caret || (this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET);
@@ -629,7 +629,7 @@ Guppy.prototype.add_classes_cursors = function(n,path){
 		    else if(this.sel_status == Guppy.SEL_CURSOR_AT_END)
 			caret_text = "]";
 		    else
-			caret_text = "[]";
+			caret_text = "\\_";
 		}
 		else{
 		    //Guppy.log(3,"HERE");
@@ -1683,6 +1683,7 @@ Guppy.prototype.delete_key = function(){
 }
 
 Guppy.prototype.backslash = function(){
+    if(this.is_text(this.current)) return;
     this.insert_symbol("sym_name");
 }
 
@@ -1695,6 +1696,7 @@ Guppy.prototype.tab = function(){
     }
     if(candidates.length == 1){
 	this.current.firstChild.textContent = candidates[0];
+	this.caret = candidates[0].length;
     }
     else {
 	this.fire_event("completion",{"candidates":candidates});
