@@ -27,10 +27,9 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.editor_active = true;
-    this.debug = 0;
     this.empty_content = "\\color{red}{[?]}"
     this.editor = guppy_div;
-    this.type_blacklist = [];
+    this.blacklist = [];
     this.ready = false;
 
     this.events = {};
@@ -77,8 +76,6 @@ var Guppy = function(guppy_div, config){
     this.recompute_locations_paths();
 }
 
-/* Functions intended for external use */
-
 Guppy.prototype.get_content = function(t){
     if(t != "xml") return Guppy.transform(t,this.base);
     else return (new XMLSerializer()).serializeToString(this.base);
@@ -104,8 +101,6 @@ Guppy.prototype.set_content = function(xml_data){
 
 Guppy.instances = {};
 Guppy.ready = false;
-
-/* -------------------- */
 
 Guppy.active_guppy = null;
 
@@ -1018,6 +1013,7 @@ Guppy.prototype.render = function(updated){
 	return;
     }
     var tex = this.render_node(this.base,"latex");
+    this.fire_event("debug",{"message":"RENDERING: " + tex})
     katex.render(tex,this.editor);
     if(updated){
 	this.recompute_locations_paths();
@@ -1711,8 +1707,8 @@ Guppy.kb.SEL_COLOR = "red"
 Guppy.kb.symbols = {};
 
 Guppy.prototype.is_blacklisted = function(symb_type){
-    for(var i = 0; i < this.type_blacklist.length; i++)
-	if(symb_type == this.type_blacklist[i]) return true;
+    for(var i = 0; i < this.blacklist.length; i++)
+	if(symb_type == this.blacklist[i]) return true;
     return false;
 }
 
@@ -1855,14 +1851,6 @@ Guppy.register_keyboard_handlers = function(){
 	    return false;
 	}}(i));
     
-}
-
-Guppy.log = function(){
-    if(!(Guppy.active_guppy) || Guppy.active_guppy.debug == Guppy.logging.NONE || Guppy.active_guppy.debug < arguments[0]) return;
-    var s = "";
-    for(var i = 1; i < arguments.length; i++){
-	console.log(arguments[i]);
-    }
 }
 
 module.exports = Guppy;
