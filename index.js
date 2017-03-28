@@ -24,6 +24,7 @@ $('document').ready(function() {
 	"options":
 	{
             //'blank_caret': "[?]",
+	    //'autoreplace':true,
             'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
 	}
     });
@@ -33,8 +34,8 @@ function flash_help(){
     $("#help_card").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 }
 
-function completion(text) {
-    $('#stuff')[0].innerHTML = "INFO: <br />"+text;
+function completion(data) {
+    $('#stuff')[0].innerHTML = "INFO: <br />"+data.candidates.join(", ");
 }
 
 function createText(texttype) {

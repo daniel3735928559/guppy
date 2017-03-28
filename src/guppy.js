@@ -30,6 +30,7 @@ var Guppy = function(guppy_div, config){
     this.empty_content = "\\color{red}{[?]}"
     this.editor = guppy_div;
     this.blacklist = [];
+    this.autoreplace = true;
     this.ready = false;
 
     this.events = {};
@@ -41,7 +42,7 @@ var Guppy = function(guppy_div, config){
 	if(e in events) this.events[e] = e in events ? events[e] : null;
     }
 
-    var opts = ["blank_caret", "empty_content", "blacklist"];
+    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace"];
     
     for(var i = 0; i < opts.length; i++){
 	var p = opts[i];
@@ -1003,7 +1004,7 @@ Guppy.prototype.insert_string = function(s){
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
-    this.check_for_symbol();
+    if(this.autoreplace) this.check_for_symbol();
     this.render(true);
 }
 

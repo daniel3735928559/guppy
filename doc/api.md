@@ -32,7 +32,7 @@ The primary useful items in the Guppy object are:
       Argument will be null.
 
     * `completion`: Called when the editor outputs tab completion
-      options.  Argument is a dictionary with the key `options`, a
+      options.  Argument is a dictionary with the key `candidates`, a
       list of the options for tab-completion.
 
     * `debug`: Called when the editor outputs some debug information.
@@ -52,6 +52,10 @@ The primary useful items in the Guppy object are:
     * `xml_content`: An XML string with which to initialise the
       editor's state.  Defaults to `<m><e/></m>` (the blank
       expression).
+  
+    * `autoreplace`: A boolean determining whether or not to
+      autoreplace typed text with the corresponding symbols when
+      possible.  Defaults to true.
   
     * `blank_caret`: A LaTeX string that specifies what the caret
       should look like when in a blank spot.  If left unspecified,
