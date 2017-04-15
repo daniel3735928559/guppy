@@ -1567,7 +1567,10 @@ Guppy.prototype.backslash = function(){
 }
 
 Guppy.prototype.tab = function(){
-    if(!this.is_symbol(this.current)) return;
+    if(!this.is_symbol(this.current)){
+	this.check_for_symbol();
+	return;
+    }
     var sym_name = this.current.firstChild.textContent;
     var candidates = [];
     for(var n in Guppy.kb.symbols){
