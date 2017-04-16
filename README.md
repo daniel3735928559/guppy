@@ -1,3 +1,5 @@
+# Guppy
+
 ## Synopsis
 
 Guppy is a Javascript-based WYSIWYG editor for mathematics whose
@@ -68,6 +70,28 @@ editor will automatically replace that entered text with the
 corresponding object.  The list of symbols supported by default is
 documented in index.html (or just see the demo page).  Further symbols
 can be added by modifying `symbols.json`.
+
+## Development
+
+When working on the editor, any changes made to the Javascript source
+(e.g. [src/guppy.js](https://github.com/daniel3735928559/guppy/blob/master/src/guppy.js)
+needs to be complied by running `./make`).
+
+Because the editor makes AJAX requests as part of its normal
+functioning, testing is best done with a small webserver.  For
+example, running
+
+```python3 -m http.server --bind 127.0.0.1 8000```
+
+in the root directory of the guppy repository and then browsing to
+[localhost:8000/index.html] will let you see the current state of the
+editor with all your modifications.  As you're making edits, be sure
+to run `./make` before refreshing in order to see your changes
+reflected in the page.
+
+If you're in a position where you don't have internet connectivity,
+you can test using [localhost:8000/basic.html] instead, as this page
+does not require any outside resources.
 
 ## Further documentation
 
