@@ -106,6 +106,11 @@ module.exports = {
     },
     
     'spacebar' : function() {
+        //Allow space in text mode
+        if ( this.is_text(this.current)) {
+            this.insert_string(" ");
+            return;
+        }
         this.space_caret = this.caret;
     },
     
