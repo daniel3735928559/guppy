@@ -8,7 +8,7 @@ module.exports = {
         var cur = null;
         var car = null;
         // check if we go to first or last element
-        var bb = g.editor.getElementsByClassName("katex")[0];
+        var bb = g.editor.getElementsByClassName("GuppyContainer")[0];
         if (!bb) return;
             var rect = bb.getBoundingClientRect();
         if (current_node) {

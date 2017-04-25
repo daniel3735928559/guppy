@@ -2,7 +2,7 @@ var katex     = require('../lib/katex/katex-modified.min.js');
 module.exports = {
     'recompute_locations_paths' :function() {
         ans = [];
-        var bb = this.editor.getElementsByClassName("katex")[0];
+        var bb = this.editor.getElementsByClassName("GuppyContainer")[0];
         if (!bb) return;
         var rect = bb.getBoundingClientRect();
         ans.push({'path':'all',
@@ -179,9 +179,19 @@ module.exports = {
             katex.render(this.empty_content,this.editor);
             return;
         }
-        var tex = this.render_node(this.base,"latex");
+        var    text = (new XMLSerializer()).serializeToString(this.base);
+        var     tex = this.render_node(this.base,"latex");
+        console.log("A+++++++++++++++++++++++++++++++++++++++");
+        console.log(text);
+        console.log(tex);
+        var element = katex.renderToString(tex);
+        //var element;
+        //element = tex.replace(/\\color{red}.*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+        //element = element.replace(/\\color{gray}.*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+        //element = element.replace(/\\xmlClass{([^}]*)}{([^}]*)}/g,'<span class="$1">$2</span>');
+        console.log(element) 
         this.fire_event("debug",{"message":"RENDERING: " + tex})
-        katex.render(tex,this.editor);
+        this.editor.innerHTML = "<span class='GuppyContainer'>"+element+"</span>";
         if (updated) {
             this.recompute_locations_paths();
         }

@@ -1,4 +1,15 @@
 module.exports = {
+    'insert_T' : function () {
+        var sand = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));
+        var wich = this.make_e(this.current.firstChild.nodeValue.slice(this.caret)); 
+        this.current.parentNode.insertBefore(sand,this.current);
+        this.current.parentNode.insertBefore(this.base.createElement("T"),this.current);
+        this.current.parentNode.insertBefore(wich,this.current);
+        this.current.parentNode.removeChild(this.current);
+        this.current = wich;
+        this.render(true);
+    },
+
     'make_e' : function(text) {
         var new_node = this.base.createElement("e");
         new_node.appendChild(this.base.createTextNode(text));

@@ -47,6 +47,7 @@ var Guppy = function(guppy_div, config) {
     this.blacklist = [];
     this.autoreplace = true;
     this.ready = false;
+    this.katexMode = 0;
 
     this.events = {};
     
@@ -63,7 +64,7 @@ var Guppy = function(guppy_div, config) {
         var p = opts[i];
         if (p in options) this[p] = options[p];
     }
-    
+   
     this.base =  (new window.DOMParser()).parseFromString('xml_content' in options ? options.xml_content : "<m><e></e></m>", "text/xml");
     
     Guppy.instances[guppy_div.id] = this;
@@ -115,6 +116,7 @@ Guppy.register_keyboard_handlers = function() {
     for (var i in Guppy.kb.k_chars)
         Mousetrap.bind(i,function(i) { return function() {
             if (!Guppy.active_guppy) return true;
+            if (i=='!') return Guppy.active_guppy.toggleMode(); 
             Guppy.active_guppy.temp_cursor.node = null;
             Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]);
             return false;

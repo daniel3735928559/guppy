@@ -50,6 +50,11 @@ module.exports = {
         }
     },
 
+    'toggleMode': function() {
+        this.insert_T();
+        return false;    
+    },
+
     'fire_event' :  function(event, args) {
         if (this.events[event]) this.events[event](args);
     },
@@ -63,7 +68,7 @@ module.exports = {
     },
     
     'is_changed' :  function() {
-        var bb = this.editor.getElementsByClassName("katex")[0];
+        var bb = this.editor.getElementsByClassName("GuppyContainer")[0];
         if (!bb) return;
         var rect = bb.getBoundingClientRect();
         if (this.bounding_box)
