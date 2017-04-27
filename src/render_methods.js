@@ -38,12 +38,13 @@ module.exports = {
         if (n.nodeName == "e") {
         n.setAttribute("path",path);
         } else {
-            var es = 1, fs = 1, cs = 1, ls = 1;
+            var es = 1, fs = 1, cs = 1, ls = 1, eT = 1;
             for(var c = n.firstChild; c != null; c = c.nextSibling) {
                 if (c.nodeName == "c") { this.add_paths(c, path+"_c"+cs); cs++; }
                 else if (c.nodeName == "f") { this.add_paths(c, path+"_f"+fs); fs++; }
                 else if (c.nodeName == "l") { this.add_paths(c, path+"_l"+ls); ls++; }
                 else if (c.nodeName == "e") { this.add_paths(c, path+"_e"+es); es++; }
+                else if (c.nodeName == "T") { this.add_paths(c, path+"_T"+eT); eT++; }
             }
         }
     },
@@ -141,7 +142,12 @@ module.exports = {
         } //Node == e ==> LONG
         else {
             for(var c = n.firstChild; c != null; c = c.nextSibling) {
-                if (c.nodeName == "c" || c.nodeName == "l" || c.nodeName == "f" || c.nodeName == "e") { this.add_classes_cursors(c); }
+                if (c.nodeName == "c" || c.nodeName == "l" || 
+                    c.nodeName == "f" || c.nodeName == "e") { 
+                    this.add_classes_cursors(c); 
+                } else if (c.nodeName == "T") {
+                    this.add_classes_cursors(c.firstChild);
+                }
             }
         }
     },
@@ -181,15 +187,15 @@ module.exports = {
         }
         var    text = (new XMLSerializer()).serializeToString(this.base);
         var     tex = this.render_node(this.base,"latex");
-        console.log("A+++++++++++++++++++++++++++++++++++++++");
-        console.log(text);
-        console.log(tex);
+        //console.log("A+++++++++++++++++++++++++++++++++++++++");
+        //console.log(text);
+        //console.log(tex);
         var element = katex.renderToString(tex);
         //var element;
         //element = tex.replace(/\\color{red}.*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
         //element = element.replace(/\\color{gray}.*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
         //element = element.replace(/\\xmlClass{([^}]*)}{([^}]*)}/g,'<span class="$1">$2</span>');
-        console.log(element) 
+        //console.log(element) 
         this.fire_event("debug",{"message":"RENDERING: " + tex})
         this.editor.innerHTML = "<span class='GuppyContainer'>"+element+"</span>";
         if (updated) {

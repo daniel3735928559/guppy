@@ -15,7 +15,7 @@ module.exports = {
             var current_path = g.path_to(current_node);
             var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
         }
-    
+        
         var boxes = g.boxes;
         if (! boxes) return;
         if (current_node) {

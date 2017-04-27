@@ -6,7 +6,10 @@ module.exports = {
         this.current.parentNode.insertBefore(this.base.createElement("T"),this.current);
         this.current.parentNode.insertBefore(wich,this.current);
         this.current.parentNode.removeChild(this.current);
-        this.current = wich;
+        this.current = wich.previousSibling;
+        this.current.appendChild(this.make_e(""));
+        this.current = this.current.firstChild;
+        this.right();
         this.render(true);
     },
 
@@ -114,6 +117,16 @@ module.exports = {
         this.delete_from_f();
         this.insert_nodes(survivor_nodes, pos > idx);
     },
+
+    'delete_T' :function (nodeToDelete) {
+        this.current = nodeToDelete.previousSibling;
+        this.caret = this.current.textContent.length;
+        this.current.textContent += nodeToDelete.nextSibling.textContent; 
+        if (this.current.firstChild == null) this.current.appendChild(this.base.createTextNode(""));
+        nodeToDelete.parentNode.removeChild(nodeToDelete.nextSibling);
+        nodeToDelete.parentNode.removeChild(nodeToDelete);
+        return false;
+    },
     
     'delete_from_e' :function() {
         // return false if we deleted something, and true otherwise.
@@ -149,6 +162,10 @@ module.exports = {
                     this.current = par.parentNode;
                     this.delete_from_f();
                 }
+            } else if (this.current.previousSibling != null && this.current.previousSibling.nodeName == 'T') {
+                return this.delete_T(this.current.previousSibling);
+            } else if (this.current.previousSibling == null && this.current.parentNode.nodeName == 'T') {
+                return this.delete_T(this.current.parentNode);
             } else {
                 // We're at the beginning (hopefully!) 
                 return false;
@@ -164,7 +181,7 @@ module.exports = {
         } else {
             //We're at the end
             if (this.current.nextSibling != null) {
-                // The next node is an f node.  Delete it.
+                // The next node is an f node.  Delete it. This also works for T nodes!
                 this.current = this.current.nextSibling;
                 this.delete_from_f();
             }

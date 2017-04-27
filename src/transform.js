@@ -86,6 +86,9 @@ module.exports = {
                 base.evaluate(Guppy.bracket_xpath, n, null, XPathResult.BOOLEAN_TYPE, null).booleanValue) { 
                 ans = "\\left("+ans+"\\right)";
             }
+        } else if (n.nodeName == "T") {
+            var nn    = n.firstChild
+            ans = Guppy.manual_render(base,t,nn,r);
         }
         return ans;
     }

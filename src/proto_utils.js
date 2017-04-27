@@ -51,6 +51,7 @@ module.exports = {
     },
 
     'toggleMode': function() {
+        if (this.current.parentNode.nodeName != 'm') return true;
         this.insert_T();
         return false;    
     },
