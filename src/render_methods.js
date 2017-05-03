@@ -196,9 +196,6 @@ module.exports = {
             katex.render(this.empty_content,this.editor);
             return;
         }
-        var text = (new XMLSerializer()).serializeToString(this.base);
-        console.log("A+++++++++++++++++++++++++++++++++++++++");
-        //console.log(text);
         this.editor.innerHTML = "<span class='GuppyContainer'>";
         var content = this.render_node(this.base,"latex");
         var contentLength = content.length;
@@ -207,10 +204,18 @@ module.exports = {
                 this.editor.innerHTML += katex.renderToString(content[i]);
             else {
                 var t = content[i];
-                t = t.replace(/\\color{red}.*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
-                t = t.replace(/\\color{gray}.*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+                //Selection edge cursor
+                t = t.replace(/\\color{blue}[^}]*}}/,'<span class="cursor" style="color:blue;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+                //Main cursor
+                t = t.replace(/\\color{red}{\\xmlClass{main_cursor[^}]*}{[^}]*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+                //Move cursor
+                t = t.replace(/\\color{gray}[^}]*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
+                //LEtters
                 t = t.replace(/\\xmlClass{([^}]*)}{([^}]*)}/g,'<span class="$1">$2</span>');
-                t = t.replace(/> </g,">&nbsp;<")
+                //Selection
+                t = t.replace(/\\color{red}{([^}]*)}/,function(m,p) {return p.replace(/">/g,'" style="color:red;">');});
+                //Inner spacing
+                t = t.replace(/> </g,">&nbsp;<");
                 this.editor.innerHTML += t;
             }
         }
