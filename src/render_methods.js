@@ -173,20 +173,11 @@ module.exports = {
         }
     },
 
-    'bla' : function(n,s) {
-        console.log(s+n.getAttribute('path'));
-        for(var nn = n.firstChild; nn != null; nn = nn.nextSibling) {
-            if (nn.nodeType == 3) continue;
-            this.bla(nn,s+' ');
-        }
-    },
-    
     'render_node' :function(n,t) {
         // All the interesting work is done by transform.  This function just adds in the cursor and selection-start cursor
         var output = "";
         if (t == "latex") {
             this.add_paths(this.base.documentElement,"m");
-            this.bla(this.base.firstChild,"");
             this.add_classes_cursors(this.base.documentElement);
             this.current.setAttribute("current","yes");
             if (this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp","yes");
@@ -194,7 +185,7 @@ module.exports = {
             this.post_render_cleanup(this.base.documentElement);
             var outputLength = output.length
             for(var i = 0; i < outputLength; i++)
-                output[i] = output[i].replace(new RegExp('&amp;','g'), '&').replace(/ /g,"&nbsp;");
+                output[i] = output[i].replace(new RegExp('&amp;','g'), '&');
             return output;
         }
         return Guppy.transform(t, this.base);
@@ -219,7 +210,8 @@ module.exports = {
                 t = t.replace(/\\color{red}.*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
                 t = t.replace(/\\color{gray}.*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
                 t = t.replace(/\\xmlClass{([^}]*)}{([^}]*)}/g,'<span class="$1">$2</span>');
-                this.editor.innerHTML += t; 
+                t = t.replace(/> </g,">&nbsp;<")
+                this.editor.innerHTML += t;
             }
         }
         this.editor.innerHTML += "</span>";
