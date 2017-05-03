@@ -204,6 +204,7 @@ module.exports = {
                 this.editor.innerHTML += katex.renderToString(content[i]);
             else {
                 var t = content[i];
+                if ( t.startsWith("\\phantom")) continue
                 //Selection edge cursor
                 t = t.replace(/\\color{blue}[^}]*}}/,'<span class="cursor" style="color:blue;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
                 //Main cursor
