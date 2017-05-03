@@ -20,7 +20,10 @@ module.exports = {
     },
     
     'backslash' : function() {
-        if (this.is_text(this.current)) return;
+        if(this.current.parentNode.nodeName == 'm') {
+            this.insert_string("\\"); 
+            return
+        }
         this.insert_symbol("sym_name");
     },
     
@@ -107,7 +110,7 @@ module.exports = {
     
     'spacebar' : function() {
         //Allow space in text mode
-        if ( this.is_text(this.current)) {
+        if ( this.current.parentNode.nodeName == 'm') {
             this.insert_string(" ");
             return;
         }

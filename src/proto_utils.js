@@ -52,6 +52,18 @@ module.exports = {
 
     'toggleMode': function() {
         if (this.current.parentNode.nodeName != 'm') return true;
+        if (this.caret == 0 && this.current.previousSibling != null && 
+            this.current.previousSibling.nodeName == 'T') {
+            this.left();
+            this.render();
+            return true;
+        }
+        if (this.caret >= this.get_length(this.current) && this.current.nextSibling != null && 
+            this.current.nextSibling.nodeName == 'T') {
+            this.right();
+            this.render();
+            return true;
+        }
         this.insert_T();
         return false;    
     },

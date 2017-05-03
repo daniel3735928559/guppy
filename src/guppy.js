@@ -123,7 +123,7 @@ Guppy.register_keyboard_handlers = function() {
         }}(i));  
     for (var i in Guppy.kb.k_syms)
         Mousetrap.bind(i,function(i) { return function() {
-            if (!Guppy.active_guppy) return true;
+            if (!Guppy.active_guppy || Guppy.active_guppy.current.parentNode.nodeName == 'm') return true;
             Guppy.active_guppy.temp_cursor.node = null;
             Guppy.active_guppy.space_caret = 0;
             Guppy.active_guppy.insert_symbol(Guppy.kb.k_syms[i]);

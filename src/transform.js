@@ -1,6 +1,12 @@
 module.exports = {
     'transform' : function(t, base, r) {
-        return Guppy.manual_render(base,t,base.documentElement,r);
+        var result = [];
+        for(var n = base.firstChild.firstChild; n != null; n = n.nextSibling)
+            if (n.nodeName == 'T')
+                result.push(Guppy.manual_render(base,t,n,r));
+            else
+                result.push(Guppy.manual_render(base,t,n,r));
+        return result;
     },
 
     'bracket_xpath' : "(count(./*) != 1 and not \
@@ -83,12 +89,12 @@ module.exports = {
             for(var nn = n.firstChild; nn != null; nn = nn.nextSibling)
                 ans += Guppy.manual_render(base,t,nn,r);
             if (t == "latex" && n.getAttribute("bracket") == "yes" &&
-                base.evaluate(Guppy.bracket_xpath, n, null, XPathResult.BOOLEAN_TYPE, null).booleanValue) { 
+                base.evaluate(Guppy.bracket_xpath, n, null, XPathResult.BOOLEAN_TYPE, null).booleanValue) {
                 ans = "\\left("+ans+"\\right)";
             }
         } else if (n.nodeName == "T") {
-            var nn    = n.firstChild
-            ans = Guppy.manual_render(base,t,nn,r);
+            for(var nn = n.firstChild; nn != null; nn = nn.nextSibling)
+                ans += Guppy.manual_render(base,t,nn,r);
         }
         return ans;
     }
