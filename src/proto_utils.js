@@ -113,7 +113,9 @@ module.exports = {
     },
     
     'is_blank' :  function() {
-        return this.base.documentElement.firstChild == this.base.documentElement.lastChild && this.base.documentElement.firstChild.firstChild.textContent == "";
+        return ((this.base.documentElement.firstChild == this.base.documentElement.lastChild && 
+                 this.base.documentElement.firstChild.firstChild.textContent == "") ||
+                (this.pureKatex && this.base.documentElement.firstChild.nextSibling.textContent == ""));
     },
     
     'insert_string' :  function(s) {

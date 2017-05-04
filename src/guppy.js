@@ -43,11 +43,11 @@ var Guppy = function(guppy_div, config) {
     
     this.editor_active = true;
     this.empty_content = "\\color{red}{[?]}"
-    this.editor = guppy_div;
-    this.blacklist = [];
-    this.autoreplace = true;
-    this.ready = false;
-    this.katexMode = 0;
+    this.editor        = guppy_div;
+    this.blacklist     = [];
+    this.autoreplace   = true;
+    this.ready         = false;
+    this.pureKatex     = false;
 
     this.events = {};
     
@@ -58,7 +58,7 @@ var Guppy = function(guppy_div, config) {
         if (e in events) this.events[e] = e in events ? events[e] : null;
     }
 
-    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace"];
+    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace","pureKatex"];
     
     for (var i = 0; i < opts.length; i++) {
         var p = opts[i];
@@ -90,6 +90,7 @@ var Guppy = function(guppy_div, config) {
         this.render(true);
     }
     this.deactivate();
+    if (this.pureKatex) this.insert_T();
     this.recompute_locations_paths();
 }
 
@@ -116,7 +117,7 @@ Guppy.register_keyboard_handlers = function() {
     for (var i in Guppy.kb.k_chars)
         Mousetrap.bind(i,function(i) { return function() {
             if (!Guppy.active_guppy) return true;
-            if (i=='!') return Guppy.active_guppy.toggleMode(); 
+            if (i=='!' && ! Guppy.active_guppy.pureKatex) return Guppy.active_guppy.toggleMode(); 
             Guppy.active_guppy.temp_cursor.node = null;
             Guppy.active_guppy.insert_string(Guppy.kb.k_chars[i]);
             return false;

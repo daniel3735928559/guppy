@@ -9,7 +9,6 @@ module.exports = {
         this.current = wich.previousSibling;
         this.current.appendChild(this.make_e(""));
         this.current = this.current.firstChild;
-        this.right();
         this.render(true);
     },
 

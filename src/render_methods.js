@@ -200,7 +200,7 @@ module.exports = {
         var content = this.render_node(this.base,"latex");
         var contentLength = content.length;
         for(var i = 0;i < contentLength; i++) {
-            if(i%2)
+            if(this.pureKatex || i%2)
                 this.editor.innerHTML += katex.renderToString(content[i]);
             else {
                 var t = content[i];
