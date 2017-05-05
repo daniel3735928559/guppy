@@ -172,6 +172,7 @@ module.exports = {
     
     'done' :  function(s) {
         if (this.is_symbol(this.current)) this.complete_symbol();
+        else if (this.current.parentNode.nodeName == 'm') this.insert_string('\n');
         else this.fire_event("done");
     },
     

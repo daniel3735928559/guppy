@@ -1,4 +1,5 @@
-var katex     = require('../lib/katex/katex-modified.min.js');
+var katex  = require('../lib/katex/katex-modified.min.js');
+var margin = "margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;";
 module.exports = {
     'recompute_locations_paths' :function() {
         ans = [];
@@ -49,105 +50,145 @@ module.exports = {
         }
     },
 
-    'add_selection_e' :function(n,text,text_node) {
+    'add_selection_e' :function(n,text,text_node,classes,pureText) {
         var sel_cursor;
         if (this.sel_status == Guppy.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
         if (this.sel_status == Guppy.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
+
         if (this.sel_status != Guppy.SEL_NONE) {
-            var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
-            if (!text_node && text.length == 0 && n.parentNode.childElementCount > 1) {
-                sel_caret_text = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
+            if (!pureText) {
+                var sel_caret_text = this.is_small(sel_cursor.node) ? Guppy.kb.SMALL_SEL_CARET : Guppy.kb.SEL_CARET;
+                if (!text_node && text.length == 0 && n.parentNode.childElementCount > 1) {
+                    sel_caret_text = "\\color{blue}{\\xmlClass{"+classes+"}{"+sel_caret_text+"}}";
+                } else {
+                    sel_caret_text = "\\color{blue}{"+sel_caret_text+"}";
+                }
+                if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
+                    sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+                if (this.sel_status == Guppy.SEL_CURSOR_AT_START)
+                    sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
             } else {
-                sel_caret_text = "\\color{blue}{"+sel_caret_text+"}";
+                var height = this.is_small(sel_cursor.node) ? 0.5 : Guppy.kb.SMALL_CARET_SIZE ; Guppy.kb.CARET_SIZE;
+                sel_caret_text = '<span class="cursor" style="color:blue;'+margin+'height:'+height+';"></span>';
             }
-            if (this.sel_status == Guppy.SEL_CURSOR_AT_END) 
-                sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-            if (this.sel_status == Guppy.SEL_CURSOR_AT_START) 
-                sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
         }
         return { 'sel_caret_text': sel_caret_text,
                  'sel_cursor'    : sel_cursor,
         }; 
     },
 
-    'add_phantoms_e' :function(n,sel_cursor) {
+    'add_phantoms_e' :function(n,sel_cursor,classes,pureText) {
         var ans = "";
         if (n.parentNode.childElementCount == 1) {
             if (this.current == n) {
-                var blank_caret = this.blank_caret || (this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET);
-                ans = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
+                if (pureText) {
+                    var blank_caret = this.blank_caret || (this.is_small(this.current) ? Guppy.kb.SMALL_CARET_SIZE : Guppy.kb.CARET_SIZE);
+                    ans= '<span class="cursor main_cursor '+classes+'" style="color:red;'+margin+'height:'+blank_caret+';"></span>';
+                } else {
+                    var blank_caret = this.blank_caret || (this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET);
+                    ans = "\\color{red}{\\xmlClass{main_cursor "+classes+"}{"+blank_caret+"}}";
+                }
             }
             else if (this.temp_cursor.node == n)
-                ans = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+                ans = "\\color{gray}{\\xmlClass{"+classes+"}{[?]}}";
             else
-                ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
-        } else if (this.temp_cursor.node != n && this.current != n && (!(sel_cursor) || sel_cursor.node != n)) {
+                ans = "\\color{blue}{\\xmlClass{"+classes+"}{[?]}}";
+        } else if (!pureText && this.temp_cursor.node != n && this.current != n && (!(sel_cursor) || sel_cursor.node != n)) {
             // These are the empty e elements at either end of
             // a c or m node, such as the space before and
             // after both the sin and x^2 in sin(x^2)
             //
             // Here, we add in a small element so that we can
             // use the mouse to select these areas
-            ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\cursor[0.1ex]{1ex}}}";
+            ans = "\\phantom{\\xmlClass{"+classes+"}{\\cursor[0.1ex]{1ex}}}";
         }
         return ans; 
     },
 
-    'add_caret_e' :function(n,text_node,text) {
+    'add_caret_e' :function(n,text_node,text,classes,pureText) {
         var caret_text = "";
-        if (text_node) {
-            if (this.sel_status == Guppy.SEL_CURSOR_AT_START)
-                caret_text = "[";
-            else if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
-                caret_text = "]";
+        if (pureText) {
+            if (text_node) return ""; 
+            if (text.length == 0) 
+                caret_text = '<span class="cursor main_cursor '+classes+'" style="color:red;'+margin+'height:'+Guppy.kb.CARET_SIZE+';"></span>';
             else
-                caret_text = "\\_";
+                caret_text = '<span class="cursor main_cursor" style="color:red;'+margin+'height:'+Guppy.kb.CARET_SIZE+';"></span>';
+            if (this.sel_status == Guppy.SEL_CURSOR_AT_START)
+                this.renderColor = 'style="color:'+Guppy.kb.SEL_COLOR+';"';
+            else if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
+                if (pureText)
+                    this.renderColor = "";
         } else {
-            caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
-            if (text.length == 0)
-                caret_text = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
-            else
-                caret_text = "\\color{red}{\\xmlClass{main_cursor}{"+caret_text+"}}"
-            if (this.sel_status == Guppy.SEL_CURSOR_AT_START)
-                caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
-            else if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
-                caret_text = "}" + caret_text;
+            if (text_node) {
+                if (this.sel_status == Guppy.SEL_CURSOR_AT_START)
+                    caret_text = "[";
+                else if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
+                    caret_text = "]";
+                else
+                    caret_text = "\\_";
+            } else {
+                caret_text = this.is_small(this.current) ? Guppy.kb.SMALL_CARET : Guppy.kb.CARET;
+                if (text.length == 0) {
+                    caret_text = "\\color{red}{\\xmlClass{main_cursor "+classes+"}{"+caret_text+"}}";
+                } else
+                    caret_text = "\\color{red}{\\xmlClass{main_cursor}{"+caret_text+"}}"
+                if (this.sel_status == Guppy.SEL_CURSOR_AT_START) {
+                    caret_text = caret_text + "\\color{"+Guppy.kb.SEL_COLOR+"}{";
+                } else if (this.sel_status == Guppy.SEL_CURSOR_AT_END)
+                    caret_text = "}" + caret_text;
+            }
         }
         return caret_text;
     },
     
     'add_classes_cursors' :function(n,path) {
         if (n.nodeName == "e") {
+            this.renderColor    = "";
             var ans             = "";
             var caret_text      = "";
             var temp_caret_text = "";
             var text            = n.firstChild.nodeValue;
             var text_node       = this.is_text(n);
-            var sel             = this.add_selection_e(n,text,text_node);
+            var classesi        = "guppy_elt guppy_loc_"+n.getAttribute("path")+"_";
+            var classes0        = "guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0";
+            var pureText        = n.parentNode.nodeName == "m";
+            var sel             = this.add_selection_e(n,text,text_node,classes0,pureText);
             if (text.length == 0) {
                 if (text_node) caret_text = "\\_";
-                else ans = this.add_phantoms_e(n,sel.sel_cursor);
+                else ans = this.add_phantoms_e(n,sel.sel_cursor,classes0,pureText);
             }
+            
             for(var i = 0; i < text.length+1; i++) {
                 if (n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)) {
-                    ans += this.add_caret_e(n,text_node,text);
+                    ans += this.add_caret_e(n,text_node,text,classes0,pureText);
                 } else if (n == this.current && i == this.caret && text_node) {
                     ans += caret_text;
                 } else if (this.sel_status != Guppy.SEL_NONE && sel.sel_cursor.node == n && i == sel.sel_cursor.caret) {
+                    this.renderColor = this.renderColor == '' ? 'style="color:'+Guppy.kb.SEL_COLOR+';"' : '';
                     ans += sel.sel_caret_text;
-                } else if (this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)) {
+                } else if (this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || 
+                           n.parentNode.childElementCount > 1)) {
                     if (text_node) 
                         temp_caret_text = ".";
-                    else {
+                    else if (pureText) {
+                        temp_caret_text = '<span style="color:gray;'+margin+'height:'+Guppy.kb.CARET_SIZE+';"></span>';
+                    } else {
                         temp_caret_text = this.is_small(this.current) ? Guppy.kb.TEMP_SMALL_CARET : Guppy.kb.TEMP_CARET;
                         if (text.length == 0)
-                            temp_caret_text = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
+                            temp_caret_text = "\\color{gray}{\\xmlClass{"+classes0+"}{"+temp_caret_text+"}}";
                         else
                             temp_caret_text = "\\color{gray}{"+temp_caret_text+"}";
                     }
                     ans += temp_caret_text;
                 }
-                if (i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
+                if (i < text.length) {
+                    if (pureText) {
+                        var letter = text[i] == ' ' ? '&nbsp;' : text[i]
+                        letter = letter.replace(/\r?\n/g, "<br/>");
+                        ans += '<span class="'+classesi+i+'" '+this.renderColor+'>'+letter+'</span>';
+                    } else
+                        ans += "\\xmlClass{"+classesi+i+"'}{"+text[i]+"}";
+                }
             }
             n.setAttribute("render", ans);
             n.removeAttribute("path");
@@ -159,6 +200,7 @@ module.exports = {
                     this.add_classes_cursors(c); 
             }
         }
+
     },
     
     'post_render_cleanup' :function(n) {
@@ -200,24 +242,10 @@ module.exports = {
         var content = this.render_node(this.base,"latex");
         var contentLength = content.length;
         for(var i = 0;i < contentLength; i++) {
-            if(this.pureKatex || i%2)
+            if(this.pureKatex || i%2) {
                 this.editor.innerHTML += katex.renderToString(content[i]);
-            else {
-                var t = content[i];
-                if ( t.startsWith("\\phantom")) continue
-                //Selection edge cursor
-                t = t.replace(/\\color{blue}[^}]*}}/,'<span class="cursor" style="color:blue;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
-                //Main cursor
-                t = t.replace(/\\color{red}{\\xmlClass{main_cursor[^}]*}{[^}]*}}}/,'<span class="cursor main_cursor" style="color:red;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
-                //Move cursor
-                t = t.replace(/\\color{gray}[^}]*}}/,'<span style="color:grey;margin-right:-1px;border-right:1px solid;margin-bottom:-0.0862em;height:0.7em;"></span>');
-                //LEtters
-                t = t.replace(/\\xmlClass{([^}]*)}{([^}]*)}/g,'<span class="$1">$2</span>');
-                //Selection
-                t = t.replace(/\\color{red}{([^}]*)}/,function(m,p) {return p.replace(/">/g,'" style="color:red;">');});
-                //Inner spacing
-                t = t.replace(/> </g,">&nbsp;<");
-                this.editor.innerHTML += t;
+            } else {
+                this.editor.innerHTML += content[i];
             }
         }
         this.editor.innerHTML += "</span>";

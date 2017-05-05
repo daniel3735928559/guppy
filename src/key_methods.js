@@ -97,7 +97,7 @@ module.exports = {
         this.sel_clear();
         if (this.caret >= this.get_length(this.current)) {
             var nn = this.base.evaluate("following::e[1]", this.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            if (nn != null) {
+            if (nn != null && ! (this.pureKatex && nn.parentNode.nodeName == 'm')) {
                 this.current = nn;
                 this.caret = 0;
             } else{
@@ -121,7 +121,7 @@ module.exports = {
         this.sel_clear();
         if (this.caret <= 0) {
             var pn = this.base.evaluate("preceding::e[1]", this.current, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            if (pn != null) {
+            if (pn != null && ! (this.pureKatex && pn.parentNode.nodeName == 'm') ) {
                 this.current = pn;
                 this.caret = this.current.firstChild.nodeValue.length;
             } else {

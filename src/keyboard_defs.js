@@ -3,13 +3,15 @@
 kb = {};
 kb.is_mouse_down = false;
 
-kb.CARET = "\\cursor[-0.2ex]{0.7em}"
-kb.TEMP_SMALL_CARET = "\\cursor[0em]{0.6em}"
-kb.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"
-kb.SMALL_CARET = "\\cursor[-0.05em]{0.5em}"
-kb.SEL_CARET = "\\cursor[-0.2ex]{0.7em}"
-kb.SMALL_SEL_CARET = "\\cursor[-0.05em]{0.5em}"
-kb.SEL_COLOR = "red"
+kb.CARET                = "\\cursor[-0.2ex]{0.7em}"
+kb.TEMP_SMALL_CARET     = "\\cursor[0em]{0.6em}"
+kb.TEMP_CARET           = "\\cursor[-0.2ex]{0.7em}"
+kb.SMALL_CARET          = "\\cursor[-0.05em]{0.5em}"
+kb.SEL_CARET            = "\\cursor[-0.2ex]{0.7em}"
+kb.SMALL_SEL_CARET      = "\\cursor[-0.05em]{0.5em}"
+kb.SEL_COLOR            = "red"
+kb.CARET_SIZE           = "0.7em"
+kb.SMALL_CARET_SIZE     = "0.5em"
 
 kb.symbols = {};
 kb.k_chars = {

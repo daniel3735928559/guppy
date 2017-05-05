@@ -9,6 +9,9 @@ module.exports = {
         this.current = wich.previousSibling;
         this.current.appendChild(this.make_e(""));
         this.current = this.current.firstChild;
+        //No why I need this - caret disappears otherwise.
+        this.right();
+        this.left();
         this.render(true);
     },
 
@@ -163,7 +166,7 @@ module.exports = {
                 }
             } else if (this.current.previousSibling != null && this.current.previousSibling.nodeName == 'T') {
                 return this.delete_T(this.current.previousSibling);
-            } else if (this.current.previousSibling == null && this.current.parentNode.nodeName == 'T') {
+            } else if (this.current.previousSibling == null && this.current.parentNode.nodeName == 'T' && !this.pureKatex) {
                 return this.delete_T(this.current.parentNode);
             } else {
                 // We're at the beginning (hopefully!) 

@@ -84,13 +84,13 @@ var Guppy = function(guppy_div, config) {
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if (self.activate) self.activate();}, false);
+    if (this.pureKatex) this.insert_T();
     if (Guppy.ready && !this.ready) {
         this.ready = true;
         this.fire_event("ready");
         this.render(true);
     }
     this.deactivate();
-    if (this.pureKatex) this.insert_T();
     this.recompute_locations_paths();
 }
 
