@@ -14,7 +14,8 @@ var guppydefs = [
     require('./transform.js'),
     require('./get_location.js'),
     require('./guppy_utils.js'),
-    require('./mouse_methods.js')
+    require('./mouse_methods.js'),
+    require('./guppyGui.js')
 ]
 
 String.prototype.splice = function(idx, s) { return (this.slice(0,idx) + s + this.slice(idx)); };

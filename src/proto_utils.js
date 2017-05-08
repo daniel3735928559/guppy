@@ -126,7 +126,7 @@ module.exports = {
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
         this.caret += s.length;
         this.checkpoint();
-        if (this.autoreplace) this.check_for_symbol();
+        if (this.current.parentNode.nodeName != 'm' && this.autoreplace) this.check_for_symbol();
         this.render(true);
     },
     
@@ -192,10 +192,16 @@ module.exports = {
         var instance = this;
         if (this.is_text(this.current)) return;
         for (var s in Guppy.kb.symbols) {
-            if (instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(Guppy.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)) {
+            if (instance.current.nodeName == 'e' && 
+                s.length <= (instance.caret - instance.space_caret) && 
+                !(Guppy.is_blank(instance.current)) && 
+                instance.current.firstChild.nodeValue.search_at(instance.caret,s)) {
+                //
                 var temp = instance.current.firstChild.nodeValue;
                 var temp_caret = instance.caret;
-                instance.current.firstChild.nodeValue = instance.current.firstChild.nodeValue.slice(0,instance.caret-s.length)+instance.current.firstChild.nodeValue.slice(instance.caret);
+                instance.current.firstChild.nodeValue = (
+                    instance.current.firstChild.nodeValue.slice(0,instance.caret-s.length)+
+                    instance.current.firstChild.nodeValue.slice(instance.caret));
                 instance.caret -= s.length;
                 var success = instance.insert_symbol(s);
                 if (!success) {

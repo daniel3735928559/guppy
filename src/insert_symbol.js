@@ -83,6 +83,7 @@ module.exports = {
     'insert_symbol' :function(sym_name) {
         var s = Guppy.kb.symbols[sym_name];
         if (this.is_blacklisted(s['type'])) return false;
+        if (this.current.parentNode.nodeName == 'm') this.insert_T();
         var node_list = {};
         var content = {};
         var left_piece,right_piece;

@@ -13,6 +13,7 @@ body {
     padding: 10px;
     box-shadow: 1px 1px 1px 0 lightgray inset;
     cursor: text;
+    overflow-y:auto;
 }
 
 #result {
@@ -52,3 +53,28 @@ body {
 @-webkit-keyframes blink-animation {
   to { visibility: hidden; }
 }
+
+#guppyToolbox {
+    display   : none;
+    text-align: left;
+    width     : 21em;
+    height    : 20em;
+    background-color:blue;
+    position:absolute;
+    top: 200px;
+    left: 500px;
+}
+
+#guppyToolboxTitle {
+    color:white;
+    font-weight:bold;
+}
+
+.closer {
+    font-weight: bold;
+}
+
+.closer:hover {
+    color : red;
+}
+
