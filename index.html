@@ -26,12 +26,25 @@
 </head>
 
 <body>
-    <div>Enter mathematical expressions below
+    <div>Enter text and math. To switch to math mode use "!", than use the cheat sheet below or the toolbox.
     (<a href="#" onclick="flash_help()">help</a>)</div> <br/>
 
     <div id="guppy1"></div>
     <br />
+   
+     
+    <div>
+        <button onclick='document.getElementById("guppyToolbox").style.display="inline-block"'>Math toolbox</a>
+    </div>
+    
+    <div draggeable="true" class='draggeable' id='guppyToolbox'>
+        <button class='closer' style='margin:0;padding:0' 
+                onclick='document.getElementById("guppyToolbox").style.display="none"'>X</button>
+        <span id='guppyToolboxTitle'>Toolbox<span>
+        <div id="guppyGui" style="background-color:bisque;"></div>
+    </div>
 
+    <br/>
     <div>Click the buttons to render the expression in various
       plaintext formats</div> <br/>
     
@@ -223,5 +236,4 @@
     </div>
 
 </body>
-
 </html>
