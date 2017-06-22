@@ -12,6 +12,7 @@
     <!-- <script src="lib/katex/katex-modified.min.js"></script> -->
     <!-- <script src="lib/mousetrap/mousetrap.min.js"></script> -->
     <script type="text/javascript" src="build/guppy_editor.min.js"></script>
+    <script type="text/javascript" src="build/guppy_render.min.js"></script>
 
     <script type="text/javascript" src="index.js"></script>
     <link rel="stylesheet" href="index.css">
@@ -28,7 +29,15 @@
 <body>
     <div>Enter mathematical expressions below
     (<a href="#" onclick="flash_help()">help</a>)</div> <br/>
-
+    For example, try this one: <script id="eqn1" type="text/guppy_xml"><m><e></e><f type="definite_integral"><b p="latex">\displaystyle\int_{<r ref="1"/>}^{<r ref="2"/>}<r ref="3"/>d<r 
+ref="4"/></b><b p="small_latex">\int_{<r ref="1"/>}^{<r ref="2"/>}<r ref="3"/>d<r ref="4"/></b><b p="text">integrate(<r ref="3"/>,<r ref="4"/>,<r ref="1"/>,<r ref="2"/>)</b><c 
+up="2" down="1" size="s" name="lower_limit"><e>0</e></c><c up="2" down="1" size="s" name="upper_limit"><e></e><f type="pi" c="yes"><b p="latex">{\pi}</b><b p="text"> $pi 
+</b></f><e>/2</e></c><c up="2" down="1" delete="3" name="integrand"><e></e><f type="fraction"><b p="latex">\dfrac{<r ref="1"/>}{<r ref="2"/>}</b><b p="small_latex">\frac{<r 
+ref="1"/>}{<r ref="2"/>}</b><b p="text">(<r ref="1"/>)/(<r ref="2"/>)</b><c up="1" down="2" name="numerator"><e>1</e></c><c up="1" down="2" name="denominator"><e>1+</e><f 
+type="exponential"><b p="latex">{<r ref="1"/>}^{<r ref="2"/>}</b><b p="text">(<r ref="1"/>)^(<r ref="2"/>)</b><c up="2" bracket="yes" delete="1" name="base"><e></e><f type="tan"><b 
+p="latex">\tan\left(<r ref="1"/>\right)</b><b p="text">tan(<r ref="1"/>)</b><c delete="1"><e>x</e></c></f><e></e></c><c down="1" delete="1" size="s" name="exponent"><e></e><f 
+type="square_root"><b p="latex">\sqrt{<r ref="1"/>}</b><b p="text">sqrt(<r ref="1"/>)</b><c delete="1"><e>2</e></c></f><e></e></c></f><e></e></c></f><e></e></c><c up="2" down="1" 
+bracket="yes" delete="4" name="variable"><e>x</e></c></f><e></e></m></script>
     <div id="guppy1"></div>
     <br />
 
