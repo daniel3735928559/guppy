@@ -49,7 +49,6 @@ var Guppy = function(config){
     	this.ready = true;
     	this.fire_event("ready");
     }
-    console.log(this.current);
 }
 
 Guppy.SEL_NONE = 0;
@@ -490,21 +489,21 @@ Guppy.prototype.sel_get = function(){
 	    "cursor":0};
 }
 
-Guppy.prototype.print_selection = function(){
-    var sel = this.sel_get();
-    if(sel == null) return "[none]";
-    var ans = "";
-    ans += "node_list: \n";
-    for(var i = 0; i < sel.node_list.length; i++){
-	var n = sel.node_list[i];
-	ans += (new XMLSerializer()).serializeToString(n) + "\n";
-    }
-    ans += "\ninvolved: \n";
-    for(var i = 0; i < sel.involved.length; i++){
-	var n = sel.involved[i];
-	ans += (new XMLSerializer()).serializeToString(n) + "\n";
-    }
-}
+// Guppy.prototype.print_selection = function(){
+//     var sel = this.sel_get();
+//     if(sel == null) return "[none]";
+//     var ans = "";
+//     ans += "node_list: \n";
+//     for(var i = 0; i < sel.node_list.length; i++){
+// 	var n = sel.node_list[i];
+// 	ans += (new XMLSerializer()).serializeToString(n) + "\n";
+//     }
+//     ans += "\ninvolved: \n";
+//     for(var i = 0; i < sel.involved.length; i++){
+// 	var n = sel.involved[i];
+// 	ans += (new XMLSerializer()).serializeToString(n) + "\n";
+//     }
+// }
 
 Guppy.prototype.make_e = function(text){
     var base = this.doc.base;
