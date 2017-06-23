@@ -580,28 +580,6 @@ Guppy.prototype.sel_paste = function(){
     this.insert_nodes(this.clipboard, true);
     this.checkpoint();
     return;
-    var real_clipboard = [];
-    for(var i = 0; i < this.clipboard.length; i++){
-	real_clipboard.push(this.clipboard[i].cloneNode(true));
-    }
-    
-    if(real_clipboard.length == 1){
-	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.substring(0,this.caret) + real_clipboard[0].firstChild.nodeValue + this.current.firstChild.nodeValue.substring(this.caret);
-	this.caret += real_clipboard[0].firstChild.nodeValue.length;
-    }
-    else{
-	var nn = this.make_e(real_clipboard[real_clipboard.length-1].firstChild.nodeValue + this.current.firstChild.nodeValue.substring(this.caret));
-	this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.substring(0,this.caret) + real_clipboard[0].firstChild.nodeValue;
-	if(this.current.nextSibling == null)
-	    this.current.parentNode.appendChild(nn)
-	else
-	    this.current.parentNode.insertBefore(nn, this.current.nextSibling)
-	for(var i = 1; i < real_clipboard.length - 1; i++)
-	    this.current.parentNode.insertBefore(real_clipboard[i], nn);
-	this.current = nn;
-	this.caret = real_clipboard[real_clipboard.length-1].firstChild.nodeValue.length
-    }
-    this.checkpoint();
 }
 
 Guppy.prototype.sel_clear = function(){
