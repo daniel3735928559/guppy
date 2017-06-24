@@ -1,22 +1,5 @@
 var GuppyUtils = {};
 
-// GuppyUtils.next_sibling = function(n){
-//     if(n == null) return null;
-//     var c = n.parentNode.nextSibling;
-//     while(c != null && c.nodeName != "e") c = c.nextSibling;
-//     if(c == null) return null
-//     else return c.firstChild;
-// }
-
-// GuppyUtils.prev_sibling = function(n){
-//     if(n == null) return null;
-//     var c = n.parentNode.previousSibling;
-//     while(c != null && c.nodeName != "e") c = c.previousSibling;
-//     if(c == null) return null
-//     else return c.firstChild;
-// }
-
-
 GuppyUtils.CARET = "\\cursor[-0.2ex]{0.7em}"
 GuppyUtils.TEMP_SMALL_CARET = "\\cursor[0em]{0.6em}"
 GuppyUtils.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"

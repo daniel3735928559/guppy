@@ -3,6 +3,7 @@ GuppyDoc = require('./guppy_doc.js');
 
 function guppy_render(){
     var l = document.getElementsByTagName("script");
+    var ans = []
     for(var i = 0; i < l.length; i++){
 	if(l[i].getAttribute("type") == "text/guppy_xml"){
 	    var n = l[i];
@@ -11,8 +12,10 @@ function guppy_render(){
 	    s.setAttribute("id","eqn1_render");
 	    katex.render(d.get_content("latex"), s);
 	    n.parentNode.replaceChild(s, n);
+	    ans.push({"container":s, "doc":d})
 	}
     }
+    return ans;
 }
 
 module.exports = guppy_render;
