@@ -7,15 +7,13 @@
     <script type="text/javascript" src="test.js"></script>
   </head>
   <body>
-    <div id="guppy1" style="width:50%;border:2px solid blue;height:150px;padding:10px;"></div>
-    <div id="results" style="width:50%;border:1px solid
-    black;padding:10px;"><b>Test results: <span id="pass_rate"></span></b></div>
-    <button onclick="display_coverage()">Redisplay coverage</button>
-    <div id="coverage" style="width:50%;border:1px solid black;padding:10px;"></div>
+    <div id="guppy1" style="width:80%;float:left;border:2px solid blue;height:150px;padding:10px;"></div>
+    <div id="results" style="width:40%;float:left;border:1px solid black;padding:10px;">Test results: <b><span id="pass_rate"></span></b></div>
+    <div id="coverage" style="width:40%;float:left;border:1px solid black;padding:10px;">Test coverage: </div>
     <script>
       Guppy.get_symbols(["builtins","../sym/symbols.json","../sym/extra_symbols.json"]);
       var test_guppy = new Guppy("guppy1",
-      {"events":{"ready":function(g){console.log("testing");}}});
+      {"events":{"error":function(g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},"ready":function(g){console.log("testing");}}});
       setTimeout(start_tests, 2000);
     </script>
 </body></html>

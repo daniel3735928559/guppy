@@ -11,7 +11,6 @@ var tests = [
     },
     {
 	"description":"Basic undo",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"xy",
 	"run":function(g){
@@ -20,7 +19,6 @@ var tests = [
     },
     {
 	"description":"Basic redo",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"xyz",
 	"run":function(g){
@@ -29,7 +27,6 @@ var tests = [
     },
     {
 	"description":"Sine",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"sin(x)",
 	"run":function(g){
@@ -38,7 +35,6 @@ var tests = [
     },
     {
 	"description":"Sine undo",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"sin",
 	"run":function(g){
@@ -47,7 +43,6 @@ var tests = [
     },
     {
 	"description":"Exponent undo",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"2x",
 	"run":function(g){
@@ -101,7 +96,6 @@ var tests = [
     },
     {
 	"description":"f-char delete",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"(2)^(x)",
 	"run":function(g){
@@ -119,7 +113,6 @@ var tests = [
     },
     {
 	"description":"matrix add row",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1;2)",
 	"run":function(g){
@@ -128,7 +121,6 @@ var tests = [
     },
     {
 	"description":"matrix copy row",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1;1)",
 	"run":function(g){
@@ -137,7 +129,6 @@ var tests = [
     },
     {
 	"description":"matrix add col",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1,2)",
 	"run":function(g){
@@ -146,7 +137,6 @@ var tests = [
     },
     {
 	"description":"matrix copy col",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1,1)",
 	"run":function(g){
@@ -155,7 +145,6 @@ var tests = [
     },
     {
 	"description":"2x2 matrix",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1,2;(x)^(2),3)",
 	"run":function(g){
@@ -164,7 +153,6 @@ var tests = [
     },
     {
 	"description":"2x2 matrix delete col",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(2;3)",
 	"run":function(g){
@@ -173,7 +161,6 @@ var tests = [
     },
     {
 	"description":"2x2 matrix delete row",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1,2)",
 	"run":function(g){
@@ -182,7 +169,6 @@ var tests = [
     },
     {
 	"description":"matrix extend up",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(2;1)",
 	"run":function(g){
@@ -191,7 +177,6 @@ var tests = [
     },
     {
 	"description":"matrix extend left",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(2,1)",
 	"run":function(g){
@@ -200,7 +185,6 @@ var tests = [
     },
     {
 	"description":"matrix copy up",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(21;1)",
 	"run":function(g){
@@ -209,7 +193,6 @@ var tests = [
     },
     {
 	"description":"matrix copy up move",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1;21)",
 	"run":function(g){
@@ -218,7 +201,6 @@ var tests = [
     },
     {
 	"description":"matrix copy left",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(12,1)",
 	"run":function(g){
@@ -227,7 +209,6 @@ var tests = [
     },
     {
 	"description":"matrix copy left undo",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"matrix(1)",
 	"run":function(g){
@@ -236,7 +217,6 @@ var tests = [
     },
     {
 	"description":"sel all delete",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"",
 	"run":function(g){
@@ -245,7 +225,6 @@ var tests = [
     },
     {
 	"description":"spacebar",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"cos",
 	"run":function(g){
@@ -254,7 +233,6 @@ var tests = [
     },
     {
 	"description":"backslash",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":" $theta ",
 	"run":function(g){
@@ -263,7 +241,6 @@ var tests = [
     },
     {
 	"description":"theta",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"th $eta ",
 	"run":function(g){
@@ -272,7 +249,6 @@ var tests = [
     },
     {
 	"description":"completion",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"cos()",
 	"run":function(g){
@@ -281,7 +257,6 @@ var tests = [
     },
     {
 	"description":"selection squaring",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"(x+1)^(2)",
 	"run":function(g){
@@ -290,7 +265,6 @@ var tests = [
     },
     {
 	"description":"right paren",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"((x+1))^(2)",
 	"run":function(g){
@@ -299,7 +273,6 @@ var tests = [
     },
     {
 	"description":"paren completion",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"((x+1))^(2)",
 	"run":function(g){
@@ -308,7 +281,6 @@ var tests = [
     },
     {
 	"description":"definite integral",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"integrate((x)^(2),x,0,2)",
 	"run":function(g){
@@ -317,7 +289,6 @@ var tests = [
     },
     {
 	"description":"delete",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"",
 	"run":function(g){
@@ -326,7 +297,6 @@ var tests = [
     },
     {
 	"description":"click",
-	"content":'<m><e></e></m>',
 	"type":"text",
 	"expected":"xsin(ax)",
 	"run":function(g){
@@ -338,9 +308,8 @@ var tests = [
     },
     {
 	"description":"click select",
-	"content":'<m><e></e></m>',
 	"type":"text",
-	"expected":"x(x)^(2)",
+	"expected":"x+(x)^(2)",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x',')','y','x','^','2']);
 	    do_mouse_down("m_e1_0", .7, .1);
@@ -349,6 +318,34 @@ var tests = [
 	    do_mouse_down("m_e2_0", .9, .9, true);
 	    do_mouse_up();
 	    do_keys(['+']);
+	}
+    },
+    {
+	"description":"mouse move",
+	"type":"text",
+	"expected":"x+y",
+	"run":function(g){
+	    do_keys(['x','+','s','i','n','y']);
+	    do_mouse_move("m_e1_0", .1, .1);
+	    do_mouse_down("m_f1_c1_e1_0", .1, .1);
+	    do_mouse_up();
+	    do_keys(['backspace']);
+	}
+    },
+    {
+	"description":"delete exponent",
+	"type":"text",
+	"expected":"x",
+	"run":function(g){
+	    do_keys(['x','^','2','backspace','backspace']);
+	}
+    },
+    {
+	"description":"problem",
+	"type":"text",
+	"expected":"!z",
+	"run":function(g){
+	    test_guppy.backend.problem("!z");
 	}
     }
 ];
@@ -385,13 +382,15 @@ function do_mouse_up(){
 
 function append_result(name, result, i){
     var res = document.getElementById("results");
-    res.appendChild(document.createElement("br"));
+    var d = document.createElement("div");
+    d.setAttribute("style","padding:5px;background-color:"+(result == "PASS" ? "#6c0" : "#f30"));
     var rerun = document.createElement("a");
     rerun.appendChild(document.createTextNode(name));
     rerun.setAttribute("href","#");
     rerun.setAttribute("onclick", "run_test("+i+", test_guppy)");
-    res.appendChild(rerun);
-    res.appendChild(document.createTextNode(": " + result));
+    d.appendChild(rerun);
+    d.appendChild(document.createTextNode(": " + result));
+    res.appendChild(d);
 }
 
 function patch_object_functions(name, obj, is_class, exclude){
@@ -429,7 +428,7 @@ function track_coverage(g){
 }
 
 function display_coverage(){
-    document.getElementById("coverage").innerHTML = "<b>Test coverage: </b><span id='cov'></span>";
+    document.getElementById("coverage").innerHTML = "Test coverage: <b><span id='cov'></span></b>";
     var res = document.getElementById("coverage");
     var tot = 0, cov = 0;
     for(var n in covered_functions){
@@ -438,11 +437,16 @@ function display_coverage(){
 	if(calls > 0) cov++;
 	//res.appendChild(document.createElement("br"));
 	s = document.createElement("div");
-	s.setAttribute("style","padding:5px; background-color:" + (calls > 0 ? "#0c0;" : "#c00;"));
+	s.setAttribute("style","padding:5px; background-color:" + (calls > 0 ? "#6c0;" : "#f30;"));
 	s.appendChild(document.createTextNode(n + ": " + calls));
 	res.appendChild(s);
     }
-    document.getElementById("cov").innerHTML = (Math.round(10000*cov/tot)/100)+"%";
+    document.getElementById("cov").innerHTML = (Math.round(10000*cov/tot)/100)+"% (" + cov + " covered, " + (tot-cov) + " not covered).  ";
+    var re = document.createElement("a");
+    re.setAttribute("onclick","display_coverage()");
+    re.setAttribute("href","#");
+    re.appendChild(document.createTextNode("Recompute"));
+    document.getElementById("cov").appendChild(re);
 }
 
 function start_tests(){
@@ -455,7 +459,7 @@ function start_tests(){
     	if(run_test(i, g)) pass++;
 	tot++;
     }
-    document.getElementById("pass_rate").innerHTML = (Math.round(10000*pass/tot)/100)+"% pass rate";
+    document.getElementById("pass_rate").innerHTML = (Math.round(10000*pass/tot)/100)+"% pass rate (" + pass + " pass, " + (tot-pass) + " fails)";
     display_coverage();
 }
 
@@ -463,11 +467,16 @@ function run_test(i, g){
     var t = tests[i];
     console.log(i,t);
     test_guppy.activate();
-    test_guppy.backend.set_content(t.content);
+    test_guppy.backend.set_content(t.content || "<m><e></e></m>");
     test_guppy.render();
-    t.run(test_guppy);
-    test_guppy.render();
-    var observed = test_guppy.backend.get_content(t.type);
+    var observed = ""
+    try{
+	t.run(test_guppy);
+	test_guppy.render();
+	observed = test_guppy.backend.get_content(t.type);
+    } catch(e) {
+	observed = e + "\n" + e.stack;
+    }
     test_guppy.deactivate();
     if(t.expected == observed){
 	append_result(t.description,"PASS", i);
