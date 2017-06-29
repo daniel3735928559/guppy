@@ -5,6 +5,7 @@
         "text":"norm({$1})"},
      "current":0,
      "type":"norm",
+     "group":"functions",
      "attrs":[{"delete":"1"}]
     },
     
@@ -14,6 +15,7 @@
         "text":"text({$1})"},
      "current":0,
      "type":"text",
+     "group":"editor",
      "attrs":[{"mode":"text"}]
     },
     
@@ -23,6 +25,7 @@
         "text":"SYMBOL({$1})"},
      "current":0,
      "type":"symbol",
+     "group":"editor",
      "attrs":[{"mode":"symbol"}]
     },
     
@@ -32,6 +35,7 @@
 	"text":"abs({$1})"},
      "current":0,
      "type":"absolute_value",
+     "group":"functions",
      "attrs":[{"delete":"1"}]
     },
     
@@ -41,6 +45,7 @@
         "text":"sqrt({$1})"},
      "current":0,
      "type":"square_root",
+     "group":"functions",
      "attrs":[{"delete":"1"}]
     },
     
@@ -50,6 +55,7 @@
 	"text":"({$1})"},
      "current":1,
      "type":"bracket",
+     "group":"syntax",
      "attrs":[{"delete":"1","is_bracket":"yes"}]
     },
     
@@ -59,6 +65,7 @@
 	"text":"floor({$1})"},
      "current":0,
      "type":"floor",
+     "group":"functions",
      "attrs":[{"delete":"1"}]
     },
     
@@ -69,6 +76,7 @@
      "current":1,
      "type":"exponential",
      "current_type":"token",
+     "group":"functions",
      "attrs":[
 	 {"up":"2","bracket":"yes","delete":"1","name":"base"},
 	 {"down":"1","delete":"1","name":"exponent","small":"yes"}
@@ -82,6 +90,7 @@
      "current":1,
      "type":"subscript",
      "current_type":"token",
+     "group":"functions",
      "attrs":[
 	 {"down":"2","bracket":"yes","delete":"1","name":"base"},
 	 {"up":"1","delete":"1","name":"subscript","small":"yes"}
@@ -95,6 +104,7 @@
 	"text":"({$1})/({$2})"},
      "current":0,
      "type":"fraction",
+     "group":"functions",
      "attrs":[
 	 {"up":"1","down":"2","name":"numerator"},
 	 {"up":"1","down":"2","name":"denominator"}
@@ -109,6 +119,7 @@
      "current":1,
      "current_type":"token",
      "type":"fraction",
+     "group":"functions",
      "attrs":[
 	 {"up":"1","down":"2","name":"numerator"},
 	 {"up":"1","down":"2","name":"denominator"}
@@ -122,6 +133,7 @@
 	"text":"integrate({$1},{$2})"},
      "current":0,
      "type":"indefinite_integral",
+     "group":"calculus",
      "attrs":[
 	 {"delete":"1","name":"integrand"},
 	 {"delete":"1","bracket":"yes","name":"variable"}
@@ -135,6 +147,7 @@
 	"text":"integrate({$3},{$4},{$1},{$2})"},
      "current":0,
      "type":"definite_integral",
+     "group":"calculus",
      "attrs":[
 	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
 	 {"down":"1","up":"2","small":"yes","name":"upper_limit"},
@@ -150,6 +163,7 @@
 	"text":"diff({$2},{$1})"},
      "current":0,
      "type":"derivative",
+     "group":"calculus",
      "attrs":[
 	 {"down":"1","up":"2","bracket":"yes","name":"function"},
 	 {"down":"1","up":"2","bracket":"yes","name":"variable"}
@@ -163,6 +177,7 @@
 	"text":"sum({$3},{$1},{$2})"},
      "current":0,
      "type":"summation",
+     "group":"functions",
      "attrs":[
 	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
 	 {"down":"1","up":"2","small":"yes","name":"upper_limit"},
@@ -176,22 +191,30 @@
 	"text":"nroot({$1},{$2})"},
      "current":0,
      "type":"root",
+     "group":"functions",
      "attrs":[
 	 {"down":"2","up":"1","small":"yes","delete":"1","name":"index"},
 	 {"down":"2","up":"1","delete":"1","name":"radicand"}
      ]
     },
     
-    "_func":["sin","cos","tan","sec","csc","cot","log","ln"],
+    "_func":{
+	"group":"functions",
+	"symbols":["sin","cos","tan","sec","csc","cot","log","ln"]
+    },
     
     "_raw":{
-	"infty":{"latex":"\\infty","text":" $infinity "},
-	"leq":{"latex":"\\leq","text":" <= "},
-	"less":{"latex":"<","text":" < "},
-	"geq":{"latex":"\\geq","text":" >= "},
-	"greater":{"latex":">","text":" > "},
-	"*":{"latex":"\\cdot","text":"*"}
+	"group":"operations",
+	"symbols":{
+	    "infty":{"latex":"\\infty","text":" $infinity "},
+	    "leq":{"latex":"\\leq","text":" <= "},
+	    "less":{"latex":"<","text":" < "},
+	    "geq":{"latex":"\\geq","text":" >= "},
+	    "greater":{"latex":">","text":" > "},
+	    "*":{"latex":"\\cdot","text":"*"}
+	}
     },
 
-    "_literal":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]
+    "_literal":{"group":"greek",
+		"symbols":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]}
 }

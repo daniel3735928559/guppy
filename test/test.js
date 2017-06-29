@@ -358,6 +358,7 @@ var tests = [
 		    "latex":"\\tan^{{$1}}({$2})",
 		    "text":" tan^({$1})({$2})"
 		},
+		"group":"test",
 		"current":0,
 		"type":"ptan",
 		"attrs":[{"down":"2"},{"up":"1"}]
@@ -370,7 +371,7 @@ var tests = [
 	"type":"text",
 	"expected":" Re(i)",
 	"run":function(g){
-	    test_guppy.backend.add_symbol_func("Re");
+	    test_guppy.backend.add_symbol_func("Re","test");
 	    do_keys(['shift+r','e','i']);
 	}
     },
@@ -379,7 +380,7 @@ var tests = [
 	"type":"text",
 	"expected":"ASDA",
 	"run":function(g){
-	    test_guppy.backend.add_symbol_raw("asda","ASDA","ASDA");
+	    test_guppy.backend.add_symbol_raw("asda","ASDA","ASDA","test");
 	    do_keys(['a','s','d','a']);
 	}
     }

@@ -77,26 +77,22 @@ GuppyBackend.prototype.fire_event = function(event, args){
 }
 
 GuppyBackend.prototype.add_symbols = function(name, sym){
-    console.log("S",this.symbols);
     var new_syms = GuppySymbols.add_symbols(name, sym);
-    console.log(new_syms);
     for(var s in new_syms){
-	console.log("s",s,new_syms[s]);
 	this.symbols[s] = new_syms[s];
     }
 }
 
-GuppyBackend.prototype.add_symbol_func = function(name){
-    var new_syms = GuppySymbols.add_symbols("_func", [name]);
+GuppyBackend.prototype.add_symbol_func = function(name, group){
+    var new_syms = GuppySymbols.add_symbols("_func", {"group":group,"symbols":[name]});
     for(var s in new_syms)
 	this.symbols[s] = new_syms[s];
 }
 
-GuppyBackend.prototype.add_symbol_raw = function(name, latex, text){
+GuppyBackend.prototype.add_symbol_raw = function(name, latex, text, group){
     var s = {}
     s[name] = {"latex":latex,"text":text}
-    var new_syms = GuppySymbols.add_symbols("_raw", s);
-    console.log(new_syms);
+    var new_syms = GuppySymbols.add_symbols("_raw", {"group":group,"symbols":s});
     for(var s in new_syms)
 	this.symbols[s] = new_syms[s];
 }
