@@ -71,7 +71,7 @@
      "current_type":"token",
      "attrs":[
 	 {"up":"2","bracket":"yes","delete":"1","name":"base"},
-	 {"down":"1","delete":"1","name":"exponent","size":"s"}
+	 {"down":"1","delete":"1","name":"exponent","small":"yes"}
      ]
     },
     
@@ -84,7 +84,7 @@
      "current_type":"token",
      "attrs":[
 	 {"down":"2","bracket":"yes","delete":"1","name":"base"},
-	 {"up":"1","delete":"1","name":"subscript","size":"s"}
+	 {"up":"1","delete":"1","name":"subscript","small":"yes"}
      ]
     },
     
@@ -136,8 +136,8 @@
      "current":0,
      "type":"definite_integral",
      "attrs":[
-	 {"down":"1","up":"2","name":"lower_limit"},
-	 {"down":"1","up":"2","name":"upper_limit"},
+	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
+	 {"down":"1","up":"2","small":"yes","name":"upper_limit"},
 	 {"down":"1","up":"2","delete":"3","name":"integrand"},
 	 {"down":"1","up":"2","bracket":"yes","delete":"4","name":"variable"}
      ]
@@ -164,8 +164,8 @@
      "current":0,
      "type":"summation",
      "attrs":[
-	 {"down":"1","up":"2","name":"lower_limit"},
-	 {"down":"1","up":"2","name":"upper_limit"},
+	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
+	 {"down":"1","up":"2","small":"yes","name":"upper_limit"},
 	 {"down":"1","up":"2","delete":"3","bracket":"yes","name":"summand"}
      ]
     },
@@ -177,7 +177,7 @@
      "current":0,
      "type":"root",
      "attrs":[
-	 {"down":"2","up":"1","delete":"1","name":"index"},
+	 {"down":"2","up":"1","small":"yes","delete":"1","name":"index"},
 	 {"down":"2","up":"1","delete":"1","name":"radicand"}
      ]
     },

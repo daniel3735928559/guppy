@@ -36,7 +36,7 @@ GuppyUtils.is_symbol = function(nn){
 GuppyUtils.is_small = function(nn){
     var n = nn.parentNode;
     while(n != null && n.nodeName != 'm'){
-	if(n.getAttribute("size") == "s"){
+	if(n.getAttribute("small") == "yes"){
 	    return true;
 	}
 	n = n.parentNode

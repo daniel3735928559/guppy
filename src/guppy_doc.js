@@ -6,7 +6,7 @@ var GuppyDoc = function(doc){
 GuppyDoc.prototype.is_small = function(nn){
     var n = nn.parentNode;
     while(n != null && n.nodeName != 'm'){
-	if(n.getAttribute("size") == "s") return true;
+	if(n.getAttribute("small") == "yes") return true;
 	n = n.parentNode
 	while(n != null && n.nodeName != 'c') n = n.parentNode;
     }

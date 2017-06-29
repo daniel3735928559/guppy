@@ -22,7 +22,7 @@
      "current":0,
      "type":"cohomology",
      "attrs":[
-	 {"up":"2","down":"1","size":"s","name":"degree"},
+	 {"up":"2","down":"1","small":"yes","name":"degree"},
 	 {"up":"2","down":"1","name":"space"}
      ]
     }
