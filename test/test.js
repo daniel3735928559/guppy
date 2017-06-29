@@ -393,19 +393,15 @@ function do_keys(chs){
 
 function do_mouse_move(path,x_frac,y_frac){
     elts = test_guppy.editor.getElementsByClassName("guppy_loc_"+path);
-    console.log(elts);
     var rect = elts[1].getBoundingClientRect();
     var x = rect.left + (rect.right - rect.left)*x_frac;
     var y = rect.top + (rect.bottom - rect.top)*y_frac;
-    console.log("R",JSON.stringify(rect),x,y);
     Guppy.mouse_move({"target":test_guppy.editor,"clientX":x,"clientY":y,"preventDefault":function(){}});
 }
 
 function do_mouse_down(path,x_frac,y_frac, shift){
     elts = test_guppy.editor.getElementsByClassName("guppy_loc_"+path);
-    console.log(elts);
     var rect = elts[1].getBoundingClientRect();
-    console.log("R",rect.top,rect.bottom,rect.left,rect.right,x,y);
     var x = rect.left + (rect.right - rect.left)*x_frac;
     var y = rect.top + (rect.bottom - rect.top)*y_frac;
     Guppy.mouse_down({"target":test_guppy.editor,"clientX":x,"clientY":y,"preventDefault":function(){},"shiftKey":shift});
@@ -490,7 +486,6 @@ function start_tests(){
     track_coverage(g);
     var tot = 0, pass = 0;
     for(var i = 0; i < tests.length; i++){
-	console.log("running",tests[i]);
     	if(run_test(i, g)) pass++;
 	tot++;
     }
@@ -500,7 +495,6 @@ function start_tests(){
 
 function run_test(i, g){
     var t = tests[i];
-    console.log(i,t);
     test_guppy.activate();
     test_guppy.backend.set_content(t.content || "<m><e></e></m>");
     test_guppy.render();
