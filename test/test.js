@@ -28,7 +28,7 @@ var tests = [
     {
 	"description":"Sine",
 	"type":"text",
-	"expected":"sin(x)",
+	"expected":" sin(x)",
 	"run":function(g){
 	    do_keys(['s','i','n','x']);
 	}
@@ -250,7 +250,7 @@ var tests = [
     {
 	"description":"completion",
 	"type":"text",
-	"expected":"cos()",
+	"expected":" cos()",
 	"run":function(g){
 	    do_keys(['c','o','space','s','tab']);
 	}
@@ -298,7 +298,7 @@ var tests = [
     {
 	"description":"click",
 	"type":"text",
-	"expected":"xsin(ax)",
+	"expected":"x sin(ax)",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x']);
 	    do_mouse_down("m_f1_c1_e1_0", .2, .2);

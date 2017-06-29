@@ -180,5 +180,18 @@
 	 {"down":"2","up":"1","delete":"1","name":"index"},
 	 {"down":"2","up":"1","delete":"1","name":"radicand"}
      ]
-    }
+    },
+    
+    "_func":["sin","cos","tan","sec","csc","cot","log","ln"],
+    
+    "_raw":{
+	"infty":{"latex":"\\infty","text":" $infinity "},
+	"leq":{"latex":"\\leq","text":" <= "},
+	"less":{"latex":"<","text":" < "},
+	"geq":{"latex":"\\geq","text":" >= "},
+	"greater":{"latex":">","text":" > "},
+	"*":{"latex":"\\cdot","text":"*"}
+    },
+
+    "_literal":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]
 }

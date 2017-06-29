@@ -13,7 +13,7 @@ $('document').ready(function() {
         $('#stuff')[0].innerHTML = '';
     });
 
-    Guppy.get_symbols(["builtins","sym/symbols.json","sym/extra_symbols.json"]);
+    Guppy.get_symbols(["sym/symbols.json","sym/extra_symbols.json"]);
     var g1 = new Guppy("guppy1", {
 	"events":{
 	    //'debug':10,
