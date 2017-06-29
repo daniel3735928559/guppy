@@ -45,17 +45,15 @@ editor) and whose values are dictionaries with the following keys:
   the editor is `pi+sin(x)` and the cursor is just after the pi, then
   if `^` is pressed, the state will become `{pi}^{}+sin(x)`.  
 
-* [optional] `attrs`: This is a dictionary describing the XML
-  attributes that will be given to each of the symbol's editable
-  components.  That is, each key is an attribute name, and each value
-  is a list of strings, the ith of which will be the value of the
-  attribute for the ith component (attribute will be excluded if the
-  value is 0).  For example, if the `attrs` dictionary has entry
-  `"size":[0,0,"s"]`, then the first and second components will not
-  get a size attribute, and the third will get an attribute
-  `size="s"`.  You can include whatever attribute names you want, but
-  the following names are treated specially in Guppy if they are
-  present:
+* [optional] `attrs`: This is an array of dictionaries describing the
+  XML attributes that will be given to each of the symbol's editable
+  components.  Each key/value pair in the ith dictionary in this array
+  will be set as an attribute name/value pair on the ith editable
+  component.  For example, if the `attrs` list has first entry
+  `{"small":"yes"}`, then the first component will get a "small"
+  attribute with value "yes".  You can include whatever attribute
+  names you want, but the following names are treated specially in
+  Guppy if they are present:
   
   * `mode`: This should be set to "text" for any components that
     should be rendered as text (rather than in math mode).  
@@ -91,10 +89,11 @@ editor) and whose values are dictionaries with the following keys:
     `x` and the second `y`, but will render as `(x+1)^{y+2}` if the first
     component is `x+1` and the second `y+2`.  
   
-  * `size`: If `size` is `"s"`, then when rendering to LaTeX, anything
-    in this component will be rendered using its `small_latex` output
-    mode if available.  For example, an exponent has
-    `"small":[0,"s"]`, so the second component (the thing in the
-    exponent) is marked as being small.  Thus, for instance, fractions
-    and integrals (to name two) that appear inside that exponent will
-    not render at their normal, large size.
+  * `small`: If `small` is `"yes"`, then when rendering to LaTeX,
+    anything in this component (or any descendant) will be rendered
+    using its `small_latex` output mode if available.  For example,
+    the exponent symbol has `attrs[1] = {"small":"yes",...}`, so the
+    second component (the thing in the exponent) is marked as being
+    small.  Thus, for instance, fractions and integrals (to name two)
+    that appear inside that exponent will not render at their normal,
+    large size.
