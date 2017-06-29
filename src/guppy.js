@@ -2,6 +2,7 @@ Mousetrap = require('mousetrap');
 katex = require('../lib/katex/katex-modified.min.js');
 GuppyBackend = require('./guppy_backend.js');
 GuppyUtils = require('./guppy_utils.js');
+GuppySymbols = require('./guppy_symbols.js');
 
 var Guppy = function(guppy_div, config){
     var self = this;
@@ -42,7 +43,6 @@ var Guppy = function(guppy_div, config){
     this.editor.addEventListener("focus", function(e) { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     if(Guppy.ready && !this.ready){
     	this.ready = true;
-	console.log("ready");
     	this.backend.fire_event("ready");
 	this.render(true);
     }
@@ -55,18 +55,48 @@ Guppy.ready = false;
 
 Guppy.active_guppy = null;
 
-Guppy.get_symbols = function(l){
+Guppy.init_symbols = function(symbols){
     var all_ready = function(){
 	Guppy.register_keyboard_handlers();
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render(true);
-	    Guppy.instances[i].backend.fire_event("ready")
+	    Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+	    Guppy.instances[i].backend.fire_event("ready");
 	    Guppy.instances[i].events["ready"] = null;
 	}
 	GuppyBackend.ready = true;
     }
-    GuppyBackend.get_symbols(l,all_ready);
+    if(!(Array.isArray(symbols))){
+	symbols = [symbols];
+    }
+    var calls = [];
+    for(var i = 0; i < symbols.length; i++){
+	var x = function outer(j){
+	    return function(callback){
+		var req = new XMLHttpRequest();
+		req.onload = function(){
+		    var syms = JSON.parse(this.responseText);
+		    for(var s in syms){
+			var new_syms = GuppySymbols.add_symbols(s,syms[s], GuppySymbols.symbols);
+			for(var s in new_syms)
+			    GuppySymbols.symbols[s] = new_syms[s];
+		    }
+		    callback();
+		};
+		req.open("get", symbols[j], true);
+		req.send();
+	    }
+	}(i);
+	calls.push(x);
+    }
+    calls.push(all_ready);
+    var j = 0;
+    var cb = function(){
+	j += 1;
+	if(j < calls.length) calls[j](cb);
+    }
+    if(calls.length > 0) calls[0](cb);
 }
 
 Guppy.prototype.is_changed = function(){

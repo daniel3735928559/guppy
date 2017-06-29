@@ -347,6 +347,41 @@ var tests = [
 	"run":function(g){
 	    test_guppy.backend.problem("!z");
 	}
+    },
+    {
+	"description":"symbol",
+	"type":"text",
+	"expected":" tan^(2)(x)",
+	"run":function(g){
+	    test_guppy.backend.add_symbols("pta",{
+		"output":{
+		    "latex":"\\tan^{{$1}}({$2})",
+		    "text":" tan^({$1})({$2})"
+		},
+		"current":0,
+		"type":"ptan",
+		"attrs":[{"down":"2"},{"up":"1"}]
+	    });
+	    do_keys(['p','t','a','2','right','x']);
+	}
+    },
+    {
+	"description":"symbol_func",
+	"type":"text",
+	"expected":" Re(i)",
+	"run":function(g){
+	    test_guppy.backend.add_symbol_func("Re");
+	    do_keys(['shift+r','e','i']);
+	}
+    },
+    {
+	"description":"symbol_raw",
+	"type":"text",
+	"expected":"ASDA",
+	"run":function(g){
+	    test_guppy.backend.add_symbol_raw("asda","ASDA","ASDA");
+	    do_keys(['a','s','d','a']);
+	}
     }
 ];
 

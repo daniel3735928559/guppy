@@ -1,6 +1,6 @@
 Mousetrap = require('mousetrap');
 katex = require('../lib/katex/katex-modified.min.js');
-GuppyUtil = require('./guppy_utils.js');
+GuppyUtils = require('./guppy_utils.js');
 GuppyDoc = require('./guppy_doc.js');
 GuppySymbols = require('./guppy_symbols.js');
 
@@ -55,10 +55,6 @@ GuppyBackend.SEL_NONE = 0;
 GuppyBackend.SEL_CURSOR_AT_START = 1;
 GuppyBackend.SEL_CURSOR_AT_END = 2;
 
-GuppyBackend.get_symbols = function(l, cb){
-    GuppySymbols.get_symbols(l,cb);
-}
-
 GuppyBackend.prototype.get_content = function(t,r){
     return this.doc.get_content(t,r);
 }
@@ -78,6 +74,31 @@ GuppyBackend.prototype.set_content = function(xml_data){
 
 GuppyBackend.prototype.fire_event = function(event, args){
     if(this.events[event]) this.events[event](args);
+}
+
+GuppyBackend.prototype.add_symbols = function(name, sym){
+    console.log("S",this.symbols);
+    var new_syms = GuppySymbols.add_symbols(name, sym);
+    console.log(new_syms);
+    for(var s in new_syms){
+	console.log("s",s,new_syms[s]);
+	this.symbols[s] = new_syms[s];
+    }
+}
+
+GuppyBackend.prototype.add_symbol_func = function(name){
+    var new_syms = GuppySymbols.add_symbols("_func", [name]);
+    for(var s in new_syms)
+	this.symbols[s] = new_syms[s];
+}
+
+GuppyBackend.prototype.add_symbol_raw = function(name, latex, text){
+    var s = {}
+    s[name] = {"latex":latex,"text":text}
+    var new_syms = GuppySymbols.add_symbols("_raw", s);
+    console.log(new_syms);
+    for(var s in new_syms)
+	this.symbols[s] = new_syms[s];
 }
 
 GuppyBackend.prototype.select_to = function(loc, sel_cursor, sel_caret, mouse){
@@ -282,7 +303,7 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
     //
     // content is a list of nodes to insert
     var base = this.doc.base;
-    var s = GuppySymbols.symbols[sym_name];
+    var s = this.symbols[sym_name];
     var f = base.createElement("f");
     if("type" in s) f.setAttribute("type",s["type"])
     if(s['char']) f.setAttribute("c","yes");
@@ -367,7 +388,7 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 }
 
 GuppyBackend.prototype.insert_symbol = function(sym_name){
-    var s = GuppySymbols.symbols[sym_name];
+    var s = this.symbols[sym_name];
     if(this.is_blacklisted(s['type'])){
 	return false;
     }
@@ -1022,7 +1043,7 @@ GuppyBackend.prototype.tab = function(){
     }
     var sym_name = this.current.firstChild.textContent;
     var candidates = [];
-    for(var n in GuppySymbols.symbols){
+    for(var n in this.symbols){
 	if(n.startsWith(sym_name)) candidates.push(n);
     }
     if(candidates.length == 1){
@@ -1124,7 +1145,7 @@ GuppyBackend.prototype.done = function(s){
 
 GuppyBackend.prototype.complete_symbol = function(){
     var sym_name = this.current.firstChild.textContent;
-    if(!(GuppySymbols.symbols[sym_name])) return;
+    if(!(this.symbols[sym_name])) return;
     this.current = this.current.parentNode.parentNode;
     this.delete_from_f();
     this.insert_symbol(sym_name);
@@ -1143,7 +1164,7 @@ GuppyBackend.prototype.is_blacklisted = function(symb_type){
 GuppyBackend.prototype.check_for_symbol = function(){
     var instance = this;
     if(GuppyUtils.is_text(this.current)) return;
-    for(var s in GuppySymbols.symbols){
+    for(var s in this.symbols){
 	if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(GuppyUtils.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
 	    var temp = instance.current.firstChild.nodeValue;
 	    var temp_caret = instance.caret;

@@ -11,7 +11,7 @@
     <div id="results" style="width:40%;float:left;border:1px solid black;padding:10px;">Test results: <b><span id="pass_rate"></span></b></div>
     <div id="coverage" style="width:40%;float:left;border:1px solid black;padding:10px;">Test coverage: </div>
     <script>
-      Guppy.get_symbols(["../sym/symbols.json","../sym/extra_symbols.json"]);
+      Guppy.init_symbols(["../sym/symbols.json","../sym/extra_symbols.json"]);
       var test_guppy = new Guppy("guppy1",
       {"events":{"error":function(g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},"ready":function(g){console.log("testing");}}});
       setTimeout(start_tests, 2000);
