@@ -21,11 +21,9 @@
 	"text":"cohomology({$2},{$1})"},
      "current":0,
      "type":"cohomology",
-     "attrs":{
-	 "up":[2,2],
-	 "down":[1,1],
-	 "bracket":[0,0],
-	 "size":["s",0],
-	 "name":["degree","space"]}
+     "attrs":[
+	 {"up":"2","down":"1","size":"s","name":"degree"},
+	 {"up":"2","down":"1","name":"space"}
+     ]
     }
 }

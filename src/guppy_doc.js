@@ -3,6 +3,16 @@ var GuppyDoc = function(doc){
     this.set_content(doc);
 }
 
+GuppyDoc.prototype.is_small = function(nn){
+    var n = nn.parentNode;
+    while(n != null && n.nodeName != 'm'){
+	if(n.getAttribute("size") == "s") return true;
+	n = n.parentNode
+	while(n != null && n.nodeName != 'c') n = n.parentNode;
+    }
+    return false;
+}
+
 GuppyDoc.prototype.ensure_text_nodes = function(){
     var l = this.base.getElementsByTagName("e");
     for(var i = 0; i < l.length; i++){
@@ -84,12 +94,9 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
 	}
     }
     else if(n.nodeName == "f"){
-	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
-	    if(nn.nodeName == "b" && nn.getAttribute("p") == t){
-		ans = this.manual_render(t,nn,r);
-		break;
-	    }
-	}
+	var real_type = (t == "latex" && this.is_small(n)) ? "small_latex" : t;
+	var nn = this.xpath_node("./b[@p='"+real_type+"']", n) || this.xpath_node("./b[@p='"+t+"']", n);
+	if(nn) ans = this.manual_render(t,nn,r);
     }
     else if(n.nodeName == "b"){
 	var cs = []

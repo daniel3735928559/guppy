@@ -5,8 +5,8 @@
         "text":"norm({$1})"},
      "current":0,
      "type":"norm",
-     "attrs":{
-	 "delete":[1]}},
+     "attrs":[{"delete":"1"}]
+    },
     
     "text":
     {"output":{
@@ -14,8 +14,8 @@
         "text":"text({$1})"},
      "current":0,
      "type":"text",
-     "attrs":{
-	 "mode":["text"]}},
+     "attrs":[{"mode":"text"}]
+    },
     
     "sym_name":
     {"output":{
@@ -23,8 +23,8 @@
         "text":"SYMBOL({$1})"},
      "current":0,
      "type":"symbol",
-     "attrs":{
-	 "mode":["symbol"]}},
+     "attrs":[{"mode":"symbol"}]
+    },
     
     "abs":
     {"output":{
@@ -32,8 +32,7 @@
 	"text":"abs({$1})"},
      "current":0,
      "type":"absolute_value",
-     "attrs":{
-	 "delete":[1]}
+     "attrs":[{"delete":"1"}]
     },
     
     "sqrt":
@@ -42,8 +41,7 @@
         "text":"sqrt({$1})"},
      "current":0,
      "type":"square_root",
-     "attrs":{
-	 "delete":[1]}
+     "attrs":[{"delete":"1"}]
     },
     
     "paren":
@@ -52,9 +50,7 @@
 	"text":"({$1})"},
      "current":1,
      "type":"bracket",
-     "attrs":{
-	 "delete":[1],
-	 "is_bracket":["yes"]}
+     "attrs":[{"delete":"1","is_bracket":"yes"}]
     },
     
     "floor":
@@ -63,8 +59,7 @@
 	"text":"floor({$1})"},
      "current":0,
      "type":"floor",
-     "attrs":{
-	 "delete":[1]}
+     "attrs":[{"delete":"1"}]
     },
     
     "exp":
@@ -74,13 +69,10 @@
      "current":1,
      "type":"exponential",
      "current_type":"token",
-     "attrs":{
-	 "up":[2,0],
-	 "down":[0,1],
-	 "bracket":["yes",0],
-	 "delete":[1,1],
-	 "size":[0,"s"],
-	 "name":["base","exponent"]}
+     "attrs":[
+	 {"up":"2","bracket":"yes","delete":"1","name":"base"},
+	 {"down":"1","delete":"1","name":"exponent","size":"s"}
+     ]
     },
     
     "sub":
@@ -90,12 +82,10 @@
      "current":1,
      "type":"subscript",
      "current_type":"token",
-     "attrs":{
-	 "up":[0,1],
-	 "down":[2,0],
-	 "bracket":["yes",0],
-	 "delete":[1,1],
-	 "size":[0,"s"]}
+     "attrs":[
+	 {"down":"2","bracket":"yes","delete":"1","name":"base"},
+	 {"up":"1","delete":"1","name":"subscript","size":"s"}
+     ]
     },
     
     "frac":
@@ -105,10 +95,10 @@
 	"text":"({$1})/({$2})"},
      "current":0,
      "type":"fraction",
-     "attrs":{
-	 "up":[1,1],
-	 "down":[2,2],
-	 "name":["numerator","denominator"]}
+     "attrs":[
+	 {"up":"1","down":"2","name":"numerator"},
+	 {"up":"1","down":"2","name":"denominator"}
+     ]
     },
     
     "slash":
@@ -119,10 +109,10 @@
      "current":1,
      "current_type":"token",
      "type":"fraction",
-     "attrs":{
-	 "up":[1,1],
-	 "down":[2,2],
-	 "name":["numerator","denominator"]}
+     "attrs":[
+	 {"up":"1","down":"2","name":"numerator"},
+	 {"up":"1","down":"2","name":"denominator"}
+     ]
     },
     
     "int":
@@ -132,10 +122,10 @@
 	"text":"integrate({$1},{$2})"},
      "current":0,
      "type":"indefinite_integral",
-     "attrs":{
-	 "bracket":[0,"yes"],
-	 "delete":[1,1],
-	 "name":["integrand","variable"]}
+     "attrs":[
+	 {"delete":"1","name":"integrand"},
+	 {"delete":"1","bracket":"yes","name":"variable"}
+     ]
     },
     
     "defi":
@@ -145,68 +135,27 @@
 	"text":"integrate({$3},{$4},{$1},{$2})"},
      "current":0,
      "type":"definite_integral",
-     "attrs":{
-	 "up":[2,2,2,2],
-	 "down":[1,1,1,1],
-	 "bracket":[0,0,0,"yes"],
-	 "delete":[0,0,3,4],
-	 "size":["s","s",0,0],
-	 "name":["lower_limit","upper_limit","integrand","variable"]}
-    },
-    
-    "smi":
-    {"output":{
-        "latex":"\\int{{$1}}d{$2}",
-	"text":"integrate({$1},{$2})"},
-     "current":0,
-     "type":"indefinite_integral",
-     "attrs":{
-	 "bracket":[0,"yes"],
-	 "delete":[1,2],
-	 "name":["integrand","variable"]}
-    },
-    
-    "smd":
-    {"output":{
-        "latex":"\\int_{{$1}}^{{$2}}{$3}d{$4}",
-	"text":"integrate({$3},{$4},{$1},{$2})"},
-     "current":0,
-     "type":"definite_integral",
-     "attrs":{
-	 "up":[2,2,2,2],
-	 "down":[1,1,1,1],
-	 "bracket":[0,0,0,"yes"],
-	 "delete":[0,0,3,4],
-	 "size":["s","s",0,0],
-	 "name":["lower_limit","upper_limit","integrand","variable"]}
-    },
-    
-    "diff":
-    {"output":{
-        "latex":"\\frac{d}{d{$1}}{$2}",
-	"text":"diff({$2},{$1})"},
-     "current":0,
-     "type":"derivative",
-     "attrs":{
-	 "up":[2,2],
-	 "down":[1,1],
-	 "bracket":["yes","yes"],
-	 "name":["function","variable"]}
+     "attrs":[
+	 {"down":"1","up":"2","name":"lower_limit"},
+	 {"down":"1","up":"2","name":"upper_limit"},
+	 {"down":"1","up":"2","delete":"3","name":"integrand"},
+	 {"down":"1","up":"2","bracket":"yes","delete":"4","name":"variable"}
+     ]
     },
     
     "deriv":
     {"output":{
-        "latex":"\\frac{d}{d{$1}}{$2}",
+        "latex":"\\displaystyle\\frac{d}{d{$1}}{$2}",
+        "small_latex":"\\frac{d}{d{$1}}{$2}",
 	"text":"diff({$2},{$1})"},
      "current":0,
      "type":"derivative",
-     "attrs":{
-	 "up":[2,2],
-	 "down":[1,1],
-	 "bracket":["yes","yes"],
-	 "name":["function","variable"]}
+     "attrs":[
+	 {"down":"1","up":"2","bracket":"yes","name":"function"},
+	 {"down":"1","up":"2","bracket":"yes","name":"variable"}
+     ]
     },
-    
+        
     "sum":
     {"output":{
         "latex":"\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
@@ -214,12 +163,11 @@
 	"text":"sum({$3},{$1},{$2})"},
      "current":0,
      "type":"summation",
-     "attrs":{
-	 "up":[2,2,2],
-	 "down":[1,1,1],
-	 "bracket":[0,0,"yes"],
-	 "delete":[0,0,3],
-	 "name":["lower_limit","upper_limit","summand"]}
+     "attrs":[
+	 {"down":"1","up":"2","name":"lower_limit"},
+	 {"down":"1","up":"2","name":"upper_limit"},
+	 {"down":"1","up":"2","delete":"3","bracket":"yes","name":"summand"}
+     ]
     },
 
     "root":
@@ -228,10 +176,9 @@
 	"text":"nroot({$1},{$2})"},
      "current":0,
      "type":"root",
-     "attrs":{
-	 "up":[1,1],
-	 "down":[2,2],
-	 "delete":[1,1],
-	 "name":["index","radicand"]}
+     "attrs":[
+	 {"down":"2","up":"1","delete":"1","name":"index"},
+	 {"down":"2","up":"1","delete":"1","name":"radicand"}
+     ]
     }
 }

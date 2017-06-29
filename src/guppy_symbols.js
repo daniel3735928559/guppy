@@ -11,9 +11,9 @@ GuppySymbols.symb_func = function(func_name){
     GuppySymbols.symbols[func_name] = {"output":{"latex":"\\"+func_name+"\\left({$1}\\right)",
 					     "text":func_name+"({$1})"},
 				   "type":func_name,
-				   "attrs":{
-				       "delete":[1]
-				   }
+				   "attrs":[
+				       {"delete":"1"}
+				   ]
 				  };
 }
 

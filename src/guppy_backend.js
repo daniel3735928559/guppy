@@ -346,8 +346,11 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 	}
 	else nc.appendChild(this.make_e(""));
 	if(i+1 == first_ref) first = nc.lastChild;
-	for(var a in s['attrs'])
-	    if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
+	if(s['attrs'])
+	    for(var a in (s['attrs'][i] || {}))
+		nc.setAttribute(a,s['attrs'][i][a]);
+	    // for(var a in s['attrs'])
+	    // 	if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
 	if(i in lists){
 	    var par = f;
 	    for(var j = 0; j < lists[i]; j++){
