@@ -29,6 +29,9 @@ editor) and whose values are dictionaries with the following keys:
 * `type`: A string name for the symbol (will appear in the XML and can
   used for searching).
 
+* `group`: A string group name for the symbol (will be used to group
+  symbols in button interface).
+
 * `current`: If this is non-zero, then if the symbol is inserted while
   something is selected, then that selection will become this
   component of the symbol.  For example, if the current state is

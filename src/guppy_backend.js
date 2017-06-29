@@ -302,6 +302,7 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
     var s = this.symbols[sym_name];
     var f = base.createElement("f");
     if("type" in s) f.setAttribute("type",s["type"])
+    if("group" in s) f.setAttribute("group",s["group"])
     if(s['char']) f.setAttribute("c","yes");
     
     var first_ref = -1;

@@ -42,6 +42,17 @@ GuppyDoc.prototype.xpath_list = function(xpath, node){
     return this.base.evaluate(xpath, node, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 }
 
+GuppyDoc.prototype.get_symbols = function(groups){
+    var types = {};
+    var ans = [];
+    var iterator = groups ? this.xpath_list("//f") || this.xpath_list("//f[@group='"+groups[i]+"']");
+    for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext())
+	types[nn.getAttribute("type")] = true;
+    for(var t in types)
+	ans.push(t);
+    return ans;
+}
+
 GuppyDoc.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.ensure_text_nodes();
