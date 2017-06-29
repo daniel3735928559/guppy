@@ -135,7 +135,7 @@ circumstances (e.g. for creating a browser-button-based interface):
   (e.g. `myGuppy.backend.left()` will move the cursor one spot to the
   left).
 
-### GuppyBackend
+### `GuppyBackend`
 
 #### Instance methods
 
