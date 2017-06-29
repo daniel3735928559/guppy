@@ -1,6 +1,22 @@
 ## API reference
 
-The primary useful items in the Guppy object are:
+There are three main classes:
+
+* `Guppy`: The editor--does rendering, handles keyboard events,
+  interfaces with other classes in the simplest use-case.
+
+* `GuppyBackend`: The business logic of the editor.  Understands how
+  to maneuver a cursor through an XML document.  An editor instance,
+  say `myGuppy`, has an instance of this class as `myGuppy.backend`.
+
+* `GuppyDoc`: For manipulating standalone documents.  For example, if
+  you have an XML string and want to load it as a Guppy document,
+  convert it to LaTeX, or run an XPath query on it, this class has
+  that functionality.
+
+### `Guppy`
+
+#### Constructor
 
 * `new Guppy(guppy_div, config)`: `guppy_div` is either the div ID or
   the actual div object that you want turned into a Guppy editor
@@ -72,7 +88,9 @@ The primary useful items in the Guppy object are:
   This function should be called for each div that you want to turn
   into a Guppy instance.
 
-* `Guppy.get_symbols(symbol_files, callback)`: `symbol_files` is a
+#### Static methods
+
+* `Guppy.init_symbols(symbol_files, callback)`: `symbol_files` is a
   list of URLs of JSON files conaining further symbols that should be
   accepted by Guppy.  The special string `"builtins"` may also be
   included in the list to get Guppy's built-in symbol definitions
@@ -85,11 +103,13 @@ The primary useful items in the Guppy object are:
   `symbol_files` list. Once all files are loaded, `callback` will be
   called if it was passed.
 
-* `Guppy.prototype.get_content(type)`: `type` can be `"xml"`,
+#### Instance methods
+
+* `get_content(type)`: `type` can be `"xml"`,
   `"latex"`, or `"text"`, and the function will return (respectively)
   the XML, LaTeX, or ASCII representation of the instance's content.
   
-* `Guppy.prototype.set_content(xml_data)`: `xml_data` is a string
+* `set_content(xml_data)`: `xml_data` is a string
   containing XML that describes a valid Guppy editor state (e.g. one
   returned by `get_content("xml")`).  This resets the state of the
   editor.
@@ -107,6 +127,17 @@ The primary useful items in the Guppy object are:
 
 There are other instance-level functions that may be of use in some
 circumstances (e.g. for creating a browser-button-based interface):
+
+#### Properties
+
+* `backend`: An instance of GuppyBackend that can be used for
+  programatically manipulating the editor
+  (e.g. `myGuppy.backend.left()` will move the cursor one spot to the
+  left).
+
+### GuppyBackend
+
+#### Instance methods
 
 * `left()` and `right()` will move the cursor left and right
   (respectively).
@@ -157,3 +188,55 @@ circumstances (e.g. for creating a browser-button-based interface):
 * `insert_symbol(sym_name)` will take the string name of a symbol
   (from any of the files loaded by `Guppy.get_symbols`) and insert it
   at the current cursor position.
+
+* `add_symbols(name, symbols)` will add the symbol from the `symbols`
+  dictionary to the symbol dictionary of that instance of the editor
+  only.
+  
+* `add_symbol_raw(name, latex, text, group)` will add a symbol to the
+  symbol dictionary with name `name`, LaTeX representation `latex`,
+  text representation `text`, and group `group`.
+  
+* `add_symbol_func(name, group)` will add a function symbol to the
+  symbol dictionary with name `name`, LaTeX representation `\\name()`,
+  text representation ` name() `, and group `group`.
+
+### `GuppyDoc`
+
+#### Constructor
+
+* `new GuppyDoc(doc)`: Takes an XML string `doc` and creates a Guppy
+  document from it.
+
+  * `doc` is a string which should be valid Guppy XML.
+
+#### Instance methods
+
+* `get_content(format)`: Return the content of the document.
+
+  * `format` is a string--either `"latex"`, `"text"`, or `"xml"`.
+    Determines the format of in which to return the content.
+
+* `set_content(xml_data)`: Sets the content of the document.
+
+  * `xml_data` is a string which should be valid Guppy XML.
+
+* `xpath_node(xpath)`: Returns the first node matching the given xpath
+  expression.
+
+  * `xpath`: A string containing XPath.  
+
+* `xpath_list(xpath)`: Returns an iterator over all nodes matching the
+  given XPath expression.
+
+  * `xpath`: A string containing XPath.  
+
+* `get_symbols(groups)`: Returns a list of all string types of symbols
+  involved in any of the groups in `groups`.
+
+  * `groups` is either empty (in which case all symbol types will be
+    returned) or an array of string names of groups whose symbol types
+    should be included.
+
+* `root()`: Returns an Element object for the root node of the
+  document.
