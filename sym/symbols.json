@@ -55,7 +55,7 @@
 	"text":"({$1})"},
      "current":1,
      "type":"bracket",
-     "group":"syntax",
+     "group":"functions",
      "attrs":[{"delete":"1","is_bracket":"yes"}]
     },
     

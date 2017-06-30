@@ -1,8 +1,8 @@
 GuppySymbols = {"symbols":{}};
 
 GuppySymbols.symb_raw = function(symb_name,latex_symb,text_symb,group){
-    return {"output":{"latex":[latex_symb],
-		      "text":[text_symb]},
+    return {"output":{"latex":latex_symb,
+		      "text":text_symb},
 	    "group":group,
 	    "char":true,
 	    "type":symb_name};

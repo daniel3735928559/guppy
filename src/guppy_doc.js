@@ -45,7 +45,7 @@ GuppyDoc.prototype.xpath_list = function(xpath, node){
 GuppyDoc.prototype.get_symbols = function(groups){
     var types = {};
     var ans = [];
-    var iterator = groups ? this.xpath_list("//f") || this.xpath_list("//f[@group='"+groups[i]+"']");
+    var iterator = groups ? this.xpath_list("//f") : this.xpath_list("//f[@group='"+groups[i]+"']");
     for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext())
 	types[nn.getAttribute("type")] = true;
     for(var t in types)
