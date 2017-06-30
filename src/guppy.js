@@ -252,6 +252,9 @@ Guppy.mouse_down = function(e){
 	    }
 	    return;
 	}
+	if(n.classList && n.classList.contains("guppy_osk")){
+	    return;
+	}
 	n = n.parentNode;
     }
     Guppy.active_guppy = null;
@@ -349,7 +352,7 @@ Guppy.prototype.activate = function(){
     this.editor.focus();
     if(this.ready){
 	this.render(true);
-	//this.fire_event("focus",{"focused":true});
+	this.backend.fire_event("focus",{"focused":true});
     }
 }
 
@@ -368,7 +371,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.alt_down = false;
     if(this.ready){
 	this.render();
-	//this.fire_event("focus",{"focused":false});
+	this.backend.fire_event("focus",{"focused":false});
     }
 }
 

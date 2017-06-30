@@ -5,25 +5,25 @@
     <title>Guppy OSK</title>
 
     <link rel="stylesheet" href="osk.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
     <script src="osk.js"></script>
-    <link rel="stylesheet" href="/build/guppy.min.css">
-    <!-- <script src="lib/katex/katex-modified.min.js"></script> -->
-    <!-- <script src="lib/mousetrap/mousetrap.min.js"></script> -->
-    <script type="text/javascript" src="/build/guppy.min.js"></script>
+    <link rel="stylesheet" href="../build/guppy.min.css">
+    <script type="text/javascript" src="../build/guppy.min.js"></script>
+    <script type="text/javascript">
+window.onload = function(){
+    var g1 = new Guppy("guppy1");
+    var g2 = new Guppy("guppy2");
+    Guppy.init_symbols(["/sym/symbols.json"]);
+    OSK = new GuppyOSK({"goto_tab":"abc"});
 
-    <script type="text/javascript" src="index.js"></script>
+};
+    </script>
 </head>
 
 <body>
-    <div id="guppy1"
-    style="width:50%;padding:10px;margin:10px;border:2px solid black;"></div>
-
-    
+  <div>
+    <div id="guppy1" style="width:50%;padding:10px;margin:10px;border:2px solid black;"></div><br /><br />
+    <div id="guppy2" style="width:50%;padding:10px;margin:10px;border:2px solid black;"></div>
+  </div>
 </body>
 
 </html>
