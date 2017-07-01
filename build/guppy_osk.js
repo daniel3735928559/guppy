@@ -71,9 +71,16 @@ GuppyOSK.prototype.attach = function(guppy){
     var grouped = {"abc":[],"ABC":[]};
     var abc = "0123456789abcdefghijklmnopqrstuvwxyz.,+-"
     for(var i = 0; i < abc.length; i++){
-	grouped["abc"].push({"name":abc[i], "latex":abc[i]});
-	var u = abc[i].toUpperCase()
-	grouped["ABC"].push({"name":u, "latex":u});
+	var latex = abc[i];
+	var upper_latex = latex.toUpperCase();
+	var name = abc[i];
+	console.log(latex);
+	if(latex == "."){
+	    latex = "."+GuppyOSK.blank;
+	    upper_latex = latex;
+	}
+	grouped["abc"].push({"name":name, "latex":latex});
+	grouped["ABC"].push({"name":name.toUpperCase(), "latex":upper_latex});
     }
     for(var s in syms){
 	var group = syms[s].group;

@@ -210,7 +210,13 @@
 	    "leq":{"latex":"\\leq","text":" <= "},
 	    "less":{"latex":"<","text":" < "},
 	    "geq":{"latex":"\\geq","text":" >= "},
-	    "greater":{"latex":">","text":" > "},
+	    "greater":{"latex":">","text":" > "}
+	}
+    },
+
+    "_raw":{
+	"group":"abc",
+	"symbols":{
 	    "*":{"latex":"\\cdot","text":"*"}
 	}
     },

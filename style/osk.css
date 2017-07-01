@@ -22,19 +22,22 @@ body {
 
 .guppy_osk .guppy_osk_key {
     margin: 3px;
-    /*width: 40px;*/
     display: inline-block;
     justify-content: center;
     align-items: center;
     min-width: 60px;
-    line-height:50px;
-    height: 60px;
+    line-height:60px;
     vertical-align:middle;
     text-align: center;
     background: #ddd;
     border: 1px solid #f9f9f9;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+}
+
+.guppy_osk #abc .guppy_osk_key,.guppy_osk .controls .guppy_osk_key,.guppy_osk #ABC .guppy_osk_key {
+    line-height:40px !important;
+    height: 40px !important; 
 }
 
 .guppy_osk .guppy_osk_key:hover {
