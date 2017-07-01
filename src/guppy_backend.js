@@ -86,7 +86,7 @@ GuppyBackend.prototype.add_symbols = function(name, sym){
 }
 
 GuppyBackend.prototype.add_symbol_func = function(name, group){
-    var new_syms = GuppySymbols.add_symbols("_func", {"group":group,"symbols":[name]});
+    var new_syms = GuppySymbols.add_symbols("_func", [{"group":group,"symbols":[name]}]);
     for(var s in new_syms)
 	this.symbols[s] = new_syms[s];
 }
@@ -94,7 +94,7 @@ GuppyBackend.prototype.add_symbol_func = function(name, group){
 GuppyBackend.prototype.add_symbol_raw = function(name, latex, text, group){
     var s = {}
     s[name] = {"latex":latex,"text":text}
-    var new_syms = GuppySymbols.add_symbols("_raw", {"group":group,"symbols":s});
+    var new_syms = GuppySymbols.add_symbols("_raw", [{"group":group,"symbols":s}]);
     for(var s in new_syms)
 	this.symbols[s] = new_syms[s];
 }

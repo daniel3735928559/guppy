@@ -56,6 +56,11 @@ Guppy.ready = false;
 Guppy.active_guppy = null;
 
 Guppy.add_symbols = function(symbols){
+    for(var s in symbols){
+	var new_syms = GuppySymbols.add_symbols(s,symbols[s], GuppySymbols.symbols);
+	for(var s in new_syms)
+	    GuppySymbols.symbols[s] = new_syms[s];
+    }
     for(var i in Guppy.instances){
 	for(var s in symbols){
 	    Guppy.instances[i].backend.symbols[s] = JSON.parse(JSON.stringify(symbols[s]));
@@ -64,9 +69,8 @@ Guppy.add_symbols = function(symbols){
 }
 
 Guppy.set_global_symbols = function(symbols){
-    for(var i in Guppy.instances){
-	Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(symbols));
-    }
+    GuppySymbols.symbols = {};
+    Guppy.add_symbols(symbols);
 }
 
 Guppy.reset_global_symbols = function(){
