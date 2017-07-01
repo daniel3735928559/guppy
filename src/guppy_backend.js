@@ -151,12 +151,12 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 	if(this.sel_status != GuppyBackend.SEL_NONE){
 	    var sel_caret_text = GuppyUtils.is_small(sel_cursor.node) ? GuppyUtils.SMALL_SEL_CARET : GuppyUtils.SEL_CARET;
 	    if(!text_node && text.length == 0 && n.parentNode.childElementCount > 1){
-		sel_caret_text = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
+		sel_caret_text = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
 	    }
 	    else{
-		sel_caret_text = "\\color{blue}{"+sel_caret_text+"}";
+		sel_caret_text = "\\blue{"+sel_caret_text+"}";
 	    }
-	    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\color{"+GuppyUtils.SEL_COLOR+"}{";
+	    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\"+GuppyUtils.SEL_COLOR+"{";
 	    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
 	}
 	var caret_text = "";
@@ -166,12 +166,12 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 	    else if(n.parentNode.childElementCount == 1){
 		if(this.current == n){
 		    var blank_caret = this.blank_caret || (GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET);
-		    ans = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
+		    ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
 		}
 		else if(this.temp_cursor.node == n)
-		    ans = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		    ans = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 		else
-		    ans = "\\color{blue}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
+		    ans = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{[?]}}";
 	    }
 	    else if(this.temp_cursor.node != n && this.current != n && (!(sel_cursor) || sel_cursor.node != n)){
 		// These are the empty e elements at either end of
@@ -196,12 +196,12 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 		else{
 		    caret_text = GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET;
 		    if(text.length == 0)
-			caret_text = "\\color{red}{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
+			caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
 		    else{
-			caret_text = "\\color{red}{\\xmlClass{main_cursor}{"+caret_text+"}}"
+			caret_text = "\\red{\\xmlClass{main_cursor}{"+caret_text+"}}"
 		    }
 		    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START)
-			caret_text = caret_text + "\\color{"+GuppyUtils.SEL_COLOR+"}{";
+			caret_text = caret_text + "\\"+GuppyUtils.SEL_COLOR+"{";
 		    else if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END)
 			caret_text = "}" + caret_text;
 		}
@@ -219,10 +219,10 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 		else{
 		    temp_caret_text = GuppyUtils.is_small(this.current) ? GuppyUtils.TEMP_SMALL_CARET : GuppyUtils.TEMP_CARET;
 		    if(text.length == 0){
-			temp_caret_text = "\\color{gray}{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
+			temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
 		    }
 		    else
-			temp_caret_text = "\\color{gray}{"+temp_caret_text+"}";
+			temp_caret_text = "\\gray{"+temp_caret_text+"}";
 		}
 		ans += temp_caret_text;
 	    }
@@ -1124,6 +1124,7 @@ GuppyBackend.prototype.find_current = function(){
 }
 
 GuppyBackend.prototype.undo = function(){
+    this.sel_clear();
     if(this.undo_now <= 0) return;
     this.undo_now--;
     this.restore(this.undo_now);

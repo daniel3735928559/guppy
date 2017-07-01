@@ -74,7 +74,6 @@ GuppyOSK.prototype.attach = function(guppy){
 	var latex = abc[i];
 	var upper_latex = latex.toUpperCase();
 	var name = abc[i];
-	console.log(latex);
 	if(latex == "."){
 	    latex = "."+GuppyOSK.blank;
 	    upper_latex = latex;
