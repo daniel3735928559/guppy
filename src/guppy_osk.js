@@ -69,7 +69,7 @@ GuppyOSK.prototype.attach = function(guppy){
     var tab_bar = elt("ul");
     sym_tabs.appendChild(tab_bar);
     var grouped = {"abc":[],"ABC":[]};
-    var abc = "0123456789abcdefghijklmnopqrstuvwxyz.,+-"
+    var abc = "0123456789abcdefghijklmnopqrstuvwxyz.=+-"
     for(var i = 0; i < abc.length; i++){
 	var latex = abc[i];
 	var upper_latex = latex.toUpperCase();
@@ -96,7 +96,8 @@ GuppyOSK.prototype.attach = function(guppy){
 	    var key = elt("span",{"class":"guppy_osk_key"});
 	    if(g == "abc" || g == "ABC"){
 		var f = function(n){
-		    key.addEventListener("click",function(){
+		    key.addEventListener("click",function(e){
+			e.preventDefault();
 			guppy.backend.insert_string(n);
 			guppy.render();
 			if(self.config.goto_tab){
@@ -107,7 +108,8 @@ GuppyOSK.prototype.attach = function(guppy){
 		f(sym.name);
 	    } else {
 		var f = function(n){
-		    key.addEventListener("click",function(){
+		    key.addEventListener("click",function(e){
+			e.preventDefault();
 			guppy.backend.insert_symbol(n);
 			guppy.render();
 			if(self.config.goto_tab){
@@ -131,20 +133,20 @@ GuppyOSK.prototype.attach = function(guppy){
 	controls.appendChild(e);
     }
     
-    add_control("&larr;S", function(){ guppy.backend.sel_left();guppy.render();});
-    add_control("S&rarr;", function(){ guppy.backend.sel_right();guppy.render();});
-    add_control("cut", function(){ guppy.backend.sel_cut();guppy.render();});
-    add_control("copy", function(){ guppy.backend.sel_copy();guppy.render();});
-    add_control("paste", function(){ guppy.backend.sel_paste();guppy.render();});
-    add_control("undo", function(){ guppy.backend.undo();guppy.render();});
-    add_control("redo", function(){ guppy.backend.redo();guppy.render();});
-    add_control("del", function(){ guppy.backend.backspace();guppy.render();});
-    add_control("spc", function(){ guppy.backend.spacebar();guppy.render();});
-    add_control("ret", function(){ guppy.backend.done();guppy.render();});
-    add_control("&larr;", function(){ guppy.backend.left();guppy.render();});
-    add_control("&uarr;", function(){ guppy.backend.up();guppy.render();});
-    add_control("&darr;", function(){ guppy.backend.down();guppy.render();});
-    add_control("&rarr;", function(){ guppy.backend.right();guppy.render();});
+    add_control("&larr;S", function(e){ e.preventDefault();guppy.backend.sel_left();guppy.render();});
+    add_control("S&rarr;", function(e){ e.preventDefault();guppy.backend.sel_right();guppy.render();});
+    add_control("cut", function(e){ e.preventDefault();guppy.backend.sel_cut();guppy.render();});
+    add_control("copy", function(e){ e.preventDefault();guppy.backend.sel_copy();guppy.render();});
+    add_control("paste", function(e){ e.preventDefault();guppy.backend.sel_paste();guppy.render();});
+    add_control("undo", function(e){ e.preventDefault();guppy.backend.undo();guppy.render();});
+    add_control("redo", function(e){ e.preventDefault();guppy.backend.redo();guppy.render();});
+    add_control("del", function(e){ e.preventDefault();guppy.backend.backspace();guppy.render();});
+    add_control("spc", function(e){ e.preventDefault();guppy.backend.spacebar();guppy.render();});
+    add_control("ret", function(e){ e.preventDefault();guppy.backend.done();guppy.render();});
+    add_control("&larr;", function(e){ e.preventDefault();guppy.backend.left();guppy.render();});
+    add_control("&uarr;", function(e){ e.preventDefault();guppy.backend.up();guppy.render();});
+    add_control("&darr;", function(e){ e.preventDefault();guppy.backend.down();guppy.render();});
+    add_control("&rarr;", function(e){ e.preventDefault();guppy.backend.right();guppy.render();});
     
     osk.appendChild(controls);
     document.body.appendChild(osk);
