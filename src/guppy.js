@@ -55,6 +55,26 @@ Guppy.ready = false;
 
 Guppy.active_guppy = null;
 
+Guppy.add_symbols = function(symbols){
+    for(var i in Guppy.instances){
+	for(var s in symbols){
+	    Guppy.instances[i].backend.symbols[s] = JSON.parse(JSON.stringify(symbols[s]));
+	}
+    }
+}
+
+Guppy.set_global_symbols = function(symbols){
+    for(var i in Guppy.instances){
+	Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(symbols));
+    }
+}
+
+Guppy.reset_global_symbols = function(){
+    for(var i in Guppy.instances){
+	Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+    }
+}
+
 Guppy.init_symbols = function(symbols){
     var all_ready = function(){
 	Guppy.register_keyboard_handlers();

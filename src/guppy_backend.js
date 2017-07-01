@@ -32,7 +32,8 @@ var GuppyBackend = function(config){
 	var p = opts[i];
 	if(p in options) this[p] = options[p];
     }
-    
+
+    this.symbols = {};
     this.doc = new GuppyDoc();
     
     this.clipboard = null;
@@ -47,6 +48,7 @@ var GuppyBackend = function(config){
     this.checkpoint();
     if(GuppyBackend.ready && !this.ready){
     	this.ready = true;
+	this.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
     	this.fire_event("ready");
     }
 }
@@ -1131,6 +1133,7 @@ GuppyBackend.prototype.undo = function(){
 }
 
 GuppyBackend.prototype.redo = function(){
+    this.sel_clear();
     if(this.undo_now >= this.undo_data.length-1) return;
     this.undo_now++;
     this.restore(this.undo_now);
