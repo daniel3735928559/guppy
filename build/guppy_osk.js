@@ -15,7 +15,7 @@ function GuppyOSK(config){
     this.element = null;
 }
 
-GuppyOSK.blank = "\\color{blue}{[?]}";
+GuppyOSK.blank = "\\blue{[?]}";
 GuppyOSK.text_blank = "[?]";
 
 function elt(name, attrs, content){

@@ -35,7 +35,10 @@ body {
     -webkit-border-radius: 5px;
 }
 
-.guppy_osk #abc .guppy_osk_key,.guppy_osk .controls .guppy_osk_key,.guppy_osk #ABC .guppy_osk_key {
+.guppy_osk #abc .guppy_osk_key,
+.guppy_osk .controls .guppy_osk_key,
+.guppy_osk #ABC .guppy_osk_key,
+.guppy_osk #greek .guppy_osk_key {
     line-height:40px !important;
     height: 40px !important; 
 }

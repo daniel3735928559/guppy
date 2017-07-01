@@ -198,29 +198,24 @@
      ]
     },
     
-    "_func":{
+    "_func":[{
 	"group":"functions",
 	"symbols":["sin","cos","tan","sec","csc","cot","log","ln"]
-    },
+    }],
     
-    "_raw":{
-	"group":"operations",
-	"symbols":{
-	    "infty":{"latex":"\\infty","text":" $infinity "},
-	    "leq":{"latex":"\\leq","text":" <= "},
-	    "less":{"latex":"<","text":" < "},
-	    "geq":{"latex":"\\geq","text":" >= "},
-	    "greater":{"latex":">","text":" > "}
-	}
-    },
+    "_raw":[
+	{"group":"operations",
+	 "symbols":{
+	     "leq":{"latex":"\\leq","text":" <= "},
+	     "less":{"latex":"<","text":" < "},
+	     "geq":{"latex":"\\geq","text":" >= "},
+	     "greater":{"latex":">","text":" > "}}},
+	{"group":"abc",
+	 "symbols":{
+	     "*":{"latex":"\\cdot","text":"*"},
+	     "infty":{"latex":"\\infty","text":" $infinity "}}}
+    ],
 
-    "_raw":{
-	"group":"abc",
-	"symbols":{
-	    "*":{"latex":"\\cdot","text":"*"}
-	}
-    },
-
-    "_literal":{"group":"greek",
-		"symbols":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]}
+    "_literal":[{"group":"greek",
+		"symbols":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]}]
 }
