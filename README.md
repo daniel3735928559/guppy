@@ -72,7 +72,8 @@ A stripped-down version of the demo page would look like:
 * How do I change the styling of the editor?
 
   There are multiple configuration options and CSS classes that can be
-  used.  
+  used to customise the appearance of the editor.  See [the
+  documentation](doc/style.md).
 
 ## Editor usage
 
