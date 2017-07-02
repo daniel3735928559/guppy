@@ -1,5 +1,5 @@
 $('document').ready(function() {
-    guppy_render();
+    GuppyRender.render_all();
     $('#xml_btn').on('click', function() {
         createText('xml');
     });
@@ -26,7 +26,7 @@ $('document').ready(function() {
 	{
             //'blank_caret': "[?]",
 	    //'autoreplace':true,
-            'empty_content': "\\color{gray}{\\text{Click here to start typing a mathematical expression}}"
+            'empty_content': "\\gray{\\text{Click here to start typing a mathematical expression}}"
 	}
     });
 });

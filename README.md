@@ -29,8 +29,8 @@ A stripped-down version of the demo page would look like:
     <div id="guppy_div" style="width:400px;height:100px;"></div>
     
     <script>
-        Guppy.get_symbols(["builtins","sym/symbols.json"]);
         new Guppy("guppy_div");
+        Guppy.init_symbols(["sym/symbols.json"]);
     </script>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
     <button onclick="alert(Guppy.instances.guppy_div.get_content('latex'))">See LaTeX</button>
@@ -56,6 +56,19 @@ A stripped-down version of the demo page would look like:
 * For each div that you want turned into a Guppy instance, call `new
   Guppy()` passing in as the first argument either the Element object
   for that div or its ID.
+
+## FAQ
+
+* How to make it mobile friendly?
+
+  The standard phone keyboard will not activate when the editor is
+  focused.  However, Guppy comes with an on-screen keyboard that you
+  can activate.  After all instances of Guppy on the page are created
+
+* How do I change the styling of the editor?
+
+  There are multiple configuration options and CSS classes that can be
+  used.  
 
 ## Editor usage
 
@@ -84,18 +97,20 @@ example, running
 ```python3 -m http.server --bind 127.0.0.1 8000```
 
 in the root directory of the guppy repository and then browsing to
-[localhost:8000/index.html] will let you see the current state of the
-editor with all your modifications.  As you're making edits, be sure
-to run `./make` before refreshing in order to see your changes
-reflected in the page.
+[localhost:8000/index.html](localhost:8000/index.html) will let you
+see the current state of the editor with all your modifications.  As
+you're making edits, be sure to run `./make` before refreshing in
+order to see your changes reflected in the page.
 
 If you're in a position where you don't have internet connectivity,
-you can test using [localhost:8000/basic.html] instead, as this page
-does not require any outside resources.
+you can test using
+[localhost:8000/basic.html](localhost:8000/index.html) instead, as
+this page does not require any outside resources.
 
 ## Further documentation
 
-* [The Javascript API for controlling the editor](doc/api.md)
+* [The Javascript API for controlling the editor](doc/editor_api.md)
+* [The Javascript APIs for document manipulation, on-screen keyboard, and rendering](doc/other_api.md)
 * [The JSON specification used to describe available symbols](doc/symbols.md)
 * [The XML format used to represent expressions](doc/format.md)
 * [Editor internals](doc/internals.md)

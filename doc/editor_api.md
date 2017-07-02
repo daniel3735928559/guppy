@@ -1,6 +1,6 @@
-## API reference
+## Editor API reference
 
-There are three main classes:
+There are two main classes used to control the editor:
 
 * `Guppy`: The editor--does rendering, handles keyboard events,
   interfaces with other classes in the simplest use-case.
@@ -8,11 +8,6 @@ There are three main classes:
 * `GuppyBackend`: The business logic of the editor.  Understands how
   to maneuver a cursor through an XML document.  An editor instance,
   say `myGuppy`, has an instance of this class as `myGuppy.backend`.
-
-* `GuppyDoc`: For manipulating standalone documents.  For example, if
-  you have an XML string and want to load it as a Guppy document,
-  convert it to LaTeX, or run an XPath query on it, this class has
-  that functionality.
 
 ### `Guppy`
 
@@ -96,7 +91,8 @@ There are three main classes:
   included in the list to get Guppy's built-in symbol definitions
   (Greek letters, etc.).
 
-  This function should only be called once per page.
+  This function should only be called once per page, after all Guppy
+  instances have been initialised.
 
   If the same symbol is defined in multiple files in the list, the
   definition that is used is from whichever file appears later in the
@@ -189,7 +185,7 @@ circumstances (e.g. for creating a browser-button-based interface):
   (from any of the files loaded by `Guppy.get_symbols`) and insert it
   at the current cursor position.
 
-* `add_symbols(name, symbols)` will add the symbol from the `symbols`
+* `add_symbols(name, symbol)` will add the symbol from the `symbol`
   dictionary to the symbol dictionary of that instance of the editor
   only.
   
@@ -200,43 +196,3 @@ circumstances (e.g. for creating a browser-button-based interface):
 * `add_symbol_func(name, group)` will add a function symbol to the
   symbol dictionary with name `name`, LaTeX representation `\\name()`,
   text representation ` name() `, and group `group`.
-
-### `GuppyDoc`
-
-#### Constructor
-
-* `new GuppyDoc(doc)`: Takes an XML string `doc` and creates a Guppy
-  document from it.
-
-  * `doc` is a string which should be valid Guppy XML.
-
-#### Instance methods
-
-* `get_content(format)`: Return the content of the document.
-
-  * `format` is a string--either `"latex"`, `"text"`, or `"xml"`.
-    Determines the format of in which to return the content.
-
-* `set_content(xml_data)`: Sets the content of the document.
-
-  * `xml_data` is a string which should be valid Guppy XML.
-
-* `xpath_node(xpath)`: Returns the first node matching the given xpath
-  expression.
-
-  * `xpath`: A string containing XPath.  
-
-* `xpath_list(xpath)`: Returns an iterator over all nodes matching the
-  given XPath expression.
-
-  * `xpath`: A string containing XPath.  
-
-* `get_symbols(groups)`: Returns a list of all string types of symbols
-  involved in any of the groups in `groups`.
-
-  * `groups` is either empty (in which case all symbol types will be
-    returned) or an array of string names of groups whose symbol types
-    should be included.
-
-* `root()`: Returns an Element object for the root node of the
-  document.

@@ -1,7 +1,9 @@
 katex = require('../lib/katex/katex-modified.min.js');
 GuppyDoc = require('./guppy_doc.js');
 
-function guppy_render(){
+GuppyRender = {}
+
+GuppyRender.render_all = function(){
     var l = document.getElementsByTagName("script");
     var ans = []
     for(var i = 0; i < l.length; i++){
@@ -18,4 +20,11 @@ function guppy_render(){
     return ans;
 }
 
-module.exports = guppy_render;
+GuppyRender.render = function(doc, target_id){
+    var d = new GuppyDoc(doc);
+    var target = document.getElementById(target_id);
+    katex.render(d.get_content("latex"), target);
+    return {"container":target, "doc":d};
+}
+
+module.exports = GuppyRender;

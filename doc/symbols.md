@@ -100,3 +100,33 @@ editor) and whose values are dictionaries with the following keys:
     small.  Thus, for instance, fractions and integrals (to name two)
     that appear inside that exponent will not render at their normal,
     large size.
+
+The following symbol names are treated specially:
+
+* `_raw`: The value under this key should be an array of objects with keys:
+
+  * `group`: The string name of the group
+
+  * `symbols`: An array of objects with keys:
+
+    * `name`: The name of the symbol (the string used to enter it)
+
+    * `latex`: The LaTeX rendering of the symbol
+    
+    * `text`: The text rendering of the symbol
+
+* `_func`: The value under this key should be an array of objects with keys:
+
+  * `group`: The string name of the group
+
+  * `symbols`: An array of string names of the functions (which will
+    take a single argument and whose latex rendering will be
+    `\name(<argument>)` and text rendering will be ` name(<argument>) `.  
+
+* `_literal`: The value under this key should be an array of objects with keys:
+
+  * `group`: The string name of the group
+
+  * `symbols`: An array of string names of the functions (which will
+    take a single argument and whose latex rendering will be
+    `\name` and text rendering will be ` $name `.  

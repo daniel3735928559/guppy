@@ -26,7 +26,7 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.editor_active = true;
-    this.empty_content = "\\color{red}{[?]}"
+    this.empty_content = config['options']['empty_content'] || "\\color{red}{[?]}"
     this.editor = guppy_div;
     this.blacklist = [];
     this.autoreplace = true;
@@ -336,17 +336,13 @@ Guppy.prototype.render_node = function(t){
     if(t == "render"){
 	var root = this.backend.doc.root();
 	this.backend.add_paths(root,"m");
-	//console.log("C1",(new XMLSerializer()).serializeToString(this.backend.doc.base));
 	this.backend.temp_cursor = this.temp_cursor;
 	this.backend.add_classes_cursors(root);
-	//console.log("C2",(new XMLSerializer()).serializeToString(this.backend.doc.base));
 	this.backend.current.setAttribute("current","yes");
 	if(this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp","yes");
-	//console.log("C3",(new XMLSerializer()).serializeToString(this.backend.doc.base));
 	output = this.backend.get_content("latex",true);
 	this.backend.remove_cursors_classes(root);
 	output = output.replace(new RegExp('&amp;','g'), '&');
-	//console.log("OUTPUT",output);
 	return output;
     }
     else{
@@ -356,13 +352,11 @@ Guppy.prototype.render_node = function(t){
 }
 
 Guppy.prototype.render = function(updated){
-    if(!this.editor_active && GuppyUtils.is_blank(this.backend.doc.root())){
+    if(!this.editor_active && GuppyUtils.is_blank(this.backend.doc.root().firstChild)){
 	katex.render(this.empty_content,this.editor);
 	return;
     }
     var tex = this.render_node("render");
-    //console.log("TEX",tex);
-    //this.fire_event("debug",{"message":"RENDERING: " + tex})
     katex.render(tex,this.editor);
     if(updated){
 	this.recompute_locations_paths();

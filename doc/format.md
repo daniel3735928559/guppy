@@ -40,7 +40,31 @@ represented is specified as follows:
   children it has (e.g., in the case of a 1D array, how many elements
   the array has, represented by the number of `<c>` nodes).
 
-So, for example, the square root of x+1 would be represented as:
+## Examples
+
+The simple expression `x+1` is represented as:
+
+```
+<m>
+  <e>x+1</e>
+</m>
+```
+
+`sin(x)` is represented as: 
+
+```
+<m>
+  <e></e>
+  <f>
+    <b p="latex">\sin\left(<r ref="1"/>\right)</b>
+    <b p="text">sin(<r ref="1"/>)</b>
+    <c><e>x</e></c>
+  </f>
+  <e></e>
+</m>
+```
+
+The square root of `x+1` is:
 
 ```
 <m>
@@ -54,7 +78,7 @@ So, for example, the square root of x+1 would be represented as:
 </m>
 ```
 
-Whereas the fraction `1+(1-x)/sin(x) would be represented as:
+`1+(1-x)/sin(x)` would be represented as:
 
 ```
 <m>
@@ -73,6 +97,32 @@ Whereas the fraction `1+(1-x)/sin(x) would be represented as:
       </f>
       <e></e>
     </c>
+  </f>
+  <e></e>
+</m>
+```
+
+The 2x3 matrix `[1, 2, 3; x, y, z]` would be represented by:
+
+
+```
+<m>
+  <e></e>
+  <f type="matrix" group="array">
+    <b p="latex">\left(\begin{matrix} <r ref="1" d="2" sep0=" &amp; " sep1="\\"/> \end{matrix}\right)</b>
+    <b p="text">matrix(<r ref="1" d="2" sep0="," sep1=";"/>)</b>
+    <l s="2">
+      <l s="3">
+        <c><e>1</e></c>
+	<c><e>2</e></c>
+	<c><e>3</e></c>
+      </l>
+      <l s="3">
+        <c><e>x</e></c>
+	<c><e>y</e></c>
+	<c><e>z</e></c>
+      </l>
+    </l>
   </f>
   <e></e>
 </m>
