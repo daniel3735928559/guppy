@@ -63,7 +63,11 @@ A stripped-down version of the demo page would look like:
 
   The standard phone keyboard will not activate when the editor is
   focused.  However, Guppy comes with an on-screen keyboard that you
-  can activate.  After all instances of Guppy on the page are created
+  can activate.  See [GuppyOSK
+  documentation](https://github.com/daniel3735928559/guppy/blob/master/doc/other_api.md#guppyosk)
+  as well as the [OSK
+  example](https://github.com/daniel3735928559/guppy/blob/master/examples/osk.html)
+  ([demo](https://daniel3735928559.github.io/guppy/examples/osk.html)).
 
 * How do I change the styling of the editor?
 
@@ -88,7 +92,7 @@ can be added by modifying `symbols.json`.
 
 When working on the editor, any changes made to the Javascript source
 (e.g. [src/guppy.js](https://github.com/daniel3735928559/guppy/blob/master/src/guppy.js)
-needs to be complied by running `./make`).
+need to be complied by running `./make -d`).
 
 Because the editor makes AJAX requests as part of its normal
 functioning, testing is best done with a small webserver.  For
@@ -111,6 +115,7 @@ this page does not require any outside resources.
 
 * [The Javascript API for controlling the editor](doc/editor_api.md)
 * [The Javascript APIs for document manipulation, on-screen keyboard, and rendering](doc/other_api.md)
+* [Editor styling options](doc/style.md)
 * [The JSON specification used to describe available symbols](doc/symbols.md)
 * [The XML format used to represent expressions](doc/format.md)
 * [Editor internals](doc/internals.md)
