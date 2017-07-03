@@ -26,7 +26,7 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.editor_active = true;
-    this.empty_content = config['options']['empty_content'] || "\\color{red}{[?]}"
+    this.empty_content = options['empty_content'] || "\\red{[?]}"
     this.editor = guppy_div;
     this.blacklist = [];
     this.autoreplace = true;
