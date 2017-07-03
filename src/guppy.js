@@ -352,7 +352,7 @@ Guppy.prototype.render_node = function(t){
 }
 
 Guppy.prototype.render = function(updated){
-    if(!this.editor_active && GuppyUtils.is_blank(this.backend.doc.root().firstChild)){
+    if(!this.editor_active && this.backend.doc.is_blank()){
 	katex.render(this.empty_content,this.editor);
 	return;
     }
