@@ -34,7 +34,7 @@ var GuppyBackend = function(config){
     }
 
     this.symbols = {};
-    this.doc = new GuppyDoc();
+    this.doc = new GuppyDoc(options["xml_content"]);
     
     this.clipboard = null;
     this.current = this.doc.root().firstChild;

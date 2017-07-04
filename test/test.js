@@ -1,6 +1,13 @@
 var covered_functions = {};
 var tests = [
     {
+	"description":"Ready",
+	"content":"none",
+	"type":"text",
+	"expected":"!ready",
+	"run":function(g){}
+    },
+    {
 	"description":"Basic",
 	"content":"<m><e>x+1</e></m>",
 	"type":"text",
@@ -383,6 +390,24 @@ var tests = [
 	    test_guppy.backend.add_symbol_raw("asda","ASDA","ASDA","test");
 	    do_keys(['a','s','d','a']);
 	}
+    },
+    {
+	"description":"left_end",
+	"content":"<m><e>x</e></m>",
+	"type":"text",
+	"expected":"!left",
+	"run":function(g){
+	    do_keys(['left']);
+	}
+    },
+    {
+	"description":"right_end",
+	"content":"<m><e>x</e></m>",
+	"type":"text",
+	"expected":"!right",
+	"run":function(g){
+	    do_keys(['right','right']);
+	}
     }
 ];
 
@@ -497,7 +522,8 @@ function start_tests(){
 function run_test(i, g){
     var t = tests[i];
     test_guppy.activate();
-    test_guppy.backend.set_content(t.content || "<m><e></e></m>");
+    if(!t.content) test_guppy.backend.set_content("<m><e></e></m>");
+    else if(t.content != "none") test_guppy.backend.set_content(t.content);
     test_guppy.render();
     var observed = ""
     try{
