@@ -900,7 +900,8 @@ GuppyBackend.prototype.right = function(){
 }
 
 GuppyBackend.prototype.spacebar = function(){
-    this.space_caret = this.caret;
+    if(GuppyUtils.is_text(this.current)) this.insert_string(" ");
+    else this.space_caret = this.caret;
 }
 
 GuppyBackend.prototype.left = function(){
