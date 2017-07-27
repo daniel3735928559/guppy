@@ -22,7 +22,10 @@ There are two main classes used to control the editor:
 
   * `events`: A dictionary of callbacks (omit any that you do not wish
     to handle) for various events.  These will be called with an
-    `event` argument.
+    `event` argument which will, at a minimum, contain a `target`
+    element which refers to the Guppy instance that triggered the
+    event.  The following are the events for which callbacks can be
+    registered through the Guppy constructor:
     
     * `ready`: Called when the instance is ready to render things.
       Argument will be null.
