@@ -25,6 +25,11 @@ function elt(name, attrs, content){
     return ans;
 }
 
+function click_listener(elt, fn){
+    elt.addEventListener("click", fn);
+    elt.addEventListener("touchstart", fn);
+}
+
 function make_tabs(element){
     var headers = element.querySelectorAll("li a");
     var tabs = element.getElementsByTagName("div");
@@ -33,7 +38,7 @@ function make_tabs(element){
     for(var j = 0; j < headers.length; j++){
         if(j != 0) tabs[j].style.display = "none";
 	header = headers[j];
-	header.addEventListener("click", function(e){
+	click_listener(header, function(e){
 	    for(var i = 0; i < headers.length; i++){
 		tabs[i].style.display = "none";
 		headers[i].classList.remove("active_tab");
@@ -95,7 +100,7 @@ GuppyOSK.prototype.attach = function(guppy){
 	    var key = elt("span",{"class":"guppy_osk_key"});
 	    if(g == "abc" || g == "ABC"){
 		var f = function(n){
-		    key.addEventListener("click",function(e){
+		    click_listener(key, function(e){
 			e.preventDefault();
 			guppy.backend.insert_string(n);
 			guppy.render();
@@ -107,7 +112,7 @@ GuppyOSK.prototype.attach = function(guppy){
 		f(sym.name);
 	    } else {
 		var f = function(n){
-		    key.addEventListener("click",function(e){
+		    click_listener(key, function(e){
 			e.preventDefault();
 			guppy.backend.insert_symbol(n);
 			guppy.render();
@@ -128,7 +133,7 @@ GuppyOSK.prototype.attach = function(guppy){
 
     var add_control = function(content,fn){
 	var e = elt("span",{"class":"guppy_osk_key"},content);
-	e.addEventListener("click",fn);
+	click_listener(e, fn);
 	controls.appendChild(e);
     }
     
