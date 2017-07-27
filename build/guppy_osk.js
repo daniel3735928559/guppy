@@ -26,8 +26,8 @@ function elt(name, attrs, content){
 }
 
 function click_listener(elt, fn){
-    elt.addEventListener("click", fn);
-    elt.addEventListener("touchstart", fn);
+    elt.addEventListener("click", fn, false);
+    elt.addEventListener("touchstart", fn, false);
 }
 
 function make_tabs(element){
