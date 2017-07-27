@@ -20,6 +20,12 @@ body {
     border: none !important;
 }
 
+.guppy_osk .spacer {
+    display: inline-block;
+    min-width:30px;
+    margin:3px;
+}
+
 .guppy_osk .guppy_osk_key {
     margin: 3px;
     display: inline-block;
@@ -35,9 +41,9 @@ body {
     -webkit-border-radius: 5px;
 }
 
-.guppy_osk #abc .guppy_osk_key,
+.guppy_osk #qwerty .guppy_osk_key,
 .guppy_osk .controls .guppy_osk_key,
-.guppy_osk #ABC .guppy_osk_key,
+.guppy_osk #QWERTY .guppy_osk_key,
 .guppy_osk #greek .guppy_osk_key {
     line-height:40px !important;
     height: 40px !important; 

@@ -73,18 +73,28 @@ GuppyOSK.prototype.attach = function(guppy){
     var controls = elt("div",{"class":"controls"});
     var tab_bar = elt("ul");
     sym_tabs.appendChild(tab_bar);
-    var grouped = {"abc":[],"ABC":[]};
-    var abc = "0123456789abcdefghijklmnopqrstuvwxyz.=+-"
+    var grouped = {"qwerty":[],"QWERTY":[]};
+    var abc = "1234567890+-\n\tqwertyuiop=\n\t\tasdfghjkl.\n\t\t\tzxcvbnm"
     for(var i = 0; i < abc.length; i++){
-	var latex = abc[i];
-	var upper_latex = latex.toUpperCase();
-	var name = abc[i];
-	if(latex == "."){
-	    latex = "."+GuppyOSK.blank;
-	    upper_latex = latex;
+	if(abc[i] == "\n"){
+	    grouped["qwerty"].push({"break":true});
+	    grouped["QWERTY"].push({"break":true});
 	}
-	grouped["abc"].push({"name":name, "latex":latex});
-	grouped["ABC"].push({"name":name.toUpperCase(), "latex":upper_latex});
+	else if(abc[i] == "\t"){
+	    grouped["qwerty"].push({"tab":true});
+	    grouped["QWERTY"].push({"tab":true});
+	}
+	else{
+	    var latex = abc[i];
+	    var upper_latex = latex.toUpperCase();
+	    var name = abc[i];
+	    if(latex == "."){
+		latex = "."+GuppyOSK.blank;
+		upper_latex = latex;
+	    }
+	    grouped["qwerty"].push({"name":name, "latex":latex});
+	    grouped["QWERTY"].push({"name":name.toUpperCase(), "latex":upper_latex});
+	}
     }
     for(var s in syms){
 	var group = syms[s].group;
@@ -97,34 +107,42 @@ GuppyOSK.prototype.attach = function(guppy){
 	tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
 	for(var s in grouped[g]){
 	    var sym = grouped[g][s];
-	    var key = elt("span",{"class":"guppy_osk_key"});
-	    if(g == "abc" || g == "ABC"){
-		var f = function(n){
-		    click_listener(key, function(e){
-			e.preventDefault();
-			guppy.backend.insert_string(n);
-			guppy.render();
-			if(self.config.goto_tab){
-			    document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-			}
-		    });
-		};
-		f(sym.name);
-	    } else {
-		var f = function(n){
-		    click_listener(key, function(e){
-			e.preventDefault();
-			guppy.backend.insert_symbol(n);
-			guppy.render();
-			if(self.config.goto_tab){
-			    document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-			}
-		    });
-		};
-		f(sym.name);
+	    if(sym['break']){
+		group_elt.appendChild(elt("br"));
 	    }
-	    group_elt.appendChild(key);
-	    katex.render(sym.latex, key);
+	    else if(sym['tab']){
+		group_elt.appendChild(elt("span",{"class":"spacer"}));
+	    }
+	    else{
+		var key = elt("span",{"class":"guppy_osk_key"});
+		if(g == "qwerty" || g == "QWERTY"){
+		    var f = function(n){
+			click_listener(key, function(e){
+			    e.preventDefault();
+			    guppy.backend.insert_string(n);
+			    guppy.render();
+			    if(self.config.goto_tab){
+				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
+			    }
+			});
+		    };
+		    f(sym.name);
+		} else {
+		    var f = function(n){
+			click_listener(key, function(e){
+			    e.preventDefault();
+			    guppy.backend.insert_symbol(n);
+			    guppy.render();
+			    if(self.config.goto_tab){
+				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
+			    }
+			});
+		    };
+		    f(sym.name);
+		}
+		group_elt.appendChild(key);
+		katex.render(sym.latex, key);
+	    }
 	}
 	sym_tabs.appendChild(group_elt);
     }

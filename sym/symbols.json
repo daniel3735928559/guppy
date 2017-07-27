@@ -210,7 +210,7 @@
 	     "less":{"latex":"<","text":" < "},
 	     "geq":{"latex":"\\geq","text":" >= "},
 	     "greater":{"latex":">","text":" > "}}},
-	{"group":"abc",
+	{"group":"qwerty",
 	 "symbols":{
 	     "*":{"latex":"\\cdot","text":"*"},
 	     "infty":{"latex":"\\infty","text":" $infinity "}}}
