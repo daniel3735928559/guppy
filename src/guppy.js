@@ -36,6 +36,7 @@ var Guppy = function(guppy_div, config){
     
     Guppy.instances[guppy_div.id] = this;
 
+    config['parent'] = self;
     this.backend = new GuppyBackend(config);
     this.temp_cursor = {"node":null,"caret":0}
     this.editor.addEventListener("keydown",Guppy.key_down, false);

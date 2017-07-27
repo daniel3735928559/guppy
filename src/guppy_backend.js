@@ -13,7 +13,8 @@ var GuppyBackend = function(config){
     var config = config || {};
     var events = config['events'] || {};
     var options = config['options'] || {};
-
+    this.parent = config['parent'] || this;
+    
     this.blacklist = [];
     this.autoreplace = true;
     this.ready = false;
@@ -75,7 +76,8 @@ GuppyBackend.prototype.set_content = function(xml_data){
 }
 
 GuppyBackend.prototype.fire_event = function(event, args){
-    if(this.events[event]) this.events[event](args);
+    target = this.editor;
+    if(this.events[event]) this.events[event](this.parent, args);
 }
 
 GuppyBackend.prototype.add_symbols = function(name, sym){
