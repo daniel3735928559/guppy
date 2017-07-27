@@ -81,6 +81,10 @@ GuppyBackend.prototype.fire_event = function(event, args){
     if(this.events[event]) this.events[event](args);
 }
 
+GuppyBackend.prototype.remove_symbol = function(name){
+    if(this.symbols[name]) delete this.symbols[name];
+}
+
 GuppyBackend.prototype.add_symbols = function(name, sym){
     var new_syms = GuppySymbols.add_symbols(name, sym);
     for(var s in new_syms){
