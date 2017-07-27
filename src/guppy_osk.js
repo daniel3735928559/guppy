@@ -3,7 +3,7 @@ function GuppyOSK(config){
     for(var gid in Guppy.instances){
 	var g = Guppy.instances[gid];
 	var f = function(guppy){
-	    guppy.backend.events.focus = function(target, c){
+	    guppy.backend.events.focus = function(c){
 		if(c.focused) self.attach(guppy);
 		else self.detach(guppy);
 	    }

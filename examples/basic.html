@@ -10,7 +10,7 @@
      window.onload = function(){
 	 var g1 = new Guppy("guppy1", {
 	     "events":{
-		 'done': function(target, event) { console.log(g1.backend.get_content('xml')); },
+		 'done': function(event) { console.log(g1.backend.get_content('xml')); },
 		 'completion': console.log
 	     },
 	     "options":{

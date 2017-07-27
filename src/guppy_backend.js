@@ -76,8 +76,9 @@ GuppyBackend.prototype.set_content = function(xml_data){
 }
 
 GuppyBackend.prototype.fire_event = function(event, args){
-    target = this.editor;
-    if(this.events[event]) this.events[event](this.parent, args);
+    args = args || {};
+    args.target = this.parent;
+    if(this.events[event]) this.events[event](args);
 }
 
 GuppyBackend.prototype.add_symbols = function(name, sym){

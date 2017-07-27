@@ -14,11 +14,11 @@
       Guppy.init_symbols(["../sym/symbols.json","../sym/extra_symbols.json"]);
       var test_guppy = new Guppy("guppy1",
       {"events":{
-      "error":function(target, g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},
-      "left_end":function(target, g){test_guppy.backend.set_content("<m><e>!left</e></m>");},
-      "right_end":function(target, g){test_guppy.backend.set_content("<m><e>!right</e></m>");},
-      "change":function(target, g){console.log("CHANGE",g.old,g.new)},
-      "ready":function(target, g){
+      "error":function(g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},
+      "left_end":function(g){test_guppy.backend.set_content("<m><e>!left</e></m>");},
+      "right_end":function(g){test_guppy.backend.set_content("<m><e>!right</e></m>");},
+      "change":function(g){console.log("CHANGE",g.old,g.new)},
+      "ready":function(g){
           console.log("testing");
           test_guppy.backend.set_content("<m><e>!ready</e></m>");
           setTimeout(start_tests,2000);
