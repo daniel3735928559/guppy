@@ -13,7 +13,7 @@ var GuppyBackend = function(config){
     var config = config || {};
     var events = config['events'] || {};
     var options = config['options'] || {};
-    this.parent = config['parent'] || this;
+    this.parent = config['parent'];
     
     this.blacklist = [];
     this.autoreplace = true;
@@ -77,7 +77,7 @@ GuppyBackend.prototype.set_content = function(xml_data){
 
 GuppyBackend.prototype.fire_event = function(event, args){
     args = args || {};
-    args.target = this.parent;
+    args.target = this.parent || this;
     if(this.events[event]) this.events[event](args);
 }
 
@@ -1119,6 +1119,7 @@ GuppyBackend.prototype.checkpoint = function(){
     this.fire_event("change",{"old":this.undo_data[this.undo_now-1],"new":this.undo_data[this.undo_now]});
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
+    if(this.parent && this.parent.ready) this.parent.render(true);
 }
 
 GuppyBackend.prototype.restore = function(t){

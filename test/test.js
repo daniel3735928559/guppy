@@ -526,6 +526,7 @@ function start_tests(){
     }
     document.getElementById("pass_rate").innerHTML = (Math.round(10000*pass/tot)/100)+"% pass rate (" + pass + " pass, " + (tot-pass) + " fails)";
     display_coverage();
+    g.backend.set_content("<m><e>x</e></m>");
 }
 
 function run_test(i, g){
