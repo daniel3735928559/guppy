@@ -237,6 +237,9 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 	    }
 	    if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
 	}
+	if(text_node && n == this.current){
+	    ans = "\\xmlClass{guppy_text_current}{{"+ans+"}}";
+	}
 	n.setAttribute("render", ans);
 	n.removeAttribute("path");
     }
