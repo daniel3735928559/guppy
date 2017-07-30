@@ -374,6 +374,15 @@ var tests = [
 	}
     },
     {
+	"description":"remove symbol",
+	"type":"text",
+	"expected":"tanx",
+	"run":function(g){
+	    test_guppy.backend.remove_symbol("tan");
+	    do_keys(['t','a','n','x']);
+	}
+    },
+    {
 	"description":"symbol_func",
 	"type":"text",
 	"expected":" Re(i)",
