@@ -32,7 +32,7 @@ function click_listener(elt, fn){
 
 function make_tabs(element){
     var headers = element.querySelectorAll("li a");
-    var tabs = element.getElementsByTagName("div");
+    var tabs = element.getElementsByClassName("guppy_osk_group");
     tabs[0].style.display = "block";
     headers[0].classList.add("active_tab");
     for(var j = 0; j < headers.length; j++){
@@ -45,9 +45,10 @@ function make_tabs(element){
 	    }
 	    e.target.classList.add("active_tab")
 	    element.querySelector(e.target.getAttribute("href")).style.display = "block";
+	    e.preventDefault();
+	    return false;
 	});
     }
-    
 }
 
 GuppyOSK.prototype.detach = function(guppy){
@@ -103,7 +104,8 @@ GuppyOSK.prototype.attach = function(guppy){
 	grouped[group].push({"name":s,"latex":display});
     }
     for(var g in grouped){
-	var group_elt = elt("div",{"class":"guppy_osk_group","id":g});
+	var group_container = elt("div",{"class":"guppy_osk_group","id":g});
+	var group_elt = elt("div",{"class":"guppy_osk_group_box","id":g});
 	tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
 	for(var s in grouped[g]){
 	    var sym = grouped[g][s];
@@ -124,6 +126,8 @@ GuppyOSK.prototype.attach = function(guppy){
 			    if(self.config.goto_tab){
 				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
 			    }
+			    e.preventDefault();
+			    return false;
 			});
 		    };
 		    f(sym.name);
@@ -136,6 +140,8 @@ GuppyOSK.prototype.attach = function(guppy){
 			    if(self.config.goto_tab){
 				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
 			    }
+			    e.preventDefault();
+			    return false;
 			});
 		    };
 		    f(sym.name);
@@ -144,7 +150,8 @@ GuppyOSK.prototype.attach = function(guppy){
 		katex.render(sym.latex, key);
 	    }
 	}
-	sym_tabs.appendChild(group_elt);
+	group_container.appendChild(group_elt);
+	sym_tabs.appendChild(group_container);
     }
     make_tabs(sym_tabs);
     osk.appendChild(sym_tabs);

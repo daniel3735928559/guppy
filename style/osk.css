@@ -20,9 +20,21 @@ body {
     border: none !important;
 }
 
+.guppy_osk_group {
+    width: 100%;
+    text-align: center;
+}
+
+.guppy_osk_group_box {
+    display: inline-block !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin:auto;
+}
+
 .guppy_osk .spacer {
     display: inline-block;
-    min-width:30px;
+    min-width:7px;
     margin:3px;
 }
 
