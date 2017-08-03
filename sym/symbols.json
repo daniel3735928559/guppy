@@ -206,13 +206,13 @@
     "_raw":[
 	{"group":"operations",
 	 "symbols":{
+	     "*":{"latex":"\\cdot","text":"*"},
 	     "leq":{"latex":"\\leq","text":" <= "},
 	     "less":{"latex":"<","text":" < "},
 	     "geq":{"latex":"\\geq","text":" >= "},
 	     "greater":{"latex":">","text":" > "}}},
 	{"group":"qwerty",
 	 "symbols":{
-	     "*":{"latex":"\\cdot","text":"*"},
 	     "infty":{"latex":"\\infty","text":" $infinity "}}}
     ],
 
