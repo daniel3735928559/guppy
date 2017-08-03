@@ -13,7 +13,7 @@ GuppyRender.render_all = function(){
 	    var s = document.createElement("span");
 	    s.setAttribute("id","eqn1_render");
 	    katex.render(d.get_content("latex"), s);
-	    n.parentNode.replaceChild(s, n);
+	    n.parentNode.insertBefore(s, n);
 	    ans.push({"container":s, "doc":d})
 	}
     }
