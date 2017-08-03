@@ -34,8 +34,6 @@ body {
 
 .guppy_osk .spacer {
     display: inline-block;
-    min-width:7px;
-    margin:3px;
 }
 
 .guppy_osk .guppy_osk_key {

@@ -75,7 +75,7 @@ GuppyOSK.prototype.attach = function(guppy){
     var tab_bar = elt("ul");
     sym_tabs.appendChild(tab_bar);
     var grouped = {"qwerty":[],"QWERTY":[]};
-    var abc = "1234567890+-\n\tqwertyuiop=\n\t\tasdfghjkl.\n\t\t\tzxcvbnm"
+    var abc = "1234567890+-=\n\tqwertyuiop*/\n\t\tasdfghjkl.\n\t\t\tzxcvbnm"
     for(var i = 0; i < abc.length; i++){
 	if(abc[i] == "\n"){
 	    grouped["qwerty"].push({"break":true});
@@ -84,6 +84,14 @@ GuppyOSK.prototype.attach = function(guppy){
 	else if(abc[i] == "\t"){
 	    grouped["qwerty"].push({"tab":true});
 	    grouped["QWERTY"].push({"tab":true});
+	}
+	else if(abc[i] == "*"){
+	    grouped["qwerty"].push({"name":"*","latex":"\\cdot"});
+	    grouped["QWERTY"].push({"name":"*","latex":"\\cdot"});
+	}
+	else if(abc[i] == "/"){
+	    grouped["qwerty"].push({"name":"/","latex":"/"});
+	    grouped["QWERTY"].push({"name":"/","latex":"/"});
 	}
 	else{
 	    var latex = abc[i];
