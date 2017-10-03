@@ -112,9 +112,11 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
 	    if(n.previousSibling && n.nextSibling && ans == "")
 		ans = " * ";
 	    else {
-		ans = ans.replace(/(.)([^a-zA-Z0-9])(.)/g,"$1 $2 $3");
-		ans = ans.replace(/([a-zA-Z])([a-zA-Z0-9])/g,"$1 * $2");
-		ans = ans.replace(/([a-zA-Z0-9])([a-zA-Z])/g,"$1 * $2");
+		ans = ans.replace(/(.)([^a-zA-Z0-9.])(.)/g,"$1 $2 $3");
+		ans = ans.replace(/([a-zA-Z])(?=\.)/g,"$1 * ");
+		ans = ans.replace(/(\.)(?=[a-zA-Z])/g,"$1 * ");
+		ans = ans.replace(/([a-zA-Z])(?=[a-zA-Z0-9])/g,"$1 * ");
+		ans = ans.replace(/([a-zA-Z0-9])(?=[a-zA-Z])/g,"$1 * ");
 		if(n.previousSibling && n.previousSibling.getAttribute("group") != "operations") ans = ans.replace(/^([a-zA-Z0-9])/g," * $1");
 		if(n.nextSibling && n.nextSibling.getAttribute("group") != "operations") ans = ans.replace(/([a-zA-Z0-9])$/g,"$1 * ");
 		ans = " "+ans+" ";
