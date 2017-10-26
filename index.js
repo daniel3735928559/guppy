@@ -26,6 +26,7 @@ $('document').ready(function() {
 	{
             //'blank_caret': "[?]",
 	    //'autoreplace':true,
+	    'cliptype':'latex',
             'empty_content': "\\gray{\\text{Click here to start typing a mathematical expression}}"
 	}
     });

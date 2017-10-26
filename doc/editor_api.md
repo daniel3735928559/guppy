@@ -82,6 +82,13 @@ There are two main classes used to control the editor:
     * `blacklist`: A list of string symbol names, corresponding to
       symbols that should not be allowed in this instance of the
       editor.  Defaults to `[]` (nothing blacklisted).
+      
+    * `cliptype`: A string, either `"text"` or `"latex"`.  If this
+      option is present, when text is placed onto the editor
+      clipboard, the contents of the editor will be rendered into
+      either plain text or LaTeX (depending on the value of this
+      option) and an attempt will be made to copy the result to the system
+      clipboard.
     
   This function should be called for each div that you want to turn
   into a Guppy instance.

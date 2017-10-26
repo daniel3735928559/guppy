@@ -27,7 +27,7 @@ var GuppyBackend = function(config){
 	if(e in events) this.events[e] = e in events ? events[e] : null;
     }
 
-    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace"];
+    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace", "cliptype"];
     
     for(var i = 0; i < opts.length; i++){
 	var p = opts[i];
@@ -563,19 +563,42 @@ GuppyBackend.prototype.sel_copy = function(){
     var sel = this.sel_get();
     if(!sel) return;
     this.clipboard = [];
+    var clip_text = "";
     for(var i = 0; i < sel.node_list.length; i++){
-	this.clipboard.push(sel.node_list[i].cloneNode(true));
+	var node = sel.node_list[i].cloneNode(true);
+	this.clipboard.push(node);
+	if(this.cliptype) clip_text += this.doc.manual_render(this.cliptype, node);
     }
+    if(this.cliptype) this.system_copy(clip_text);
     this.sel_clear();
 }
 
+GuppyBackend.prototype.system_copy = function(text) {
+    if (window.clipboardData && window.clipboardData.setData)
+        return clipboardData.setData("Text", text);
+    else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";
+	textarea.style.background = "transparent";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { return document.execCommand("copy"); }
+	catch (ex) { return false; }
+        finally { document.body.removeChild(textarea); }
+    }
+}
 GuppyBackend.prototype.sel_cut = function(){
     var node_list = this.sel_delete();
     if(!node_list) return;
     this.clipboard = [];
+    var clip_text = "";
     for(var i = 0; i < node_list.length; i++){
-	this.clipboard.push(node_list[i].cloneNode(true));
+	var node = node_list[i].cloneNode(true);
+	this.clipboard.push(node);
+	if(this.cliptype) clip_text += this.doc.manual_render(this.cliptype, node);
     }
+    if(this.cliptype) this.system_copy(clip_text);
     this.sel_clear();
     this.checkpoint();
 }
