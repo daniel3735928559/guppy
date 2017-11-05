@@ -18,7 +18,7 @@
         "showInheritedInNav": true
     },
     "opts": {
-        "destination": "./docs",
+        "destination": "./site/docs",
         "encoding": "utf8",
         "private": true,
         "recurse": true,

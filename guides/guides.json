@@ -1,6 +1,7 @@
 {
     "style": {"title":"Styling the editor"},
     "symbols":{"title":"Creating custom symbols"},
+    "faq": {"title": "FAQ"},
     "format": {"title": "XML format"},
     "internals": {"title": "Editor internals"}
 }

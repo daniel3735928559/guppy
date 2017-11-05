@@ -1,9 +1,9 @@
 {
     "name": "guppymath",
-    "version": "1.1.0",
+    "version": "2.0.0-alpha",
     "description": "WYSIWYG mathematics equation editor",
     "directories": {
-	"doc": "doc",
+	"doc": "site/docs",
 	"test": "test"
     },
     "scripts": {
