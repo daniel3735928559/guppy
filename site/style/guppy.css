@@ -1,0 +1,25 @@
+.guppy_active {
+    background-color: #ffffff;
+}
+
+.guppy_inactive {
+    background-color: #fafafa;
+}
+
+.guppy_text_current {
+    border: 1px solid #ccc;
+}
+
+.guppy_active .main_cursor {
+  animation: blink-animation 1s steps(2, start) infinite;
+  -webkit-animation: blink-animation 1s steps(2, start) infinite;
+}
+
+@keyframes blink-animation {
+  to { visibility: hidden; }
+}
+
+@-webkit-keyframes blink-animation {
+  to { visibility: hidden; }
+}
+

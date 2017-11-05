@@ -1,0 +1,107 @@
+body {
+    min-height:100%;
+}
+
+.guppy_osk {
+    position:fixed;
+    width:100%;
+    bottom: 0px;
+    /* border: 1px solid #ccc; */
+}
+
+.guppy_osk .controls{
+    text-align: center;
+    width: 100%;
+    background-color: #fff;
+    padding: 5px;
+}
+
+.guppy_osk .keys {
+    border: none !important;
+}
+
+.guppy_osk_group {
+    width: 100%;
+    text-align: center;
+}
+
+.guppy_osk_group_box {
+    display: inline-block !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin:auto;
+}
+
+.guppy_osk .spacer {
+    display: inline-block;
+}
+
+.guppy_osk .guppy_osk_key {
+    margin: 3px;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    min-width: 60px;
+    line-height:60px;
+    vertical-align:middle;
+    text-align: center;
+    background: #ddd;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.guppy_osk #qwerty .guppy_osk_key,
+.guppy_osk .controls .guppy_osk_key,
+.guppy_osk #QWERTY .guppy_osk_key,
+.guppy_osk #greek .guppy_osk_key {
+    line-height:40px !important;
+    height: 40px !important; 
+}
+
+.guppy_osk .guppy_osk_key:hover {
+    position: relative;
+    top: 1px;
+    left: 1px;
+    border: 1px solid #e5e5e5;
+    cursor: pointer;
+}
+
+.tabbed{
+  overflow:hidden;
+  clear:both;
+}
+
+.tabbed ul{
+  list-style-type:none;
+  /* position:relative; */
+}
+
+.tabbed li{
+    float:left;
+    cusror: pointer;
+}
+ 
+.tabbed a{
+  display:block;
+  padding:5px 10px;
+  background-color: #fff;
+  color: #000;
+  text-decoration: none;
+  margin: 0 5px;
+  border-top:1px solid #000;
+  border-left:1px solid #000;
+  border-right:1px solid #000;
+  border-bottom: 0;
+}
+
+.tabbed a.active_tab{
+  background-color: #7cf;
+}
+
+.tabbed div{
+  clear: both;
+  border:1px solid #ccc;
+  padding:5px;
+  display:none;
+}

@@ -38,9 +38,12 @@ product d times y by the product d times x".
 Also, in its default configuration it requires neither backslashes nor
 use of the mouse to enter expressions.
 
-## How is it different from using semantically meaningful macros in LaTeX?  For example, "$\derivative{y}{x}$" or "$\exp{x}{2}$".
+## How is it different from using semantically meaningful macros in LaTeX?
 
-It's less typing and it's prettier.
+I actually don't have anything against `$\derivative{y}{x}$` or
+`$\exp{x}{2}$` when LaTeX is actually required.
+
+However, this way is less typing and it's prettier.
 
 In this editor, when you make the three keystrokes to enter "x^2", you
 not only get to see the rendered exponent (and thus can more easily
@@ -50,25 +53,54 @@ with x as the base and 2 as the exponent.
 
 ## Why can't it output to Maple/SymPy/Sage/[My favourite language]?
 
-The simple answer is that you can make it do so.
+The simple answer is that you could make it do so.
 
-The much better answer is that you shouldn't.
+The much better answer is that you shouldn't. 
 
 A common suggested use-case for this is to take user input, have the
 editor output it as SymPy for processing on the server side.  This
 almost always permits a malicious user to easily execute arbitrary
-code (such as `rm -rf --no-preserve-root /`) on the server.  Removing
-builtins will not save you, and containers will probably also not save
-you.
+code (such as `rm -rf --no-preserve-root /`) on the server.  
 
-If the significance of `().__class__.__base__.__subclasses__()` is
-lost on you, you definitely shouldn't do this.  Even if you understand
-why that is relevant, you still most likely should not do this.
+Removing builtins will not save you, chroot will not save you, and
+containers will also probably not save you.  If the significance of
+`().__class__.__base__.__subclasses__()` is lost on you, you
+definitely shouldn't do this.  Even if you understand why that is
+relevant, you still most likely should not do this.
+
+If you want to process your mathematical expressions server-side
+consume them as data (probably via the syntax tree output) and
+evaluate them the usual way and don't introduce an effective call to
+`eval()` into your system.
+
+## Can I make the cursor orange?
+
+Yes.  Many elements are tagged with CSS classes so that you can
+write CSS to customise the editor's appearance.  !important.  
+
+## What are the future plans for this editor?
+
+If PostScript is the assembly language of typesetting, then maybe
+LaTeX is the C, and GXML can be one of many competing higher-level
+languages for specifying mathematical formulae.
+
+A consequence of leaving plaintext formats, however, is that tooling
+needs to be created, both for creating and consuming content: 
+
+* *Creating:* To make it easier to create whole documents using Guppy
+  will require plugins for existing editors like Quill.js, CodeMirror,
+  and even emacs.
+  
+* *Consuming:* GuppyRenderis a start, but there is some infrastructure
+  still to create to ensure that users can take advantage of the
+  semantic understanding of equations now available.  We envision a
+  tool a bit like a code browser, except for reading mathematics.
+  Something that allows cross-referencing any symbol in an expression
+  with its definition and uses, for example.
 
 ## Why "guppy"?
 
-I truly don't remember.  `/usr/share/dict/words` might have played a
-role.
+I truly don't remember.  `/usr/share/dict/words` may be involved.
 
 ## Why XML?
 
@@ -81,14 +113,6 @@ specimens into the new hot sauce.
 
 Because it was there.
 
-## Why?
-
-Because.
-
-## Can I make the cursor orange?
-
-Yes.  Many elements are tagged with CSS classes so that you can
-write CSS to customise the editor's appearance.  !important.  
 
 ## Can it do matrices?
 
