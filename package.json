@@ -8,7 +8,8 @@
     },
     "scripts": {
 	"test": "echo \"Error: no test specified\" && exit 1",
-	"rebuild": "./make",
+	"build": "./make",
+	"build-debug": "./make -d",
 	"generate-docs": "jsdoc --configure jsdoc.json --verbose"
     },
     "repository": {

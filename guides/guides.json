@@ -1,0 +1,6 @@
+{
+    "style": {"title":"Styling the editor"},
+    "symbols":{"title":"Creating custom symbols"},
+    "format": {"title": "XML format"},
+    "internals": {"title": "Editor internals"}
+}
