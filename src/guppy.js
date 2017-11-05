@@ -4,6 +4,50 @@ GuppyBackend = require('./guppy_backend.js');
 GuppyUtils = require('./guppy_utils.js');
 GuppySymbols = require('./guppy_symbols.js');
 
+/**
+   @class
+   @classdesc An instance of Guppy
+   @param {string} guppy_div - The string ID of the element that should be converted to an editor
+   @param {Object} [config] - The configuration options for this instance
+   @param {Object} [config.events] - A dictionary of events
+   @param {function} [config.events.ready] - Called when the instance is ready to render things. 
+   @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively. 
+   @param {function} [config.events.left_end] - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
+   @param {function} [config.events.left_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
+   @param {function} [config.events.done] - Called when the enter key is pressed in the editor.
+   @param {function} [config.events.completion] - Called when the editor outputs tab completion
+      options.  Argument is a dictionary with the key `candidates`, a
+      list of the options for tab-completion.
+   @param {function} [config.events.debug] - Called when the editor outputs some debug information.
+      Argument is a dictionary with the key `message`.
+   @param {function} [config.events.error] - Called when the editor receives an error.  Argument is
+      a dictionary with the key `message`.
+   @param {function} [config.events.focus] - Called when the editor is focused or unfocused.
+      Argument will have a single key `focused` which will be `true`
+      or `false` according to whether the editor is newly focused or
+      newly unfocused (respectively).
+   @param {Object} [config.options] - A dictionary of options
+   @param {string} [config.options.xml_content=<m><e/></m>] - An XML
+      string with which to initialise the editor's state.
+   @param {boolean} [config.options.autoreplace=true] - Determines
+      whether or not to autoreplace typed text with the corresponding
+      symbols when possible.
+   @param {string} [config.options.blank=""] - A LaTeX string that
+      specifies what the caret should look like when in a blank spot.
+   @param {string} [config.options.empty_content=\color{red}{[?]}] - A
+      LaTeX string that will be displayed when the editor is both
+      inactive and contains no content.
+   @param {string[]} [config.options.blacklist=[]] - A list of string
+      symbol names, corresponding to symbols that should not be
+      allowed in this instance of the editor.
+   @param {string} [config.options.cliptype] - A string, either
+      "text" or "latex".  If this option is present, when text is
+      placed onto the editor clipboard, the contents of the editor
+      will be rendered into either plain text or LaTeX (depending on
+      the value of this option) and an attempt will be made to copy
+      the result to the system clipboard.
+   @constructor 
+ */
 var Guppy = function(guppy_div, config){
     var self = this;
     var config = config || {};
@@ -37,6 +81,8 @@ var Guppy = function(guppy_div, config){
     Guppy.instances[guppy_div.id] = this;
 
     config['parent'] = self;
+
+    /**   @member {GuppyBackend} */
     this.backend = new GuppyBackend(config);
     this.temp_cursor = {"node":null,"caret":0}
     this.editor.addEventListener("keydown",Guppy.key_down, false);
@@ -80,6 +126,11 @@ Guppy.reset_global_symbols = function(){
     }
 }
 
+/** 
+    Initialise the symbols for all instances of the editor
+    @memberof Guppy
+    @param {string[]} symbols - A list of URLs for symbol JSON files to request
+*/
 Guppy.init_symbols = function(symbols){
     var all_ready = function(){
 	Guppy.register_keyboard_handlers();
@@ -352,6 +403,13 @@ Guppy.prototype.render_node = function(t){
     return output
 }
 
+/** 
+    Render the document
+    @memberof Guppy
+    @param {boolean} [updated=false] - Whether there have been visible
+    changes to the document (i.e. that affect the positions of
+    elements)
+*/
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.backend.doc.is_blank()){
 	katex.render(this.empty_content,this.editor);
@@ -364,6 +422,10 @@ Guppy.prototype.render = function(updated){
     }
 }
 
+/** 
+    Focus this instance of the editor
+    @memberof Guppy
+*/
 Guppy.prototype.activate = function(){
     Guppy.active_guppy = this;
     this.editor_active = true;
@@ -375,6 +437,11 @@ Guppy.prototype.activate = function(){
     }
 }
 
+
+/** 
+    Unfocus this instance of the editor
+    @memberof Guppy
+*/
 Guppy.prototype.deactivate = function(){
     this.editor_active = false;
     var r1 = new RegExp('(?:\\s|^)guppy_active(?:\\s|$)');

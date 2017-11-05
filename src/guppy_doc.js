@@ -1,3 +1,9 @@
+/**
+   @class
+   @classdesc A class representing a Guppy document
+   @param {string} [doc=<m><e></e></m>] - An XML string representing the document
+   @constructor 
+ */
 var GuppyDoc = function(doc){
     doc = doc || "<m><e></e></m>";
     this.set_content(doc);
@@ -20,6 +26,11 @@ GuppyDoc.prototype.ensure_text_nodes = function(){
     }
 }
 
+/** 
+    Check if document is empty
+    @memberof GuppyDoc
+    @returns {boolean}
+*/
 GuppyDoc.prototype.is_blank = function(){
     if(this.base.getElementsByTagName("f").length > 0) return false;
     var l = this.base.getElementsByTagName("e");
@@ -27,10 +38,22 @@ GuppyDoc.prototype.is_blank = function(){
     return false;
 }
 
+
+/** 
+    Get the document as a DOM object
+    @memberof GuppyDoc
+    @returns {Element}
+*/
 GuppyDoc.prototype.root = function(){
     return this.base.documentElement;
 }
 
+/** 
+    Get the content of the document as a string
+    @memberof GuppyDoc
+    @param {string} t - The rendering method to use ("latex" or "text")
+    @returns {string}
+*/
 GuppyDoc.prototype.get_content = function(t,r){
     if(t != "xml"){
 	var ans = this.manual_render(t,this.root(),r);
@@ -49,6 +72,12 @@ GuppyDoc.prototype.xpath_list = function(xpath, node){
     return this.base.evaluate(xpath, node, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 }
 
+/** 
+    Get the names of symbols used in this document
+    @memberof GuppyDoc
+    @param {string[]} [groups] - A list of groups you want strings for
+    @returns {string[]}
+*/
 GuppyDoc.prototype.get_symbols = function(groups){
     var types = {};
     var ans = [];
@@ -60,6 +89,11 @@ GuppyDoc.prototype.get_symbols = function(groups){
     return ans;
 }
 
+/** 
+    Set the content of the document
+    @memberof GuppyDoc
+    @param {string} xml_data - An XML string representing the content of the document
+*/
 GuppyDoc.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.ensure_text_nodes();
