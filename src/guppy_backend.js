@@ -92,7 +92,7 @@ GuppyBackend.prototype.set_content = function(xml_data){
 GuppyBackend.prototype.fire_event = function(event, args){
     args = args || {};
     args.target = this.parent || this;
-    if(this.events[event]) this.events[event](args);
+    if(this.events[event] && this.ready && GuppyBackend.ready) this.events[event](args);
 }
 
 /** 

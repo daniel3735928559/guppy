@@ -138,6 +138,7 @@ Guppy.init_symbols = function(symbols){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render(true);
 	    Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+	    Guppy.instances[i].backend.ready = true;
 	    Guppy.instances[i].backend.fire_event("ready");
 	    Guppy.instances[i].events["ready"] = null;
 	}
