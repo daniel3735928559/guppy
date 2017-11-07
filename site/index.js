@@ -5,7 +5,7 @@ $('document').ready(function() {
 	    //'debug':10,
             'right_end': function() {},
             'left_end': function() {},
-            'done': function() { createText('text'); },
+            'change': update_output,
             'completion': completion,
 	},
 	"options":
@@ -17,6 +17,19 @@ $('document').ready(function() {
 	}
     });
 });
+
+function update_output(){
+    console.log("ASD");
+    try{
+	$('#latex_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("latex");
+	$('#text_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("text");
+	$('#ast_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("ast");
+	$('#xml_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("xml").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+    catch(e){
+	console.log(e);
+    }
+}
 
 function completion(target, data) {
     $('#stuff')[0].innerHTML = "INFO: <br />"+data.candidates.join(", ");

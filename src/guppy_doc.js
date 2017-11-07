@@ -55,11 +55,40 @@ GuppyDoc.prototype.root = function(){
     @returns {string}
 */
 GuppyDoc.prototype.get_content = function(t,r){
-    if(t != "xml"){
-	var ans = this.manual_render(t,this.root(),r);
-	return ans;
+    if(t == "xml") return (new XMLSerializer()).serializeToString(this.base);
+    else if(t == "ast") return JSON.stringify(this.syntax_tree());
+    else return this.manual_render(t,this.root(),r);
+}
+
+GuppyDoc.prototype.syntax_tree = function(n){
+    n = n || this.root()
+    var ans = [];
+    if(n.nodeName == "e"){
+	ans = n.firstChild.textContent;
     }
-    else return (new XMLSerializer()).serializeToString(this.base);
+    else if(n.nodeName == "f"){
+	ans = [n.getAttribute("type"), [], {}];	
+	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
+	for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
+	    if(nn.hasAttribute("name")) ans[2][nn.getAttribute("name")] = this.syntax_tree(nn)
+	    else ans[1].push(this.syntax_tree(nn))
+	}
+    }
+    else if(n.nodeName == "l"){
+	ans = [];
+	var i = 0;
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+	    ans[i++] = this.syntax_tree(nn);
+	}
+    }
+    else if(n.nodeName == "c" || n.nodeName == "m"){
+	nodes = []
+	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+	    nodes.push(this.syntax_tree(nn));
+	}
+	ans = nodes;
+    }
+    return ans;
 }
 
 GuppyDoc.prototype.xpath_node = function(xpath, node){
