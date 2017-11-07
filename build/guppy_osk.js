@@ -1,3 +1,17 @@
+/** 
+    @class
+    @classdesc To enable the on-screen keyboard, ensure all Guppy
+    instances have been initialised and then create a new GuppyOSK
+    object with `new GuppyOSK()`.  This will cause any instances of
+    the editor to, when focused, create an on-screen keyboard at the
+    bottom of the screen with tabs for the various groups of symbols.
+    @param {Object} [config] - Configuration options for the on-screen keyboard
+    @param {string} [config.goto_tab] - The name of the group whose
+      tab the keyboard should jump to every time a key is pressed.
+      For example, the value `"abc"` will cause the keyboard to revert
+      to the lower-case alphanumeric tab every time a key is pressed.
+    @constructor
+*/
 function GuppyOSK(config){
     var self = this;
     for(var gid in Guppy.instances){
