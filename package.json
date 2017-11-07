@@ -1,38 +1,38 @@
 {
-    "name": "guppymath",
-    "version": "2.0.0-alpha",
-    "description": "WYSIWYG mathematics equation editor",
-    "directories": {
-	"doc": "site/docs",
-	"test": "test"
-    },
-    "scripts": {
-	"test": "echo \"Error: no test specified\" && exit 1",
-	"build": "./make",
-	"build-debug": "./make -d",
-	"generate-docs": "jsdoc --configure jsdoc.json --verbose"
-    },
-    "repository": {
-	"type": "git",
-	"url": "git+https://github.com/daniel3735928559/guppy.git"
-    },
-    "keywords": [
-	"math",
-	"wysiwyg",
-	"equation",
-	"editor"
-    ],
-    "author": "daniel3735928559",
-    "license": "MIT",
-    "bugs": {
-	"url": "https://github.com/daniel3735928559/guppy/issues"
-    },
-    "homepage": "https://github.com/daniel3735928559/guppy#readme",
-    "dependencies": {
-	"mousetrap": "^1.6.0"
-    },
-    "devDependencies": {
-	"browserify": "latest",
-	"minami": "^1.2.3"
-    }
+   "name": "guppymath",
+   "version": "2.0.0-alpha",
+   "description": "WYSIWYG mathematics equation editor",
+   "directories": {
+      "doc": "site/docs",
+      "test": "test"
+   },
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "build": "./make",
+      "build-debug": "./make -d",
+      "generate-docs": "jsdoc --configure jsdoc.json --verbose"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/daniel3735928559/guppy.git"
+   },
+   "keywords": [
+      "math",
+      "wysiwyg",
+      "equation",
+      "editor"
+   ],
+   "author": "daniel3735928559",
+   "license": "MIT",
+   "bugs": {
+      "url": "https://github.com/daniel3735928559/guppy/issues"
+   },
+   "homepage": "https://github.com/daniel3735928559/guppy#readme",
+   "dependencies": {
+      "mousetrap": "^1.6.0"
+   },
+   "devDependencies": {
+      "browserify": "latest",
+      "minami": "^1.2.3"
+   }
 }
