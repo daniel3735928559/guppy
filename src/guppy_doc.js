@@ -62,31 +62,44 @@ GuppyDoc.prototype.get_content = function(t,r){
 
 GuppyDoc.prototype.syntax_tree = function(n){
     n = n || this.root()
-    var ans = [];
     if(n.nodeName == "e"){
-	ans = n.firstChild.textContent;
+	console.log("Should never happen");
+	//ans = n.firstChild.textContent;
     }
     else if(n.nodeName == "f"){
-	ans = [n.getAttribute("type"), [], {}];	
+	var ans = {"args":[], "kwargs":{}};
+	ans['value'] = n.getAttribute("type");
+	ans['type'] = "function";
+	if(n.hasAttribute("ast_value")) ans['value'] = n.getAttribute("ast_value");
+	if(n.hasAttribute("ast_type")) ans['type'] = n.getAttribute("ast_type");
+	else if(n.hasAttribute("c")) ans['type'] = "name";
+	
+	console.log("ANSS",JSON.stringify(ans));
 	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
 	for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
-	    if(nn.hasAttribute("name")) ans[2][nn.getAttribute("name")] = this.syntax_tree(nn)
-	    else ans[1].push(this.syntax_tree(nn))
+	    if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
+	    else ans.args.push(this.syntax_tree(nn))
 	}
     }
     else if(n.nodeName == "l"){
 	ans = [];
-	var i = 0;
 	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
-	    ans[i++] = this.syntax_tree(nn);
+	    ans.push(this.syntax_tree(nn));
 	}
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
-	nodes = []
+	var tokens = []
 	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
-	    nodes.push(this.syntax_tree(nn));
+	    if(nn.nodeName == "e"){
+		tokens = tokens.concat(GuppyDoc.tokenise(nn.firstChild.textContent));
+	    }
+	    else if(nn.nodeName == "f"){
+		tokens.push(this.syntax_tree(nn));
+		console.log("F",JSON.stringify(tokens))
+	    }
 	}
-	ans = nodes;
+	console.log("TOKENS",tokens);
+	ans = GuppyDoc.parse(tokens);
     }
     return ans;
 }
@@ -241,6 +254,175 @@ GuppyDoc.prototype.path_to = function(n){
     var ns = 0;
     for(var nn = n; nn != null; nn = nn.previousSibling) if(nn.nodeType == 1 && nn.nodeName == name) ns++;
     return this.path_to(n.parentNode)+"_"+name+""+ns;
+}
+
+GuppyDoc.tokenise = function(s){
+    var tokens = [
+	{"type":"number", "re":"^[0-9]+(\\.[0-9]+)?", "value":function(m){return Number(m)}},
+	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
+	{"type":"name", "re":"^[a-zA-Z]", "value":function(m){return m}},
+	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
+    ];
+    var ans = [];
+    while(s.length > 0){
+	var ok = false;
+	for(var i = 0; i < tokens.length; i++){
+	    var t = tokens[i];
+	    re = RegExp(t.re);
+	    var m = re.exec(s);
+	    if(m){
+		m = m[0];
+		s = s.substring(m.length);
+		ok = true;
+		if(t.type != "space") ans.push({"type":t.type, "value": t.value(m)})
+		break;
+	    }
+	}
+	if(!ok){
+	    console.log("Tokenising error");
+	    return [];
+	}
+    }
+    return ans;
+}
+
+GuppyDoc.parse = function(tokens){
+    console.log("TT",JSON.stringify(tokens));
+    var symbol_table = {};
+
+    var original_symbol = {
+	nud: function () { throw Error("Undefined"); },
+	led: function (left) { throw Error("Missing operator"); }
+    };
+
+    var itself = function () {
+	return this;
+    };
+
+    var symbol = function (id, bp) {
+	var s = symbol_table[id];
+	bp = bp || 0;
+	if (s) {
+            if (bp >= s.lbp) {
+		s.lbp = bp;
+            }
+	} else {
+            s = Object.create(original_symbol);
+            s.id = s.value = id;
+            s.lbp = bp;
+            symbol_table[id] = s;
+	}
+	return s;
+    };
+
+    symbol("(end)");
+
+    s = symbol("(blank)", 60);
+    s.nud = function(){ return {"value":"blank"};};
+    
+    s = symbol("(function)", 60);
+    s.led = function(left){ return {"value":"*", "first":left, "second": this};};
+    s.nud = itself;
+    
+    s = symbol("(literal)", 60);
+    s.led = function(left){ return {"value":"*", "first":left, "second": this};};
+    s.nud = itself;
+
+    s = symbol("(var)", 60);
+    s.led = function(left){ return {"value":"*", "first":left, "second": this}; };
+    s.nud = itself;
+
+    var token;
+    var token_nr = 0;
+
+    var advance = function (id) {
+	var a, o, t, v;
+	if (id && token.id !== id) {
+            throw Error("Expected '" + id + "'");
+	}
+	if (token_nr >= tokens.length) {
+            token = symbol_table["(end)"];
+            return;
+	}
+	t = tokens[token_nr];
+	token_nr += 1;
+	v = t.value;
+	var args = null;
+	var kwargs = null;
+	a = t.type;
+	if (a === "name") {
+            o = symbol_table["(var)"];
+	} else if (a === "operator") {
+            o = symbol_table[v];
+            if (!o) {
+		t.error("Unknown operator.");
+            }
+	} else if (a ===  "number") {
+            a = "literal";
+            o = symbol_table["(literal)"];
+	} else if (a ===  "function") {
+            a = "function";
+            o = symbol_table["(function)"];
+	    args = t.args;
+	    kwargs = t.kwargs;
+	} else {
+            throw Error("Unexpected token",t);
+	}
+	console.log("ATVO", a,t,v,o);
+	token = Object.create(o);
+	token.value = v;
+	if(args) token.args = args;
+	if(kwargs) token.kwargs = kwargs;
+	return token;
+    };
+
+
+    var expression = function (rbp) {
+	var left;
+	var t = token;
+	advance();
+	console.log("T", t, token);
+	left = t.nud();
+	while (rbp < token.lbp) {
+            t = token;
+            advance();
+	    console.log("tok",token);
+            left = t.led(left);
+	}
+	return left;
+    };
+
+    var infix = function (id, bp, led) {
+	var s = symbol(id, bp);
+	s.led = led || function (left) {
+            this.args = [left, expression(bp)];
+            return this;
+	};
+	return s;
+    }
+
+    infix("+", 50);
+    infix("-", 50);
+    infix("*", 60);
+    infix("/", 60);
+    var prefix = function (id, nud) {
+	var s = symbol(id);
+	s.nud = nud || function () {
+            this.args = [expression(70)];
+            return this;
+	};
+	return s;
+    }
+
+    prefix("-");
+    prefix("!");
+    prefix("typeof");
+
+    if(tokens.length == 0) return {"value":"blank"};
+    
+    advance();
+    
+    return expression(10);
 }
 
 module.exports = GuppyDoc;

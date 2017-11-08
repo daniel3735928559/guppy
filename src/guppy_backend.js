@@ -347,6 +347,8 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
     var base = this.doc.base;
     var s = this.symbols[sym_name];
     var f = base.createElement("f");
+    if("ast_type" in s) f.setAttribute("ast_type",s["ast_type"])
+    if("ast_value" in s) f.setAttribute("ast_value",s["ast_value"])
     if("type" in s) f.setAttribute("type",s["type"])
     if("group" in s) f.setAttribute("group",s["group"])
     if(s['char']) f.setAttribute("c","yes");

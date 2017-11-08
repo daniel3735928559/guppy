@@ -1,5 +1,5 @@
 $('document').ready(function() {
-    Guppy.init_symbols(["../sym/symbols.json","../sym/extra_symbols.json"]);
+    Guppy.init_symbols(["../sym/symbols.json"]);
     var g1 = new Guppy("guppy1", {
 	"events":{
 	    //'debug':10,
