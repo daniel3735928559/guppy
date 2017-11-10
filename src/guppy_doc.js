@@ -51,7 +51,7 @@ GuppyDoc.prototype.root = function(){
 /** 
     Get the content of the document as a string
     @memberof GuppyDoc
-    @param {string} t - The rendering method to use ("latex" or "text")
+    @param {string} t - The rendering method to use ("latex", "text", "ast" (for syntax tree), or "xml" (for internal XML representation))
     @returns {string}
 */
 GuppyDoc.prototype.get_content = function(t,r){
@@ -95,10 +95,8 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	    }
 	    else if(nn.nodeName == "f"){
 		tokens.push(this.syntax_tree(nn));
-		console.log("F",JSON.stringify(tokens))
 	    }
 	}
-	console.log("TOKENS",tokens);
 	ans = GuppyDoc.parse(tokens);
     }
     return ans;
@@ -287,7 +285,6 @@ GuppyDoc.tokenise = function(s){
 }
 
 GuppyDoc.parse = function(tokens){
-    console.log("TT",JSON.stringify(tokens));
     var symbol_table = {};
 
     var original_symbol = {
@@ -368,7 +365,6 @@ GuppyDoc.parse = function(tokens){
 	} else {
             throw Error("Unexpected token",t);
 	}
-	console.log("ATVO", a,t,v,o);
 	token = Object.create(o);
 	token.value = v;
 	if(args) token.args = args;
@@ -381,12 +377,10 @@ GuppyDoc.parse = function(tokens){
 	var left;
 	var t = token;
 	advance();
-	console.log("T", t, token);
 	left = t.nud();
 	while (rbp < token.lbp) {
             t = token;
             advance();
-	    console.log("tok",token);
             left = t.led(left);
 	}
 	return left;
