@@ -154,8 +154,20 @@ Guppy.init_symbols = function(symbols){
 		var req = new XMLHttpRequest();
 		req.onload = function(){
 		    var syms = JSON.parse(this.responseText);
+		    var templates = syms["_templates"];
+		    if(templates){
+			for(var i = 0; i < templates.length; i++){
+			    Guppy.templates[i]
+			}
+		    }
 		    for(var s in syms){
-			var new_syms = GuppySymbols.add_symbols(s,syms[s], GuppySymbols.symbols);
+			if(s == "!templates"){
+
+			}
+			else{
+			    
+			}
+			var new_syms = GuppySymbols.add_symbols(s,syms[s]);
 			for(var s in new_syms)
 			    GuppySymbols.symbols[s] = new_syms[s];
 		    }
