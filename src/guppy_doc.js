@@ -320,11 +320,11 @@ GuppyDoc.parse = function(tokens){
     
     s = symbol("(literal)", 60);
     s.led = mul;
-    s.nud = function(){ return ["val", this.value] };
+    s.nud = function(){ return ["val", [this.value]] };
 
     s = symbol("(var)", 60);
     s.led = mul;
-    s.nud = function(){ return ["var", this.value] };
+    s.nud = function(){ return ["var", [this.value]] };
 
     var token;
     var token_nr = 0;
