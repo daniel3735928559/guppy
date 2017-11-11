@@ -133,7 +133,7 @@
 	 "value":"/"},
      "attrs":{
 	 "type":"fraction",
-	 "group":"functions"}
+	 "group":"functions"},
      "args":[
 	 {"up":"1","down":"2","name":"numerator"},
 	 {"up":"1","down":"2","name":"denominator"}
@@ -235,9 +235,9 @@
         "latex":"\\cdot",
 	"text":"*"},
      "attrs":{
-	 "char":true,
+	 "char":"yes",
 	 "group":"operations",
-	 "type":"*"}
+	 "type":"*"},
      "ast":{
 	 "type":"operator"}
     },
@@ -245,7 +245,7 @@
     "infinity":{"output":{"latex":"\\infty",
 			  "text":"$infinity"},
 		"attrs":{"group":"qwerty",
-			 "char":true,
+			 "char":"yes",
 			 "type":"infinity"}
 	       },
     
@@ -253,31 +253,33 @@
     [
 	{"template":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
 			       "text":" {$name}({$1})"},
-		     "type":"{$name}",
-		     "group":"functions",
-		     "attrs":[
+		     "attrs":{
+			 "type":"{$name}",
+			 "group":"functions"},
+		     "args":[
 			 {"delete":"1"}
-		     ]
-		    },
+		     ]},
 	 "values":["sin","cos","tan","sec","csc","cot","log","ln"]},
 	
 	{"template":{"output":{"latex":"\\{$name}",
 			       "text":"${$name}"},
-		     "group":"greek",
-		     "char":true,
-		     "type":"{$name}"},
+		     "attrs":{
+			 "group":"greek",
+			 "char":"yes",
+			 "type":"{$name}"}},
 	 "values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
 
 	{"template":{"output":{"latex":"{$latex}",
 			       "text":"{$text}"},
-		     "group":"operations",
-		     "char":true,
-		     "type":"{$name}"},
+		     "attrs":{
+			 "group":"operations",
+			 "char":"yes",
+			 "type":"{$name}"}},
 	 
 	 "values":{"leq":{"latex":"\\leq","text":" <= "},
 		   "less":{"latex":"<","text":" < "},
 		   "geq":{"latex":"\\geq","text":" >= "},
 		   "greater":{"latex":">","text":" > "}}}
 	
-    ],
+    ]
 }

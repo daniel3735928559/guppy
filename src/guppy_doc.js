@@ -72,7 +72,7 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	ans['type'] = "function";
 	if(n.hasAttribute("ast_value")) ans['value'] = n.getAttribute("ast_value");
 	if(n.hasAttribute("ast_type")) ans['type'] = n.getAttribute("ast_type");
-	else if(n.hasAttribute("c")) ans['type'] = "name";
+	else if(n.getAttribute("char") == "yes") ans['type'] = "name";
 	
 	console.log("ANSS",JSON.stringify(ans));
 	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)

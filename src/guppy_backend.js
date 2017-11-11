@@ -347,11 +347,14 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
     var base = this.doc.base;
     var s = this.symbols[sym_name];
     var f = base.createElement("f");
-    if("ast_type" in s) f.setAttribute("ast_type",s["ast_type"])
-    if("ast_value" in s) f.setAttribute("ast_value",s["ast_value"])
-    if("type" in s) f.setAttribute("type",s["type"])
-    if("group" in s) f.setAttribute("group",s["group"])
-    if(s['char']) f.setAttribute("c","yes");
+    for(var a in s.attrs){
+	f.setAttribute(a, s.attrs[a]);
+    }
+    if("ast" in s){
+	if("type" in s.ast) f.setAttribute("ast_type",s["ast_type"])
+	if("value" in s.ast) f.setAttribute("ast_value",s["ast_value"])
+    }
+    //if(s['char']) f.setAttribute("c","yes");
     
     var first_ref = -1;
     var refs_count = 0;
@@ -369,7 +372,6 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 	    for(var i = 0; i < out.length; i++){
 		m = out[i].match(/^\{\$([0-9]+)((?:\{[^}]+\})*)\}$/);
 		if(m){
-		    //console.log("O",out);
 		    out[i] = {'ref':parseInt(m[1])};
 		    if(m[2].length > 0){
 			mm = m[2].match(/\{[^}]*\}/g);
@@ -412,9 +414,9 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 	}
 	else nc.appendChild(this.make_e(""));
 	if(i+1 == first_ref) first = nc.lastChild;
-	if(s['attrs'])
-	    for(var a in (s['attrs'][i] || {}))
-		nc.setAttribute(a,s['attrs'][i][a]);
+	if(s['args'])
+	    for(var a in (s['args'][i] || {}))
+		nc.setAttribute(a,s['args'][i][a]);
 	    // for(var a in s['attrs'])
 	    // 	if(s['attrs'][a][i] != 0) nc.setAttribute(a,s['attrs'][a][i]);
 	if(i in lists){
@@ -439,17 +441,16 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 */
 GuppyBackend.prototype.insert_symbol = function(sym_name){
     var s = this.symbols[sym_name];
-    if(this.is_blacklisted(s['type'])){
+    if(s.attrs && this.is_blacklisted(s.attrs.type)){
 	return false;
     }
     var node_list = {};
     var content = {};
     var left_piece,right_piece;
-    var cur = s['current'] == null ? 0 : parseInt(s['current']);
+    var cur = (s.current) ? s.current.index || 0 : 0;
     var to_remove = [];
     var to_replace = null;
     var replace_f = false;
-    
     
     if(cur > 0){
 	cur--;
@@ -461,7 +462,7 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
 	    right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
 	    content[cur] = sel.node_list;
 	}
-	else if(s['current_type'] == 'token'){
+	else if(s.current && s.current.type == 'token'){
 	    // If we're at the beginning, then the token is the previous f node
 	    if(this.caret == 0 && this.current.previousSibling != null){
 		content[cur] = [this.make_e(""), this.current.previousSibling, this.make_e("")];
@@ -525,7 +526,7 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
     
     this.caret = 0;
     this.current = f;
-    if(s['char']){
+    if(s.attrs['char'] == "yes"){
 	this.current = this.current.nextSibling;
     }
     else this.down_from_f_to_blank();
@@ -1107,7 +1108,7 @@ GuppyBackend.prototype.delete_from_e = function(){
     }
     else{
 	// The order of these is important
-	if(this.current.previousSibling != null && this.current.previousSibling.getAttribute("c") == "yes"){
+	if(this.current.previousSibling != null && this.current.previousSibling.getAttribute("char") == "yes"){
 	    // The previous node is an f node but is really just a character.  Delete it.
 	    this.current = this.current.previousSibling;
 	    this.delete_from_f();

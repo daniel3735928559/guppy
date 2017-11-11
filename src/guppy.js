@@ -157,19 +157,23 @@ Guppy.init_symbols = function(symbols){
 		    var templates = syms["_templates"];
 		    if(templates){
 			for(var i = 0; i < templates.length; i++){
-			    Guppy.templates[i]
+			    var t = templates[i].template;
+			    for(var v in templates[i].values){
+				if(Object.prototype.toString.call(templates[i].values) == "[object Array]"){
+				    var name = templates[i].values[v];
+				    var args = {}
+				}
+				else{
+				    var name = v;
+				    var args = templates[i].values[v];
+				}
+				var sym = GuppySymbols.eval_template(JSON.parse(JSON.stringify(t)), name, args);
+				GuppySymbols.symbols[name] = sym;
+			    }
 			}
 		    }
 		    for(var s in syms){
-			if(s == "!templates"){
-
-			}
-			else{
-			    
-			}
-			var new_syms = GuppySymbols.add_symbols(s,syms[s]);
-			for(var s in new_syms)
-			    GuppySymbols.symbols[s] = new_syms[s];
+			GuppySymbols.symbols[s] = syms[s];
 		    }
 		    callback();
 		};
