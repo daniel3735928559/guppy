@@ -74,7 +74,6 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	if(n.hasAttribute("ast_type")) ans['type'] = n.getAttribute("ast_type");
 	else if(n.getAttribute("char") == "yes") ans['type'] = "name";
 	
-	console.log("ANSS",JSON.stringify(ans));
 	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
 	for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
 	    if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
@@ -292,10 +291,8 @@ GuppyDoc.parse = function(tokens){
 	led: function (left) { throw Error("Missing operator"); }
     };
 
-    var itself = function () {
-	return this;
-    };
-
+    var mul = function(left){ return ["*", [left, this.nud()]]; };
+    
     var symbol = function (id, bp) {
 	var s = symbol_table[id];
 	bp = bp || 0;
@@ -315,19 +312,19 @@ GuppyDoc.parse = function(tokens){
     symbol("(end)");
 
     s = symbol("(blank)", 60);
-    s.nud = function(){ return {"value":"blank"};};
+    s.nud = function(){ return ["blank"];};
     
     s = symbol("(function)", 60);
-    s.led = function(left){ return {"value":"*", "first":left, "second": this};};
-    s.nud = itself;
+    s.led = mul;
+    s.nud = function(){ return [this.value, this.args || [], this.kwargs || {}];};
     
     s = symbol("(literal)", 60);
-    s.led = function(left){ return {"value":"*", "first":left, "second": this};};
-    s.nud = itself;
+    s.led = mul;
+    s.nud = function(){ return ["val", this.value] };
 
     s = symbol("(var)", 60);
-    s.led = function(left){ return {"value":"*", "first":left, "second": this}; };
-    s.nud = itself;
+    s.led = mul;
+    s.nud = function(){ return ["var", this.value] };
 
     var token;
     var token_nr = 0;
@@ -366,6 +363,7 @@ GuppyDoc.parse = function(tokens){
             throw Error("Unexpected token",t);
 	}
 	token = Object.create(o);
+	token.type = a;
 	token.value = v;
 	if(args) token.args = args;
 	if(kwargs) token.kwargs = kwargs;
@@ -389,8 +387,7 @@ GuppyDoc.parse = function(tokens){
     var infix = function (id, bp, led) {
 	var s = symbol(id, bp);
 	s.led = led || function (left) {
-            this.args = [left, expression(bp)];
-            return this;
+            return [this.value, [left, expression(bp)]];
 	};
 	return s;
     }
@@ -402,8 +399,7 @@ GuppyDoc.parse = function(tokens){
     var prefix = function (id, nud) {
 	var s = symbol(id);
 	s.nud = nud || function () {
-            this.args = [expression(70)];
-            return this;
+            return [this.value, [expression(70)]];
 	};
 	return s;
     }
@@ -412,7 +408,7 @@ GuppyDoc.parse = function(tokens){
     prefix("!");
     prefix("typeof");
 
-    if(tokens.length == 0) return {"value":"blank"};
+    if(tokens.length == 0) return ["blank"];
     
     advance();
     

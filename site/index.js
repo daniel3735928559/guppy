@@ -19,7 +19,6 @@ $('document').ready(function() {
 });
 
 function update_output(){
-    console.log("ASD");
     try{
 	$('#latex_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("latex");
 	$('#text_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("text");
