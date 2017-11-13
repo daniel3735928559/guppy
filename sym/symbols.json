@@ -45,7 +45,7 @@
     
     "sqrt":
     {"output":{
-        "latex":"\\sqrt{{$1}}",
+        "latex":"\\sqrt{{$1}\\phantom{\\tiny{!}}}",
         "text":"sqrt({$1})"},
      "attrs":{
 	 "type":"square_root",
