@@ -13,7 +13,7 @@ rendering), or a plaintext format (for parsing).
 ## Demo
 
 A live demo can be found at 
-[http://daniel3735928559.github.io/guppy/](http://daniel3735928559.github.io/guppy/)
+[http://daniel3735928559.github.io/guppy/site](http://daniel3735928559.github.io/guppy/site)
 
 ## Code example
 
