@@ -78,4 +78,10 @@ GuppyHelp.innerHTML = `<p>Start typing the name of a mathematical function to au
                 </tr>
 </table>`;
 
+var help_x = document.createElement("div");
+help_x.innerHTML = `<font size="6pt">&times;</font>`;
+help_x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
+help_x.onclick = function(e){ GuppyHelp.style.display = "none"; }
+GuppyHelp.appendChild(help_x);
+
 module.exports = GuppyHelp;
