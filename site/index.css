@@ -10,6 +10,7 @@ body {
     line-height: 100px;
     height: 100px;
     padding-top: 0;
+    font-size: 36px;
 }
 
 .navbar-nav li a {

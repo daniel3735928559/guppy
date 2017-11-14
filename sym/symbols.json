@@ -28,7 +28,7 @@
      "attrs":{
 	 "type":"symbol",
 	 "group":"editor"},
-     "attrs":[
+     "args":[
 	 {"mode":"symbol"}]
     },
     
