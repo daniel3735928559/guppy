@@ -1,5 +1,6 @@
 $('document').ready(function() {
     Guppy.init_symbols(["../sym/symbols.json"]);
+    output_type = "latex";
     var g1 = new Guppy("guppy1", {
 	"events":{
 	    //'debug':10,
@@ -18,15 +19,28 @@ $('document').ready(function() {
     });
 });
 
+function select_output(t){
+    output_type = t;
+    update_output();
+    var l = document.getElementsByClassName("output-select");
+    for(var i = 0; i < l.length; i++){
+	var new_class = l[i].getAttribute("class").replace(new RegExp("btn-primary","g"),"btn-default");
+	l[i].setAttribute("class", new_class);
+    }
+    var cur = document.getElementById("output_"+t);
+    var new_class = cur.getAttribute("class").replace(new RegExp("btn-default","g"),"btn-primary");
+    cur.setAttribute("class", new_class);
+}
+
 function update_output(){
     try{
-	$('#latex_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("latex");
-	$('#text_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("text");
-	$('#ast_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("ast");
-	$('#xml_output')[0].innerHTML = Guppy.instances['guppy1'].backend.get_content("xml").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+	content = Guppy.instances['guppy1'].backend.get_content(output_type);
+	content = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	if(content.replace(/\s/g,"").length == 0) content = "Output will appear here";
+	$('#sample_output')[0].innerHTML = content;
     }
     catch(e){
-	console.log(e);
+	$('#sample_output')[0].innerHTML = "Syntax error";
     }
 }
 

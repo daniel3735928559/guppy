@@ -37,14 +37,18 @@
     
     <h1>Mathematics input widget for the web</h1>
     <br /><br />
-    <div class="center-block" id="guppy1"></div> <br />
-    <pre>
-    <div id="latex_output"></div>
-    <div id="text_output"></div>
-    <div id="ast_output"></div>
-    <div id="xml_output"></div>
-    </pre>
-    <br /><br />
+    <div class="row">
+      <div class="center-block" id="guppy1"></div> 
+    </div>
+    <br />
+    <div class="row">
+    <button id="output_latex" class="btn btn-primary col-sm-1 col-sm-offset-4 output-select" onclick="select_output('latex')">LaTeX</button>
+    <button id="output_text" class="btn btn-default col-sm-1 output-select" onclick="select_output('text')">Text</button>
+    <button id="output_ast" class="btn btn-default col-sm-1 output-select" onclick="select_output('ast')">JSON</button>
+    <button id="output_xml" class="btn btn-default col-sm-1 output-select" onclick="select_output('xml')">XML</button></div>
+    <div class="row">
+    <pre id="sample_output" class="col-sm-4 col-sm-offset-4">Output will appear here</pre>
+    </div>
     <div class="row">
       <div class="col-sm-4">
 	<h3>Human-friendly</h3>
