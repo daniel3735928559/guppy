@@ -87,7 +87,7 @@
 	 "type":"factorial",
 	 "group":"functions"},
      "args":[
-	 {"delete":"1"}]
+	 {"bracket":"yes","delete":"1"}]
     },
     
     "exp":

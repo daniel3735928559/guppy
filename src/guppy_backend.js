@@ -526,10 +526,13 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
     
     this.caret = 0;
     this.current = f;
-    if(s.attrs['char'] == "yes"){
+    if(s.attrs['char'] == "yes" || (s.current && s.attrs && s.current.index >= s.args.length)){
 	this.current = this.current.nextSibling;
     }
-    else this.down_from_f_to_blank();
+    else{
+	this.down_from_f_to_blank();
+	this.caret = this.current.firstChild.textContent.length;
+    }
 
     this.sel_clear();
     this.checkpoint();

@@ -233,14 +233,12 @@ Guppy.prototype.is_changed = function(){
 
 Guppy.prototype.toggle_help = function(){
     if(GuppyHelp.style.display == "none"){
-	console.log("helping",document.documentElement.scrollTop, document.documentElement.scrollLeft);
 	var r = this.editor.getBoundingClientRect();
 	GuppyHelp.style.top = (r.bottom+document.documentElement.scrollTop) + "px";
 	GuppyHelp.style.left = (r.left+document.documentElement.scrollLeft) + "px";
 	GuppyHelp.style.display = "block";
     }
     else{
-	console.log("unhelping");
 	GuppyHelp.style.display = "none";
     }
 }
