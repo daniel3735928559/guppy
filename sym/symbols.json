@@ -76,6 +76,20 @@
 	 {"delete":"1"}]
     },
     
+    "factorial":
+    {"output":{
+        "latex":"{$1}!",
+	"text":"({$1})!"},
+     "current":{
+	 "index":1,
+	 "type":"token"},
+     "attrs":{
+	 "type":"factorial",
+	 "group":"functions"},
+     "args":[
+	 {"delete":"1"}]
+    },
+    
     "exp":
     {"output":{
         "latex":"{{$1}}^{{$2}}",

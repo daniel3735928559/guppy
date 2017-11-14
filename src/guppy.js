@@ -3,6 +3,7 @@ katex = require('../lib/katex/katex-modified.min.js');
 GuppyBackend = require('./guppy_backend.js');
 GuppyUtils = require('./guppy_utils.js');
 GuppySymbols = require('./guppy_symbols.js');
+GuppyHelp = require('./guppy_help.js');
 
 /**
    @class
@@ -69,6 +70,14 @@ var Guppy = function(guppy_div, config){
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;
     
+    this.buttons_div = document.createElement("div");
+    this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {}));
+    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){}));
+    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help(); }));
+    this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
+
+    guppy_div.addEventListener("mouseenter",function(e){self.buttons_div.style.display = "block";}, false);
+    guppy_div.addEventListener("mouseleave",function(e){self.buttons_div.style.display = "none";}, false);
     this.editor_active = true;
     this.empty_content = options['empty_content'] || "\\red{[?]}"
     this.editor = guppy_div;
@@ -102,6 +111,23 @@ Guppy.ready = false;
 
 Guppy.active_guppy = null;
 
+Guppy.make_button = function(url, cb){
+    var b = document.createElement("img");
+    b.setAttribute("class","guppy-button");
+    b.style="cursor:pointer;height:16px;width:16px;padding-left:4px;opacity:0.5;";
+    b.setAttribute("src", url);
+    if(cb){
+	b.onclick = function(e){
+	    cb(e);
+	    if(e.cancelBubble!=null) e.cancelBubble = true;
+	    if(e.stopPropagation) e.stopPropagation();
+	    e.preventDefault();
+	    return false;
+	};
+    }
+    return b;
+}
+
 Guppy.add_symbols = function(symbols){
     for(var s in symbols){
 	var new_syms = GuppySymbols.add_symbols(s,symbols[s], GuppySymbols.symbols);
@@ -132,6 +158,7 @@ Guppy.reset_global_symbols = function(){
     @param {string[]} symbols - A list of URLs for symbol JSON files to request
 */
 Guppy.init_symbols = function(symbols){
+    document.body.appendChild(GuppyHelp);
     var all_ready = function(){
 	Guppy.register_keyboard_handlers();
 	for(var i in Guppy.instances){
@@ -202,6 +229,20 @@ Guppy.prototype.is_changed = function(){
 	ans = true;
     this.bounding_box = rect;
     return ans;
+}
+
+Guppy.prototype.toggle_help = function(){
+    if(GuppyHelp.style.display == "none"){
+	console.log("helping",document.documentElement.scrollTop, document.documentElement.scrollLeft);
+	var r = this.editor.getBoundingClientRect();
+	GuppyHelp.style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+	GuppyHelp.style.left = (r.left+document.documentElement.scrollLeft) + "px";
+	GuppyHelp.style.display = "block";
+    }
+    else{
+	console.log("unhelping");
+	GuppyHelp.style.display = "none";
+    }
 }
 
 Guppy.prototype.recompute_locations_paths = function(){
@@ -315,6 +356,7 @@ Guppy.mouse_up = function(e){
 }
 
 Guppy.mouse_down = function(e){
+    if(e.target.getAttribute("class") == "guppy-button") return;
     var n = e.target;
     Guppy.kb.is_mouse_down = true;
     if(e.target == document.getElementById("toggle_ref")) toggle_div("help_card");
@@ -430,10 +472,12 @@ Guppy.prototype.render_node = function(t){
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.backend.doc.is_blank()){
 	katex.render(this.empty_content,this.editor);
+	this.editor.appendChild(this.buttons_div);
 	return;
     }
     var tex = this.render_node("render");
     katex.render(tex,this.editor);
+    this.editor.appendChild(this.buttons_div);
     if(updated){
 	this.recompute_locations_paths();
     }
@@ -494,10 +538,8 @@ Guppy.kb.k_chars = {
     "-":"-",
     "*":"*",
     ".":".",
-    ",":",",
     "shift+/":"/",
     "shift+=":"+",
-    "!":"!"
 };
 Guppy.kb.k_syms = {
     "/":"slash",
@@ -508,6 +550,7 @@ Guppy.kb.k_syms = {
     ">":"greater",
     "_":"sub",
     "|":"abs",
+    "!":"factorial",
     "shift+up":"exp",
     "shift+down":"sub"
 };
@@ -534,6 +577,8 @@ Guppy.kb.k_controls = {
     "enter":"done",
     "mod+shift+right":"list_extend_copy_right",
     "mod+shift+left":"list_extend_copy_left",
+    ",":"list_extend_right",
+    ";":"list_extend_down",
     "mod+right":"list_extend_right",
     "mod+left":"list_extend_left",
     "mod+up":"list_extend_up",
