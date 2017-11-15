@@ -36,13 +36,14 @@ function select_output(t){
 
 function update_output(){
     try{
-	content = Guppy.instances['guppy1'].backend.get_content(output_type);
+	content = Guppy.instances['guppy1'].backend.get_content(output_type)+"";
 	//content = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 	if(content.replace(/\s/g,"").length == 0) content = "Output " + output_type + " will appear here";
 	$('#sample_output')[0].value = content;
     }
     catch(e){
-	$('#sample_output')[0].value = "Syntax error";
+	$('#sample_output')[0].value = "Malformed input";
+	//throw e;
     }
 }
 
