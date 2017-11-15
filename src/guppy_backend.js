@@ -89,6 +89,12 @@ GuppyBackend.prototype.set_content = function(xml_data){
     this.checkpoint();
 }
 
+
+GuppyBackend.prototype.import_ast = function(ast){
+    var self = this;
+    this.doc.import_ast(ast, this.symbols, function(name, content){ return self.symbol_to_node(name, content, self.symbols, self.doc.base); } );
+}
+
 GuppyBackend.prototype.fire_event = function(event, args){
     args = args || {};
     args.target = this.parent || this;
@@ -340,12 +346,13 @@ GuppyBackend.prototype.delete_from_f = function(to_insert){
     p.removeChild(next);
 }
 
-GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
+GuppyBackend.prototype.symbol_to_node = function(sym_name, content, symbols, doc_base){
     // sym_name is a key in the symbols dictionary
     //
     // content is a list of nodes to insert
-    var base = this.doc.base;
-    var s = this.symbols[sym_name];
+    var base = doc_base || this.doc.base;
+    if(symbols) var s = symbols[sym_name]
+    else var s = this.symbols[sym_name];
     var f = base.createElement("f");
     for(var a in s.attrs){
 	f.setAttribute(a, s.attrs[a]);
@@ -412,7 +419,11 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 		nc.appendChild(node_list[se].cloneNode(true));
 	    }
 	}
-	else nc.appendChild(this.make_e(""));
+	else{
+	    var new_e = base.createElement("e");
+	    new_e.appendChild(base.createTextNode(""));
+	    nc.appendChild(new_e);
+	}
 	if(i+1 == first_ref) first = nc.lastChild;
 	if(s['args'])
 	    for(var a in (s['args'][i] || {}))

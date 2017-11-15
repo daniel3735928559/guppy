@@ -64,6 +64,13 @@ GuppyDoc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
+GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
+    console.log("hello",ast,syms,s2n);
+    var doc = GuppyAST.to_xml(ast, syms, s2n);
+    console.log((new XMLSerializer()).serializeToString(doc));
+    this.base = doc;
+}
+
 GuppyDoc.prototype.syntax_tree = function(n){
     n = n || this.root()
     if(n.nodeName == "e"){

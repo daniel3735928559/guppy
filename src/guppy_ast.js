@@ -82,21 +82,14 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
 	else{var d = args[0].cloneNode(true); append_str(d, "-"); append_doc(d, args[1]); return d;};
     }
-    functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["val"] = function(args){ console.log("hi", args); return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["_default"] = function(name, args){
 	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
 	var e0 = base.documentElement.firstChild;
-	var f = symbol_to_node(name);
-	var c_idx = 0;
-	for(var n = f.firstChild; c_idx < args.length && n; n = n.nextSibling){
-	    if(n.nodeName == "c" || n.node_name == "l"){
-		n.parentNode.replaceChild(args[c_idx], n);
-		n = args[c_idx];
-		c_idx++;
-	    }
-	}
+	var f = symbol_to_node(name, args)['f'];
 	e0.parentNode.insertBefore(f,e0.nextSibling);
+	return base;
     }
     return GuppyAST.eval(ast, functions);
 }
@@ -128,6 +121,7 @@ GuppyAST.eval = function(ast, functions){
 	    args.push(ast[1][i]);
 	}
     }
+    console.log("Fn",ast[0],functions[ast[0]]);
     if(functions[ast[0]]) ans = functions[ast[0]](args);
     else if(functions["_default"]) ans = functions["_default"](ast[0], args);
     
