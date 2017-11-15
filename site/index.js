@@ -14,9 +14,11 @@ $('document').ready(function() {
             //'blank_caret': "[?]",
 	    //'autoreplace':true,
 	    'cliptype':'latex',
-            'empty_content': "\\gray{\\text{Click to start typing math!}}"
+            'empty_content': "{\\text{Click to start typing math!}}"
 	}
     });
+    document.getElementById("sample_output").readOnly = true;
+    update_output();
 });
 
 function select_output(t){
@@ -24,26 +26,26 @@ function select_output(t){
     update_output();
     var l = document.getElementsByClassName("output-select");
     for(var i = 0; i < l.length; i++){
-	var new_class = l[i].getAttribute("class").replace(new RegExp("btn-primary","g"),"btn-default");
+	var new_class = l[i].getAttribute("class").replace(new RegExp("output-selected","g"),"output-unselected");
 	l[i].setAttribute("class", new_class);
     }
     var cur = document.getElementById("output_"+t);
-    var new_class = cur.getAttribute("class").replace(new RegExp("btn-default","g"),"btn-primary");
+    var new_class = cur.getAttribute("class").replace(new RegExp("output-unselected","g"),"output-selected");
     cur.setAttribute("class", new_class);
 }
 
 function update_output(){
     try{
 	content = Guppy.instances['guppy1'].backend.get_content(output_type);
-	content = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-	if(content.replace(/\s/g,"").length == 0) content = "Output will appear here";
-	$('#sample_output')[0].innerHTML = content;
+	//content = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	if(content.replace(/\s/g,"").length == 0) content = "Output " + output_type + " will appear here";
+	$('#sample_output')[0].value = content;
     }
     catch(e){
-	$('#sample_output')[0].innerHTML = "Syntax error";
+	$('#sample_output')[0].value = "Syntax error";
     }
 }
 
 function completion(target, data) {
-    $('#stuff')[0].innerHTML = "INFO: <br />"+data.candidates.join(", ");
+    $('#sample_output')[0].value = data.candidates.join(", ");
 }

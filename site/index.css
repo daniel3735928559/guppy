@@ -21,6 +21,14 @@ body {
     padding-left: 0;
 }
 
+a.output-select {
+    padding: 5px;
+}
+
+a.output-selected {
+    color: #d0d;
+}
+
 #guppy1 {
     width: 400px;
     border: 1px solid black;

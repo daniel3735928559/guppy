@@ -2,7 +2,7 @@
     "norm":
     {"output":{
         "latex":"||{$1}||",
-        "text":"norm({$1})"},
+        "asciimath":"norm({$1})"},
      "attrs":{
 	 "type":"norm",
 	 "group":"functions"},
@@ -13,7 +13,7 @@
     "text":
     {"output":{
         "latex":"\\text{{$1}}",
-        "text":"text({$1})"},
+        "asciimath":"text({$1})"},
      "attrs":{
 	 "type":"text",
 	 "group":"editor"},
@@ -24,7 +24,7 @@
     "sym_name":
     {"output":{
         "latex":"\\backslash\\texttt{{$1}}",
-        "text":"SYMBOL({$1})"},
+        "asciimath":"SYMBOL({$1})"},
      "attrs":{
 	 "type":"symbol",
 	 "group":"editor"},
@@ -35,7 +35,7 @@
     "abs":
     {"output":{
         "latex":"\\left|{$1}\\right|",
-	"text":"abs({$1})"},
+	"asciimath":"|{$1}|"},
      "attrs":{
 	 "type":"absolute_value",
 	 "group":"functions"},
@@ -46,7 +46,7 @@
     "sqrt":
     {"output":{
         "latex":"\\sqrt{{$1}\\phantom{\\tiny{!}}}",
-        "text":"sqrt({$1})"},
+        "asciimath":"sqrt({$1})"},
      "attrs":{
 	 "type":"square_root",
 	 "group":"functions"},
@@ -57,7 +57,7 @@
     "paren":
     {"output":{
         "latex":"\\left({$1}\\right)",
-	"text":"({$1})"},
+	"asciimath":"({$1})"},
      "attrs":{
 	 "type":"bracket",
 	 "group":"functions"},
@@ -67,8 +67,8 @@
     
     "floor":
     {"output":{
-        "latex":"\\lfloor{$1}\\rfloor",
-	"text":"floor({$1})"},
+        "latex":"\\lfloor {$1} \\rfloor",
+	"asciimath":"|_ {$1} _|"},
      "attrs":{
 	 "type":"floor",
 	 "group":"functions"},
@@ -79,7 +79,7 @@
     "factorial":
     {"output":{
         "latex":"{$1}!",
-	"text":"({$1})!"},
+	"asciimath":"({$1})!"},
      "current":{
 	 "index":1,
 	 "type":"token"},
@@ -93,7 +93,7 @@
     "exp":
     {"output":{
         "latex":"{{$1}}^{{$2}}",
-	"text":"({$1})^({$2})"},
+	"asciimath":"({$1})^({$2})"},
      "current":{
 	 "index":1,
 	 "type":"token"},
@@ -109,7 +109,7 @@
     "sub":
     {"output":{
         "latex":"{{$1}}_{{$2}}",
-	"text":"{$1}{$2}"},
+	"asciimath":"{$1}{$2}"},
      "current":{
 	 "index":1,
 	 "type":"token"},
@@ -126,7 +126,7 @@
     {"output":{
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
-	"text":"({$1})/({$2})"},
+	"asciimath":"({$1})/({$2})"},
      "ast":{
 	 "value":"/"},
      "attrs":{
@@ -139,7 +139,7 @@
     },
     
     "slash":
-    {"output":{"latex":"\\dfrac{{$1}}{{$2}}","small_latex":"\\frac{{$1}}{{$2}}","text":"({$1})/({$2})"},
+    {"output":{"latex":"\\dfrac{{$1}}{{$2}}","small_latex":"\\frac{{$1}}{{$2}}","asciimath":"({$1})/({$2})"},
      "current":{
 	 "index":1,
 	 "type":"token"},
@@ -158,7 +158,7 @@
     {"output":{
         "latex":"\\displaystyle\\int{{$1}}d{$2}",
         "small_latex":"\\int{{$1}}d{$2}",
-	"text":"integrate({$1},{$2})"},
+	"asciimath":"int {$1} d{$2}"},
      "attrs":{
 	 "type":"indefinite_integral",
 	 "group":"calculus"},
@@ -172,7 +172,7 @@
     {"output":{
         "latex":"\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
         "small_latex":"\\int_{{$1}}^{{$2}}{$3}d{$4}",
-	"text":"integrate({$3},{$4},{$1},{$2})"},
+	"asciimath":"int_{{$1}}^{{$2}} {$3} d{$4}"},
      "attrs":{
 	 "type":"definite_integral",
 	 "group":"calculus"},
@@ -188,7 +188,7 @@
     {"output":{
         "latex":"\\displaystyle\\frac{d}{d{$1}}{$2}",
         "small_latex":"\\frac{d}{d{$1}}{$2}",
-	"text":"diff({$2},{$1})"},
+	"asciimath":"diff({$2},{$1})"},
      "attrs":{
 	 "type":"derivative",
 	 "group":"calculus"},
@@ -202,7 +202,7 @@
     {"output":{
         "latex":"\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
         "small_latex":"\\sum_{{$1}}^{{$2}}{$3}",
-	"text":"sum({$3},{$1},{$2})"},
+	"asciimath":"sum_{{$1}}^{{$2}} {$3}"},
      "attrs":{
 	 "type":"summation",
 	 "group":"functions"},
@@ -213,10 +213,25 @@
      ]
     },
 
+    "prod":
+    {"output":{
+        "latex":"\\displaystyle\\prod_{{$1}}^{{$2}}{$3}",
+        "small_latex":"\\prod_{{$1}}^{{$2}}{$3}",
+	"asciimath":"prod_{{$1}}^{{$2}} {$3}"},
+     "attrs":{
+	 "type":"summation",
+	 "group":"functions"},
+     "args":[
+	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
+	 {"down":"1","up":"2","small":"yes","name":"upper_limit"},
+	 {"down":"1","up":"2","delete":"3","bracket":"yes","name":"summand"}
+     ]
+    },
+    
     "root":
     {"output":{
         "latex":"\\sqrt[{$1}]{{$2}}",
-	"text":"nroot({$1},{$2})"},
+	"asciimath":"nroot({$1},{$2})"},
      "attrs":{
 	 "type":"root",
 	 "group":"functions"},
@@ -229,7 +244,7 @@
     "vec":
     {"output":{
         "latex":"\\left\\langle {$1{,}} \\right\\rangle",
-	"text":"vec({$1{,}})"},
+	"asciimath":"vec({$1{,}})"},
      "attrs":{
 	 "group":"array",
 	 "type":"vector"}
@@ -238,7 +253,7 @@
     "mat":
     {"output":{
         "latex":"\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
-	"text":"matrix({$1{,}{;}})"},
+	"asciimath":"matrix({$1{,}{;}})"},
      "attrs":{
 	 "group":"array",
 	 "type":"matrix"}
@@ -247,7 +262,7 @@
     "*":
     {"output":{
         "latex":"\\cdot",
-	"text":"*"},
+	"asciimath":"*"},
      "attrs":{
 	 "char":"yes",
 	 "group":"operations",
@@ -257,7 +272,7 @@
     },
 
     "infinity":{"output":{"latex":"\\infty",
-			  "text":"$infinity"},
+			  "asciimath":"oo"},
 		"attrs":{"group":"qwerty",
 			 "char":"yes",
 			 "type":"infinity"}
@@ -266,7 +281,7 @@
     "_templates":
     [
 	{"template":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
-			       "text":" {$name}({$1})"},
+			       "asciimath":" {$name}({$1})"},
 		     "attrs":{
 			 "type":"{$name}",
 			 "group":"functions"},
@@ -276,7 +291,7 @@
 	 "values":["sin","cos","tan","sec","csc","cot","log","ln"]},
 	
 	{"template":{"output":{"latex":"\\{$name}",
-			       "text":"${$name}"},
+			       "asciimath":"{$name}"},
 		     "attrs":{
 			 "group":"greek",
 			 "char":"yes",
@@ -284,16 +299,17 @@
 	 "values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
 
 	{"template":{"output":{"latex":"{$latex}",
-			       "text":"{$text}"},
+			       "asciimath":"{$text}"},
 		     "attrs":{
 			 "group":"operations",
 			 "char":"yes",
 			 "type":"{$name}"}},
 	 
-	 "values":{"leq":{"latex":"\\leq","text":" <= "},
-		   "less":{"latex":"<","text":" < "},
-		   "geq":{"latex":"\\geq","text":" >= "},
-		   "greater":{"latex":">","text":" > "}}}
+	 "values":{"leq":{"latex":"\\leq","asciimath":" <= "},
+		   "less":{"latex":"<","asciimath":" < "},
+		   "geq":{"latex":"\\geq","asciimath":" >= "},
+		   "greater":{"latex":">","asciimath":" > "},
+		   "neq":{"latex":"\\neq","asciimath":" != "}}}
 	
     ]
 }

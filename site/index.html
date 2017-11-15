@@ -4,10 +4,10 @@
 <head>
     <title>Guppy</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- <link rel="stylesheet" href="bootstrap.min.css"> -->
-    <!-- <script src="jquery.min.js"></script> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> --
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> --
+    <!-- <link rel="stylesheet" href="bootstrap.min.css"> -- -->
+    <!-- <script src="jquery.min.js"></script> -- -->
 
     <link rel="stylesheet" href="../build/guppy.min.css">
     <script type="text/javascript" src="../build/guppy.min.js"></script>
@@ -42,21 +42,25 @@
     </div>
     <br /><br /><br />
     <div class="row">
-    <button id="output_latex" class="btn btn-primary col-sm-1 col-sm-offset-4 output-select" onclick="select_output('latex')">LaTeX</button>
-    <button id="output_text" class="btn btn-default col-sm-1 output-select" onclick="select_output('text')">Text</button>
-    <button id="output_ast" class="btn btn-default col-sm-1 output-select" onclick="select_output('ast')">JSON</button>
-    <button id="output_xml" class="btn btn-default col-sm-1 output-select" onclick="select_output('xml')">XML</button></div>
+	<input class="col-sm-4 col-sm-offset-4" style="font-family:monospace;white-space:pre;" type="text" id="sample_output" class="form-control" placeholder="Output will appear here"></input>
+    </div>
     <div class="row">
-    <pre id="sample_output" class="col-sm-4 col-sm-offset-4">Output will appear here</pre>
+      <div class="col-sm-4 col-sm-offset-4" style="text-align:center"> 
+	<a href="#" id="output_latex" class="output-select output-selected" onclick="select_output('latex')">LaTeX</a>
+	<a href="#" id="output_text" class="output-select output-unselected" onclick="select_output('text')">Text</a>
+	<a href="#" id="output_asciimath" class="output-select output-unselected" onclick="select_output('asciimath')">ASCIIMath</a>
+	<a href="#" id="output_ast" class="output-select output-unselected" onclick="select_output('ast')">JSON</a>
+	<a href="#" id="output_xml" class="output-select output-unselected" onclick="select_output('xml')">XML</a>
+      </div>
     </div>
     <div class="row">
       <div class="col-sm-4">
 	<h3>Human-friendly</h3>
 	<ul>
-	  <li>WYSIWYG, no backslashes required.</li>
+	  <li>WYSIWYG, backslashes optional.</li>
 	  <li>Keyboard only; optional mouse interface.</li>
 	  <li>Mobile keyboard.</li>
-	  <li>LaTeX or ASCII math output.  </li>
+	  <li>LaTeX or plain text output.  </li>
 	  <li>Supports matrices and custom symbols.</li>
 	</ul>
       </div>

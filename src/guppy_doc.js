@@ -57,6 +57,7 @@ GuppyDoc.prototype.root = function(){
 GuppyDoc.prototype.get_content = function(t,r){
     if(t == "xml") return (new XMLSerializer()).serializeToString(this.base);
     else if(t == "ast") return JSON.stringify(this.syntax_tree());
+    else if(t == "text") return GuppyDoc.to_text(this.syntax_tree());
     else return this.manual_render(t,this.root(),r);
 }
 
@@ -76,8 +77,9 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	
 	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
 	for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
-	    if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
-	    else ans.args.push(this.syntax_tree(nn))
+	    //if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
+	    //ans.args.push(this.syntax_tree(nn))
+	    ans.args.push(this.syntax_tree(nn))
 	}
     }
     else if(n.nodeName == "l"){
@@ -283,6 +285,47 @@ GuppyDoc.tokenise = function(s){
     return ans;
 }
 
+GuppyDoc.to_text = function(ast){
+    functions = {}
+    functions["*"] = function(args){return "("+args[0]+" * "+args[1]+")";}
+    functions["+"] = function(args){return "("+args[0]+" + "+args[1]+")";}
+    functions["/"] = function(args){return "("+args[0]+" / "+args[1]+")";}
+    functions["-"] = function(args){return args.length == 1 ? "-"+args[0] : "("+args[0]+" - "+args[1]+")";}
+    functions["val"] = function(args){return args[0];}
+    functions["var"] = function(args){return args[0];}
+    functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";}
+    functions["factorial"] = function(args){return "("+args[0]+")!";}
+    functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";}
+    return GuppyDoc.eval(ast, functions);
+}
+
+GuppyDoc.eval = function(ast, functions, vars){
+    ans = null;
+    console.log("EVAL",JSON.stringify(ast));
+    if(!functions["*"]) functions["*"] = function(args){return args[0]*args[1];}
+    if(!functions["+"]) functions["+"] = function(args){return args[0]+args[1];}
+    if(!functions["/"]) functions["/"] = function(args){if(args[1] == 0) throw Exception("Divide by zero"); return args[0]/args[1];}
+    if(!functions["-"]) functions["-"] = function(args){return args.length == 1 ? -args[0] : args[0]-args[1];}
+    if(!functions["val"]) functions["val"] = function(args){return args[0];}
+    if(!functions["var"] && vars) functions["var"] = function(args){return vars[args[0]];}
+    if(!functions["_default"]) functions["_default"] = function(name, args){ throw Exception("Function not implemented: " + name);}
+    
+    var args = []
+    for(var i = 0; i < ast[1].length; i++){
+	if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
+	    args.push(GuppyDoc.eval(ast[1][i], functions, vars));
+	}
+	else{
+	    args.push(ast[1][i]);
+	}
+    }
+    if(functions[ast[0]]) ans = functions[ast[0]](args);
+    else if(functions["_default"]) ans = functions["_default"](ast[0], args);
+    
+    console.log("EVAL",JSON.stringify(ast),'=',ans);
+    return ans
+}
+
 GuppyDoc.parse = function(tokens){
     var symbol_table = {};
 
@@ -316,7 +359,8 @@ GuppyDoc.parse = function(tokens){
     
     s = symbol("(function)", 60);
     s.led = mul;
-    s.nud = function(){ return [this.value, this.args || [], this.kwargs || {}];};
+    //s.nud = function(){ return [this.value, this.args || [], this.kwargs || {}];};
+    s.nud = function(){ return [this.value, this.args || []];};
     
     s = symbol("(literal)", 60);
     s.led = mul;
