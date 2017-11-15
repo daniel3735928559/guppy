@@ -132,7 +132,7 @@
 	 "group":"functions"},
      "args":[
 	 {"up":"1","down":"2","name":"numerator"},
-	 {"up":"1","down":"2","name":"denominator"}
+	 {"up":"1","down":"2","delete":"1","name":"denominator"}
      ]
     },
     
@@ -146,7 +146,7 @@
 	 "group":"functions"},
      "args":[
 	 {"up":"1","down":"2","name":"numerator"},
-	 {"up":"1","down":"2","name":"denominator"}
+	 {"up":"1","down":"2","name":"denominator","delete":"1"}
      ]
     },
         
