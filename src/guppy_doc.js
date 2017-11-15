@@ -83,24 +83,31 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	    //ans.args.push(this.syntax_tree(nn))
 	    ans.args.push(this.syntax_tree(nn))
 	}
+	console.log("F",JSON.stringify(ans))
     }
     else if(n.nodeName == "l"){
 	ans = [];
 	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
 	    ans.push(this.syntax_tree(nn));
 	}
+	ans = ["list",ans];
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
-	var tokens = []
-	for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
-	    if(nn.nodeName == "e"){
-		tokens = tokens.concat(GuppyAST.tokenise_e(nn.firstChild.textContent));
-	    }
-	    else if(nn.nodeName == "f"){
-		tokens.push(this.syntax_tree(nn));
-	    }
+	if(n.hasAttribute("mode") && n.getAttribute("mode") == "text"){
+	    ans = n.firstChild.firstChild.textContent;
 	}
-	ans = GuppyAST.parse_e(tokens);
+	else{
+	    var tokens = []
+	    for(var nn = n.firstChild; nn != null; nn = nn.nextSibling){
+		if(nn.nodeName == "e"){
+		    tokens = tokens.concat(GuppyAST.tokenise_e(nn.firstChild.textContent));
+		}
+		else if(nn.nodeName == "f"){
+		    tokens.push(this.syntax_tree(nn));
+		}
+	    }
+	    ans = GuppyAST.parse_e(tokens);
+	}
     }
     return ans;
 }

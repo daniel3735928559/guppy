@@ -127,8 +127,6 @@
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
 	"asciimath":"({$1})/({$2})"},
-     "ast":{
-	 "value":"/"},
      "attrs":{
 	 "type":"fraction",
 	 "group":"functions"},
@@ -143,8 +141,6 @@
      "current":{
 	 "index":1,
 	 "type":"token"},
-     "ast":{
-	 "value":"/"},
      "attrs":{
 	 "type":"fraction",
 	 "group":"functions"},

@@ -351,8 +351,8 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 	f.setAttribute(a, s.attrs[a]);
     }
     if("ast" in s){
-	if("type" in s.ast) f.setAttribute("ast_type",s["ast_type"])
-	if("value" in s.ast) f.setAttribute("ast_value",s["ast_value"])
+	if("type" in s.ast) f.setAttribute("ast_type",s.ast["type"])
+	if("value" in s.ast) f.setAttribute("ast_value",s.ast["value"])
     }
     //if(s['char']) f.setAttribute("c","yes");
     
