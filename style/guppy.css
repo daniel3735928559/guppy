@@ -1,9 +1,11 @@
 .guppy_active {
     background-color: #ffffff;
+    color:#000;
 }
 
 .guppy_inactive {
     background-color: #fafafa;
+    color:#000;
 }
 
 .guppy_text_current {

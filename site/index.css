@@ -24,23 +24,28 @@ body {
 
 a.output-select {
     padding: 5px;
-    color: #036;
+    color: #9cf;
+    text-decoration: none;
 }
 
 a.output-selected {
-    color: #b0b;
+    border-bottom: 1px solid #fff;
+}
+
+div.highlight input {
+    color:#333;
 }
 
 div.highlight {
     width:100%;
     padding:20px;
-    background-color:#a0d8ff;
+    background-color:#024;
+    color:#efefef
 }
 
 #guppy1 {
     width: 400px;
     border: 1px solid black;
-    /* height: 60px; */
     padding: 10px;
     box-shadow: 1px 1px 1px 0 lightgray inset;
     cursor: text;
