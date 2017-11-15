@@ -1,6 +1,6 @@
 GuppyAST = {};
 
-GuppyAST.tokenise = function(s){
+GuppyAST.tokenise_e = function(s){
     var tokens = [
 	{"type":"number", "re":"^[0-9]+(\\.[0-9]+)?", "value":function(m){return Number(m)}},
 	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
@@ -31,16 +31,16 @@ GuppyAST.tokenise = function(s){
 }
 
 GuppyAST.to_text = function(ast){
-    var functions = {}
-    functions["*"] = function(args){return "("+args[0]+" * "+args[1]+")";}
-    functions["+"] = function(args){return "("+args[0]+" + "+args[1]+")";}
-    functions["/"] = function(args){return "("+args[0]+" / "+args[1]+")";}
-    functions["-"] = function(args){return args.length == 1 ? "-"+args[0] : "("+args[0]+" - "+args[1]+")";}
-    functions["val"] = function(args){return args[0];}
-    functions["var"] = function(args){return args[0];}
-    functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";}
-    functions["factorial"] = function(args){return "("+args[0]+")!";}
-    functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";}
+    var functions = {};
+    functions["*"] = function(args){return "("+args[0]+" * "+args[1]+")";};
+    functions["+"] = function(args){return "("+args[0]+" + "+args[1]+")";};
+    functions["/"] = function(args){return "("+args[0]+" / "+args[1]+")";};
+    functions["-"] = function(args){return args.length == 1 ? "-"+args[0] : "("+args[0]+" - "+args[1]+")";};
+    functions["val"] = function(args){return args[0];};
+    functions["var"] = function(args){return args[0];};
+    functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";};
+    functions["factorial"] = function(args){return "("+args[0]+")!";};
+    functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";};
     return GuppyAST.eval(ast, functions);
 }
 
@@ -71,7 +71,7 @@ GuppyAST.eval = function(ast, functions, vars){
     return ans
 }
 
-GuppyAST.parse = function(tokens){
+GuppyAST.parse_e = function(tokens){
     var symbol_table = {};
 
     var original_symbol = {
