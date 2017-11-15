@@ -60,6 +60,7 @@ GuppyDoc.prototype.get_content = function(t,r){
     if(t == "xml") return (new XMLSerializer()).serializeToString(this.base);
     else if(t == "ast") return JSON.stringify(this.syntax_tree());
     else if(t == "text") return GuppyAST.to_text(this.syntax_tree());
+    else if(t == "function") return GuppyAST.to_function(this.syntax_tree());
     else return this.manual_render(t,this.root(),r);
 }
 

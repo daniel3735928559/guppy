@@ -59,19 +59,62 @@ GuppyAST.to_text = function(ast){
     return GuppyAST.eval(ast, functions);
 }
 
-GuppyAST.compute(ast, functions, vars){
-    if(!functions["*"]) functions["*"] = function(args){return args[0]*args[1];}
-    if(!functions["+"]) functions["+"] = function(args){return args[0]+args[1];}
-    if(!functions["/"]) functions["/"] = function(args){if(args[1] == 0) throw Exception("Divide by zero"); return args[0]/args[1];}
-    if(!functions["-"]) functions["-"] = function(args){return args.length == 1 ? -args[0] : args[0]-args[1];}
-    if(!functions["val"]) functions["val"] = function(args){return args[0];}
-    if(!functions["var"] && vars) functions["var"] = function(args){return vars[args[0]];}
-    if(!functions["*"]) functions["*"] = function(args){return args[0]*args[1];}
-    if(!functions["exponential"]) functions["exponential"] = function(args){return args[0]**args[1];}
-    if(!functions["fraction"]) functions["fraction"] = functions["/"];
+GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
+    var prepend_str = function(doc, str){
+	doc.documentElement.firstChild.textContent += str;
+    }
+    var append_str = function(doc, str){
+	doc.documentElement.lastChild.textContent += str;
+    }
+    var append_doc = function(doc, doc2){
+	var n = doc.documentElement.lastChild;
+	var nn = doc2.documentElement.firstChild
+	n.firstChild.textContent += nn.firstChild.textContent;
+	for(nn = nn.nextSibling; nn; nn = nn.nextSibling){
+	    n.parentNode.insertBefore(nn,null); 
+	}
+    }
+    var functions = {};
+    functions["*"] = function(args){var d = args[0].cloneNode(true); append_doc(d, args[1]); return d;};
+    functions["+"] = function(args){var d = args[0].cloneNode(true); append_str(d, "+"); append_doc(d, args[1]); return d;};
+    functions["/"] = function(args){var d = args[0].cloneNode(true); append_str(d, "/"); append_doc(d, args[1]); return d;};
+    functions["-"] = function(args){
+	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
+	else{var d = args[0].cloneNode(true); append_str(d, "-"); append_doc(d, args[1]); return d;};
+    }
+    functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["_default"] = function(name, args){
+	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
+	var e0 = base.documentElement.firstChild;
+	var f = symbol_to_node(name);
+	var c_idx = 0;
+	for(var n = f.firstChild; c_idx < args.length && n; n = n.nextSibling){
+	    if(n.nodeName == "c" || n.node_name == "l"){
+		n.parentNode.replaceChild(args[c_idx], n);
+		n = args[c_idx];
+		c_idx++;
+	    }
+	}
+	e0.parentNode.insertBefore(f,e0.nextSibling);
+    }
+    return GuppyAST.eval(ast, functions);
 }
 
-GuppyAST.eval = function(ast, functions, vars){
+GuppyAST.to_function = function(ast, functions){
+    functions = functions || {}
+    if(!functions["*"]) functions["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
+    if(!functions["+"]) functions["+"] = function(args){return function(vars){return args[0](vars)+args[1](vars)};};
+    if(!functions["/"]) functions["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    if(!functions["-"]) functions["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
+    if(!functions["val"]) functions["val"] = function(args){return function(vars){ return args[0]; };};
+    if(!functions["var"]) functions["var"] = function(args){return function(vars){ return vars[args[0]]; };};
+    if(!functions["exponential"]) functions["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
+    if(!functions["fraction"]) functions["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    return GuppyAST.eval(ast, functions);
+}
+
+GuppyAST.eval = function(ast, functions){
     ans = null;
     if(!functions["_default"]) functions["_default"] = function(name, args){ throw Exception("Function not implemented: " + name);}
     console.log("EVAL",JSON.stringify(ast));
@@ -79,7 +122,7 @@ GuppyAST.eval = function(ast, functions, vars){
     var args = []
     for(var i = 0; i < ast[1].length; i++){
 	if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
-	    args.push(GuppyAST.eval(ast[1][i], functions, vars));
+	    args.push(GuppyAST.eval(ast[1][i], functions));
 	}
 	else{
 	    args.push(ast[1][i]);
