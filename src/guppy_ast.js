@@ -85,9 +85,10 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     functions["val"] = function(args){ console.log("hi", args); return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["_default"] = function(name, args){
+	if(!symbols[name]) throw Exception("Unrecognised symbol: "+name);
 	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
 	var e0 = base.documentElement.firstChild;
-	var f = symbol_to_node(name, args)['f'];
+	var f = symbol_to_node(symbols[name], args, base)['f'];
 	e0.parentNode.insertBefore(f,e0.nextSibling);
 	return base;
     }
