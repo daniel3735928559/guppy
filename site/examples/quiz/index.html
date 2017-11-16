@@ -4,15 +4,15 @@
 <head>
     <title>Homework</title>
 
-    <link rel="stylesheet" href="../build/guppy.min.css">
-    <script type="text/javascript" src="../build/guppy.min.js"></script>
-    <script type="text/javascript" src="../build/guppy_render.min.js"></script>
-    <script type="text/javascript" src="../lib/math-expressions/math-expressions.js"></script>
+    <link rel="stylesheet" href="/build/guppy.min.css">
+    <script type="text/javascript" src="/build/guppy.min.js"></script>
+    <script type="text/javascript" src="/build/guppy_render.min.js"></script>
+    <script type="text/javascript" src="/lib/math-expressions/math-expressions.js"></script>
     <script type="text/javascript">
      answers = ["1", "x^2", "( 4+ sqrt( 16 - 4 ) )/( 2 )"];
      blank = "\\color{gray}{\\text{Click here to start typing your answer}}";
      check_answer = function(idx){
-	 attempt = Guppy.instances['ans'+(idx+1)].backend.get_content('text');
+	 attempt = Guppy.instances['ans'+(idx+1)].backend.get_content('asciimath');
 	 answer = answers[idx];
 	 try{
 	     if(MathExpression.fromText(attempt).equals(MathExpression.fromText(answer))) 
@@ -42,8 +42,7 @@
 	 });
 
 	 
-         Guppy.init_symbols(["../sym/symbols.json","../sym/extra_symbols.json"]);
-	 console.log(document.getElementsByTagName("script")[5].getAttribute("id"));
+         Guppy.init_symbols(["/sym/symbols.json"]);
 	 GuppyRender.render_all();
       }
     </script>
@@ -51,7 +50,6 @@
      div.answerbox {
 	 width: 400px;
 	 border: 2px solid black;
-	 height: 23px;
 	 padding: 10px;
 	 box-shadow: 1px 1px 1px 0 lightgray inset;
 	 cursor: text;

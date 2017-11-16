@@ -46,6 +46,7 @@ GuppyAST.tokenise_text = function(s){
 
 GuppyAST.to_text = function(ast){
     var functions = {};
+    functions["bracket"] = function(args){return "("+args[0]+")";};
     functions["*"] = function(args){return "("+args[0]+" * "+args[1]+")";};
     functions["+"] = function(args){return "("+args[0]+" + "+args[1]+")";};
     functions["/"] = function(args){return "("+args[0]+" / "+args[1]+")";};
