@@ -198,6 +198,7 @@ Guppy.init_symbols = function(symbols){
 				GuppySymbols.symbols[name] = sym;
 			    }
 			}
+			delete syms["_templates"];
 		    }
 		    for(var s in syms){
 			GuppySymbols.symbols[s] = syms[s];

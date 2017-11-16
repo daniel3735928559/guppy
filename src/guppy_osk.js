@@ -120,9 +120,9 @@ GuppyOSK.prototype.attach = function(guppy){
 	}
     }
     for(var s in syms){
-	var group = syms[s].group;
+	var group = syms[s].attrs.group;
 	if(!grouped[group]) grouped[group] = [];
-	var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+\}/g, GuppyOSK.blank);
+	var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
 	grouped[group].push({"name":s,"latex":display});
     }
     for(var g in grouped){
