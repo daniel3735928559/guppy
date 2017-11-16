@@ -4,16 +4,16 @@
 <head>
     <title>Guppy OSK</title>
 
-    <link rel="stylesheet" href="/style/guppy.css">
-    <link rel="stylesheet" href="/style/osk.css">
+    <link rel="stylesheet" href="../../../style/guppy.css">
+    <link rel="stylesheet" href="../../../style/osk.css">
     <script src="/build/guppy_osk.js"></script>
-    <link rel="stylesheet" href="/build/guppy.min.css">
-    <script type="text/javascript" src="/build/guppy.min.js"></script>
+    <link rel="stylesheet" href="../../../build/guppy.min.css">
+    <script type="text/javascript" src="../../../build/guppy.min.js"></script>
     <script type="text/javascript">
      window.onload = function(){
 	 var g1 = new Guppy("guppy1");
 	 var g2 = new Guppy("guppy2");
-	 Guppy.init_symbols(["/sym/symbols.json"]);
+	 Guppy.init_symbols(["../../../sym/symbols.json"]);
 	 OSK = new GuppyOSK({"goto_tab":"qwerty"});
      };
     </script>
