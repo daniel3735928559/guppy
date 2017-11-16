@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<link rel="stylesheet" href="/build/guppy.min.css">
+	<script type="text/javascript" src="/build/guppy.min.js"></script>
+    </head>
+    <body>
+	Enter an expression (with no variables) to compute its value: <br /><br />
+	
+	<script type="text/javascript">
+	 window.onload = function(){
+	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
+		 var a = document.getElementById("ans");
+		 try{
+		     var f = Guppy.instances.guppy1.backend.get_content("function")
+		     a.innerHTML = f({});
+		 }
+		 catch(e){ a.innerHTML = "NaN"; }
+	     }}});
+	     Guppy.init_symbols(["/sym/symbols.json"]);
+	 }
+	</script> 
+	<div id="guppy1" style="width: 400px; border: 2px solid black;padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset;cursor: text;display: inline-block"></div>
+	=
+	<span id="ans">NaN</span>
+  </body>
+</html>

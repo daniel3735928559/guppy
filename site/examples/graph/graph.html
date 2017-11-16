@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<link rel="stylesheet" href="/build/guppy.min.css">
+	<script type="text/javascript" src="/build/guppy.min.js"></script>
+	<script type="text/javascript" src="./fabric.min.js"></script>
+    </head>
+    <body>
+	<canvas id="graph" width="400" height="400" style="border:1px solid #d3d3d3;"></canvas>
+	
+	<script type="text/javascript">
+	 window.onload = function(){
+	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
+		 try{
+		     var f = Guppy.instances.guppy1.backend.get_content("function")
+		     var F = function(x){ return f({"x":x}); };
+		     plot(F);
+		 }
+		 catch(e){draw_axes();}
+	     }}});
+	     Guppy.init_symbols(["/sym/symbols.json"]);
+	 }
+	 var canvas;
+	 var r = 200; // radius of canvas
+	 canvas = new fabric.Canvas('graph');
+	 draw_axes = function(){
+	     canvas.clear();
+	     canvas.add(new fabric.Line([r,-1000,r,1000],{stroke:"blue",strokeWidth:1,selectable:false}));
+	     canvas.add(new fabric.Line([-1000,r,1000,r],{stroke:"blue",strokeWidth:1,selectable:false}));
+	 };
+	 plot = function(f){
+	     draw_axes();
+	     var points = [];
+	     for(var x = -r; x <= r; x++){ points.push({"x":r+x, "y":-f(x*10/r)*r/10+r});}
+	     canvas.add(new fabric.Polyline(points,{fill:null,stroke:"red",strokeWidth:2,selectable:false}));
+	     canvas.renderAll();
+	 }
+	 draw_axes();
+	</script> 
+	<div id="guppy1" style="width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text;"></div>
+  </body>
+</html>

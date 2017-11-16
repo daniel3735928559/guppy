@@ -1,0 +1,97 @@
+<html><body><pre>
+&lt;!doctype html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;title&gt;Homework&lt;/title&gt;
+
+    &lt;link rel="stylesheet" href="/build/guppy.min.css"&gt;
+    &lt;script type="text/javascript" src="/build/guppy.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="/build/guppy_render.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="/lib/math-expressions/math-expressions.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript"&gt;
+     answers = ["1", "x^2", "( 4+ sqrt( 16 - 4 ) )/( 2 )"];
+     blank = "\\color{gray}{\\text{Click here to start typing your answer}}";
+     check_answer = function(idx){
+	 attempt = Guppy.instances['ans'+(idx+1)].backend.get_content('asciimath');
+	 answer = answers[idx];
+	 try{
+	     if(MathExpression.fromText(attempt).equals(MathExpression.fromText(answer))) 
+		 document.getElementById("res"+(idx+1)).innerHTML = '&lt;font color="green"&gt;Correct&lt;/font&gt;';
+	     else
+		 document.getElementById("res"+(idx+1)).innerHTML = '&lt;font color="red"&gt;Incorrect&lt;/font&gt;';
+	 }
+	 catch(e){
+	     document.getElementById("res"+(idx+1)).innerHTML = '&lt;font color="red"&gt;Invalid input&lt;/font&gt;';
+	 }
+     }
+     window.onload = function(){
+	 
+	 var g1 = new Guppy("ans1", {
+	     "events":{'done': function(event) { check_answer(0); }},
+	     "options":{'empty_content': blank,
+			'blacklist': ["sin","cos","sec","tan","cot","csc"] }
+	 });
+	 var g2 = new Guppy("ans2", {
+	     "events":{'done': function(event) { check_answer(1); }},
+	     "options":{'empty_content': blank,
+			'blacklist':["ln","log"]}
+	 });
+	 var g3 = new Guppy("ans3", {
+	     "events":{'done': function(event) { check_answer(2); }},
+	     "options":{'empty_content': "\\color{gray}{\\text{Click here to start typing your answer}}"}
+	 });
+
+	 
+         Guppy.init_symbols(["/sym/symbols.json"]);
+	 GuppyRender.render_all();
+      }
+    &lt;/script&gt;
+    &lt;style&gt;
+     div.answerbox {
+	 width: 400px;
+	 border: 2px solid black;
+	 padding: 10px;
+	 box-shadow: 1px 1px 1px 0 lightgray inset;
+	 cursor: text;
+	 display:inline-block;
+	 margin:10px;
+     }
+     .button {
+	 cursor: pointer;
+	 min-height: 23px;
+	 display:inline-block;
+	 background-color:#66f;
+	 padding:10px;
+	 border-radius: 5px;
+     }
+     li {
+	 margin-bottom: 20px;
+     }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;ul&gt;
+	&lt;li&gt;
+	    Express &lt;script id="qn1" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="sin" group="functions"&gt;&lt;b p="latex"&gt;\sin\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; sin(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;z&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;+&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="cos" group="functions"&gt;&lt;b p="latex"&gt;\cos\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; cos(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;z&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/m&gt;&lt;/script&gt; without using any trigonometric functions.&lt;br /&gt;
+	    &lt;div id="ans1" class="answerbox"&gt;&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer(0)" id="sub1"&gt;Submit&lt;/div&gt;
+	    &lt;span id="res1"&gt;Unanswered&lt;/span&gt;
+	&lt;/li&gt;
+	&lt;li&gt;
+	    Simplify &lt;script id="qn2" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;e&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;f type="ln" group="functions"&gt;&lt;b p="latex"&gt;\ln\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; ln(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;x&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/m&gt;&lt;/script&gt;&lt;br /&gt;
+	    &lt;div id="ans2" class="answerbox"&gt;&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer(1)" id="sub2"&gt;Submit&lt;/div&gt;
+	    &lt;span id="res2"&gt;Unanswered&lt;/span&gt;
+	&lt;/li&gt;
+	&lt;li&gt;
+	    Find the largest value of x solving: &lt;script id="qn3" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;x&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;-4x+1=0&lt;/e&gt;&lt;/m&gt;&lt;/script&gt;&lt;br /&gt;
+	    &lt;div id="ans3" class="answerbox"&gt;&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer(2)" id="sub3"&gt;Submit&lt;/div&gt;
+	    &lt;span id="res3"&gt;Unanswered&lt;/span&gt;
+	&lt;/li&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</pre></body></html>

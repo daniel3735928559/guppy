@@ -73,6 +73,7 @@ var Guppy = function(guppy_div, config){
     this.buttons_div = document.createElement("div");
     this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {}));
     this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){}));
+    this.buttons_div.appendChild(Guppy.make_button("icons/sigma.png", function(e){}));
     this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help(); }));
     this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
 
@@ -114,7 +115,7 @@ Guppy.active_guppy = null;
 Guppy.make_button = function(url, cb){
     var b = document.createElement("img");
     b.setAttribute("class","guppy-button");
-    b.style="cursor:pointer;height:16px;width:16px;padding-left:4px;opacity:0.5;";
+    b.style="cursor:pointer;height:16px;width:16px;padding-left:7px;opacity:0.5;";
     b.setAttribute("src", url);
     if(cb){
 	b.onclick = function(e){

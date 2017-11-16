@@ -83,7 +83,7 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
 	else{var d = args[0].cloneNode(true); append_str(d, "-"); append_doc(d, args[1]); return d;};
     }
-    functions["val"] = function(args){ console.log("hi", args); return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["_default"] = function(name, args){
 	if(!symbols[name]) throw Exception("Unrecognised symbol: "+name);
@@ -106,13 +106,18 @@ GuppyAST.to_function = function(ast, functions){
     if(!functions["var"]) functions["var"] = function(args){return function(vars){ return vars[args[0]]; };};
     if(!functions["exponential"]) functions["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
     if(!functions["fraction"]) functions["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    if(!functions["square_root"]) functions["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
+    if(!functions["sin"]) functions["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
+    if(!functions["cos"]) functions["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};
+    if(!functions["tan"]) functions["tan"] = function(args){return function(vars){return Math.tan(args[0](vars))};};
+    if(!functions["log"]) functions["log"] = function(args){return function(vars){return Math.log(args[0](vars))};};
     return GuppyAST.eval(ast, functions);
 }
 
 GuppyAST.eval = function(ast, functions){
     ans = null;
     if(!functions["_default"]) functions["_default"] = function(name, args){ throw Exception("Function not implemented: " + name);}
-    console.log("EVAL",JSON.stringify(ast));
+    //console.log("EVAL",JSON.stringify(ast));
     
     var args = []
     for(var i = 0; i < ast[1].length; i++){
@@ -123,11 +128,11 @@ GuppyAST.eval = function(ast, functions){
 	    args.push(ast[1][i]);
 	}
     }
-    console.log("Fn",ast[0],functions[ast[0]]);
+    //console.log("Fn",ast[0],functions[ast[0]]);
     if(functions[ast[0]]) ans = functions[ast[0]](args);
     else if(functions["_default"]) ans = functions["_default"](ast[0], args);
     
-    console.log("EVAL",JSON.stringify(ast),'=',ans);
+    //console.log("EVAL",JSON.stringify(ast),'=',ans);
     return ans
 }
 
