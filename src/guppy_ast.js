@@ -50,7 +50,7 @@ GuppyAST.tokenise_text = function(s){
 
 GuppyAST.to_eqlist = function(ast){
     console.log(ast);
-    comparators = ["eq","neq","leq","geq","less","greater"];
+    comparators = ["=","!=","<=",">=","<",">"];
     if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) < 0) return [ast];
     return GuppyAST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
 }
@@ -58,6 +58,12 @@ GuppyAST.to_eqlist = function(ast){
 GuppyAST.to_text = function(ast){
     var functions = {};
     functions["bracket"] = function(args){return "("+args[0]+")";};
+    functions["="] = function(args){return args[0]+" = "+args[1];};
+    functions["!="] = function(args){return args[0]+" != "+args[1];};
+    functions["<="] = function(args){return args[0]+" <= "+args[1];};
+    functions[">="] = function(args){return args[0]+" >= "+args[1];};
+    functions["<"] = function(args){return args[0]+" < "+args[1];};
+    functions[">"] = function(args){return args[0]+" > "+args[1];};
     functions["*"] = function(args){return "("+args[0]+" * "+args[1]+")";};
     functions["+"] = function(args){return "("+args[0]+" + "+args[1]+")";};
     functions["/"] = function(args){return "("+args[0]+" / "+args[1]+")";};
@@ -205,6 +211,10 @@ GuppyAST.parse_e = function(tokens){
     s.led = mul;
     s.nud = function(){ return ["val", [this.value]] };
 
+    s = symbol("(pass)", 60);
+    s.led = mul;
+    s.nud = function(){ return this.args[0] };
+    
     s = symbol("(var)", 60);
     s.led = mul;
     s.nud = function(){ return ["var", [this.value]] };
@@ -234,6 +244,10 @@ GuppyAST.parse_e = function(tokens){
             if (!o) {
 		throw Exception("Unknown operator.");
             }
+	} else if (a ===  "pass") {
+            a = "pass";
+            o = symbol_table["(pass)"];
+	    args = t.args;
 	} else if (a ===  "number") {
             a = "literal";
             o = symbol_table["(literal)"];
@@ -276,12 +290,12 @@ GuppyAST.parse_e = function(tokens){
     }
 
     
-    infix("eq", 40);
-    infix("neq", 40);
-    infix("less", 40);
-    infix("greater", 40);
-    infix("leq", 40);
-    infix("geq", 40);
+    infix("=", 40);
+    infix("!=", 40);
+    infix("<", 40);
+    infix(">", 40);
+    infix("<=", 40);
+    infix(">=", 40);
 
     infix("+", 50);
     infix("-", 50);
@@ -349,6 +363,10 @@ GuppyAST.parse_text = function(tokens){
     s = symbol("(var)", 60);
     s.led = mul;
     s.nud = function(){ return ["var", [this.value]] };
+    
+    s = symbol("(pass)", 60);
+    s.led = mul;
+    s.nud = function(){ return this.args[0] };
 
     var token;
     var token_nr = 0;
@@ -378,6 +396,9 @@ GuppyAST.parse_text = function(tokens){
 	} else if (a ===  "number") {
             a = "literal";
             o = symbol_table["(literal)"];
+	} else if (a ===  "pass") {
+            a = "pass";
+            o = symbol_table["(pass)"];
 	} else if (a ===  "function") {
             a = "function";
             o = symbol_table["(function)"];
