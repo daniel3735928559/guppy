@@ -73,8 +73,8 @@ var Guppy = function(guppy_div, config){
     this.buttons_div = document.createElement("div");
     this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {}));
     this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){}));
-    this.buttons_div.appendChild(Guppy.make_button("icons/sigma.png", function(e){}));
-    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help(); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ self.toggle_help("symbols"); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help("controls"); }));
     this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
 
     guppy_div.addEventListener("mouseenter",function(e){self.buttons_div.style.display = "block";}, false);
@@ -159,18 +159,20 @@ Guppy.reset_global_symbols = function(){
     @param {string[]} symbols - A list of URLs for symbol JSON files to request
 */
 Guppy.init_symbols = function(symbols){
-    document.body.appendChild(GuppyHelp);
     var all_ready = function(){
+	GuppyHelp.init(GuppySymbols.symbols);
 	Guppy.register_keyboard_handlers();
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render(true);
 	    Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+	}
+	GuppyBackend.ready = true;
+	for(var i in Guppy.instances){
 	    Guppy.instances[i].backend.ready = true;
 	    Guppy.instances[i].backend.fire_event("ready");
 	    Guppy.instances[i].events["ready"] = null;
 	}
-	GuppyBackend.ready = true;
     }
     if(!(Array.isArray(symbols))){
 	symbols = [symbols];
@@ -233,15 +235,15 @@ Guppy.prototype.is_changed = function(){
     return ans;
 }
 
-Guppy.prototype.toggle_help = function(){
-    if(GuppyHelp.style.display == "none"){
+Guppy.prototype.toggle_help = function(div_id){
+    if(GuppyHelp[div_id].style.display == "none"){
 	var r = this.editor.getBoundingClientRect();
-	GuppyHelp.style.top = (r.bottom+document.documentElement.scrollTop) + "px";
-	GuppyHelp.style.left = (r.left+document.documentElement.scrollLeft) + "px";
-	GuppyHelp.style.display = "block";
+	GuppyHelp[div_id].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+	GuppyHelp[div_id].style.left = (r.left+document.documentElement.scrollLeft) + "px";
+	GuppyHelp[div_id].style.display = "block";
     }
     else{
-	GuppyHelp.style.display = "none";
+	GuppyHelp[div_id].style.display = "none";
     }
 }
 
@@ -554,6 +556,21 @@ Guppy.kb.k_syms = {
     "shift+up":"exp",
     "shift+down":"sub"
 };
+Guppy.kb.k_text = {
+    "/":"/",
+    "*":"*",
+    "(":"(",
+    ")":")",
+    "<":"<",
+    ">":">",
+    "_":"_",
+    "|":"|",
+    "!":"!",
+    ",":",",
+    ".":".",
+    ";":";",
+    "=":"="
+};
 Guppy.kb.k_controls = {
     "up":"up",
     "down":"down",
@@ -622,7 +639,12 @@ Guppy.register_keyboard_handlers = function(){
 	    if(!Guppy.active_guppy) return true;
 	    Guppy.active_guppy.temp_cursor.node = null;
 	    Guppy.active_guppy.backend.space_caret = 0;
-	    Guppy.active_guppy.backend.insert_symbol(Guppy.kb.k_syms[i]);
+	    if(GuppyUtils.is_text(Guppy.active_guppy.backend.current)){
+		if(Guppy.kb.k_text[i]) Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+	    }
+	    else{
+		Guppy.active_guppy.backend.insert_symbol(Guppy.kb.k_syms[i]);
+	    }
 	    Guppy.active_guppy.render(true);
 	    return false;
 	}}(i));
