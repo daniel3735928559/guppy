@@ -30,7 +30,7 @@ GuppyAST.tokenise_e = function(s){
 	    if(isNaN(Number(m))) throw Exception("Invalid number: "+m);
 	    return Number(m);
 	}},
-	{"type":"boundary", "re":"^(<=|>=|>|<|=)", "value":function(m){return m}},
+	{"type":"operator", "re":"^(<=|>=|!=|>|<|=)", "value":function(m){return m}},
 	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
 	{"type":"name", "re":"^[a-zA-Z]", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
@@ -46,6 +46,13 @@ GuppyAST.tokenise_text = function(s){
 	{"type":"rparen", "re":"^\)", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
     ]);
+}
+
+GuppyAST.to_eqlist = function(ast){
+    console.log(ast);
+    comparators = ["eq","neq","leq","geq","less","greater"];
+    if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) < 0) return [ast];
+    return GuppyAST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
 }
 
 GuppyAST.to_text = function(ast){
@@ -100,6 +107,22 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     return GuppyAST.eval(ast, functions);
 }
 
+GuppyAST.get_nodes = function(ast, name){
+    var ans = [];
+    if(ast[0] == name) ans.push(ast[1]);
+    for(var i = 0; i < ast[1].length; i++) ans = ans.concat(GuppyAST.get_nodes(ast[1][i], name));
+    return ans;
+}
+
+GuppyAST.get_vars = function(ast){
+    var vars = {};
+    var ans = [];
+    var l = get_nodes(ast, "var");
+    for(var i = 0; i < l.length; i++) vars[l[i][0]] = true;
+    for(var x in vars) ans.push(x);
+    return ans;
+}
+
 GuppyAST.to_function = function(ast, functions){
     functions = functions || {}
     defaults = {}
@@ -117,7 +140,7 @@ GuppyAST.to_function = function(ast, functions){
     defaults["tan"] = function(args){return function(vars){return Math.tan(args[0](vars))};};
     defaults["log"] = function(args){return function(vars){return Math.log(args[0](vars))};};
     for(var n in defaults) if(!functions[n]) functions[n] = defaults[n];
-    return GuppyAST.eval(ast, functions);
+    return {"function":GuppyAST.eval(ast, functions),"vars":GuppyAST.get_vars(ast)};
 }
 
 GuppyAST.eval = function(ast, functions){
@@ -209,7 +232,7 @@ GuppyAST.parse_e = function(tokens){
 	} else if (a === "operator") {
             o = symbol_table[v];
             if (!o) {
-		t.error("Unknown operator.");
+		throw Exception("Unknown operator.");
             }
 	} else if (a ===  "number") {
             a = "literal";
@@ -251,6 +274,14 @@ GuppyAST.parse_e = function(tokens){
 	};
 	return s;
     }
+
+    
+    infix("eq", 40);
+    infix("neq", 40);
+    infix("less", 40);
+    infix("greater", 40);
+    infix("leq", 40);
+    infix("geq", 40);
 
     infix("+", 50);
     infix("-", 50);

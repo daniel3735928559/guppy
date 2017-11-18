@@ -1,7 +1,11 @@
 {
-    "style": {"title":"Styling the editor"},
-    "symbols":{"title":"Creating custom symbols"},
-    "faq": {"title": "FAQ"},
-    "format": {"title": "XML format"},
-    "internals": {"title": "Editor internals"}
+    "usage": {"title": "Using the editor",
+	      "children":{
+		  "style": {"title":"Styling the editor"},
+		  "symbols":{"title":"Creating custom symbols"}}},
+    "behind-the-scenes":{"title": "Behind the scenes",
+			 "children":{
+			     "roadmap": {"title": "Roadmap for future development"},
+			     "format": {"title": "XML format"},
+			     "internals": {"title": "Editor internals"}}}
 }

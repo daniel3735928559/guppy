@@ -51,7 +51,7 @@ GuppyHelp.init = function(symbols){
     make_row("guppy_help_table","ctrl+shift+backspace","Delete current row in matrix");
     
     for(var s in symbols){
-	var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "?");
+	var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
 	var row = make_row("guppy_syms_table",s," ");
 	katex.render(latex, row.lastChild);
     }

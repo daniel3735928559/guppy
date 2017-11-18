@@ -301,9 +301,10 @@
 			 "char":"yes",
 			 "type":"{$name}"},
 		     "ast":{
-			 "type":"boundary"}},
+			 "type":"operator"}},
 	 
-	 "values":{"leq":{"latex":"\\leq","asciimath":" <= "},
+	 "values":{"eq":{"latex":"=","asciimath":" = "},
+		   "leq":{"latex":"\\leq","asciimath":" <= "},
 		   "less":{"latex":"<","asciimath":" < "},
 		   "geq":{"latex":"\\geq","asciimath":" >= "},
 		   "greater":{"latex":">","asciimath":" > "},

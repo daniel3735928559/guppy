@@ -71,7 +71,7 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.buttons_div = document.createElement("div");
-    this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {}));
+    this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { self.backend.fire_event("keyboard"); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){}));
     this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ self.toggle_help("symbols"); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help("controls"); }));
@@ -535,7 +535,6 @@ Guppy.kb.is_mouse_down = false;
 
 // keys aside from 0-9,a-z,A-Z
 Guppy.kb.k_chars = {
-    "=":"=",
     "+":"+",
     "-":"-",
     "*":"*",
@@ -548,6 +547,7 @@ Guppy.kb.k_syms = {
     "^":"exp",
     "*":"*",
     "(":"paren",
+    "=":"eq",
     "<":"less",
     ">":"greater",
     "_":"sub",

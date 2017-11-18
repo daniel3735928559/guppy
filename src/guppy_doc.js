@@ -61,6 +61,7 @@ GuppyDoc.prototype.get_content = function(t,r){
     else if(t == "ast") return JSON.stringify(this.syntax_tree());
     else if(t == "text") return GuppyAST.to_text(this.syntax_tree());
     else if(t == "function") return GuppyAST.to_function(this.syntax_tree());
+    else if(t == "eqns") return GuppyAST.to_eqlist(this.syntax_tree());
     else return this.manual_render(t,this.root(),r);
 }
 
@@ -114,6 +115,7 @@ GuppyDoc.prototype.syntax_tree = function(n){
 		    tokens.push(this.syntax_tree(nn));
 		}
 	    }
+	    console.log("TOK",tokens);
 	    ans = GuppyAST.parse_e(tokens);
 	}
     }
