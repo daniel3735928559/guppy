@@ -3,14 +3,14 @@ var tests = [
     {
 	"description":"Ready",
 	"content":"none",
-	"type":"text",
-	"expected":"!ready",
+	"type":"asciimath",
+	"expected":"ready",
 	"run":function(g){}
     },
     {
 	"description":"Basic",
 	"content":"<m><e>x+1</e></m>",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"+1",
 	"run":function(g){
 	    do_keys(['right','backspace']);
@@ -19,7 +19,7 @@ var tests = [
     {
 	"description":"Basic undo",
 	"type":"text",
-	"expected":"xy",
+	"expected":"(x * y)",
 	"run":function(g){
 	    do_keys(['x','y','z','mod+z']);
 	}
@@ -27,7 +27,7 @@ var tests = [
     {
 	"description":"Basic redo",
 	"type":"text",
-	"expected":"xyz",
+	"expected":"((x * y) * z)",
 	"run":function(g){
 	    do_keys(['x','y','z','mod+z','mod+y']);
 	}
@@ -35,14 +35,14 @@ var tests = [
     {
 	"description":"Sine",
 	"type":"text",
-	"expected":" sin(x)",
+	"expected":"sin(x)",
 	"run":function(g){
 	    do_keys(['s','i','n','x']);
 	}
     },
     {
 	"description":"Sine undo",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"sin",
 	"run":function(g){
 	    do_keys(['s','i','n','mod+z']);
@@ -51,7 +51,7 @@ var tests = [
     {
 	"description":"Exponent undo",
 	"type":"text",
-	"expected":"2x",
+	"expected":"(2 * x)",
 	"run":function(g){
 	    do_keys(['2','x','^','mod+z']);
 	}
@@ -69,7 +69,7 @@ var tests = [
 	"description":"Basic select replace",
 	"content":"<m><e>x+1</e></m>",
 	"type":"text",
-	"expected":"a1",
+	"expected":"(a * 1)",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','a']);
 	}
@@ -78,7 +78,7 @@ var tests = [
 	"description":"Basic select left",
 	"content":"<m><e>x+1</e></m>",
 	"type":"text",
-	"expected":"a+1",
+	"expected":"(a + 1)",
 	"run":function(g){
 	    do_keys(['right','shift+left','a']);
 	}
@@ -86,7 +86,7 @@ var tests = [
     {
 	"description":"Basic cut/paste",
 	"content":"<m><e>x+1</e></m>",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"1x+",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','mod+x','right','mod+v']);
@@ -95,7 +95,7 @@ var tests = [
     {
 	"description":"Basic copy/paste",
 	"content":"<m><e>x+1</e></m>",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"x+1x+",
 	"run":function(g){
 	    do_keys(['shift+right','shift+right','mod+c','right','mod+v']);
@@ -103,7 +103,7 @@ var tests = [
     },
     {
 	"description":"f-char delete",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"(2)^(x)",
 	"run":function(g){
 	    do_keys(['2','^','x','p','i','backspace']);
@@ -111,16 +111,16 @@ var tests = [
     },
     {
 	"description":"f-char cut/paste",
-	"content":'<m><e></e><f><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="text">sin(<r ref="1"/>)</b><c><e>x</e></c></f><e>+</e><f c="yes"><b p="latex">{\\pi}</b><b p="text"> PI </b></f><e>+</e><f><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="text">cos(<r ref="1"/>)</b><c><e>x</e></c></f><e></e></m>',
+	"content":'<m><e></e><f type="sin" group="functions"><b p="latex">\\sin\\left(<r ref="1"/>\\right)</b><b p="asciimath"> sin(<r ref="1"/>)</b><c delete="1"><e>x</e></c></f><e>+</e><f group="greek" char="yes" type="pi"><b p="latex">\\pi</b><b p="asciimath"> pi </b></f><e>+</e><f type="cos" group="functions"><b p="latex">\\cos\\left(<r ref="1"/>\\right)</b><b p="asciimath"> cos(<r ref="1"/>)</b><c delete="1"><e>x</e></c></f><e></e></m>',
 	"type":"text",
-	"expected":"sin(x)+cos(x)+ PI ",
+	"expected":"((sin(x) + cos(x)) + pi)",
 	"run":function(g){
 	    do_keys(['right','right','right','shift+right','shift+right','mod+x','right','right','right','right','mod+v']);
 	}
     },
     {
 	"description":"matrix add row",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1;2)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+down','2']);
@@ -128,7 +128,7 @@ var tests = [
     },
     {
 	"description":"matrix copy row",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1;1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+down']);
@@ -136,7 +136,7 @@ var tests = [
     },
     {
 	"description":"matrix add col",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1,2)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+right','2']);
@@ -144,7 +144,7 @@ var tests = [
     },
     {
 	"description":"matrix copy col",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1,1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+right']);
@@ -152,7 +152,7 @@ var tests = [
     },
     {
 	"description":"2x2 matrix",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1,2;(x)^(2),3)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+right','2','mod+down','right','3','left','left','x','^','2']);
@@ -160,7 +160,7 @@ var tests = [
     },
     {
 	"description":"2x2 matrix delete col",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(2;3)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+right','2','mod+down','right','3','left','left','x','^','2','mod+backspace']);
@@ -168,7 +168,7 @@ var tests = [
     },
     {
 	"description":"2x2 matrix delete row",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1,2)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+right','2','mod+down','right','3','left','left','x','^','2','mod+shift+backspace']);
@@ -176,7 +176,7 @@ var tests = [
     },
     {
 	"description":"matrix extend up",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(2;1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+up','2']);
@@ -184,7 +184,7 @@ var tests = [
     },
     {
 	"description":"matrix extend left",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(2,1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+left','2']);
@@ -192,7 +192,7 @@ var tests = [
     },
     {
 	"description":"matrix copy up",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(21;1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+up','2']);
@@ -200,7 +200,7 @@ var tests = [
     },
     {
 	"description":"matrix copy up move",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1;21)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+up','down','2']);
@@ -208,7 +208,7 @@ var tests = [
     },
     {
 	"description":"matrix copy left",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(12,1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+left','2']);
@@ -216,7 +216,7 @@ var tests = [
     },
     {
 	"description":"matrix copy left undo",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"matrix(1)",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+left','mod+z']);
@@ -224,7 +224,7 @@ var tests = [
     },
     {
 	"description":"sel all delete",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+up','down','x','^','2','+','mod+a','backspace']);
@@ -232,7 +232,7 @@ var tests = [
     },
     {
 	"description":"spacebar",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"cos",
 	"run":function(g){
 	    do_keys(['c','o','space','s']);
@@ -240,23 +240,23 @@ var tests = [
     },
     {
 	"description":"backslash",
-	"type":"text",
-	"expected":" $theta ",
+	"type":"asciimath",
+	"expected":" theta ",
 	"run":function(g){
 	    do_keys(['\\','t','h','e','t','a','enter']);
 	}
     },
     {
 	"description":"theta",
-	"type":"text",
-	"expected":"th $eta ",
+	"type":"asciimath",
+	"expected":"th eta ",
 	"run":function(g){
 	    do_keys(['t','h','e','t','a']);
 	}
     },
     {
 	"description":"completion",
-	"type":"text",
+	"type":"asciimath",
 	"expected":" cos()",
 	"run":function(g){
 	    do_keys(['c','o','space','s','tab']);
@@ -264,7 +264,7 @@ var tests = [
     },
     {
 	"description":"selection squaring",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"(x+1)^(2)",
 	"run":function(g){
 	    do_keys(['x','+','1','shift+left','shift+left','shift+left','^','2']);
@@ -272,7 +272,7 @@ var tests = [
     },
     {
 	"description":"right paren",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"((x+1))^(2)",
 	"run":function(g){
 	    do_keys(['(','x','+','1',')','^','2']);
@@ -280,7 +280,7 @@ var tests = [
     },
     {
 	"description":"paren completion",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"((x+1))^(2)",
 	"run":function(g){
 	    do_keys(['(','x','+','1','right','^','2']);
@@ -288,15 +288,15 @@ var tests = [
     },
     {
 	"description":"definite integral",
-	"type":"text",
-	"expected":"integrate((x)^(2),x,0,2)",
+	"type":"asciimath",
+	"expected":"int_{0}^{2} (x)^(2) dx",
 	"run":function(g){
 	    do_keys(['d','e','f','i','1','right','2','down','backspace','0','up','right','x','shift+up','2','right','right','x']);
 	}
     },
     {
 	"description":"delete",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x','home','del','del']);
@@ -304,7 +304,7 @@ var tests = [
     },
     {
 	"description":"click",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"x sin(ax)",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x']);
@@ -315,7 +315,7 @@ var tests = [
     },
     {
 	"description":"click select",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"x+(x)^(2)",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x',')','y','x','^','2']);
@@ -329,7 +329,7 @@ var tests = [
     },
     {
 	"description":"mouse move",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"x+y",
 	"run":function(g){
 	    do_keys(['x','+','s','i','n','y']);
@@ -341,7 +341,7 @@ var tests = [
     },
     {
 	"description":"delete exponent",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"x",
 	"run":function(g){
 	    do_keys(['x','^','2','backspace','backspace']);
@@ -349,7 +349,7 @@ var tests = [
     },
     {
 	"description":"problem",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"!z",
 	"run":function(g){
 	    test_guppy.backend.problem("!z");
@@ -357,7 +357,7 @@ var tests = [
     },
     {
 	"description":"symbol",
-	"type":"text",
+	"type":"asciimath",
 	"expected":" tan^(2)(x)",
 	"run":function(g){
 	    test_guppy.backend.add_symbols("pta",{
@@ -375,7 +375,7 @@ var tests = [
     },
     {
 	"description":"remove symbol",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"tanx",
 	"run":function(g){
 	    test_guppy.backend.remove_symbol("tan");
@@ -384,7 +384,7 @@ var tests = [
     },
     {
 	"description":"symbol_func",
-	"type":"text",
+	"type":"asciimath",
 	"expected":" Re(i)",
 	"run":function(g){
 	    test_guppy.backend.add_symbol_func("Re","test");
@@ -393,7 +393,7 @@ var tests = [
     },
     {
 	"description":"symbol_raw",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"ASDA",
 	"run":function(g){
 	    test_guppy.backend.add_symbol_raw("asda","ASDA","ASDA","test");
@@ -403,7 +403,7 @@ var tests = [
     {
 	"description":"left_end",
 	"content":"<m><e>x</e></m>",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"!left",
 	"run":function(g){
 	    do_keys(['left']);
@@ -412,7 +412,7 @@ var tests = [
     {
 	"description":"right_end",
 	"content":"<m><e>x</e></m>",
-	"type":"text",
+	"type":"asciimath",
 	"expected":"!right",
 	"run":function(g){
 	    do_keys(['right','right']);

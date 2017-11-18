@@ -58,6 +58,7 @@ var GuppyBackend = function(config){
     }
 }
 
+GuppyBackend.ready = false;
 GuppyBackend.SEL_NONE = 0;
 GuppyBackend.SEL_CURSOR_AT_START = 1;
 GuppyBackend.SEL_CURSOR_AT_END = 2;

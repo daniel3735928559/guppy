@@ -26,7 +26,7 @@ GuppyUtils.path_to = function(n){
 }
 
 GuppyUtils.is_text = function(nn){
-    return nn.parentNode.getAttribute("mode") && (nn.parentNode.getAttribute("mode") == "text" || nn.parentNode.getAttribute("mode") == "symbol");
+    return nn.parentNode.hasAttribute("mode") && (nn.parentNode.getAttribute("mode") == "text" || nn.parentNode.getAttribute("mode") == "symbol");
 }
 
 GuppyUtils.is_symbol = function(nn){

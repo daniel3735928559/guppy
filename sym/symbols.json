@@ -287,7 +287,7 @@
 	 "values":["sin","cos","tan","sec","csc","cot","log","ln"]},
 	
 	{"template":{"output":{"latex":"\\{$name}",
-			       "asciimath":"{$name}"},
+			       "asciimath":" {$name} "},
 		     "attrs":{
 			 "group":"greek",
 			 "char":"yes",
@@ -299,7 +299,9 @@
 		     "attrs":{
 			 "group":"operations",
 			 "char":"yes",
-			 "type":"{$name}"}},
+			 "type":"{$name}"},
+		     "ast":{
+			 "type":"boundary"}},
 	 
 	 "values":{"leq":{"latex":"\\leq","asciimath":" <= "},
 		   "less":{"latex":"<","asciimath":" < "},

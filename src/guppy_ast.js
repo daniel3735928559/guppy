@@ -26,7 +26,11 @@ GuppyAST.tokenise = function(s, tokens){
 
 GuppyAST.tokenise_e = function(s){
     return GuppyAST.tokenise(s, [
-	{"type":"number", "re":"^[0-9]+(\\.[0-9]*)?", "value":function(m){return Number(m)}},
+	{"type":"number", "re":"^[0-9.]+", "value":function(m){
+	    if(isNaN(Number(m))) throw Exception("Invalid number: "+m);
+	    return Number(m);
+	}},
+	{"type":"boundary", "re":"^(<=|>=|>|<|=)", "value":function(m){return m}},
 	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
 	{"type":"name", "re":"^[a-zA-Z]", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
@@ -35,7 +39,7 @@ GuppyAST.tokenise_e = function(s){
 
 GuppyAST.tokenise_text = function(s){
     return GuppyAST.tokenise(s, [
-	{"type":"number", "re":"^[0-9]+(\\.[0-9]*)?", "value":function(m){return Number(m)}},
+	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
 	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
 	{"type":"name", "re":"^[a-zA-Z]+", "value":function(m){return m}},
 	{"type":"lparen", "re":"^\(", "value":function(m){return m}},
@@ -98,19 +102,21 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 
 GuppyAST.to_function = function(ast, functions){
     functions = functions || {}
-    if(!functions["*"]) functions["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
-    if(!functions["+"]) functions["+"] = function(args){return function(vars){return args[0](vars)+args[1](vars)};};
-    if(!functions["/"]) functions["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
-    if(!functions["-"]) functions["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
-    if(!functions["val"]) functions["val"] = function(args){return function(vars){ return args[0]; };};
-    if(!functions["var"]) functions["var"] = function(args){return function(vars){ return vars[args[0]]; };};
-    if(!functions["exponential"]) functions["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
-    if(!functions["fraction"]) functions["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
-    if(!functions["square_root"]) functions["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
-    if(!functions["sin"]) functions["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
-    if(!functions["cos"]) functions["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};
-    if(!functions["tan"]) functions["tan"] = function(args){return function(vars){return Math.tan(args[0](vars))};};
-    if(!functions["log"]) functions["log"] = function(args){return function(vars){return Math.log(args[0](vars))};};
+    defaults = {}
+    defaults["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
+    defaults["+"] = function(args){return function(vars){return args[0](vars)+args[1](vars)};};
+    defaults["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
+    defaults["val"] = function(args){return function(vars){ return args[0]; };};
+    defaults["var"] = function(args){return function(vars){ return vars[args[0]]; };};
+    defaults["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
+    defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
+    defaults["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
+    defaults["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};
+    defaults["tan"] = function(args){return function(vars){return Math.tan(args[0](vars))};};
+    defaults["log"] = function(args){return function(vars){return Math.log(args[0](vars))};};
+    for(var n in defaults) if(!functions[n]) functions[n] = defaults[n];
     return GuppyAST.eval(ast, functions);
 }
 
