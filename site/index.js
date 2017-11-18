@@ -43,6 +43,7 @@ function update_output(){
     }
     catch(e){
 	$('#sample_output')[0].value = "Malformed input";
+	console.log(e.stack);
 	//throw e;
     }
 }
