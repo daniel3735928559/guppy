@@ -12,10 +12,10 @@
 	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
 		 var a = document.getElementById("ans");
 		 try{
-		     var f = Guppy.instances.guppy1.backend.get_content("function")
-		     a.innerHTML = f({});
+		     var fn = Guppy.instances.guppy1.backend.get_content("function");
+		     a.innerHTML = fn.function({"pi":Math.PI,"e":Math.E});
 		 }
-		 catch(e){ a.innerHTML = "NaN"; }
+		 catch(e){ a.innerHTML = "Error"; }
 	     }}});
 	     Guppy.init_symbols(["../../../sym/symbols.json"]);
 	 }

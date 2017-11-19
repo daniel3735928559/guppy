@@ -49,7 +49,6 @@ GuppyAST.tokenise_text = function(s){
 }
 
 GuppyAST.to_eqlist = function(ast){
-    console.log(ast);
     comparators = ["=","!=","<=",">=","<",">"];
     if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) < 0) return [ast];
     return GuppyAST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
@@ -114,8 +113,10 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 }
 
 GuppyAST.get_nodes = function(ast, name){
+    if(ast.length < 2) return [];
     var ans = [];
     if(ast[0] == name) ans.push(ast[1]);
+    if(ast[0] == "var" || ast[0] == "val") return ans;
     for(var i = 0; i < ast[1].length; i++) ans = ans.concat(GuppyAST.get_nodes(ast[1][i], name));
     return ans;
 }
@@ -123,7 +124,7 @@ GuppyAST.get_nodes = function(ast, name){
 GuppyAST.get_vars = function(ast){
     var vars = {};
     var ans = [];
-    var l = get_nodes(ast, "var");
+    var l = GuppyAST.get_nodes(ast, "var");
     for(var i = 0; i < l.length; i++) vars[l[i][0]] = true;
     for(var x in vars) ans.push(x);
     return ans;
@@ -137,7 +138,7 @@ GuppyAST.to_function = function(ast, functions){
     defaults["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
     defaults["val"] = function(args){return function(vars){ return args[0]; };};
-    defaults["var"] = function(args){return function(vars){ return vars[args[0]]; };};
+    defaults["var"] = function(args){return function(vars){ if(args[0] == "pi") return Math.PI; if(args[0] == "e") return Math.E; return vars[args[0]]; };};
     defaults["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
     defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};

@@ -92,7 +92,7 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	    //ans.args.push(this.syntax_tree(nn))
 	    ans.args.push(this.syntax_tree(nn))
 	}
-	console.log("F",JSON.stringify(ans))
+	//console.log("F",JSON.stringify(ans))
     }
     else if(n.nodeName == "l"){
 	ans = [];
@@ -115,7 +115,7 @@ GuppyDoc.prototype.syntax_tree = function(n){
 		    tokens.push(this.syntax_tree(nn));
 		}
 	    }
-	    console.log("TOK",tokens);
+	    //console.log("TOK",tokens);
 	    ans = GuppyAST.parse_e(tokens);
 	}
     }
