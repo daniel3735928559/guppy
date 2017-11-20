@@ -66,10 +66,13 @@ GuppyDoc.prototype.get_content = function(t,r){
 }
 
 GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
+    syms = syms || GuppySymbols.symbols;
+    s2n = s2n || GuppySymbols.symbol_to_node;
     console.log("hello",ast,syms,s2n);
     var doc = GuppyAST.to_xml(ast, syms, s2n);
-    console.log((new XMLSerializer()).serializeToString(doc));
+    console.log("doc",(new XMLSerializer()).serializeToString(doc));
     this.base = doc;
+    this.ensure_text_nodes();
 }
 
 GuppyDoc.prototype.syntax_tree = function(n){
@@ -89,7 +92,7 @@ GuppyDoc.prototype.syntax_tree = function(n){
 	var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
 	for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
 	    //if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
-	    //ans.args.push(this.syntax_tree(nn))
+	    //else ans.args.push(this.syntax_tree(nn))
 	    ans.args.push(this.syntax_tree(nn))
 	}
 	//console.log("F",JSON.stringify(ans))
@@ -171,7 +174,7 @@ GuppyDoc.bracket_xpath = "(count(./*) != 1 and not \
 			      )\
 			      or\
 			      (\
-			        f/@c='yes' and \
+			        f/@char='yes' and \
 				count(./e[@current='yes'])=0 and \
 				count(./e[@temp='yes'])=0 \
 			      )\

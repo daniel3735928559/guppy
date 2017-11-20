@@ -186,6 +186,9 @@ Guppy.init_symbols = function(symbols){
 		    var syms = JSON.parse(this.responseText);
 		    var templates = syms["_templates"];
 		    if(templates){
+			for(var t in templates){
+			    GuppySymbols.templates[t] = templates[t];
+			}
 			for(var i = 0; i < templates.length; i++){
 			    var t = templates[i].template;
 			    for(var v in templates[i].values){
@@ -297,7 +300,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
 	var current_path = GuppyUtils.path_to(current_node);
 	var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
     }
-
+    
     var boxes = g.boxes;
     if(!boxes) return;
     if(current_node){
@@ -332,6 +335,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
     var loc = opt.path.substring("guppy_loc".length);
     loc = loc.replace(/_/g,"/");
     loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
+    console.log("LOC",loc);
     cur = g.backend.doc.xpath_node(loc.substring(0,loc.lastIndexOf("/")), g.backend.doc.root());
     car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
     // Check if we want the cursor before or after the element
@@ -478,6 +482,7 @@ Guppy.prototype.render = function(updated){
 	return;
     }
     var tex = this.render_node("render");
+    console.log("rendering",tex,updated);
     katex.render(tex,this.editor);
     this.editor.appendChild(this.buttons_div);
     if(updated){

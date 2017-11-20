@@ -88,7 +88,18 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	var nn = doc2.documentElement.firstChild
 	n.firstChild.textContent += nn.firstChild.textContent;
 	for(nn = nn.nextSibling; nn; nn = nn.nextSibling){
-	    n.parentNode.insertBefore(nn,null); 
+	    n.parentNode.insertBefore(nn.cloneNode(true),null); 
+	}
+    }
+    var ensure_text_nodes = function(base){
+	var l = base.getElementsByTagName("e");
+	for(var i = 0; i < l.length; i++){
+	    if(!(l[i].firstChild)) l[i].appendChild(base.createTextNode(""));
+	}
+    }
+    var get_symbol = function(name, symbols){
+	for(var s in symbols){
+	    if(symbols[s].attrs.type == name) return symbols[s];
 	}
     }
     var functions = {};
@@ -102,14 +113,28 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["_default"] = function(name, args){
-	if(!symbols[name]) throw Exception("Unrecognised symbol: "+name);
+	var sym = get_symbol(name, symbols);
+	if(!sym) throw "Unrecognised symbol: "+name;
 	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
+	ensure_text_nodes(base);
 	var e0 = base.documentElement.firstChild;
-	var f = symbol_to_node(symbols[name], args, base)['f'];
+	var content = {};
+	for(var i = 0; i < args.length; i++){
+	    content[i] = [];
+	    for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
+	}
+	var f = symbol_to_node(sym, content, base)['f'];
 	e0.parentNode.insertBefore(f,e0.nextSibling);
+	ensure_text_nodes(base);
 	return base;
     }
-    return GuppyAST.eval(ast, functions);
+    var ans = GuppyAST.eval(ast, functions);
+    var new_base = (new window.DOMParser()).parseFromString("<m></m>", "text/xml");
+    for(nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling){
+	new_base.documentElement.insertBefore(nn.cloneNode(true),null);
+    }
+    return new_base;
+
 }
 
 GuppyAST.get_nodes = function(ast, name){
@@ -152,8 +177,7 @@ GuppyAST.to_function = function(ast, functions){
 
 GuppyAST.eval = function(ast, functions){
     ans = null;
-    if(!functions["_default"]) functions["_default"] = function(name, args){ throw Exception("Function not implemented: " + name);}
-    //console.log("EVAL",JSON.stringify(ast));
+    if(!functions["_default"]) functions["_default"] = function(name, args){ throw "Function not implemented: " + name;}
     
     var args = []
     for(var i = 0; i < ast[1].length; i++){

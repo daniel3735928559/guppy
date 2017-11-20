@@ -74,12 +74,21 @@ GuppyBackend.prototype.get_content = function(t,r){
 }
 
 /** 
-    Set the content of the editor
+    Set the XML content of the editor
     @memberof GuppyBackend
     @param {string} xml_data - An XML string of the content to place in the editor
 */
 GuppyBackend.prototype.set_content = function(xml_data){
-    this.doc = new GuppyDoc(xml_data);
+    this.set_doc(new GuppyDoc(xml_data));
+}
+
+/** 
+    Set the document of the editor
+    @memberof GuppyBackend
+    @param {GuppyDoc} doc - The GuppyDoc that will be the editor's source
+*/
+GuppyBackend.prototype.set_doc = function(doc){
+    this.doc = doc;
     this.current = this.doc.root().firstChild;
     this.caret = 0;
     this.sel_start = null;
@@ -88,12 +97,13 @@ GuppyBackend.prototype.set_content = function(xml_data){
     this.undo_now = -1;
     this.sel_status = GuppyBackend.SEL_NONE;
     this.checkpoint();
+    console.log("cur",this.current);
 }
-
 
 GuppyBackend.prototype.import_ast = function(ast){
     var self = this;
-    this.doc.import_ast(ast, this.symbols, GuppySymbols.symbol_to_node);
+    this.doc.import_ast(ast, this.symbols);
+    this.set_doc(this.doc);
 }
 
 GuppyBackend.prototype.fire_event = function(event, args){

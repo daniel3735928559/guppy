@@ -1,4 +1,4 @@
-GuppySymbols = {"symbols":{}};
+GuppySymbols = {"symbols":{}, "templates":{}};
 
 GuppySymbols.eval_template = function(template, name, args){
     args['name'] = name;
@@ -18,6 +18,8 @@ GuppySymbols.eval_template = function(template, name, args){
 }
 
 GuppySymbols.symbol_to_node = function(s, content, base){
+    
+    console.log("CC",content);
     // s is a symbol
     //
     // content is a list of nodes to insert
