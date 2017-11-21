@@ -68,9 +68,7 @@ GuppyDoc.prototype.get_content = function(t,r){
 GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
     syms = syms || GuppySymbols.symbols;
     s2n = s2n || GuppySymbols.symbol_to_node;
-    console.log("hello",ast,syms,s2n);
     var doc = GuppyAST.to_xml(ast, syms, s2n);
-    console.log("doc",(new XMLSerializer()).serializeToString(doc));
     this.base = doc;
     this.ensure_text_nodes();
 }

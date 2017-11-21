@@ -19,7 +19,6 @@ GuppySymbols.eval_template = function(template, name, args){
 
 GuppySymbols.symbol_to_node = function(s, content, base){
     
-    console.log("CC",content);
     // s is a symbol
     //
     // content is a list of nodes to insert
@@ -102,12 +101,17 @@ GuppySymbols.symbol_to_node = function(s, content, base){
 	}
 	if(i in lists){
 	    var par = f;
-	    for(var j = 0; j < lists[i]; j++){
-		var nl = base.createElement("l");
-		nl.setAttribute("s","1");
-		par.appendChild(nl);
-		par = nl;
-		if(j == lists[i]-1) nl.appendChild(nc);
+	    if(i in content && content[i][0].nodeName == "l"){
+		par.appendChild(content[i][0]);
+	    }
+	    else{
+		for(var j = 0; j < lists[i]; j++){
+		    var nl = base.createElement("l");
+		    nl.setAttribute("s","1");
+		    par.appendChild(nl);
+		    par = nl;
+		    if(j == lists[i]-1) nl.appendChild(nc);
+		}
 	    }
 	}
 	else f.appendChild(nc);

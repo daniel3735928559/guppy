@@ -106,7 +106,8 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	var content = {};
 	for(var i = 0; i < args.length; i++){
 	    content[i] = [];
-	    for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
+	    if(args[i].documentElement.nodeName == "l") content[i].push(args[i].documentElement);
+	    else for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
 	}
 	return content;
     }
@@ -142,6 +143,14 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["list"] = function(args){
+	var base = (new window.DOMParser()).parseFromString("<l></l>", "text/xml");
+	for(var i = 0; i < args.length; i++){
+	    base.documentElement.appendChild(args[i].documentElement.cloneNode(true));
+	}
+	base.documentElement.firstChild.setAttribute("s",String(args.length))
+	return base;
+    };
     functions["_default"] = function(name, args){
 	return make_sym(name, args);
     }
