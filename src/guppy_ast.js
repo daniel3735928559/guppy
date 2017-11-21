@@ -102,31 +102,48 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	    if(symbols[s].attrs.type == name) return symbols[s];
 	}
     }
-    var functions = {};
-    functions["*"] = function(args){var d = args[0].cloneNode(true); append_doc(d, args[1]); return d;};
-    functions["+"] = function(args){var d = args[0].cloneNode(true); append_str(d, "+"); append_doc(d, args[1]); return d;};
-    functions["/"] = function(args){var d = args[0].cloneNode(true); append_str(d, "/"); append_doc(d, args[1]); return d;};
-    functions["-"] = function(args){
-	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
-	else{var d = args[0].cloneNode(true); append_str(d, "-"); append_doc(d, args[1]); return d;};
-    }
-    functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
-    functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
-    functions["_default"] = function(name, args){
-	var sym = get_symbol(name, symbols);
-	if(!sym) throw "Unrecognised symbol: "+name;
-	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
-	ensure_text_nodes(base);
-	var e0 = base.documentElement.firstChild;
+    var get_content_array = function(args){
 	var content = {};
 	for(var i = 0; i < args.length; i++){
 	    content[i] = [];
 	    for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
 	}
+	return content;
+    }
+    var binop_low = function(args, op, parent){
+	var d = args[0].cloneNode(true);
+	append_str(d, op);
+	append_doc(d, args[1]);
+	if(!parent || parent[0] == "+" || (parent[0] == "-" && parent[1].length > 1))
+	    return d;
+	else
+	    return make_sym("bracket", [d]);
+    }
+    var make_sym = function(name, args){
+	var sym = get_symbol(name, symbols);
+	if(!sym) throw "Unrecognised symbol: "+name;
+	var base = (new window.DOMParser()).parseFromString("<c><e></e><e></e></c>", "text/xml");
+	ensure_text_nodes(base);
+	var e0 = base.documentElement.firstChild;
+	var content = get_content_array(args);
 	var f = symbol_to_node(sym, content, base)['f'];
 	e0.parentNode.insertBefore(f,e0.nextSibling);
 	ensure_text_nodes(base);
 	return base;
+    }
+    var functions = {};
+    
+    functions["*"] = function(args){var d = args[0].cloneNode(true); append_doc(d, args[1]); return d;};
+    functions["/"] = function(args){var d = args[0].cloneNode(true); append_str(d, "/"); append_doc(d, args[1]); return d;};
+    functions["+"] = function(args, parent){ return binop_low(args, "+", parent); };
+    functions["-"] = function(args, parent){
+	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
+	else{ return binop_low(args, "-", parent);};
+    }
+    functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["_default"] = function(name, args){
+	return make_sym(name, args);
     }
     var ans = GuppyAST.eval(ast, functions);
     var new_base = (new window.DOMParser()).parseFromString("<m></m>", "text/xml");
@@ -175,22 +192,22 @@ GuppyAST.to_function = function(ast, functions){
     return {"function":GuppyAST.eval(ast, functions),"vars":GuppyAST.get_vars(ast)};
 }
 
-GuppyAST.eval = function(ast, functions){
+GuppyAST.eval = function(ast, functions, parent){
     ans = null;
     if(!functions["_default"]) functions["_default"] = function(name, args){ throw "Function not implemented: " + name;}
     
     var args = []
     for(var i = 0; i < ast[1].length; i++){
 	if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
-	    args.push(GuppyAST.eval(ast[1][i], functions));
+	    args.push(GuppyAST.eval(ast[1][i], functions, ast));
 	}
 	else{
 	    args.push(ast[1][i]);
 	}
     }
     //console.log("Fn",ast[0],functions[ast[0]]);
-    if(functions[ast[0]]) ans = functions[ast[0]](args);
-    else if(functions["_default"]) ans = functions["_default"](ast[0], args);
+    if(functions[ast[0]]) ans = functions[ast[0]](args, parent);
+    else if(functions["_default"]) ans = functions["_default"](ast[0], args, parent);
     
     //console.log("EVAL",JSON.stringify(ast),'=',ans);
     return ans
