@@ -78,7 +78,7 @@ GuppyAST.to_text = function(ast){
 
 GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     var prepend_str = function(doc, str){
-	doc.documentElement.firstChild.textContent += str;
+	doc.documentElement.firstChild.textContent = str + doc.documentElement.firstChild.textContent;
     }
     var append_str = function(doc, str){
 	doc.documentElement.lastChild.textContent += str;
@@ -115,10 +115,18 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	var d = args[0].cloneNode(true);
 	append_str(d, op);
 	append_doc(d, args[1]);
-	if(!parent || parent[0] == "+" || (parent[0] == "-" && parent[1].length > 1))
-	    return d;
-	else
+	if(parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1))
 	    return make_sym("bracket", [d]);
+	else
+	    return d;
+    }
+    var unop_low = function(args, op, parent){
+	var d = args[0].cloneNode(true);
+	prepend_str(d, op);
+	if(parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1))
+	    return make_sym("bracket", [d]);
+	else
+	    return d;
     }
     var make_sym = function(name, args){
 	var sym = get_symbol(name, symbols);
@@ -134,11 +142,18 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     }
     var functions = {};
     
-    functions["*"] = function(args){var d = args[0].cloneNode(true); append_doc(d, args[1]); return d;};
-    functions["/"] = function(args){var d = args[0].cloneNode(true); append_str(d, "/"); append_doc(d, args[1]); return d;};
+    functions["*"] = function(args){
+	var d = args[0].cloneNode(true);
+	append_doc(d, make_sym("*",[]));
+	append_doc(d, args[1]);
+	return d;
+    };
+    functions["/"] = function(args){
+	return make_sym("frac",args);
+    };
     functions["+"] = function(args, parent){ return binop_low(args, "+", parent); };
     functions["-"] = function(args, parent){
-	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;}
+	if(args.length == 1){ return unop_low(args, "-", parent);/*var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;*/}
 	else{ return binop_low(args, "-", parent);};
     }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
