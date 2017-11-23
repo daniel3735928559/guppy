@@ -71,10 +71,10 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.buttons_div = document.createElement("div");
-    this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { self.backend.fire_event("keyboard"); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){}));
-    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ self.toggle_help("symbols"); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ self.toggle_help("controls"); }));
+    if(GuppyHelp.osk) this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { GuppyHelp.osk.attach(self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppyHelp.toggle("settings", self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppyHelp.toggle("symbols", self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppyHelp.toggle("controls", self); }));
     this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
 
     guppy_div.addEventListener("mouseenter",function(e){self.buttons_div.style.display = "block";}, false);
@@ -236,18 +236,6 @@ Guppy.prototype.is_changed = function(){
 	ans = true;
     this.bounding_box = rect;
     return ans;
-}
-
-Guppy.prototype.toggle_help = function(div_id){
-    if(GuppyHelp[div_id].style.display == "none"){
-	var r = this.editor.getBoundingClientRect();
-	GuppyHelp[div_id].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
-	GuppyHelp[div_id].style.left = (r.left+document.documentElement.scrollLeft) + "px";
-	GuppyHelp[div_id].style.display = "block";
-    }
-    else{
-	GuppyHelp[div_id].style.display = "none";
-    }
 }
 
 Guppy.prototype.recompute_locations_paths = function(){

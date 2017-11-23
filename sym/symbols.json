@@ -229,7 +229,7 @@
     
     "root":
     {"output":{
-        "latex":"\\sqrt[{$1}]{{$2}}",
+        "latex":"\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
 	"asciimath":"nroot({$1},{$2})"},
      "attrs":{
 	 "type":"root",

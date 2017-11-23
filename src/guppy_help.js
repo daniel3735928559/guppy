@@ -6,15 +6,24 @@ GuppyHelp.controls = document.createElement("div");
 GuppyHelp.controls.setAttribute("class","guppy_help");
 GuppyHelp.controls.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
 GuppyHelp.controls.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
-<style>td{ vertical-align:top;padding: 2px;}</style>
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
 <h3>Controls</h3><table id="guppy_help_table"><tr><td><b>Press...</b></td><td><b>...to do</b></td></tr></table>`;
 
 GuppyHelp.symbols = document.createElement("div");
 GuppyHelp.symbols.setAttribute("class","guppy_help");
 GuppyHelp.symbols.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
 GuppyHelp.symbols.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
-<style>td{ vertical-align:top;padding: 2px;}</style>
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
 <h3>Symbols</h3><table id="guppy_syms_table"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>`;
+
+GuppyHelp.settings = document.createElement("div");
+GuppyHelp.settings.setAttribute("class","guppy_help");
+GuppyHelp.settings.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
+GuppyHelp.settings.innerHTML = `<p>Global settings: </p>
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
+<h3>Settings</h3><table id="guppy_settings_table"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>`;
+
+GuppyHelp.div_names = ["controls","symbols","settings"];
 
 var make_row = function(table_id, c1, c2){
     var row = document.createElement("tr");
@@ -31,12 +40,34 @@ var make_x = function(elt){
     elt.appendChild(x);
 }
 
+GuppyHelp.hide_all = function(){
+    for(var i = 0; i < GuppyHelp.div_names.length; i++)
+	GuppyHelp[GuppyHelp.div_names[i]].style.display = "none";
+}
+
+GuppyHelp.toggle = function(card, g){
+    if(GuppyHelp.div_names.indexOf(card) >= 0){
+	if(GuppyHelp[card].style.display == "none"){
+	    GuppyHelp.hide_all();
+	    var r = g.editor.getBoundingClientRect();
+	    GuppyHelp[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+	    GuppyHelp[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
+	    GuppyHelp[card].style.display = "block";
+	}
+	else{
+	    GuppyHelp.hide_all();
+	}
+    }
+}
+
 make_x(GuppyHelp.symbols);
 make_x(GuppyHelp.controls);
+make_x(GuppyHelp.settings);
 
 GuppyHelp.init = function(symbols){
     document.body.appendChild(GuppyHelp.symbols);
     document.body.appendChild(GuppyHelp.controls);
+    document.body.appendChild(GuppyHelp.settings);
     
     make_row("guppy_help_table","left/right arrows","Move cursor");
     make_row("guppy_help_table","shift+left/right arrows","Select region")
