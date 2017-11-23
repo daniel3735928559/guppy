@@ -97,7 +97,6 @@ GuppyBackend.prototype.set_doc = function(doc){
     this.undo_now = -1;
     this.sel_status = GuppyBackend.SEL_NONE;
     this.checkpoint();
-    console.log("cur",this.current);
 }
 
 GuppyBackend.prototype.import_text = function(text){

@@ -1,11 +1,11 @@
 var GuppyUtils = {};
 
 GuppyUtils.CARET = "\\cursor[-0.2ex]{0.7em}"
-GuppyUtils.TEMP_SMALL_CARET = "\\cursor[0em]{0.6em}"
+GuppyUtils.TEMP_SMALL_CARET = "\\cursor{0.7ex}"
 GuppyUtils.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"
-GuppyUtils.SMALL_CARET = "\\cursor[-0.05em]{0.5em}"
+GuppyUtils.SMALL_CARET = "\\cursor{0.7ex}"
 GuppyUtils.SEL_CARET = "\\cursor[-0.2ex]{0.7em}"
-GuppyUtils.SMALL_SEL_CARET = "\\cursor[-0.05em]{0.5em}"
+GuppyUtils.SMALL_SEL_CARET = "\\cursor{0.7ex}"
 GuppyUtils.SEL_COLOR = "red"
 
 GuppyUtils.is_blank = function(n){
