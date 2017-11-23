@@ -386,7 +386,7 @@ GuppyAST.tokenise_text = function(s){
     return GuppyAST.tokenise(s, [
 	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
 	{"type":"operator", "re":"^(!=|>=|<=)", "value":function(m){return m;}},
-	{"type":"operator", "re":"^[\-+*/,!^()<>]", "value":function(m){return m}},
+	{"type":"operator", "re":"^[\-+*/,!^()=<>]", "value":function(m){return m}},
 	{"type":"name", "re":"^[a-zA-Z_]+", "value":function(m){return m}},
 	{"type":"comma", "re":"^,", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
