@@ -100,6 +100,12 @@ GuppyBackend.prototype.set_doc = function(doc){
     console.log("cur",this.current);
 }
 
+GuppyBackend.prototype.import_text = function(text){
+    var self = this;
+    this.doc.import_text(text, this.symbols);
+    this.set_doc(this.doc);
+}
+
 GuppyBackend.prototype.import_ast = function(ast){
     var self = this;
     this.doc.import_ast(ast, this.symbols);

@@ -65,6 +65,14 @@ GuppyDoc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
+GuppyDoc.prototype.import_text = function(text, syms, s2n){
+    var tokens = GuppyAST.tokenise_text(text);
+    console.log("TOKENS",JSON.stringify(tokens));
+    var ast = GuppyAST.parse_text(tokens);
+    console.log("AST",JSON.stringify(ast));
+    this.import_ast(ast, syms, s2n);
+}
+
 GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
     syms = syms || GuppySymbols.symbols;
     s2n = s2n || GuppySymbols.symbol_to_node;

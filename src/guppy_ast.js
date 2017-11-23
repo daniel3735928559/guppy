@@ -37,17 +37,6 @@ GuppyAST.tokenise_e = function(s){
     ]);
  }
 
-GuppyAST.tokenise_text = function(s){
-    return GuppyAST.tokenise(s, [
-	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
-	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
-	{"type":"name", "re":"^[a-zA-Z]+", "value":function(m){return m}},
-	{"type":"lparen", "re":"^\(", "value":function(m){return m}},
-	{"type":"rparen", "re":"^\)", "value":function(m){return m}},
-	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
-    ]);
-}
-
 GuppyAST.to_eqlist = function(ast){
     comparators = ["=","!=","<=",">=","<",">"];
     if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) < 0) return [ast];
@@ -115,15 +104,7 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	var d = args[0].cloneNode(true);
 	append_str(d, op);
 	append_doc(d, args[1]);
-	if(parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1))
-	    return make_sym("bracket", [d]);
-	else
-	    return d;
-    }
-    var unop_low = function(args, op, parent){
-	var d = args[0].cloneNode(true);
-	prepend_str(d, op);
-	if(parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1))
+	if(parent && (parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1)))
 	    return make_sym("bracket", [d]);
 	else
 	    return d;
@@ -153,7 +134,7 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     };
     functions["+"] = function(args, parent){ return binop_low(args, "+", parent); };
     functions["-"] = function(args, parent){
-	if(args.length == 1){ return unop_low(args, "-", parent);/*var d = args[0].cloneNode(true); prepend_str(d, "-"); return d;*/}
+	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d; }
 	else{ return binop_low(args, "-", parent);};
     }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
@@ -206,7 +187,7 @@ GuppyAST.to_function = function(ast, functions){
     defaults["val"] = function(args){return function(vars){ return args[0]; };};
     defaults["var"] = function(args){return function(vars){ if(args[0] == "pi") return Math.PI; if(args[0] == "e") return Math.E; return vars[args[0]]; };};
     defaults["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
-    defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
+    //defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars);};}
     defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
     defaults["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
     defaults["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};
@@ -386,6 +367,18 @@ GuppyAST.parse_e = function(tokens){
     return expression(10);
 }
 
+
+
+GuppyAST.tokenise_text = function(s){
+    return GuppyAST.tokenise(s, [
+	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
+	{"type":"operator", "re":"^[\-+*/,!^()]", "value":function(m){return m}},
+	{"type":"name", "re":"^[a-zA-Z_]+", "value":function(m){return m}},
+	{"type":"comma", "re":"^,", "value":function(m){return m}},
+	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
+    ]);
+}
+
 GuppyAST.parse_text = function(tokens){
     var symbol_table = {};
 
@@ -417,23 +410,37 @@ GuppyAST.parse_text = function(tokens){
     s = symbol("(blank)", 60);
     s.nud = function(){ return ["blank"];};
     
-    s = symbol("(function)", 60);
-    s.led = mul;
-    //s.nud = function(){ return [this.value, this.args || [], this.kwargs || {}];};
-    s.nud = function(){ return [this.value, this.args || []];};
-    
     s = symbol("(literal)", 60);
     s.led = mul;
     s.nud = function(){ return ["val", [this.value]] };
 
+    var get_args = function(){
+	var args = [];
+	advance()
+	if(token.id !== ")"){
+	    while(true){
+		args.push(expression(0));
+		if (token.id !== ",") {
+		    break;
+		}
+		advance(",");
+	    }
+	}
+	advance(")");
+	return args;
+    }
+    
     s = symbol("(var)", 60);
     s.led = mul;
-    s.nud = function(){ return ["var", [this.value]] };
+    s.nud = function(){
+	if(token.id == "("){
+	    return [this.value, get_args()];
+	}
+	else{
+	    return ["var", [this.value]]
+	}
+    };
     
-    s = symbol("(pass)", 60);
-    s.led = mul;
-    s.nud = function(){ return this.args[0] };
-
     var token;
     var token_nr = 0;
 
@@ -462,14 +469,6 @@ GuppyAST.parse_text = function(tokens){
 	} else if (a ===  "number") {
             a = "literal";
             o = symbol_table["(literal)"];
-	} else if (a ===  "pass") {
-            a = "pass";
-            o = symbol_table["(pass)"];
-	} else if (a ===  "function") {
-            a = "function";
-            o = symbol_table["(function)"];
-	    args = t.args;
-	    kwargs = t.kwargs;
 	} else {
             throw Error("Unexpected token",t);
 	}
@@ -477,7 +476,7 @@ GuppyAST.parse_text = function(tokens){
 	token.type = a;
 	token.value = v;
 	if(args) token.args = args;
-	if(kwargs) token.kwargs = kwargs;
+	//console.log("ADVD",JSON.stringify(token));
 	return token;
     };
 
@@ -485,13 +484,17 @@ GuppyAST.parse_text = function(tokens){
     var expression = function (rbp) {
 	var left;
 	var t = token;
+	//console.log("T1",JSON.stringify(token));
 	advance();
+	//console.log("T2",JSON.stringify(token));
 	left = t.nud();
 	while (rbp < token.lbp) {
             t = token;
             advance();
+	    //console.log("RB",JSON.stringify(token));
             left = t.led(left);
 	}
+	//console.log("POW", rbp, token.id, token.lbp);
 	return left;
     };
 
@@ -503,10 +506,36 @@ GuppyAST.parse_text = function(tokens){
 	return s;
     }
 
+    infix("=", 40);
+    infix("!=", 40);
+    infix("<", 40);
+    infix(">", 40);
+    infix("<=", 40);
+    infix(">=", 40);
+
     infix("+", 50);
     infix("-", 50);
     infix("*", 60);
     infix("/", 60);
+    
+    infix("!", 70, function(left){
+	return ["factorial", [left]];
+    });
+    
+    infix("^", 70, function(left){
+	return ["exponential", [left, expression(70)]];
+    });
+    
+    infix("(", 80, mul);
+
+    symbol("(").nud = function(){
+	var ans = expression(0);
+	advance(")");
+	return ans;
+    }
+    symbol(")");
+    symbol(",");
+    
     var prefix = function (id, nud) {
 	var s = symbol(id);
 	s.nud = nud || function () {
@@ -516,8 +545,6 @@ GuppyAST.parse_text = function(tokens){
     }
 
     prefix("-");
-    prefix("!");
-    prefix("typeof");
 
     if(tokens.length == 0) return ["blank"];
     
