@@ -103,11 +103,17 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     var binop_low = function(args, op, parent){
 	var d = args[0].cloneNode(true);
 	append_str(d, op);
-	append_doc(d, args[1]);
+	append_doc(d, args[1].cloneNode(true));
 	if(parent && (parent[0] == "*" || (parent[0] == "-" && parent[1].length == 1)))
 	    return make_sym("bracket", [d]);
 	else
 	    return d;
+    }
+    var binop_high = function(args, op){
+	var d = args[0].cloneNode(true);
+	append_doc(d, make_sym(op,[]));
+	append_doc(d, args[1].cloneNode(true));
+	return d;
     }
     var make_sym = function(name, args){
 	var sym = get_symbol(name, symbols);
@@ -122,13 +128,14 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	return base;
     }
     var functions = {};
-    
-    functions["*"] = function(args){
-	var d = args[0].cloneNode(true);
-	append_doc(d, make_sym("*",[]));
-	append_doc(d, args[1]);
-	return d;
-    };
+
+    var ops = ["*","<",">","=","<=",">=","!="];
+    for(var i = 0; i < ops.length; i++){
+	functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
+    }
+    // functions["*"] = function(args){
+    // 	return binop_high(args, "*");
+    // };
     functions["/"] = function(args){
 	return make_sym("frac",args);
     };
@@ -147,6 +154,12 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	base.documentElement.firstChild.setAttribute("s",String(args.length))
 	return base;
     };
+    // var comparators = {"<":"less",">":"greater","=":"eq","!=":"neq",">=":"geq","<=":"leq"};
+    // for(var c in comparators){
+    // 	functions[c] = function(args){
+    // 	    return make_sym(comparators[c], args);
+    // 	}
+    // }
     functions["_default"] = function(name, args){
 	return make_sym(name, args);
     }
@@ -372,7 +385,8 @@ GuppyAST.parse_e = function(tokens){
 GuppyAST.tokenise_text = function(s){
     return GuppyAST.tokenise(s, [
 	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
-	{"type":"operator", "re":"^[\-+*/,!^()]", "value":function(m){return m}},
+	{"type":"operator", "re":"^(!=|>=|<=)", "value":function(m){return m;}},
+	{"type":"operator", "re":"^[\-+*/,!^()<>]", "value":function(m){return m}},
 	{"type":"name", "re":"^[a-zA-Z_]+", "value":function(m){return m}},
 	{"type":"comma", "re":"^,", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
@@ -464,7 +478,7 @@ GuppyAST.parse_text = function(tokens){
 	} else if (a === "operator") {
             o = symbol_table[v];
             if (!o) {
-		t.error("Unknown operator.");
+		throw Error("Unknown operator.");
             }
 	} else if (a ===  "number") {
             a = "literal";
