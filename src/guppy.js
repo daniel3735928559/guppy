@@ -3,7 +3,7 @@ katex = require('../lib/katex/katex-modified.min.js');
 GuppyBackend = require('./guppy_backend.js');
 GuppyUtils = require('./guppy_utils.js');
 GuppySymbols = require('./guppy_symbols.js');
-GuppyHelp = require('./guppy_help.js');
+GuppySettings = require('./guppy_settings.js');
 
 /**
    @class
@@ -71,10 +71,10 @@ var Guppy = function(guppy_div, config){
     Guppy.max_tabIndex = i+1;
     
     this.buttons_div = document.createElement("div");
-    if(GuppyHelp.osk) this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { GuppyHelp.osk.attach(self); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppyHelp.toggle("settings", self); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppyHelp.toggle("symbols", self); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppyHelp.toggle("controls", self); }));
+    if(GuppySettings.osk) this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { GuppySettings.osk.attach(self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppySettings.toggle("settings", self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppySettings.toggle("symbols", self); }));
+    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppySettings.toggle("controls", self); }));
     this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
 
     guppy_div.addEventListener("mouseenter",function(e){self.buttons_div.style.display = "block";}, false);
@@ -125,6 +125,12 @@ Guppy.make_button = function(url, cb){
 	    e.preventDefault();
 	    return false;
 	};
+	b.onmouseenter = function(e){
+	    b.style.opacity = "1";
+	};
+	b.onmouseleave = function(e){
+	    b.style.opacity = "0.5";
+	};
     }
     return b;
 }
@@ -160,7 +166,7 @@ Guppy.reset_global_symbols = function(){
 */
 Guppy.init_symbols = function(symbols){
     var all_ready = function(){
-	GuppyHelp.init(GuppySymbols.symbols);
+	GuppySettings.init(GuppySymbols.symbols);
 	Guppy.register_keyboard_handlers();
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
