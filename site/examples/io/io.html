@@ -40,26 +40,26 @@
     </head>
 
     <body> 
-	<input type="text" id="input_field" placeholder="Enter math here"></input><br />
-	<div class="button" onclick="input('text')">Plain text</div>
+      <div class="label">Input: </div><input type="text" id="input_field" placeholder="Enter math here"></input><br />
+	<div class="label">Import: </div><div class="button" onclick="input('text')">Plain text</div>
 	<div class="button" onclick="input('ast')">AST</div>
 	<div class="button" onclick="input('xml')">XML</div><br />
-	<div id="guppy1" class="answerbox"></div><br />
-	<div class="button" onclick="output('latex')">LaTeX</div>
+	<div class="label">Edit: </div><div id="guppy1" class="answerbox"></div><br />
+	<div class="label">Export: </div><div class="button" onclick="output('latex')">LaTeX</div>
 	<div class="button" onclick="output('asciimath')">ASCIIMath</div>
 	<div class="button" onclick="output('text')">Plain text</div>
 	<div class="button" onclick="output('ast')">JSON AST</div>
 	<div class="button" onclick="output('eqns')">JSON equation list</div>
 	<div class="button" onclick="output('function')">Javascript</div>
 	<div class="button" onclick="output('xml')">XML</div><br />
-	<input type="text" id="output_field" placeholder="Output will appear here"></input><br />
+	<div class="label">Output: </div><input type="text" id="output_field" placeholder="Output will appear here"></input><br />
 	<div id="res"></div>
 	<style>
 	  .answerbox { width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text; display:inline-block; }
 	  div.button {cursor: pointer; color:white;min-height: 23px; display:inline-block; background-color:#66f; padding:10px; border-radius: 5px; margin: 5px 0 5px 0; display:inline-block;}
 	  input {min-height: 23px; display:inline-block; background-color:#ccc; padding:10px; border-radius: 5px; width:80%;}
 	  div.label {min-width: 70px; display:inline-block;}
-	  body {text-align: center;}
+	  /*body {text-align: center;}*/
 	</style>
 
     </body>
