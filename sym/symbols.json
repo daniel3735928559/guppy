@@ -306,7 +306,7 @@
 		     "ast":{
 			 "type":"operator"}},
 	 
-	 "values":{"eq":{"latex":"=","asciimath":" = ","type":"="},
+	 "values":{"equal":{"latex":"=","asciimath":" = ","type":"="},
 		   "leq":{"latex":"\\leq","asciimath":" <= ","type":"<="},
 		   "less":{"latex":"<","asciimath":" < ","type":"<"},
 		   "geq":{"latex":"\\geq","asciimath":" >= ","type":">="},

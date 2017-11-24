@@ -115,7 +115,7 @@ Guppy.active_guppy = null;
 Guppy.make_button = function(url, cb){
     var b = document.createElement("img");
     b.setAttribute("class","guppy-button");
-    b.style="cursor:pointer;height:16px;width:16px;padding-left:7px;opacity:0.5;";
+    b.style="cursor:pointer;height:24px;width:24px;padding:3px;opacity:0.5;";
     b.setAttribute("src", url);
     if(cb){
 	b.onclick = function(e){
@@ -544,7 +544,7 @@ Guppy.kb.k_syms = {
     "^":"exp",
     "*":"*",
     "(":"paren",
-    "=":"eq",
+    "=":"equal",
     "<":"less",
     ">":"greater",
     "_":"sub",

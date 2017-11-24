@@ -1,9 +1,8 @@
-$('document').ready(function() {
+window.onload = function() {
     Guppy.init_symbols(["../sym/symbols.json"]);
     output_type = "latex";
     var g1 = new Guppy("guppy1", {
 	"events":{
-	    //'debug':10,
             'right_end': function() {},
             'left_end': function() {},
             'change': update_output,
@@ -11,15 +10,13 @@ $('document').ready(function() {
 	},
 	"options":
 	{
-            //'blank_caret': "[?]",
-	    //'autoreplace':true,
 	    'cliptype':'latex',
             'empty_content': "{\\text{Click to start typing math!}}"
 	}
     });
     document.getElementById("sample_output").readOnly = true;
     update_output();
-});
+};
 
 function select_output(t){
     output_type = t;
@@ -37,17 +34,15 @@ function select_output(t){
 function update_output(){
     try{
 	content = Guppy.instances['guppy1'].backend.get_content(output_type)+"";
-	//content = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 	if(content.replace(/\s/g,"").length == 0) content = "Output " + output_type + " will appear here";
-	$('#sample_output')[0].value = content;
+	document.getElementById("sample_output").value = content;
     }
     catch(e){
-	$('#sample_output')[0].value = "Malformed input";
+	document.getElementById("sample_output").value = "Failed to parse input";
 	console.log(e.stack);
-	//throw e;
     }
 }
 
 function completion(target, data) {
-    $('#sample_output')[0].value = data.candidates.join(", ");
+    document.getElementById("sample_output").value = data.candidates.join(", ");
 }
