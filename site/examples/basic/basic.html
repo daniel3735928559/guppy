@@ -2,12 +2,12 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="../../../build/guppy.min.css">
+    <link rel="stylesheet" href="../../../build/guppy-default.min.css">
     <script type="text/javascript" src="../../../build/guppy.min.js"></script>
     <script type="text/javascript">
      window.onload = function(){
+	 Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
 	 var g1 = new Guppy("guppy1");
-	 Guppy.init_symbols(["../../../sym/symbols.json"]);
      }
     </script>
 </head>

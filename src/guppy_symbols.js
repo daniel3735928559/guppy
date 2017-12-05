@@ -1,5 +1,10 @@
 GuppySymbols = {"symbols":{}, "templates":{}};
 
+GuppySymbols.make_template_symbol = function(template_name, name, args){
+    var template = JSON.parse(JSON.stringify(GuppySymbols.templates[template_name]));
+    return GuppySymbols.eval_template(template, name, args);
+}
+
 GuppySymbols.eval_template = function(template, name, args){
     args['name'] = name;
     if(Object.prototype.toString.call(template) == "[object String]"){
@@ -14,6 +19,34 @@ GuppySymbols.eval_template = function(template, name, args){
 	    template[x] = GuppySymbols.eval_template(template[x], name, args)
 	}
 	return template;
+    }
+}
+
+GuppySymbols.add_symbols = function(syms){
+    var templates = syms["_templates"];
+    if(templates){
+	for(var t in templates){
+	    GuppySymbols.templates[t] = templates[t];
+	}
+	delete syms["_templates"];
+    }
+    for(var s in syms){
+	if(syms[s].template){
+	    for(var v in syms[s].values){
+		if(Object.prototype.toString.call(syms[s].values) == "[object Array]"){
+		    var name = syms[s].values[v];
+		    var args = {}
+		}
+		else{
+		    var name = v;
+		    var args = syms[s].values[v];
+		}
+		GuppySymbols.symbols[name] = GuppySymbols.make_template_symbol(syms[s].template, name, args);;
+	    }
+	}
+	else{
+	    GuppySymbols.symbols[s] = syms[s];
+	}
     }
 }
 

@@ -16,8 +16,7 @@
 		 Guppy.instances.guppy1.render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
-	     catch(e)
-	     document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;';
+	     catch(e){ throw e;document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;'; }
 	 }
 
 	 output = function(type){
@@ -29,42 +28,41 @@
 		 document.getElementById("output_field").value = content;
 		 document.getElementById("res").innerHTML = "";
 	     }
-	     catch(e)
-	     document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;';
+	     catch(e){ document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;'; }
 	 }
 
 	 window.onload = function(){
 	     Guppy.init_symbols(["../../../sym/symbols.json"]);
 	     var g1 = new Guppy("guppy1", {
-		 "options":{'empty_content': "\\color{gray}{\\text{Import LaTeX or plaintext math below}}" }
+		 "options":{'empty_content': "\\color{red}{\\text{[?]}}" }
 	     });
 	 }
 	&lt;/script&gt;
     &lt;/head&gt;
 
     &lt;body&gt; 
-	&lt;input type="text" id="input_field" placeholder="Enter math here"&gt;&lt;/input&gt;&lt;br /&gt;
-	&lt;div class="button" onclick="input('text')"&gt;Plain text&lt;/div&gt;
+      &lt;div class="label"&gt;Input: &lt;/div&gt;&lt;input type="text" id="input_field" placeholder="Enter math here"&gt;&lt;/input&gt;&lt;br /&gt;
+	&lt;div class="label"&gt;Import: &lt;/div&gt;&lt;div class="button" onclick="input('text')"&gt;Plain text&lt;/div&gt;
 	&lt;div class="button" onclick="input('ast')"&gt;AST&lt;/div&gt;
 	&lt;div class="button" onclick="input('xml')"&gt;XML&lt;/div&gt;&lt;br /&gt;
-	&lt;div id="guppy1" class="answerbox"&gt;&lt;/div&gt;&lt;br /&gt;
-	&lt;div class="button" onclick="output('latex')"&gt;LaTeX&lt;/div&gt;
+	&lt;div class="label"&gt;Edit: &lt;/div&gt;&lt;div id="guppy1" class="answerbox"&gt;&lt;/div&gt;&lt;br /&gt;
+	&lt;div class="label"&gt;Export: &lt;/div&gt;&lt;div class="button" onclick="output('latex')"&gt;LaTeX&lt;/div&gt;
 	&lt;div class="button" onclick="output('asciimath')"&gt;ASCIIMath&lt;/div&gt;
 	&lt;div class="button" onclick="output('text')"&gt;Plain text&lt;/div&gt;
 	&lt;div class="button" onclick="output('ast')"&gt;JSON AST&lt;/div&gt;
 	&lt;div class="button" onclick="output('eqns')"&gt;JSON equation list&lt;/div&gt;
 	&lt;div class="button" onclick="output('function')"&gt;Javascript&lt;/div&gt;
 	&lt;div class="button" onclick="output('xml')"&gt;XML&lt;/div&gt;&lt;br /&gt;
-	&lt;input type="text" id="output_field" placeholder="Output will appear here"&gt;&lt;/input&gt;&lt;br /&gt;
-	&lt;div id="res" /&gt;
-
+	&lt;div class="label"&gt;Output: &lt;/div&gt;&lt;input type="text" id="output_field" placeholder="Output will appear here"&gt;&lt;/input&gt;&lt;br /&gt;
+	&lt;div id="res"&gt;&lt;/div&gt;
 	&lt;style&gt;
-	 .answerbox { width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text; display:inline-block; }
-	 div.button {cursor: pointer; color:white;min-height: 23px; display:inline-block; background-color:#66f; padding:10px; border-radius: 5px; margin: 5px 0 5px 0; display:inline-block;}
-	 input {min-height: 23px; display:inline-block; background-color:#ccc; padding:10px; border-radius: 5px; width:80%;}
-	 div.label {min-width: 70px; display:inline-block;}
-	 body {text-align: center;}
+	  .answerbox { width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text; display:inline-block; }
+	  div.button {cursor: pointer; color:white;min-height: 23px; display:inline-block; background-color:#66f; padding:10px; border-radius: 5px; margin: 5px 0 5px 0; display:inline-block;}
+	  input {min-height: 23px; display:inline-block; background-color:#ccc; padding:10px; border-radius: 5px; width:80%;}
+	  div.label {min-width: 70px; display:inline-block;}
+	  /*body {text-align: center;}*/
 	&lt;/style&gt;
+
     &lt;/body&gt;
 
 &lt;/html&gt;

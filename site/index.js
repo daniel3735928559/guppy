@@ -1,5 +1,5 @@
 window.onload = function() {
-    Guppy.init_symbols(["../sym/symbols.json"]);
+    Guppy.init({"symbols":"../sym/symbols.json"});
     output_type = "latex";
     var g1 = new Guppy("guppy1", {
 	"events":{

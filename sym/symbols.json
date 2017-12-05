@@ -278,40 +278,47 @@
 	       },
     
     "_templates":
-    [
-	{"template":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
-			       "asciimath":" {$name}({$1})"},
-		     "attrs":{
-			 "type":"{$name}",
-			 "group":"functions"},
-		     "args":[
-			 {"delete":"1"}
-		     ]},
-	 "values":["sin","cos","tan","sec","csc","cot","log","ln"]},
+    {
+	"func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
+			  "asciimath":" {$name}({$1})"},
+		"attrs":{
+		    "type":"{$name}",
+		    "group":"functions"},
+		"args":[
+		    {"delete":"1"}
+		]},
 	
-	{"template":{"output":{"latex":"\\{$name}",
-			       "asciimath":" {$name} "},
-		     "attrs":{
-			 "group":"greek",
-			 "char":"yes",
-			 "type":"{$name}"}},
-	 "values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
+	"char":{"output":{"latex":"\\{$name}",
+			   "asciimath":" {$name} "},
+		 "attrs":{
+		     "group":"greek",
+		     "char":"yes",
+		     "type":"{$name}"}},
 
-	{"template":{"output":{"latex":"{$latex}",
-			       "asciimath":"{$asciimath}"},
-		     "attrs":{
-			 "group":"operations",
-			 "char":"yes",
-			 "type":"{$type}"},
-		     "ast":{
-			 "type":"operator"}},
-	 
-	 "values":{"equal":{"latex":"=","asciimath":" = ","type":"="},
+	"binop":{"output":{"latex":"{$latex}",
+			   "asciimath":"{$asciimath}"},
+		 "attrs":{
+		     "group":"operations",
+		     "char":"yes",
+		     "type":"{$type}"},
+		 "ast":{
+		     "type":"operator"}}
+    },
+
+    "functions":{
+	"template":"func",
+	"values":["sin","cos","tan","sec","csc","cot","log","ln"]},
+    
+    "greek":{
+	"template":"char",
+	"values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
+
+    "comparisons":{
+	"template":"binop",
+	"values":{"equal":{"latex":"=","asciimath":" = ","type":"="},
 		   "leq":{"latex":"\\leq","asciimath":" <= ","type":"<="},
 		   "less":{"latex":"<","asciimath":" < ","type":"<"},
 		   "geq":{"latex":"\\geq","asciimath":" >= ","type":">="},
 		   "greater":{"latex":">","asciimath":" > ","type":">"},
-		   "neq":{"latex":"\\neq","asciimath":" != ","type":"!="}}}
-	
-    ]
+		  "neq":{"latex":"\\neq","asciimath":" != ","type":"!="}}}
 }

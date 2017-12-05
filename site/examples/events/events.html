@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../../build/guppy-default.min.css">
+    <script type="text/javascript" src="../../../build/guppy.min.js"></script>
+    <script type="text/javascript">
+     window.onload = function(){
+	 var f = function(e){
+	     e.target = e.target.id;
+	     event_area.value = JSON.stringify(e) + "\n" + event_area.value
+	 }
+	 Guppy.init({"events":{"ready":f,
+			       "change":f,
+			       "done":f,
+			       "completion":f,
+			       "focus":f,
+			       "left_end":f,
+			       "right_end":f},
+		     "symbols":"../../../sym/symbols.json"});
+	 var g1 = new Guppy("guppy1");
+	 var event_area = document.getElementById("event_info");
+     }
+	     
+    </script>
+</head>
+
+<body>
+    <div id="guppy1" style="width: 400px"></div>
+    <textarea id="event_info" style="width:800px;height:500px;"></textarea>
+</body>
+
+</html>

@@ -195,6 +195,7 @@ GuppyAST.to_function = function(ast, functions){
     defaults = {}
     defaults["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
     defaults["+"] = function(args){return function(vars){return args[0](vars)+args[1](vars)};};
+    defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
     defaults["val"] = function(args){return function(vars){ return args[0]; };};

@@ -27,21 +27,21 @@ GuppySettings = require('./guppy_settings.js');
       Argument will have a single key `focused` which will be `true`
       or `false` according to whether the editor is newly focused or
       newly unfocused (respectively).
-   @param {Object} [config.options] - A dictionary of options
-   @param {string} [config.options.xml_content=<m><e/></m>] - An XML
+   @param {Object} [config.settings] - A dictionary of settings
+   @param {string} [config.settings.xml_content=<m><e/></m>] - An XML
       string with which to initialise the editor's state.
-   @param {boolean} [config.options.autoreplace=true] - Determines
+   @param {string} [config.settings.autoreplace="auto"] - Determines
       whether or not to autoreplace typed text with the corresponding
       symbols when possible.
-   @param {string} [config.options.blank=""] - A LaTeX string that
+   @param {string} [config.settings.blank=""] - A LaTeX string that
       specifies what the caret should look like when in a blank spot.
-   @param {string} [config.options.empty_content=\color{red}{[?]}] - A
+   @param {string} [config.settings.empty_content=\color{red}{[?]}] - A
       LaTeX string that will be displayed when the editor is both
       inactive and contains no content.
-   @param {string[]} [config.options.blacklist=[]] - A list of string
+   @param {string[]} [config.settings.blacklist=[]] - A list of string
       symbol names, corresponding to symbols that should not be
       allowed in this instance of the editor.
-   @param {string} [config.options.cliptype] - A string, either
+   @param {string} [config.settings.cliptype] - A string, either
       "text" or "latex".  If this option is present, when text is
       placed onto the editor clipboard, the contents of the editor
       will be rendered into either plain text or LaTeX (depending on
@@ -53,9 +53,10 @@ var Guppy = function(guppy_div, config){
     var self = this;
     var config = config || {};
     var events = config['events'] || {}
-    var options = config['options'] || {};
-
+    var settings = config['settings'] || {};
+    
     if(typeof guppy_div === 'string' || guppy_div instanceof String){
+	this.id = guppy_div;
 	guppy_div = document.getElementById(guppy_div);
     }
     
@@ -65,22 +66,21 @@ var Guppy = function(guppy_div, config){
 	while(document.getElementById("guppy_uid_"+i)) i++;
 	Guppy.max_uid = i;
 	guppy_div.id = "guppy_uid_"+i;
+	this.id = guppy_div.id;
     }
     var i = Guppy.max_tabIndex || 0;
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;
     
     this.buttons_div = document.createElement("div");
+    this.buttons_div.setAttribute("class","guppy_buttons");
     if(GuppySettings.osk) this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { GuppySettings.osk.attach(self); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppySettings.toggle("settings", self); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppySettings.toggle("symbols", self); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppySettings.toggle("controls", self); }));
-    this.buttons_div.style = "position:absolute;bottom:0;right:0;padding:0 3px 3px 0;display:none;";
 
-    guppy_div.addEventListener("mouseenter",function(e){self.buttons_div.style.display = "block";}, false);
-    guppy_div.addEventListener("mouseleave",function(e){self.buttons_div.style.display = "none";}, false);
     this.editor_active = true;
-    this.empty_content = options['empty_content'] || "\\red{[?]}"
+    //this.empty_content = settings['empty_content'] || "\\red{[?]}"
     this.editor = guppy_div;
     this.blacklist = [];
     this.autoreplace = true;
@@ -115,8 +115,7 @@ Guppy.active_guppy = null;
 Guppy.make_button = function(url, cb){
     var b = document.createElement("img");
     b.setAttribute("class","guppy-button");
-    b.style="cursor:pointer;height:24px;width:24px;padding:3px;opacity:0.5;";
-    b.setAttribute("src", url);
+    b.setAttribute("src", GuppySettings.config.path + "/" + url);
     if(cb){
 	b.onclick = function(e){
 	    cb(e);
@@ -124,12 +123,6 @@ Guppy.make_button = function(url, cb){
 	    if(e.stopPropagation) e.stopPropagation();
 	    e.preventDefault();
 	    return false;
-	};
-	b.onmouseenter = function(e){
-	    b.style.opacity = "1";
-	};
-	b.onmouseleave = function(e){
-	    b.style.opacity = "0.5";
 	};
     }
     return b;
@@ -164,72 +157,77 @@ Guppy.reset_global_symbols = function(){
     @memberof Guppy
     @param {string[]} symbols - A list of URLs for symbol JSON files to request
 */
-Guppy.init_symbols = function(symbols){
+Guppy.init = function(config){
     var all_ready = function(){
 	GuppySettings.init(GuppySymbols.symbols);
 	Guppy.register_keyboard_handlers();
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].ready = true;
 	    Guppy.instances[i].render(true);
+
+	    // Set backend symbols
 	    Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+
+	    // Set backend settings
+	    // for(var s in GuppySettings.config.settings){
+	    // 	Guppy.instances[i].backend.settings[s] = JSON.parse(JSON.stringify(GuppySettings.config.settings[s]));
+	    // }
+
+	    // Set backend events
+	    for(var e in GuppySettings.config.events){
+		Guppy.instances[i].backend.events[e] = GuppySettings.config.events[e];
+	    }
 	}
 	GuppyBackend.ready = true;
 	for(var i in Guppy.instances){
 	    Guppy.instances[i].backend.ready = true;
 	    Guppy.instances[i].backend.fire_event("ready");
-	    Guppy.instances[i].events["ready"] = null;
 	}
     }
-    if(!(Array.isArray(symbols))){
-	symbols = [symbols];
+    if(config.settings){
+	var settings = JSON.parse(JSON.stringify(config.settings));
+	for(var s in settings){
+	    GuppySettings.config.settings[s] = settings[s];
+	}
     }
-    var calls = [];
-    for(var i = 0; i < symbols.length; i++){
-	var x = function outer(j){
-	    return function(callback){
-		var req = new XMLHttpRequest();
-		req.onload = function(){
-		    var syms = JSON.parse(this.responseText);
-		    var templates = syms["_templates"];
-		    if(templates){
-			for(var t in templates){
-			    GuppySymbols.templates[t] = templates[t];
-			}
-			for(var i = 0; i < templates.length; i++){
-			    var t = templates[i].template;
-			    for(var v in templates[i].values){
-				if(Object.prototype.toString.call(templates[i].values) == "[object Array]"){
-				    var name = templates[i].values[v];
-				    var args = {}
-				}
-				else{
-				    var name = v;
-				    var args = templates[i].values[v];
-				}
-				var sym = GuppySymbols.eval_template(JSON.parse(JSON.stringify(t)), name, args);
-				GuppySymbols.symbols[name] = sym;
-			    }
-			}
-			delete syms["_templates"];
-		    }
-		    for(var s in syms){
-			GuppySymbols.symbols[s] = syms[s];
-		    }
-		    callback();
-		};
-		req.open("get", symbols[j], true);
-		req.send();
-	    }
-	}(i);
-	calls.push(x);
+    if(config.events){
+	GuppySettings.config.events = config.events;
     }
-    calls.push(all_ready);
-    var j = 0;
-    var cb = function(){
-	j += 1;
-	if(j < calls.length) calls[j](cb);
+    if(config.path){
+	GuppySettings.config.path = config.path;
     }
-    if(calls.length > 0) calls[0](cb);
+    if(config.symbols){
+	var symbols = config.symbols;
+	if(!(Array.isArray(symbols))){
+	    symbols = [symbols];
+	}
+	var calls = [];
+	for(var i = 0; i < symbols.length; i++){
+	    var x = function outer(j){
+		return function(callback){
+		    var req = new XMLHttpRequest();
+		    req.onload = function(){
+			var syms = JSON.parse(this.responseText);
+			GuppySymbols.add_symbols(syms);
+			callback();
+		    };
+		    req.open("get", symbols[j], true);
+		    req.send();
+		}
+	    }(i);
+	    calls.push(x);
+	}
+	calls.push(all_ready);
+	var j = 0;
+	var cb = function(){
+	    j += 1;
+	    if(j < calls.length) calls[j](cb);
+	}
+	if(calls.length > 0) calls[0](cb);
+    }
+    else{
+	all_ready();
+    }
 }
 
 Guppy.prototype.is_changed = function(){
@@ -470,7 +468,7 @@ Guppy.prototype.render_node = function(t){
 */
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.backend.doc.is_blank()){
-	katex.render(this.empty_content,this.editor);
+	katex.render(this.backend.setting("empty_content"),this.editor);
 	this.editor.appendChild(this.buttons_div);
 	return;
     }

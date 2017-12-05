@@ -2,26 +2,43 @@ GuppySymbols = require('./guppy_symbols.js');
 
 
 GuppySettings = {}
-GuppySettings.controls = document.createElement("div");
-GuppySettings.controls.setAttribute("class","guppy_help");
-GuppySettings.controls.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-GuppySettings.controls.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
+GuppySettings.config = {};
+GuppySettings.config.path = "";
+GuppySettings.config.events = {};
+GuppySettings.config.settings = {
+    "autoreplace":"auto",
+    "empty_content":"\\blue{[?]}",
+    "blank_caret":"\\red{[?]}",
+    "blacklist":[],
+    "cliptype":"latex",
+};
+
+GuppySettings.settings_options = {
+    "autoreplace":["auto","whole","none"],
+    "cliptype":["latex","text","xml","ast","asciimath"],
+};
+
+GuppySettings.panels = {};
+GuppySettings.panels.controls = document.createElement("div");
+GuppySettings.panels.controls.setAttribute("class","guppy_help");
+GuppySettings.panels.controls.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
+GuppySettings.panels.controls.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
 <style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
 <h3>Controls</h3><table id="guppy_help_table"><tr><td><b>Press...</b></td><td><b>...to do</b></td></tr></table>`;
 
-GuppySettings.symbols = document.createElement("div");
-GuppySettings.symbols.setAttribute("class","guppy_help");
-GuppySettings.symbols.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-GuppySettings.symbols.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
+GuppySettings.panels.symbols = document.createElement("div");
+GuppySettings.panels.symbols.setAttribute("class","guppy_help");
+GuppySettings.panels.symbols.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
+GuppySettings.panels.symbols.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
 <style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
 <h3>Symbols</h3><table id="guppy_syms_table"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>`;
 
-GuppySettings.settings = document.createElement("div");
-GuppySettings.settings.setAttribute("class","guppy_help");
-GuppySettings.settings.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-GuppySettings.settings.innerHTML = `<p>Global settings: </p>
+GuppySettings.panels.settings = document.createElement("div");
+GuppySettings.panels.settings.setAttribute("class","guppy_help");
+GuppySettings.panels.settings.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
+GuppySettings.panels.settings.innerHTML = `<p>Global settings: </p>
 <style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
-<h3>Settings</h3><table id="guppy_settings_table"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>`;
+<h3>Settings</h3><table id="guppy_settings_table"></table>`;
 
 GuppySettings.div_names = ["controls","symbols","settings"];
 
@@ -42,17 +59,18 @@ var make_x = function(elt){
 
 GuppySettings.hide_all = function(){
     for(var i = 0; i < GuppySettings.div_names.length; i++)
-	GuppySettings[GuppySettings.div_names[i]].style.display = "none";
+	GuppySettings.panels[GuppySettings.div_names[i]].style.display = "none";
 }
 
 GuppySettings.toggle = function(card, g){
     if(GuppySettings.div_names.indexOf(card) >= 0){
-	if(GuppySettings[card].style.display == "none"){
+	GuppySettings.init_card(card, g);
+	if(GuppySettings.panels[card].style.display == "none"){
 	    GuppySettings.hide_all();
 	    var r = g.editor.getBoundingClientRect();
-	    GuppySettings[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
-	    GuppySettings[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
-	    GuppySettings[card].style.display = "block";
+	    GuppySettings.panels[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+	    GuppySettings.panels[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
+	    GuppySettings.panels[card].style.display = "block";
 	}
 	else{
 	    GuppySettings.hide_all();
@@ -60,10 +78,47 @@ GuppySettings.toggle = function(card, g){
     }
 }
 
+GuppySettings.init_card = function(card, g){
+    if(card == "settings"){
+	document.getElementById("guppy_settings_table").innerHTML = "";
+	for(var s in GuppySettings.settings_options){
+	    var opt = GuppySettings.settings_options[s];
+	    var val = g.backend.setting(s);
+	    if(opt.length == 0){
+		//make_row("guppy_settings_table",s,`<input id="guppy_settings_input_${s}" type="text" onchange="Guppy.instances['${g.id}'].backend.settings['${s}']=document.getElementById('guppy_settings_input_${s}').value;" value="`+val+`"></input>`);
+		make_row("guppy_settings_table",s,`<input id="guppy_settings_input_${s}" type="text" onchange="GuppySettings.config.settings['${s}']=document.getElementById('guppy_settings_input_${s}').value;" value="`+val+`"></input>`);
+	    }
+	    else{
+		//var selector = `<select id="guppy_settings_select_${s}" onchange="Guppy.instances['${g.id}'].backend.settings['${s}']=document.getElementById('guppy_settings_select_${s}').value;">`;
+		var sel = document.createElement("select");
+		sel.setAttribute("id",`guppy_settings_select_${s}`);
+		sel.onchange = function(ss){
+		    return function(e){
+			GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
+			console.log("ASD",ss,GuppySettings.config.settings[ss]);
+		    }
+		}(s);
+		for(var i = 0; i < opt.length; i++){
+		    var o = document.createElement("option");
+		    o.setAttribute("value",opt[i]);
+		    o.innerHTML = opt[i];
+		    sel.appendChild(o);
+		}
+		var row = document.createElement("tr");
+		row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
+		var td = document.createElement("td");
+		td.appendChild(sel);
+		row.appendChild(td);
+		document.getElementById("guppy_settings_table").appendChild(row);
+	    }
+	}
+    }
+}
+
 GuppySettings.init = function(symbols){
     for(var i = 0; i < GuppySettings.div_names.length; i++){
-	make_x(GuppySettings[GuppySettings.div_names[i]]);
-	document.body.appendChild(GuppySettings[GuppySettings.div_names[i]])
+	make_x(GuppySettings.panels[GuppySettings.div_names[i]]);
+	document.body.appendChild(GuppySettings.panels[GuppySettings.div_names[i]])
     }
     
     make_row("guppy_help_table","left/right arrows","Move cursor");
@@ -77,6 +132,8 @@ GuppySettings.init = function(symbols){
     make_row("guppy_help_table","shift+ctrl+up/down","Add copy of current row to matrix");
     make_row("guppy_help_table","ctrl+backspace","Delete current entry in list or column in matrix");
     make_row("guppy_help_table","ctrl+shift+backspace","Delete current row in matrix");
+
+    
     
     for(var s in symbols){
 	var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");

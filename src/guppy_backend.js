@@ -3,6 +3,7 @@ katex = require('../lib/katex/katex-modified.min.js');
 GuppyUtils = require('./guppy_utils.js');
 GuppyDoc = require('./guppy_doc.js');
 GuppySymbols = require('./guppy_symbols.js');
+GuppySettings = require('./guppy_settings.js');
 
 String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this.slice(idx)); };
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
@@ -17,13 +18,13 @@ var GuppyBackend = function(config){
     var self = this;
     var config = config || {};
     var events = config['events'] || {};
-    var options = config['options'] || {};
+    var settings = config['settings'] || {};
     this.parent = config['parent'];
+    this.id = this.parent.editor.id;
     
-    this.blacklist = [];
-    this.autoreplace = true;
     this.ready = false;
     this.events = {};
+    this.settings = {};
     
     var evts = ["ready", "change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
     
@@ -36,11 +37,11 @@ var GuppyBackend = function(config){
     
     for(var i = 0; i < opts.length; i++){
 	var p = opts[i];
-	if(p in options) this[p] = options[p];
+	if(p in settings) this.settings[p] = settings[p];
     }
 
     this.symbols = {};
-    this.doc = new GuppyDoc(options["xml_content"]);
+    this.doc = new GuppyDoc(settings["xml_content"]);
     
     this.current = this.doc.root().firstChild;
     this.caret = 0;
@@ -63,6 +64,16 @@ GuppyBackend.SEL_NONE = 0;
 GuppyBackend.SEL_CURSOR_AT_START = 1;
 GuppyBackend.SEL_CURSOR_AT_END = 2;
 GuppyBackend.clipboard = null;
+
+GuppyBackend.prototype.setting = function(name){
+    var ans = this.settings[name] || GuppySettings.config.settings[name];
+    console.log("ANS",ans,this.settings[name]);
+    return ans;
+}
+
+GuppyBackend.prototype.event = function(name){
+    return this.events[name] || GuppySettings.config.events[name];
+}
 
 /** 
     Get the content of the editor
@@ -114,7 +125,9 @@ GuppyBackend.prototype.import_ast = function(ast){
 GuppyBackend.prototype.fire_event = function(event, args){
     args = args || {};
     args.target = this.parent || this;
-    if(this.events[event] && this.ready && GuppyBackend.ready) this.events[event](args);
+    args.type = event;
+    var ev = this.event(event);
+    if(ev && this.ready && GuppyBackend.ready) ev(args);
 }
 
 /** 
@@ -230,7 +243,7 @@ GuppyBackend.prototype.add_classes_cursors = function(n,path){
 	    if(text_node) caret_text = "\\_";
 	    else if(n.parentNode.childElementCount == 1){
 		if(this.current == n){
-		    var blank_caret = this.blank_caret || (GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET);
+		    var blank_caret = this.setting("blank_caret") || (GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET);
 		    ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
 		}
 		else if(this.temp_cursor.node == n)
@@ -538,7 +551,8 @@ GuppyBackend.prototype.insert_string = function(s){
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
-    if(this.autoreplace) this.check_for_symbol();
+    if(this.setting("autoreplace") == "auto") this.check_for_symbol(false);
+    if(this.setting("autoreplace") == "whole") this.check_for_symbol(true);
 }
 
 /** 
@@ -550,13 +564,22 @@ GuppyBackend.prototype.sel_copy = function(){
     var sel = this.sel_get();
     if(!sel) return;
     GuppyBackend.clipboard = [];
-    var clip_text = "";
+    var cliptype = this.setting("cliptype");
+    if(cliptype != "none") var clip_doc = new GuppyDoc("<m></m>");
     for(var i = 0; i < sel.node_list.length; i++){
 	var node = sel.node_list[i].cloneNode(true);
 	GuppyBackend.clipboard.push(node);
-	if(this.cliptype) clip_text += this.doc.manual_render(this.cliptype, node);
+	if(cliptype != "none") clip_doc.root().appendChild(node.cloneNode(true));//clip_text += this.doc.manual_render(cliptype, node);
     }
-    if(this.cliptype) this.system_copy(clip_text);
+    if(cliptype != "none"){
+	try{
+	    var cliptext = clip_doc.get_content(cliptype);
+	}
+	catch(e){
+	    var cliptext = "Syntax error";
+	}
+	this.system_copy(cliptext);
+    }
     this.sel_clear();
 }
 
@@ -585,13 +608,14 @@ GuppyBackend.prototype.sel_cut = function(){
     var node_list = this.sel_delete();
     if(!node_list) return;
     GuppyBackend.clipboard = [];
+    var cliptype = this.setting("cliptype");
     var clip_text = "";
     for(var i = 0; i < node_list.length; i++){
 	var node = node_list[i].cloneNode(true);
 	GuppyBackend.clipboard.push(node);
-	if(this.cliptype) clip_text += this.doc.manual_render(this.cliptype, node);
+	if(cliptype != "none") clip_text += this.doc.manual_render(cliptype, node);
     }
-    if(this.cliptype) this.system_copy(clip_text);
+    if(cliptype != "none") this.system_copy(clip_text);
     this.sel_clear();
     this.checkpoint();
 }
@@ -1240,7 +1264,9 @@ GuppyBackend.prototype.checkpoint = function(){
     this.undo_now++;
     this.undo_data[this.undo_now] = base.cloneNode(true);
     this.undo_data.splice(this.undo_now+1, this.undo_data.length);
-    this.fire_event("change",{"old":this.undo_data[this.undo_now-1],"new":this.undo_data[this.undo_now]});
+    var old_data = this.undo_data[this.undo_now-1] ? (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now-1]) : "[none]";
+    var new_data = (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now]);
+    this.fire_event("change",{"old":old_data,"new":new_data});
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
     if(this.parent && this.parent.ready) this.parent.render(true);
@@ -1268,6 +1294,9 @@ GuppyBackend.prototype.undo = function(){
     if(this.undo_now <= 0) return;
     this.undo_now--;
     this.restore(this.undo_now);
+    var old_data = this.undo_data[this.undo_now+1] ? (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now+1]) : "[none]";
+    var new_data = (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now]);
+    this.fire_event("change",{"old":old_data,"new":new_data});
 }
 
 /** 
@@ -1280,6 +1309,9 @@ GuppyBackend.prototype.redo = function(){
     if(this.undo_now >= this.undo_data.length-1) return;
     this.undo_now++;
     this.restore(this.undo_now);
+    var old_data = this.undo_data[this.undo_now-1] ? (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now-1]) : "[none]";
+    var new_data = (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now]);
+    this.fire_event("change",{"old":old_data,"new":new_data});
 }
 
 /** 
@@ -1305,27 +1337,38 @@ GuppyBackend.prototype.problem = function(message){
 }
 
 GuppyBackend.prototype.is_blacklisted = function(symb_type){
-    for(var i = 0; i < this.blacklist.length; i++)
-	if(symb_type == this.blacklist[i]) return true;
+    var blacklist = this.setting("blacklist");
+    for(var i = 0; i < blacklist.length; i++)
+	if(symb_type == blacklist[i]) return true;
     return false;
 }
 
-GuppyBackend.prototype.check_for_symbol = function(){
+GuppyBackend.prototype.check_for_symbol = function(whole_node){
     var instance = this;
     if(GuppyUtils.is_text(this.current)) return;
-    for(var s in this.symbols){
-	if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(GuppyUtils.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){
-	    var temp = instance.current.firstChild.nodeValue;
-	    var temp_caret = instance.caret;
-	    instance.current.firstChild.nodeValue = instance.current.firstChild.nodeValue.slice(0,instance.caret-s.length)+instance.current.firstChild.nodeValue.slice(instance.caret);
-	    instance.caret -= s.length;
-	    var success = instance.insert_symbol(s);
-	    if(!success){
-		instance.current.firstChild.nodeValue = temp;
-		instance.caret = temp_caret;
-	    }
-	    break;
+    var sym = "";
+    if(whole_node){
+	var n = instance.current.firstChild.nodeValue.substring(instance.space_caret, instance.caret);
+	var m = /[a-zA-Z_]+$/.exec(n);
+	if(m){
+	    var s = m[0];
+	    if(this.symbols[s]) sym = s;
 	}
+    }
+    else
+	for(var s in this.symbols)
+	    if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(GuppyUtils.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){ sym = s; }
+
+    if(sym == "") return;
+    
+    var temp = instance.current.firstChild.nodeValue;
+    var temp_caret = instance.caret;
+    instance.current.firstChild.nodeValue = instance.current.firstChild.nodeValue.slice(0,instance.caret-sym.length)+instance.current.firstChild.nodeValue.slice(instance.caret);
+    instance.caret -= sym.length;
+    var success = instance.insert_symbol(sym);
+    if(!success){
+	instance.current.firstChild.nodeValue = temp;
+	instance.caret = temp_caret;
     }
 }
 
