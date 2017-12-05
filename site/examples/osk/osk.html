@@ -11,10 +11,12 @@
     <script type="text/javascript" src="../../../build/guppy.min.js"></script>
     <script type="text/javascript">
      window.onload = function(){
+	 OSK = new GuppyOSK({"goto_tab":"qwerty"});
+	 Guppy.init({"settings":{"osk":OSK},
+		     "path":"../../../build",
+		     "symbols":"../../../sym/symbols.json"});
 	 var g1 = new Guppy("guppy1");
 	 var g2 = new Guppy("guppy2");
-	 Guppy.init_symbols(["../../../sym/symbols.json"]);
-	 OSK = new GuppyOSK({"goto_tab":"qwerty"});
      };
     </script>
 </head>

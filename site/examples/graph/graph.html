@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<link rel="stylesheet" href="../../../build/guppy.min.css">
+	<link rel="stylesheet" href="../../../build/guppy-default.min.css">
 	<script type="text/javascript" src="../../../build/guppy.min.js"></script>
 	<script type="text/javascript" src="./fabric.min.js"></script>
     </head>
@@ -10,6 +10,7 @@
 	
 	<script type="text/javascript">
 	 window.onload = function(){
+	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
 	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
 		 try{
 		     var fn = Guppy.instances.guppy1.backend.get_content("function");
@@ -18,7 +19,6 @@
 		 }
 		 catch(e){draw_axes();}
 	     }}});
-	     Guppy.init_symbols(["../../../sym/symbols.json"]);
 	 }
 	 var canvas;
 	 var r = 200; // radius of canvas
