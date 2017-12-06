@@ -9,13 +9,14 @@
 	 input = function(type){
 	     try{
 		 var data = document.getElementById("input_field").value;
+		 if(type == "clear") Guppy.instances.guppy1.backend.set_content("<m><e/></m>");
 		 if(type == "xml") Guppy.instances.guppy1.backend.set_content(data);
 		 if(type == "ast") Guppy.instances.guppy1.backend.import_ast(JSON.parse(data));
 		 if(type == "text") Guppy.instances.guppy1.backend.import_text(data);
 		 Guppy.instances.guppy1.render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
-	     catch(e){ throw e;document.getElementById("res").innerHTML = '<font color="red">Parsing error</font>'; }
+	     catch(e){ document.getElementById("res").innerHTML = '<font color="red">Parsing error</font>'; console.log(e.stack); }
 	 }
 
 	 output = function(type){
@@ -23,7 +24,6 @@
 		 content = Guppy.instances['guppy1'].backend.get_content(type);
 		 if(type == "function") content = "Function with variables: " + JSON.stringify(content.vars);
 		 if(type == "eqns") content = JSON.stringify(content);
-		 //if(type == "ast") content = JSON.stringify(content);
 		 document.getElementById("output_field").value = content;
 		 document.getElementById("res").innerHTML = "";
 	     }
@@ -41,7 +41,8 @@
 
     <body> 
       <div class="label">Input: </div><input type="text" id="input_field" placeholder="Enter math here"></input><br />
-	<div class="label">Import: </div><div class="button" onclick="input('text')">Plain text</div>
+	<div class="label">Import: </div><div class="button" onclick="input('clear')">Clear</div>
+	<div class="button" onclick="input('text')">Plain text</div>
 	<div class="button" onclick="input('ast')">AST</div>
 	<div class="button" onclick="input('xml')">XML</div><br />
 	<div class="label">Edit: </div><div id="guppy1" class="answerbox"></div><br />
@@ -55,7 +56,7 @@
 	<div class="label">Output: </div><input type="text" id="output_field" placeholder="Output will appear here"></input><br />
 	<div id="res"></div>
 	<style>
-	  .answerbox { width: 400px; }
+	  .answerbox { width: 400px; display:inline-block; }
 	  div.button {cursor: pointer; color:white;min-height: 23px; display:inline-block; background-color:#66f; padding:10px; border-radius: 5px; margin: 5px 0 5px 0; display:inline-block;}
 	  input {min-height: 23px; display:inline-block; background-color:#ccc; padding:10px; border-radius: 5px; width:80%;}
 	  div.label {min-width: 70px; display:inline-block;}

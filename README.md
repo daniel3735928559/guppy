@@ -28,7 +28,8 @@ A stripped-down version of the demo page would look like:
    <script type="text/javascript">
       window.onload = function(){
          Guppy.init({"path":"build",
-                     "events":{"change":function(e){ document.getElementById("output").innerHTML = `<pre>${e.target.backend.get_content("latex")}</pre>` }},
+                     "events":{"change":function(e){ 
+					    document.getElementById("output").innerHTML = `<pre>${e.target.backend.get_content("latex")}</pre>`; }},
                      "symbols":"sym/symbols.json"});
          new Guppy("guppy1");
       }
@@ -50,7 +51,7 @@ A stripped-down version of the demo page would look like:
 
 * Pass a list of paths to various symbol definition files (several of
   which are in `sym/`) as well as the string `"builtins"` (if you want
-  the built-in symbols, such as Greek letters) to `Guppy.get_symbols`
+  the built-in symbols, such as Greek letters) to `Guppy.init`
   as in the example above.  This only needs to happen once per page.
   Symbol names from files that appear later in the list will override
   symbol names from files earlier in the list.

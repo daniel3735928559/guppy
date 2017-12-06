@@ -62,7 +62,11 @@
 
 	<p>Specifically, if you want to take user input and have the editor output it as, say, SymPy for processing on the server side, then this has been intentionally made difficult since such a setup almost always permits a malicious (or merely curious) user to easily take over the server.  Removing builtins will not save you, chroot will not save you, and containers will also probably not save you.  If the significance of <pre>().__class__.__base__.__subclasses__()</pre> is lost on you, you definitely shouldn't do this.  Even if you understand why that is relevant, you still most likely should not do this.</p>
 
-	<p>If you want to process your mathematical expressions server-side, then consume them as data (probably via the syntax tree output) and evaluate them with the usual recursive process.  Convenience methods exist in the code for doing this in Javascript.</p>
+	<p>If you want to process your mathematical expressions
+	server-side, our advice is that you consume them as data, (for
+	example via the "ast" syntax tree output) and evaluate them
+	with the usual recursive process.  Convenience methods exist
+	in the GuppyDoc class for doing this in Javascript.</p>
 
 	<h2>Can I make the cursor orange?</h2>
 
@@ -70,28 +74,29 @@
 
 	<h2>What are the future plans for this editor?</h2>
 	
-	<p>If PostScript is the assembly language of typesetting, then
-	perhaps LaTeX is the C, and this XML format can be one of many
-	competing higher-level languages for specifying mathematical
-	formulae.  Not optimal for all use-cases, but addressing
-	positively the needs of a few.</p>
+	<p>If PostScript is the assembly language of typesetting
+	mathematics, then perhaps LaTeX is the C and this XML format
+	can be one of many competing higher-level languages for
+	specifying mathematical formulae--not optimal for all
+	use-cases, but addressing positively the needs of a few.</p>
 
-	<p>A consequence of leaving plaintext, however, is that
-	tooling needs to be created, both for creating and consuming
-	content:
+	<p>One possibly undesirable consequence of leaving plaintext
+	input is a reliance on tooling beyond a basic text editor,
+	both for creating and consuming content.  We have ideas
+	surrounding both of these:
 
 	  <ul>
 	    <li><b>Creating:</b> To make it easier to create whole
 	    documents using the editor will require plugins for
 	    existing document editors such as, among others, Quill.js,
-	    CodeMirror, TiddlyWiki, possibly even emacs.</li>
+	    CodeMirror, TiddlyWiki, emacs (!)</li>
 	    
 	    <li><b>Consuming:</b> To ensure that users can take
 	    advantage of the semantic understanding of equations now
 	    available, we envision a tool a bit like a programming
 	    IDE, except for reading mathematics.  For example, a tool
 	    that allows cross-referencing any symbol in an expression
-	    with its definition and uses.
+	    with its definition and other occurences in the document.
 	    </li>
 	  </ul>
 	</p>

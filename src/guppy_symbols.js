@@ -1,5 +1,14 @@
 GuppySymbols = {"symbols":{}, "templates":{}};
 
+GuppySymbols.add_symbol_t = function(template_name, name, args){
+    var template = JSON.parse(JSON.stringify(GuppySymbols.templates[template_name]));
+    GuppySymbols.symbols[name] = GuppySymbols.eval_template(template, name, args);
+}
+
+GuppySymbols.add_symbol = function(name, sym){
+    GuppySymbols.symbols[name] = sym;
+}
+
 GuppySymbols.make_template_symbol = function(template_name, name, args){
     var template = JSON.parse(JSON.stringify(GuppySymbols.templates[template_name]));
     return GuppySymbols.eval_template(template, name, args);

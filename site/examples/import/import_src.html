@@ -5,7 +5,7 @@
 &lt;head&gt;
     &lt;title&gt;Homework&lt;/title&gt;
 
-    &lt;link rel="stylesheet" href="../../../build/guppy.min.css"&gt;
+    &lt;link rel="stylesheet" href="../../../build/guppy-default.min.css"&gt;
     &lt;script type="text/javascript" src="../../../build/guppy.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript" src="../../../lib/math-expressions/math-expressions.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
@@ -22,11 +22,12 @@
 	 }
      }
      window.onload = function(){
+	 Guppy.init({"path":"../../../build",
+		     "symbols":"../../../sym/symbols.json"});
 	 var g1 = new Guppy("math_input", {
 	     "options":{'empty_content': "\\color{gray}{\\text{Import LaTeX or plaintext math below}}" }
 	 });
 	 
-	 Guppy.init_symbols(["../../../sym/symbols.json"]);
      }
     &lt;/script&gt;
     &lt;style&gt;

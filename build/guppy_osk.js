@@ -186,6 +186,7 @@ GuppyOSK.prototype.attach = function(guppy){
     add_control("redo", function(e){ e.preventDefault();guppy.backend.redo();guppy.render();});
     add_control("del", function(e){ e.preventDefault();guppy.backend.backspace();guppy.render();});
     add_control("spc", function(e){ e.preventDefault();guppy.backend.spacebar();guppy.render();});
+    add_control("tab", function(e){ e.preventDefault();guppy.backend.tab();guppy.render();});
     add_control("ret", function(e){ e.preventDefault();guppy.backend.done();guppy.render();});
     add_control("&larr;", function(e){ e.preventDefault();guppy.backend.left();guppy.render();});
     add_control("&uarr;", function(e){ e.preventDefault();guppy.backend.up();guppy.render();});
@@ -195,7 +196,6 @@ GuppyOSK.prototype.attach = function(guppy){
     osk.appendChild(controls);
     document.body.appendChild(osk);
 
-    console.log("attacked",osk,guppy);
     this.guppy = guppy;
     this.element = osk;
 }

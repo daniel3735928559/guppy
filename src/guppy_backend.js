@@ -149,30 +149,6 @@ GuppyBackend.prototype.add_symbols = function(name, sym){
     }
 }
 
-/** 
-    function
-    @memberof GuppyBackend
-    @param {string} name - param
-*/
-GuppyBackend.prototype.add_symbol_func = function(name, group){
-    var new_syms = GuppySymbols.add_symbols("_func", [{"group":group,"symbols":[name]}]);
-    for(var s in new_syms)
-	this.symbols[s] = new_syms[s];
-}
-
-/** 
-    function
-    @memberof GuppyBackend
-    @param {string} name - param
-*/
-GuppyBackend.prototype.add_symbol_raw = function(name, latex, text, group){
-    var s = {}
-    s[name] = {"latex":latex,"text":text}
-    var new_syms = GuppySymbols.add_symbols("_raw", [{"group":group,"symbols":s}]);
-    for(var s in new_syms)
-	this.symbols[s] = new_syms[s];
-}
-
 GuppyBackend.prototype.select_to = function(loc, sel_cursor, sel_caret, mouse){
     if(loc.current == sel_cursor && loc.caret == sel_caret){
 	this.current = loc.current;
@@ -378,9 +354,10 @@ GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
 }
 
 /** 
-    function
+    Insert a symbol into the document at the current cursor position.
     @memberof GuppyBackend
-    @param {string} name - param
+    @param {string} sym_name - The name of the symbol to insert.
+      Should match one of the keys in the symbols JSON object
 */
 GuppyBackend.prototype.insert_symbol = function(sym_name){
     var s = this.symbols[sym_name];
@@ -513,22 +490,6 @@ GuppyBackend.prototype.sel_get = function(){
 	    "cursor":0};
 }
 
-// GuppyBackend.prototype.print_selection = function(){
-//     var sel = this.sel_get();
-//     if(sel == null) return "[none]";
-//     var ans = "";
-//     ans += "node_list: \n";
-//     for(var i = 0; i < sel.node_list.length; i++){
-// 	var n = sel.node_list[i];
-// 	ans += (new XMLSerializer()).serializeToString(n) + "\n";
-//     }
-//     ans += "\ninvolved: \n";
-//     for(var i = 0; i < sel.involved.length; i++){
-// 	var n = sel.involved[i];
-// 	ans += (new XMLSerializer()).serializeToString(n) + "\n";
-//     }
-// }
-
 GuppyBackend.prototype.make_e = function(text){
     var base = this.doc.base;
     var new_node = base.createElement("e");
@@ -537,9 +498,9 @@ GuppyBackend.prototype.make_e = function(text){
 }
 
 /** 
-    function
+    Insert a string into the document at the current cursor position.
     @memberof GuppyBackend
-    @param {string} name - param
+    @param {string} s - The string to insert.
 */
 GuppyBackend.prototype.insert_string = function(s){
     if(this.sel_status != GuppyBackend.SEL_NONE){
@@ -554,9 +515,9 @@ GuppyBackend.prototype.insert_string = function(s){
 }
 
 /** 
-    function
+    Copy the current selection, leaving the document unchanged but
+    placing the contents of the current selection on the clipboard.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_copy = function(){
     var sel = this.sel_get();
@@ -598,9 +559,8 @@ GuppyBackend.prototype.system_copy = function(text) {
 }
 
 /** 
-    function
+    Cut the current selection, removing it from the document and placing it in the clipboard.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_cut = function(){
     var node_list = this.sel_delete();
@@ -645,9 +605,8 @@ GuppyBackend.prototype.insert_nodes = function(node_list, move_cursor){
 }
 
 /** 
-    function
+    Paste the current contents of the clipboard.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_paste = function(){
     this.sel_delete();
@@ -659,9 +618,9 @@ GuppyBackend.prototype.sel_paste = function(){
 }
 
 /** 
-    function
+    Clear the current selection, leaving the document unchanged and
+    nothing selected.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_clear = function(){
     this.sel_start = null;    
@@ -670,9 +629,8 @@ GuppyBackend.prototype.sel_clear = function(){
 }
 
 /** 
-    function
+    Delete the current selection.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_delete = function(){
     var sel = this.sel_get();
@@ -701,9 +659,8 @@ GuppyBackend.prototype.sel_delete = function(){
 }
 
 /** 
-    function
+    Select the entire contents of the editor.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_all = function(){
     this.home();
@@ -753,9 +710,9 @@ GuppyBackend.prototype.set_sel_boundary = function(sstatus, mouse){
 }
 
 /** 
-    function
+    Move the cursor to the left, adjusting the selection along with
+    the cursor.
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.sel_left = function(){
     if(this.sel_status == GuppyBackend.SEL_NONE){
@@ -792,9 +749,10 @@ GuppyBackend.prototype.list_extend_copy_up = function(){this.list_extend("up", t
 GuppyBackend.prototype.list_extend_copy_down = function(){this.list_extend("down", true);}
 
 /** 
-    function
+    Move the cursor by one row up or down in a matrix. 
     @memberof GuppyBackend
-    @param {string} name - param
+    @param {boolean} down - If `true`, move down in the matrix;
+    otherwise, up.
 */
 GuppyBackend.prototype.list_vertical_move = function(down){
     var n = this.current;
@@ -821,9 +779,14 @@ GuppyBackend.prototype.list_vertical_move = function(down){
 }
 
 /** 
-    function
+    Add an element to a list (or row/column to a matrix) in the
+    specified direction.  Can optionally copy the current
+    element/row/column to the new one.
     @memberof GuppyBackend
-    @param {string} name - param
+    @param {string} direction - One of `"up"`, `"down"`, `"left"`, or
+      `"right"`.  
+    @param {boolean} copy - Whether or not to copy the current
+      element/row/column into the new one.
 */
 GuppyBackend.prototype.list_extend = function(direction, copy){
     var base = this.doc.base;
@@ -890,9 +853,8 @@ GuppyBackend.prototype.list_extend = function(direction, copy){
 }
 
 /** 
-    function
+    Remove the current column from a matrix
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.list_remove_col = function(){
     var n = this.current;
@@ -932,9 +894,8 @@ GuppyBackend.prototype.list_remove_col = function(){
 }
 
 /** 
-    function
+    Remove the current row from a matrix
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.list_remove_row = function(){
     var n = this.current;
@@ -958,9 +919,8 @@ GuppyBackend.prototype.list_remove_row = function(){
 }
 
 /** 
-    function
+    Remove the current element from a list (or column from a matrix)
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.list_remove = function(){
     var n = this.current;
@@ -986,9 +946,8 @@ GuppyBackend.prototype.list_remove = function(){
 }
 
 /** 
-    function
+    Simulate the right arrow key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.right = function(){
     this.sel_clear();
@@ -1008,9 +967,8 @@ GuppyBackend.prototype.right = function(){
 }
 
 /** 
-    function
+    Simulate the spacebar key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.spacebar = function(){
     if(GuppyUtils.is_text(this.current)) this.insert_string(" ");
@@ -1018,9 +976,8 @@ GuppyBackend.prototype.spacebar = function(){
 }
 
 /** 
-    function
+    Simulate the left arrow key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.left = function(){
     this.sel_clear();
@@ -1128,9 +1085,8 @@ GuppyBackend.prototype.delete_forward_from_e = function(){
 }
 
 /** 
-    function
+    Simulate the "backspace" key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.backspace = function(){
     if(this.sel_status != GuppyBackend.SEL_NONE){
@@ -1144,9 +1100,8 @@ GuppyBackend.prototype.backspace = function(){
 }
 
 /** 
-    function
+    Simulate the "delete" key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.delete_key = function(){
     if(this.sel_status != GuppyBackend.SEL_NONE){
@@ -1165,9 +1120,8 @@ GuppyBackend.prototype.backslash = function(){
 }
 
 /** 
-    function
+    Simulate a tab key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.tab = function(){
     if(!GuppyUtils.is_symbol(this.current)){
@@ -1194,9 +1148,8 @@ GuppyBackend.prototype.right_paren = function(){
 }
 
 /** 
-    function
+    Simulate an up arrow key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.up = function(){
     this.sel_clear();
@@ -1215,9 +1168,8 @@ GuppyBackend.prototype.up = function(){
 }
 
 /** 
-    function
+    Simulate a down arrow key press
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.down = function(){
     this.sel_clear();
@@ -1236,9 +1188,8 @@ GuppyBackend.prototype.down = function(){
 }
 
 /** 
-    function
+    Move the cursor to the beginning of the document
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.home = function(){
     this.current = this.doc.root().firstChild;
@@ -1246,9 +1197,8 @@ GuppyBackend.prototype.home = function(){
 }
 
 /** 
-    function
+    Move the cursor to the end of the document
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.end = function(){
     this.current = this.doc.root().lastChild;
@@ -1283,9 +1233,8 @@ GuppyBackend.prototype.find_current = function(){
 }
 
 /** 
-    function
+    Undo the last action
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.undo = function(){
     this.sel_clear();
@@ -1298,9 +1247,8 @@ GuppyBackend.prototype.undo = function(){
 }
 
 /** 
-    function
+    Redo the last undone action
     @memberof GuppyBackend
-    @param {string} name - param
 */
 GuppyBackend.prototype.redo = function(){
     this.sel_clear();
@@ -1313,11 +1261,10 @@ GuppyBackend.prototype.redo = function(){
 }
 
 /** 
-    function
+    Execute the "done" callback
     @memberof GuppyBackend
-    @param {string} name - param
 */
-GuppyBackend.prototype.done = function(s){
+GuppyBackend.prototype.done = function(){
     if(GuppyUtils.is_symbol(this.current)) this.complete_symbol();
     else this.fire_event("done");
 }
@@ -1353,9 +1300,16 @@ GuppyBackend.prototype.check_for_symbol = function(whole_node){
 	    if(this.symbols[s]) sym = s;
 	}
     }
-    else
-	for(var s in this.symbols)
-	    if(instance.current.nodeName == 'e' && s.length <= (instance.caret - instance.space_caret) && !(GuppyUtils.is_blank(instance.current)) && instance.current.firstChild.nodeValue.search_at(instance.caret,s)){ sym = s; }
+    else{	
+	var n = instance.current.firstChild.nodeValue.substring(instance.space_caret, instance.caret);
+	while(n.length > 0){
+	    if(n in this.symbols){
+		sym = n;
+		break;
+	    }
+	    n = n.substring(1);
+	}
+    }
 
     if(sym == "") return;
     

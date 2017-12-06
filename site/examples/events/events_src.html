@@ -11,7 +11,8 @@
 	     e.target = e.target.id;
 	     event_area.value = JSON.stringify(e) + "\n" + event_area.value
 	 }
-	 Guppy.init({"events":{"ready":f,
+	 Guppy.init({"path":"../../../build",
+		     "events":{"ready":f,
 			       "change":f,
 			       "done":f,
 			       "completion":f,

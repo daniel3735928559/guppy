@@ -1,19 +1,18 @@
 window.onload = function() {
+    output_type = "latex";
+    document.getElementById("sample_output").readOnly = true;
     Guppy.init({"osk":new GuppyOSK({"goto_tab":"qwerty"}),
 		"path":"../build",
 		"symbols":"../sym/symbols.json",
 		"events":{
+		    "ready": update_output,
 		    "change": update_output,
 		    "completion": completion,
 		},
 		"settings":{
-		    "cliptype":"latex",
 		    "empty_content": "{\\text{Click to start typing math!}}"
 		}});
-    output_type = "latex";
     var g1 = new Guppy("guppy1");
-    document.getElementById("sample_output").readOnly = true;
-    update_output();
 };
 
 function select_output(t){
@@ -36,8 +35,8 @@ function update_output(e){
 	document.getElementById("sample_output").value = content;
     }
     catch(e){
-	document.getElementById("sample_output").value = "Failed to parse input";
-	console.log(e.stack);
+    	document.getElementById("sample_output").value = "Failed to parse input";
+    	console.log(e.stack);
     }
 }
 

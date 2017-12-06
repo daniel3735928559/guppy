@@ -3,20 +3,21 @@
 &lt;html&gt;
     &lt;head&gt;
 	&lt;title&gt;Import/Export&lt;/title&gt;
-	&lt;link rel="stylesheet" href="../../../build/guppy.min.css"&gt;
+	&lt;link rel="stylesheet" href="../../../build/guppy-default.min.css"&gt;
 	&lt;script type="text/javascript" src="../../../build/guppy.min.js"&gt;&lt;/script&gt;
 
 	&lt;script type="text/javascript"&gt;
 	 input = function(type){
 	     try{
 		 var data = document.getElementById("input_field").value;
+		 if(type == "clear") Guppy.instances.guppy1.backend.set_content("&lt;m&gt;&lt;e/&gt;&lt;/m&gt;");
 		 if(type == "xml") Guppy.instances.guppy1.backend.set_content(data);
 		 if(type == "ast") Guppy.instances.guppy1.backend.import_ast(JSON.parse(data));
 		 if(type == "text") Guppy.instances.guppy1.backend.import_text(data);
 		 Guppy.instances.guppy1.render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
-	     catch(e){ throw e;document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;'; }
+	     catch(e){ document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;'; console.log(e.stack); }
 	 }
 
 	 output = function(type){
@@ -24,7 +25,6 @@
 		 content = Guppy.instances['guppy1'].backend.get_content(type);
 		 if(type == "function") content = "Function with variables: " + JSON.stringify(content.vars);
 		 if(type == "eqns") content = JSON.stringify(content);
-		 //if(type == "ast") content = JSON.stringify(content);
 		 document.getElementById("output_field").value = content;
 		 document.getElementById("res").innerHTML = "";
 	     }
@@ -32,7 +32,7 @@
 	 }
 
 	 window.onload = function(){
-	     Guppy.init_symbols(["../../../sym/symbols.json"]);
+	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
 	     var g1 = new Guppy("guppy1", {
 		 "options":{'empty_content': "\\color{red}{\\text{[?]}}" }
 	     });
@@ -42,7 +42,8 @@
 
     &lt;body&gt; 
       &lt;div class="label"&gt;Input: &lt;/div&gt;&lt;input type="text" id="input_field" placeholder="Enter math here"&gt;&lt;/input&gt;&lt;br /&gt;
-	&lt;div class="label"&gt;Import: &lt;/div&gt;&lt;div class="button" onclick="input('text')"&gt;Plain text&lt;/div&gt;
+	&lt;div class="label"&gt;Import: &lt;/div&gt;&lt;div class="button" onclick="input('clear')"&gt;Clear&lt;/div&gt;
+	&lt;div class="button" onclick="input('text')"&gt;Plain text&lt;/div&gt;
 	&lt;div class="button" onclick="input('ast')"&gt;AST&lt;/div&gt;
 	&lt;div class="button" onclick="input('xml')"&gt;XML&lt;/div&gt;&lt;br /&gt;
 	&lt;div class="label"&gt;Edit: &lt;/div&gt;&lt;div id="guppy1" class="answerbox"&gt;&lt;/div&gt;&lt;br /&gt;
@@ -56,7 +57,7 @@
 	&lt;div class="label"&gt;Output: &lt;/div&gt;&lt;input type="text" id="output_field" placeholder="Output will appear here"&gt;&lt;/input&gt;&lt;br /&gt;
 	&lt;div id="res"&gt;&lt;/div&gt;
 	&lt;style&gt;
-	  .answerbox { width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text; display:inline-block; }
+	  .answerbox { width: 400px; display:inline-block; }
 	  div.button {cursor: pointer; color:white;min-height: 23px; display:inline-block; background-color:#66f; padding:10px; border-radius: 5px; margin: 5px 0 5px 0; display:inline-block;}
 	  input {min-height: 23px; display:inline-block; background-color:#ccc; padding:10px; border-radius: 5px; width:80%;}
 	  div.label {min-width: 70px; display:inline-block;}
