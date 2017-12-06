@@ -42,17 +42,22 @@ var Guppy = function(guppy_div, config){
     var i = Guppy.max_tabIndex || 0;
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;
-    
+
+    var buttons = settings['buttons'] || GuppySettings.config.settings['buttons'];
     this.buttons_div = document.createElement("div");
     this.buttons_div.setAttribute("class","guppy_buttons");
-    if(GuppySettings.osk){
-	this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {
-	    if(GuppySettings.osk.guppy == self){ GuppySettings.osk.detach(self); }
-	    else{ GuppySettings.osk.attach(self); }}));
+    if(buttons){
+	for(var i = 0; i < buttons.length; i++){
+	    if(buttons[i] == "osk" && GuppySettings.osk){
+		this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {
+		    if(GuppySettings.osk.guppy == self){ GuppySettings.osk.detach(self); }
+		    else{ GuppySettings.osk.attach(self); }}));
+	    }
+	    else if(buttons[i] == "settings") this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppySettings.toggle("settings", self); }));
+	    else if(buttons[i] == "symbols") this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppySettings.toggle("symbols", self); }));
+	    else if(buttons[i] == "controls") this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppySettings.toggle("controls", self); }));
+	}
     }
-    this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppySettings.toggle("settings", self); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppySettings.toggle("symbols", self); }));
-    this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppySettings.toggle("controls", self); }));
 
     this.editor_active = true;
     //this.empty_content = settings['empty_content'] || "\\red{[?]}"
@@ -168,6 +173,7 @@ Guppy.reset_global_symbols = function(){
    @param {string[]} [config.settings.blacklist=[]] - A list of string
       symbol names, corresponding to symbols that should not be
       allowed in this instance of the editor.
+   @param {string[]} [config.settings.buttons=["osk","settings","symbols","controls"]] - A list of strings corresponding to the helper buttons that should be displayed in the editor when focused.
    @param {string} [config.settings.cliptype] - A string, either
       "text" or "latex".  If this option is present, when text is
       placed onto the editor clipboard, the contents of the editor

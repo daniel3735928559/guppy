@@ -17,7 +17,7 @@ window.onload = function() {
 
 function select_output(t){
     output_type = t;
-    update_output();
+    update_output({"target":Guppy.instances.guppy1});
     var l = document.getElementsByClassName("output-select");
     for(var i = 0; i < l.length; i++){
 	var new_class = l[i].getAttribute("class").replace(new RegExp("output-selected","g"),"output-unselected");

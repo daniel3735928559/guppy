@@ -10,6 +10,7 @@ GuppySettings.config.settings = {
     "empty_content":"\\blue{[?]}",
     "blank_caret":"\\red{[?]}",
     "blacklist":[],
+    "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
 };
 
