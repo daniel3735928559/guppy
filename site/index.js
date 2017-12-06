@@ -1,19 +1,17 @@
 window.onload = function() {
-    Guppy.init({"path":"../build","symbols":"../sym/symbols.json"});
+    Guppy.init({"osk":new GuppyOSK({"goto_tab":"qwerty"}),
+		"path":"../build",
+		"symbols":"../sym/symbols.json",
+		"events":{
+		    "change": update_output,
+		    "completion": completion,
+		},
+		"settings":{
+		    "cliptype":"latex",
+		    "empty_content": "{\\text{Click to start typing math!}}"
+		}});
     output_type = "latex";
-    var g1 = new Guppy("guppy1", {
-	"events":{
-            'right_end': function() {},
-            'left_end': function() {},
-            'change': update_output,
-            'completion': completion,
-	},
-	"options":
-	{
-	    'cliptype':'latex',
-            'empty_content': "{\\text{Click to start typing math!}}"
-	}
-    });
+    var g1 = new Guppy("guppy1");
     document.getElementById("sample_output").readOnly = true;
     update_output();
 };
@@ -31,9 +29,9 @@ function select_output(t){
     cur.setAttribute("class", new_class);
 }
 
-function update_output(){
+function update_output(e){
     try{
-	content = Guppy.instances['guppy1'].backend.get_content(output_type)+"";
+	content = e.target.backend.get_content(output_type)+"";
 	if(content.replace(/\s/g,"").length == 0) content = "Output " + output_type + " will appear here";
 	document.getElementById("sample_output").value = content;
     }
@@ -43,6 +41,6 @@ function update_output(){
     }
 }
 
-function completion(target, data) {
-    document.getElementById("sample_output").value = data.candidates.join(", ");
+function completion(e) {
+    document.getElementById("sample_output").value = e.candidates.join(", ");
 }

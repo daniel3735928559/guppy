@@ -66,9 +66,7 @@ GuppyBackend.SEL_CURSOR_AT_END = 2;
 GuppyBackend.clipboard = null;
 
 GuppyBackend.prototype.setting = function(name){
-    var ans = this.settings[name] || GuppySettings.config.settings[name];
-    console.log("ANS",ans,this.settings[name]);
-    return ans;
+    return this.settings[name] || GuppySettings.config.settings[name];
 }
 
 GuppyBackend.prototype.event = function(name){

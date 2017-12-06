@@ -10,20 +10,13 @@
       tab the keyboard should jump to every time a key is pressed.
       For example, the value `"abc"` will cause the keyboard to revert
       to the lower-case alphanumeric tab every time a key is pressed.
+    @param {string} [config.attach] - A string describing how the
+      keyboard should be attached to the editor.  Values include
+      `"focus"` for 
     @constructor
 */
 function GuppyOSK(config){
     var self = this;
-    for(var gid in Guppy.instances){
-	var g = Guppy.instances[gid];
-	var f = function(guppy){
-	    guppy.backend.events.focus = function(c){
-		if(c.focused) self.attach(guppy);
-		else self.detach(guppy);
-	    }
-	};
-	f(g);
-    }
     this.config = config || {};
     this.guppy = null;
     this.element = null;
@@ -202,6 +195,7 @@ GuppyOSK.prototype.attach = function(guppy){
     osk.appendChild(controls);
     document.body.appendChild(osk);
 
+    console.log("attacked",osk,guppy);
     this.guppy = guppy;
     this.element = osk;
 }

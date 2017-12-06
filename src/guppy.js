@@ -10,6 +10,7 @@ GuppySettings = require('./guppy_settings.js');
    @classdesc An instance of Guppy
    @param {string} guppy_div - The string ID of the element that should be converted to an editor
    @param {Object} [config] - The configuration options for this instance
+   @param {string} [config.path="/lib/guppy"] - The path to the guppy build folder.
    @param {Object} [config.events] - A dictionary of events
    @param {function} [config.events.ready] - Called when the instance is ready to render things. 
    @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively. 
@@ -74,7 +75,11 @@ var Guppy = function(guppy_div, config){
     
     this.buttons_div = document.createElement("div");
     this.buttons_div.setAttribute("class","guppy_buttons");
-    if(GuppySettings.osk) this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) { GuppySettings.osk.attach(self); }));
+    if(GuppySettings.osk){
+	this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function(e) {
+	    if(GuppySettings.osk.guppy == self){ GuppySettings.osk.detach(self); }
+	    else{ GuppySettings.osk.attach(self); }}));
+    }
     this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(e){ GuppySettings.toggle("settings", self); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(e){ GuppySettings.toggle("symbols", self); }));
     this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(e){ GuppySettings.toggle("controls", self); }));
@@ -192,6 +197,17 @@ Guppy.init = function(config){
     }
     if(config.events){
 	GuppySettings.config.events = config.events;
+    }
+    if(config.osk){
+	GuppySettings.osk = config.osk;
+	if(config.osk.config.attach == "focus"){
+	    var f = GuppySettings.config.events["focus"];
+	    GuppySettings.config.events["focus"] = function(e){
+		if(f) f(e);
+		if(e.focused) config.osk.attach(e.target);
+		else config.osk.detach(e.target);
+	    };
+	}
     }
     if(config.path){
 	GuppySettings.config.path = config.path;

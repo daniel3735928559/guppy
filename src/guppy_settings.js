@@ -3,7 +3,7 @@ GuppySymbols = require('./guppy_symbols.js');
 
 GuppySettings = {}
 GuppySettings.config = {};
-GuppySettings.config.path = "";
+GuppySettings.config.path = "/lib/guppy";
 GuppySettings.config.events = {};
 GuppySettings.config.settings = {
     "autoreplace":"auto",

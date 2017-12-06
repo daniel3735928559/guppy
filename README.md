@@ -20,22 +20,23 @@ A live demo can be found at
 A stripped-down version of the demo page would look like:
 
 ```
+<!doctype html>
 <html>
-  <head>
-    <link rel="stylesheet" href="build/guppy.min.css">
-    <script type="text/javascript" src="build/guppy.min.js"></script>
-  </head>
-  <body>
-    <div id="guppy_div" style="width:400px;height:100px;"></div>
-    
-    <script>
-        new Guppy("guppy_div");
-        Guppy.init_symbols(["sym/symbols.json"]);
-    </script>
-    <button onclick="alert(Guppy.instances.guppy_div.get_content('xml'))">See XML</button>
-    <button onclick="alert(Guppy.instances.guppy_div.get_content('latex'))">See LaTeX</button>
-    <button onclick="alert(Guppy.instances.guppy_div.get_content('text'))">See ASCII</button>
-  </body>
+<head>
+   <link rel="stylesheet" href="build/guppy-default.min.css">
+   <script type="text/javascript" src="build/guppy.min.js"></script>
+   <script type="text/javascript">
+      window.onload = function(){
+         Guppy.init({"path":"build",
+		             "symbols":"sym/symbols.json"});
+         new Guppy("guppy1");
+      }
+   </script>
+   <button onclick="alert(Guppy.instances.guppy1.get_content('xml'))">See XML</button>
+   <button onclick="alert(Guppy.instances.guppy1.get_content('latex'))">See LaTeX</button>
+   <button onclick="alert(Guppy.instances.guppy1.get_content('text'))">See ASCII</button>
+</head>
+<body><div id="guppy1" style="width: 400px;"></div></body>
 </html>
 ```
 
@@ -43,7 +44,7 @@ A stripped-down version of the demo page would look like:
 
 * Download the `build` and `sym` folders.
 
-* Include the `build/guppy.min.js` and `build/guppy.min.css` files in
+* Include the `build/guppy.min.js` and `build/guppy-default.min.css` files in
   your page.
 
 * Pass a list of paths to various symbol definition files (several of

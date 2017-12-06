@@ -5,5 +5,6 @@ browserify src/guppy_backend.js -o build/guppy_backend.min.js --standalone Guppy
 cp src/guppy_osk.js build/guppy_osk.js
 cat lib/katex/katex-modified.min.css > build/guppy-none.min.css
 cat lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css
+cat lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
 cp -r lib/katex/fonts build
 cp -r icons/ build
