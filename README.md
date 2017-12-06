@@ -28,15 +28,16 @@ A stripped-down version of the demo page would look like:
    <script type="text/javascript">
       window.onload = function(){
          Guppy.init({"path":"build",
-		             "symbols":"sym/symbols.json"});
+                     "events":{"change":function(e){ document.getElementById("output").innerHTML = `<pre>${e.target.backend.get_content("latex")}</pre>` }},
+                     "symbols":"sym/symbols.json"});
          new Guppy("guppy1");
       }
    </script>
-   <button onclick="alert(Guppy.instances.guppy1.get_content('xml'))">See XML</button>
-   <button onclick="alert(Guppy.instances.guppy1.get_content('latex'))">See LaTeX</button>
-   <button onclick="alert(Guppy.instances.guppy1.get_content('text'))">See ASCII</button>
 </head>
-<body><div id="guppy1" style="width: 400px;"></div></body>
+<body>
+  <div id="guppy1" style="width: 400px;"></div>
+  <div id="output"></div>
+</body>
 </html>
 ```
 
