@@ -505,6 +505,7 @@ GuppyBackend.prototype.make_e = function(text){
     @param {string} s - The string to insert.
 */
 GuppyBackend.prototype.insert_string = function(s){
+    var self = this;
     if(this.sel_status != GuppyBackend.SEL_NONE){
 	this.sel_delete();
 	this.sel_clear();
@@ -514,6 +515,10 @@ GuppyBackend.prototype.insert_string = function(s){
     this.checkpoint();
     if(this.setting("autoreplace") == "auto") this.check_for_symbol(false);
     if(this.setting("autoreplace") == "whole") this.check_for_symbol(true);
+    if(this.setting("autoreplace") == "delay" && setTimeout){
+	if(this.delayed_check) clearTimeout(this.delayed_check);
+	this.delayed_check = setTimeout(function(){ self.check_for_symbol(false); }, 200);
+    }
 }
 
 /** 

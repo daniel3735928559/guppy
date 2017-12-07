@@ -15,7 +15,7 @@ GuppySettings.config.settings = {
 };
 
 GuppySettings.settings_options = {
-    "autoreplace":["auto","whole","none"],
+    "autoreplace":["auto","whole","delay","none"],
     "cliptype":["latex","text","xml","ast","asciimath"],
 };
 
