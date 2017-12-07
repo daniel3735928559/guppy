@@ -418,7 +418,6 @@ var tests = [
     },
     {
 	"description":"export_text",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"definite_integral(1,2,((x^2) + 1),x)",
 	"run":function(g){
@@ -427,7 +426,6 @@ var tests = [
     },
     {
 	"description":"export_ast",
-	"content":"<m><e></e></m>",
 	"type":"ast",
 	"expected":`["definite_integral",[["val",[1]],["val",[2]],["+",[["exponential",[["var",["x"]],["val",[2]]]],["val",[1]]]],["var",["x"]]]]`,
 	"run":function(g){
@@ -435,17 +433,7 @@ var tests = [
 	}
     },
     {
-	"description":"export_text_text",
-	"content":"<m><e></e></m>",
-	"type":"text",
-	"expected":"text(abc)",
-	"run":function(g){
-	    do_keys(['t','e','x','t','a','b','c']);
-	}
-    },
-    {
-	"description":"export_text_text",
-	"content":"<m><e></e></m>",
+	"description":"export_text text node",
 	"type":"text",
 	"expected":"text(abc)",
 	"run":function(g){
@@ -454,7 +442,6 @@ var tests = [
     },
     {
 	"description":"import_text",
-	"content":"<m><e></e></m>",
 	"type":"ast",
 	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
 	"run":function(g){
@@ -462,8 +449,7 @@ var tests = [
 	}
     },
     {
-	"description":"import_text_frac",
-	"content":"<m><e></e></m>",
+	"description":"import_text frac",
 	"type":"ast",
 	"expected":`["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]`,
 	"run":function(g){
@@ -471,8 +457,7 @@ var tests = [
 	}
     },
     {
-	"description":"import_text_char",
-	"content":"<m><e></e></m>",
+	"description":"import_text char",
 	"type":"ast",
 	"expected":`["+",[["var",["epsilon"]],["var",["theta"]]]]`,
 	"run":function(g){
@@ -481,7 +466,6 @@ var tests = [
     },
     {
 	"description":"import_ast",
-	"content":"<m><e></e></m>",
 	"type":"text",
 	"expected":"-sin(((pi * omega) / 2))",
 	"run":function(g){
@@ -489,8 +473,7 @@ var tests = [
 	}
     },
     {
-	"description":"import_ast_vec",
-	"content":"<m><e></e></m>",
+	"description":"import_ast vector",
 	"type":"text",
 	"expected":"vector(list((1 / 2),(2 / 3)))",
 	"run":function(g){
@@ -498,12 +481,46 @@ var tests = [
 	}
     },
     {
-	"description":"import_ast_matrix",
-	"content":"<m><e></e></m>",
+	"description":"import_ast matrix",
 	"type":"text",
 	"expected":"matrix(list(list((pi / 2),(x^2)),list(definite_integral(1,2,square_root(x),x),sin(x))))",
 	"run":function(g){
 	    Guppy.instances.guppy1.backend.import_ast(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
+	}
+    },
+    {
+	"description":"Comparisons",
+	"type":"ast",
+	"expected":`["=",[["<",[[">",[["var",["x"]],["var",["y"]]]],["var",["z"]]]],["var",["w"]]]]`,
+	"run":function(g){
+	    do_keys(['x','>','y','<','z','=','w']);
+	}
+    },
+    {
+	"description":"Complex comparisons",
+	"type":"text",
+	"expected":"x >= y <= z != w",
+	"run":function(g){
+	    do_keys(['x','g','e','q','y','l','e','q','z','n','e','q','w']);
+	}
+    },
+    {
+	"description":"Comparisons list",
+	"type":"eqns",
+	"expected":`[[">=",[["var",["x"]],["var",["y"]]]],["<=",[["var",["y"]],["var",["z"]]]],["!=",[["var",["z"]],["var",["w"]]]]]`,
+	"run":function(g){
+	    do_keys(['x','g','e','q','y','l','e','q','z','n','e','q','w']);
+	}
+    },
+    {
+	"description":"evaluate",
+	"observe":function(g){
+	    var f = g.backend.get_content("function");
+	    return f.function({"x":2,"y":-1})
+	},
+	"expected":1,
+	"run":function(g){
+	    do_keys(['x','+','y']);
 	}
     }
 ];
@@ -627,7 +644,9 @@ function run_test(i, g){
     try{
 	t.run(test_guppy);
 	test_guppy.render();
-	observed = test_guppy.backend.get_content(t.type);
+	if(t.observe) observed = t.observe(test_guppy);
+	else observed = test_guppy.backend.get_content(t.type);
+	console.log(observed);
     } catch(e) {
 	observed = e + "\n" + e.stack;
     }
