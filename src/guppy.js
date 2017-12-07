@@ -108,35 +108,100 @@ Guppy.make_button = function(url, cb){
     return b;
 }
 
-Guppy.add_symbols = function(symbols){
-    for(var s in symbols){
-	var new_syms = GuppySymbols.add_symbols(s,symbols[s], GuppySymbols.symbols);
-	for(var s in new_syms)
-	    GuppySymbols.symbols[s] = new_syms[s];
+/** 
+    Add a symbol to all instances of the editor
+    @memberof Guppy
+    @param {string} name - The name of the symbol to add.  This is
+      also the string that will be autoreplaced with the symbol.
+    @param {Object} symbol - If `template` is present, this is just
+      the template arguments.  Otherwise, it is the complete symbol specification
+    @param {Object} symbol.output - Key/value pairs where the key is
+      the output type (such as "latex" or "asciimath") and the value
+      is the string by which the output will be rendered in that
+      format.  In this string, {$n} will be substituted with the
+      rendering of the nth argument.  If the nth argument is a
+      d-dimensional list, then the argument should be specified as
+      {$n{sep_1}{sep_2}...{sep_d}} where sep_i will be the separator
+      used to separate entries in the ith dimension.  Note that keys
+      are not necessary to describe the AST or plain-text outputs.
+    @param {Object} symbol.attrs - A specification of the attributes of the symbol
+    @param {string} symbol.attrs.type - A longer description of the
+      symbol type, suitable for searching and text rendering.
+    @param {string} [symbol.attrs.group.char] - `"yes"` or `"no"`.  Whether or not the symbol is a       character (such as pi).
+    @param {Object} [symbol.current] - If the symbol should subsume
+      part of the existing content of the editor (as in, for example,
+      the case of exponent), this object will describe how.
+    @param {Object} [symbol.current.index] - The index of the argument
+      (starting with 1) in which the content should be placed.
+    @param {Object} [symbol.ast] - Modifies the default construction
+      of an entry in the AST for this symbol.  
+    @param {Object} [symbol.ast.type="operator"] - The type of symbol
+      for AST purposes.  Can be "name" (meaning this symbol represents
+      a variable, as in the case of pi), "number" (meaning this symbol
+      is a literal value), "operator" (meaning this symbol is a
+      function or otherwise takes arguments (as in cos or +), or
+      "pass" (meaning this symbol's first argument will be used as its
+      AST entry, as in the case of brackets/parentheses).
+    @param {Object[]} [symbol.args] - A list of specifications, one
+      for each argument
+    @param {string} [symbol.args.down] - The index of the argument
+      to jump to when the "down" arrow is pressed in this argument
+    @param {string} [symbol.args.up] - The index of the argument
+      to jump to when the "up" arrow is pressed in this argument
+    @param {string} [symbol.args.small="no"] - "yes" if the symbol is
+      small (as in an exponent)
+    @param {string} [symbol.args.name] - The name of this particular
+      argument (suitable for searching)
+    @param {string} [symbol.args.bracket="no"] - "yes" if brackets
+      should automatically be rendered around this argument when they
+      might be needed to disambiguate.
+    @param {string} [symbol.args.delete] - If present, when the
+      "backspace" key is pressed at the beginning of this argument,
+      the symbol will be deleted and replaced with the argument whose
+      index is specified in this parameter.  For example, the second
+      argument of an exponent has this value set to "1", so that when
+      the exponent is deleted, the base remains.
+    @param {string} [symbol.args.mode="math"] - Change the mode of an
+      argument.  Can be "text" (meaning the argument will be editable
+      as and rendered as plain text), "symbol" (meaning the argument
+      will specify a symbol name and will complete to an actual symbol
+      when this is entered--only used for the backslash symbol), or
+      "math" (the default)
+    @param {string} [symbol.args.is_bracket="no"] - Set to "yes" if
+      the symbol is itself a bracket/parenthesis equivalent.
+    @param {string} [template] - The name of the template to use
+*/
+Guppy.add_global_symbol = function(name, symbol, template){
+    if(template){
+	symbol = GuppySymbols.make_template_symbol(template, name, symbol);
     }
+    GuppySymbols.symbols[name] = JSON.parse(JSON.stringify(symbol));
     for(var i in Guppy.instances){
-	for(var s in symbols){
-	    Guppy.instances[i].backend.symbols[s] = JSON.parse(JSON.stringify(symbols[s]));
+	Guppy.instances[i].backend.symbols[name] = JSON.parse(JSON.stringify(symbol));
+    }
+}
+
+/** 
+    Remove a symbol from all instances of the editor
+    @memberof Guppy
+    @param {string} name - The name of the symbol to remove
+*/
+Guppy.remove_global_symbol = function(name){
+    if(GuppySymbols.symbols[name]){
+	delete GuppySymbols.symbols[name]
+	for(var i in Guppy.instances){
+	    if(Guppy.instances[i].symbols[name]){
+		delete Guppy.instances[i].symbols[name];
+	    }
 	}
     }
 }
-
-Guppy.set_global_symbols = function(symbols){
-    GuppySymbols.symbols = {};
-    Guppy.add_symbols(symbols);
-}
-
-Guppy.reset_global_symbols = function(){
-    for(var i in Guppy.instances){
-	Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
-    }
-}
-
 
 /**
    Initialise global settings for all instances of the editor.  Most
    of these can be overridden for specific instances later.  Should be
    called before instantiating the Guppy class.
+   @static 
    @memberof Guppy
    @param {Object} config - The configuration options for this instance
    @param {string[]} [config.symbols] - A list of URLs for symbol JSON files to request

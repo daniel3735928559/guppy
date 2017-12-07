@@ -145,7 +145,10 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 	else{ return binop_low(args, "-", parent);};
     }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
-    functions["var"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
+    functions["var"] = function(args){
+	if(args[0].length == 1) return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");
+	else return make_sym(args[0], {});
+    };
     functions["list"] = function(args){
 	var base = (new window.DOMParser()).parseFromString("<l></l>", "text/xml");
 	for(var i = 0; i < args.length; i++){
@@ -201,7 +204,6 @@ GuppyAST.to_function = function(ast, functions){
     defaults["val"] = function(args){return function(vars){ return args[0]; };};
     defaults["var"] = function(args){return function(vars){ if(args[0] == "pi") return Math.PI; if(args[0] == "e") return Math.E; return vars[args[0]]; };};
     defaults["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
-    //defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars);};}
     defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
     defaults["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
     defaults["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};

@@ -84,8 +84,7 @@
         "latex":"{$1}!",
 	"asciimath":"({$1})!"},
      "current":{
-	 "index":1,
-	 "type":"token"},
+	 "index":1},
      "attrs":{
 	 "type":"factorial",
 	 "group":"functions"},
@@ -98,8 +97,7 @@
         "latex":"{{$1}}^{{$2}}",
 	"asciimath":"({$1})^({$2})"},
      "current":{
-	 "index":1,
-	 "type":"token"},
+	 "index":1},
      "attrs":{
 	 "type":"exponential",
 	 "group":"functions"},
@@ -114,8 +112,7 @@
         "latex":"{{$1}}_{{$2}}",
 	"asciimath":"{$1}{$2}"},
      "current":{
-	 "index":1,
-	 "type":"token"},
+	 "index":1},
      "attrs":{
 	 "type":"subscript",
 	 "group":"functions"},
@@ -142,8 +139,7 @@
     "slash":
     {"output":{"latex":"\\dfrac{{$1}}{{$2}}","small_latex":"\\frac{{$1}}{{$2}}","asciimath":"({$1})/({$2})"},
      "current":{
-	 "index":1,
-	 "type":"token"},
+	 "index":1},
      "attrs":{
 	 "type":"fraction",
 	 "group":"functions"},

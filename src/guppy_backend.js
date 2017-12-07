@@ -129,24 +129,26 @@ GuppyBackend.prototype.fire_event = function(event, args){
 }
 
 /** 
-    function
+    Remove a symbol from this instance of the editor.
     @memberof GuppyBackend
-    @param {string} name - param
+    @param {string} name - The name of the symbol to remove.
 */
 GuppyBackend.prototype.remove_symbol = function(name){
     if(this.symbols[name]) delete this.symbols[name];
 }
 
 /** 
-    function
+    Add a symbol to this instance of the editor.
     @memberof GuppyBackend
     @param {string} name - param
+    @param {Object} symbol - If `template` is present, this is the
+      template arguments.  Otherwise, it is a complete specification
+      of the symbol, the format for which can be found in the
+      documentation for Guppy.add_global_symbol.
+    @param {string} [template] - The name of the template to use.
 */
-GuppyBackend.prototype.add_symbols = function(name, sym){
-    var new_syms = GuppySymbols.add_symbols(name, sym);
-    for(var s in new_syms){
-	this.symbols[s] = new_syms[s];
-    }
+GuppyBackend.prototype.add_symbol = function(name, symbol, template){
+    this.symbols[name] = symbol;
 }
 
 GuppyBackend.prototype.select_to = function(loc, sel_cursor, sel_caret, mouse){
@@ -382,7 +384,7 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
 	    right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
 	    content[cur] = sel.node_list;
 	}
-	else if(s.current && s.current.type == 'token'){
+	else if(s.current){
 	    // If we're at the beginning, then the token is the previous f node
 	    if(this.caret == 0 && this.current.previousSibling != null){
 		content[cur] = [this.make_e(""), this.current.previousSibling, this.make_e("")];
