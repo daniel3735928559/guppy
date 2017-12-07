@@ -137,7 +137,7 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     // 	return binop_high(args, "*");
     // };
     functions["/"] = function(args){
-	return make_sym("frac",args);
+	return make_sym("fraction",args);
     };
     functions["+"] = function(args, parent){ return binop_low(args, "+", parent); };
     functions["-"] = function(args, parent){
