@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+	<title>Guppy</title>
+	<link rel="stylesheet" href="build/guppy-test.min.css">
+	<script type="text/javascript" src="build/guppy_test.js"></script>
+	<script type="text/javascript" src="test.js"></script>
+	<script type="text/javascript" src="report.js"></script>
+    </head>
+    <body>
+	<div id="guppy1" style="width:80%;float:left;border:2px solid blue;height:150px;padding:10px;"></div>
+	<div id="results" style="width:40%;float:left;border:1px solid black;padding:10px;">Test results: <b><span id="pass_rate"></span></b></div>
+	<div id="coverage" style="width:40%;float:left;border:1px solid black;padding:10px;">Test coverage: </div>
+	<script>
+	    Guppy.init({"symbols":"build/symbols.json",
+	    "path":"../build",
+	    "events":{
+		"error":function(g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},
+		"left_end":function(g){test_guppy.backend.set_content("<m><e>LEFT</e></m>");},
+		"right_end":function(g){test_guppy.backend.set_content("<m><e>RIGHT</e></m>");},
+		"change":function(g){},
+		"ready":function(g){
+		    test_guppy.backend.set_content("<m><e>READY</e></m>");
+		    setTimeout(function(){start_tests(); send_report();},2000);
+		}}});
+	 var test_guppy = new Guppy("guppy1");
+    </script>
+</body></html>

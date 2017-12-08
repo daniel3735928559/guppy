@@ -7,7 +7,7 @@
       "test": "test"
    },
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
+      "test": "./test.sh",
       "build": "./make",
       "build-debug": "./make -d",
       "generate-docs": "./node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
@@ -34,6 +34,7 @@
       "express": "^4.16.2",
       "istanbul-middleware": "^0.2.2",
       "jsdoc": "^3.5.5",
-      "minami": "^1.2.3"
+      "minami": "^1.2.3",
+      "selenium-webdriver": "^3.6.0"
    }
 }
