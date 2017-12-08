@@ -8,3 +8,9 @@ cat lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.c
 cat lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
 cp -r lib/katex/fonts build
 cp -r icons/ build
+
+mkdir test/build 2>/dev/null
+rm test/build/* 2>/dev/null
+./node_modules/.bin/browserify -t browserify-istanbul src/guppy.js -o test/build/guppy_test.js --standalone Guppy
+cat lib/katex/katex-modified.min.css style/guppy.css > test/build/guppy-test.min.css
+cp -r sym/symbols.json test/build/

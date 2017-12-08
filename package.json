@@ -30,6 +30,9 @@
    "homepage": "https://github.com/daniel3735928559/guppy#readme",
    "devDependencies": {
       "browserify": "^14.5.0",
+      "browserify-istanbul": "^3.0.1",
+      "express": "^4.16.2",
+      "istanbul-middleware": "^0.2.2",
       "jsdoc": "^3.5.5",
       "minami": "^1.2.3"
    }

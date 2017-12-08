@@ -1,4 +1,4 @@
-Mousetrap = require('mousetrap');
+Mousetrap = require('../lib/mousetrap/mousetrap.min.js');
 katex = require('../lib/katex/katex-modified.min.js');
 GuppyBackend = require('./guppy_backend.js');
 GuppyUtils = require('./guppy_utils.js');
