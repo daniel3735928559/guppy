@@ -10,7 +10,7 @@
       "test": "echo \"Error: no test specified\" && exit 1",
       "build": "./make",
       "build-debug": "./make -d",
-      "generate-docs": "jsdoc --configure jsdoc.json --verbose"
+      "generate-docs": "./node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
    },
    "repository": {
       "type": "git",
@@ -28,11 +28,9 @@
       "url": "https://github.com/daniel3735928559/guppy/issues"
    },
    "homepage": "https://github.com/daniel3735928559/guppy#readme",
-   "dependencies": {
-      "mousetrap": "^1.6.0"
-   },
    "devDependencies": {
-      "browserify": "latest",
+      "browserify": "^14.5.0",
+      "jsdoc": "^3.5.5",
       "minami": "^1.2.3"
    }
 }
