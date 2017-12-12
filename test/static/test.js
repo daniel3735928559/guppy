@@ -33,6 +33,24 @@ var tests = [
 	}
     },
     {
+	"description":"nop undo",
+	"content":"<m><e>xy</e></m>",
+	"type":"text",
+	"expected":"(x * y)",
+	"run":function(g){
+	    do_keys(['mod+z']);
+	}
+    },
+    {
+	"description":"nop redo",
+	"content":"<m><e>xy</e></m>",
+	"type":"text",
+	"expected":"(x * y)",
+	"run":function(g){
+	    do_keys(['mod+z','mod+y']);
+	}
+    },
+    {
 	"description":"Sine",
 	"type":"text",
 	"expected":"sin(x)",
@@ -381,6 +399,15 @@ var tests = [
 	}
     },
     {
+	"description":"remove global symbol",
+	"type":"asciimath",
+	"expected":"lnx",
+	"run":function(g){
+	    Guppy.remove_global_symbol("ln");
+	    do_keys(['l','n','x']);
+	}
+    },
+    {
 	"description":"symbol_func",
 	"type":"text",
 	"expected":"Re(i)",
@@ -417,11 +444,36 @@ var tests = [
 	}
     },
     {
+	"description":"delete",
+	"content":"<m><e>xy</e></m>",
+	"type":"asciimath",
+	"expected":"y",
+	"run":function(g){
+	    do_keys(['home','del']);
+	}
+    },
+    {
+	"description":"matrix nav",
+	"type":"ast",
+	"expected":`["*",[["*",[["var",["x"]],["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]]],["var",["y"]]]]`,
+	"run":function(g){
+	    do_keys(['m','a','t','1',',','2',';','3','right','4','right','y','left','left','left','left','left','left','left','left','left','left','x']);
+	}
+    },
+    {
 	"description":"export_text",
 	"type":"text",
 	"expected":"definite_integral(1,2,((x^2) + 1),x)",
 	"run":function(g){
 	    do_keys(['d','e','f','i','1','right','2','right','x','^','2','right','+','1','right','x']);
+	}
+    },
+    {
+	"description":"export_xml",
+	"type":"xml",
+	"expected":"<m><e>xy</e></m>",
+	"run":function(g){
+	    do_keys(['x','y']);
 	}
     },
     {
@@ -449,11 +501,43 @@ var tests = [
 	}
     },
     {
+	"description":"import_text arithmetic",
+	"type":"ast",
+	"expected":`["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]`,
+	"run":function(g){
+	    Guppy.instances.guppy1.backend.import_text("x^2!");
+	}
+    },
+    {
 	"description":"import_text frac",
 	"type":"ast",
 	"expected":`["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]`,
 	"run":function(g){
 	    Guppy.instances.guppy1.backend.import_text("1/(1+1/(1+1/1)))");
+	}
+    },
+    {
+	"description":"import_text calc",
+	"type":"ast",
+	"expected":`["*",[["-",[["val",[2]]]],["+",[["val",[1]],["val",[3]]]]]]`,
+	"run":function(g){
+	    Guppy.instances.guppy1.backend.import_text("-2(1+3)");
+	}
+    },
+    {
+	"description":"import_text order of operations",
+	"type":"ast",
+	"expected":`["+",[["val",[1]],["*",[["val",[2]],["val",[3]]]]]]`,
+	"run":function(g){
+	    Guppy.instances.guppy1.backend.import_text("1+2*3");
+	}
+    },
+    {
+	"description":"import_text matrix",
+	"type":"ast",
+	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
+	"run":function(g){
+	    Guppy.instances.guppy1.backend.import_text("matrix(list(list(1,2),list(3,4)))");
 	}
     },
     {
@@ -497,11 +581,35 @@ var tests = [
 	}
     },
     {
-	"description":"Complex comparisons",
+	"description":"Simple comparisons list",
+	"type":"eqns",
+	"expected":`[[">",[["var",["x"]],["var",["y"]]]],["<",[["var",["y"]],["var",["z"]]]]]`,
+	"run":function(g){
+	    do_keys(['x','>','y','<','z']);
+	}
+    },
+    {
+	"description":"Simple comparisons text",
+	"type":"text",
+	"expected":`x > y < z`,
+	"run":function(g){
+	    do_keys(['x','>','y','<','z']);
+	}
+    },
+    {
+	"description":"Complex comparisons text",
 	"type":"text",
 	"expected":"x >= y <= z != w",
 	"run":function(g){
 	    do_keys(['x','g','e','q','y','l','e','q','z','n','e','q','w']);
+	}
+    },
+    {
+	"description":"Fractions and factorials",
+	"type":"text",
+	"expected":"(2 * ((x + 1))!) = (1 / 2)",
+	"run":function(g){
+	    do_keys(['2','(','x','+','1','right','!','=','1','shift+/','2']);
 	}
     },
     {
@@ -513,7 +621,7 @@ var tests = [
 	}
     },
     {
-	"description":"evaluate",
+	"description":"evaluate basic",
 	"observe":function(g){
 	    var f = g.backend.get_content("function");
 	    return f.function({"x":2,"y":-1})
@@ -521,6 +629,28 @@ var tests = [
 	"expected":1,
 	"run":function(g){
 	    do_keys(['x','+','y']);
+	}
+    },
+    {
+	"description":"evaluate trig",
+	"observe":function(g){
+	    var f = g.backend.get_content("function");
+	    return f.function({"x":0})
+	},
+	"expected":-1,
+	"run":function(g){
+	    do_keys(['-','x','^','2','right','-','c','o','s','x']);
+	}
+    },
+    {
+	"description":"evaluate complex",
+	"observe":function(g){
+	    var f = g.backend.get_content("function");
+	    return f.function({"x":4,"y":-5})
+	},
+	"expected":-2,
+	"run":function(g){
+	    do_keys(['s','q','r','t','x','right','*','y','/','1','+','x']);
 	}
     }
 ];

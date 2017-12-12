@@ -190,8 +190,8 @@ Guppy.remove_global_symbol = function(name){
     if(GuppySymbols.symbols[name]){
 	delete GuppySymbols.symbols[name]
 	for(var i in Guppy.instances){
-	    if(Guppy.instances[i].symbols[name]){
-		delete Guppy.instances[i].symbols[name];
+	    if(Guppy.instances[i].backend.symbols[name]){
+		delete Guppy.instances[i].backend.symbols[name];
 	    }
 	}
     }
