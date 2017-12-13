@@ -18,7 +18,9 @@
 	    "events":{
 		"error":function(g){test_guppy.backend.set_content("<m><e>"+g.message+"</e></m>");},
 		"left_end":function(g){test_guppy.backend.set_content("<m><e>LEFT</e></m>");},
+		"focus":function(e){},
 		"right_end":function(g){test_guppy.backend.set_content("<m><e>RIGHT</e></m>");},
+		"done":function(g){test_guppy.backend.set_content("<m><e>DONE</e></m>");},
 		"change":function(g){},
 		"ready":function(g){
 		    test_guppy.backend.set_content("<m><e>READY</e></m>");

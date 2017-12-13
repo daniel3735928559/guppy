@@ -1,9 +1,7 @@
 cd test
 echo Starting server...
-node test_server.js > /tmp/guppy-test-output &
-npid=$!
-echo Starting browser...
-node web.js &
+node test_server.js | tee /tmp/guppy-test-output | node web.js &
+npid=`jobs -p`
 echo Waiting for done signal...
 while [[ $(grep -c DONE /tmp/guppy-test-output) -lt 1 ]]; do printf '.'; sleep 1; done
 echo ""

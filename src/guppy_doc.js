@@ -83,11 +83,7 @@ GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
 
 GuppyDoc.prototype.syntax_tree = function(n){
     n = n || this.root()
-    if(n.nodeName == "e"){
-	console.log("Should never happen");
-	//ans = n.firstChild.textContent;
-    }
-    else if(n.nodeName == "f"){
+    if(n.nodeName == "f"){
 	var ans = {"args":[], "kwargs":{}};
 	ans['value'] = n.getAttribute("type");
 	ans['type'] = "function";
@@ -210,21 +206,6 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
 	if(t == "latex" && r){
 	    ans = n.getAttribute("render");
 	}
-	else if(t == "text"){
-	    ans = n.firstChild.textContent;
-	    if(n.previousSibling && n.nextSibling && ans == "")
-		ans = " * ";
-	    else {
-		ans = ans.replace(/(.)([^a-zA-Z0-9.])(.)/g,"$1 $2 $3");
-		ans = ans.replace(/([a-zA-Z])(?=\.)/g,"$1 * ");
-		ans = ans.replace(/(\.)(?=[a-zA-Z])/g,"$1 * ");
-		ans = ans.replace(/([a-zA-Z])(?=[a-zA-Z0-9])/g,"$1 * ");
-		ans = ans.replace(/([a-zA-Z0-9])(?=[a-zA-Z])/g,"$1 * ");
-		if(n.previousSibling && n.previousSibling.getAttribute("group") != "operations") ans = ans.replace(/^([a-zA-Z0-9])/g," * $1");
-		if(n.nextSibling && n.nextSibling.getAttribute("group") != "operations") ans = ans.replace(/([a-zA-Z0-9])$/g,"$1 * ");
-		ans = " "+ans+" ";
-	    }
-	}
 	else{
 	    ans = n.firstChild.textContent;
 	}
@@ -273,14 +254,6 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
 	}
     }
     return ans;
-}
-
-GuppyDoc.prototype.path_to = function(n){
-    var name = n.nodeName;
-    if(name == "m") return "guppy_loc_m";
-    var ns = 0;
-    for(var nn = n; nn != null; nn = nn.previousSibling) if(nn.nodeType == 1 && nn.nodeName == name) ns++;
-    return this.path_to(n.parentNode)+"_"+name+""+ns;
 }
 
 module.exports = GuppyDoc;

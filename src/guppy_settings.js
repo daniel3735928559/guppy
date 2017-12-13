@@ -52,6 +52,7 @@ var make_row = function(table_id, c1, c2){
 
 var make_x = function(elt){
     var x = document.createElement("div");
+    x.setAttribute("class","guppy-card-x");
     x.innerHTML = `<font size="6pt">&times;</font>`;
     x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
     x.onclick = function(e){ elt.style.display = "none"; }

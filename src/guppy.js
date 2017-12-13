@@ -20,25 +20,15 @@ GuppySettings = require('./guppy_settings.js');
      settings specified through Guppy.init.
    @constructor 
  */
-var Guppy = function(guppy_div, config){
+var Guppy = function(id, config){
     var self = this;
     var config = config || {};
     var events = config['events'] || {}
     var settings = config['settings'] || {};
     
-    if(typeof guppy_div === 'string' || guppy_div instanceof String){
-	this.id = guppy_div;
-	guppy_div = document.getElementById(guppy_div);
-    }
+    this.id = id;
+    guppy_div = document.getElementById(id);
     
-    // Set the id on the div if it is not currently set.
-    if(!(guppy_div.id)){
-	var i = Guppy.max_uid || 0;
-	while(document.getElementById("guppy_uid_"+i)) i++;
-	Guppy.max_uid = i;
-	guppy_div.id = "guppy_uid_"+i;
-	this.id = guppy_div.id;
-    }
     var i = Guppy.max_tabIndex || 0;
     guppy_div.tabIndex = i;
     Guppy.max_tabIndex = i+1;

@@ -8,6 +8,14 @@ var tests = [
 	"run":function(g){}
     },
     {
+	"description":"Done",
+	"type":"asciimath",
+	"expected":"DONE",
+	"run":function(g){
+	    do_keys(['enter']);
+	}
+    },
+    {
 	"description":"Basic",
 	"content":"<m><e>x+1</e></m>",
 	"type":"asciimath",
@@ -246,6 +254,26 @@ var tests = [
 	"expected":"",
 	"run":function(g){
 	    do_keys(['m','a','t','1','mod+shift+up','down','x','^','2','+','mod+a','backspace']);
+	}
+    },
+    {
+	"description":"whole autoreplace",
+	"type":"asciimath",
+	"expected":"xsin* sin(x)",
+	"run":function(g){
+	    g.backend.settings.autoreplace="whole";
+	    do_keys(['x','s','i','n','*','s','i','n','x']);
+	    g.backend.settings.autoreplace="auto";
+	}
+    },
+    {
+	"description":"delay autoreplace",
+	"type":"asciimath",
+	"expected":"sinx",
+	"run":function(g){
+	    g.backend.settings.autoreplace="delay";
+	    do_keys(['s','i','n','x']);
+	    g.backend.settings.autoreplace="auto";
 	}
     },
     {
@@ -692,6 +720,28 @@ var tests = [
 	"expected":-2,
 	"run":function(g){
 	    do_keys(['s','q','r','t','x','right','*','y','/','1','+','x']);
+	}
+    },
+    {
+	"description":"cards",
+	"type":"asciimath",
+	"expected":"10x10x10x",
+	"run":function(g){
+	    var bs = document.getElementsByClassName("guppy-button");
+	    var cs = document.getElementsByClassName("guppy_help");
+	    var xs = document.getElementsByClassName("guppy-card-x");
+	    var cards = 0;
+	    for(var i = 0; i < bs.length; i++){
+		bs[i].click();
+		cards = 0;
+		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
+		do_keys([cards+""]);
+		for(var j = 0; j < xs.length; j++) xs[j].click();
+		cards = 0;
+		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
+		do_keys([cards+""]);
+		do_keys(["x"]);
+	    }
 	}
     }
 ];

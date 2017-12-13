@@ -8,8 +8,8 @@
    },
    "scripts": {
       "test": "./test.sh",
-      "build": "./make",
-      "build-debug": "./make -d",
+      "build": "./make.sh",
+      "build-debug": "./make.sh -d",
       "generate-docs": "./node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
    },
    "repository": {
