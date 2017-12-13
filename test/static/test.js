@@ -289,6 +289,22 @@ var tests = [
 	}
     },
     {
+	"description":"text selection",
+	"type":"asciimath",
+	"expected":"text(ad)",
+	"run":function(g){
+	    do_keys(['t','e','x','t','a','b','c','shift+left','shift+left','d']);
+	}
+    },
+    {
+	"description":"text copy",
+	"type":"asciimath",
+	"expected":"text(abcc)",
+	"run":function(g){
+	    do_keys(['t','e','x','t','a','b','c','shift+left','mod+c','right','mod+v']);
+	}
+    },
+    {
 	"description":"right paren",
 	"type":"asciimath",
 	"expected":"((x+1))^(2)",
@@ -332,15 +348,40 @@ var tests = [
 	}
     },
     {
-	"description":"click select",
+	"description":"click select left",
+	"type":"asciimath",
+	"expected":"x+(x)^(2)",
+	"run":function(g){
+	    do_keys(['x','s','i','n','x',')','y','x','^','2']);
+	    do_mouse_down("m_e2_0", .7, .8);
+	    do_mouse_up();
+	    do_mouse_down("m_e1_0", .9, .9, true);
+	    do_mouse_up();
+	    do_keys(['+']);
+	}
+    },
+    {
+	"description":"click select right",
 	"type":"asciimath",
 	"expected":"x+(x)^(2)",
 	"run":function(g){
 	    do_keys(['x','s','i','n','x',')','y','x','^','2']);
 	    do_mouse_down("m_e1_0", .7, .1);
-	    //do_mouse_down("m_e2_0", .7, .1);
 	    do_mouse_up();
 	    do_mouse_down("m_e2_0", .9, .9, true);
+	    do_mouse_up();
+	    do_keys(['+']);
+	}
+    },
+    {
+	"description":"click unselect",
+	"type":"asciimath",
+	"expected":"x+ sin(x)y(x)^(2)",
+	"run":function(g){
+	    do_keys(['x','s','i','n','x',')','y','x','^','2']);
+	    do_mouse_down("m_e1_0", .7, .1);
+	    do_mouse_up();
+	    do_mouse_down("m_e1_0", .7, .1, true);
 	    do_mouse_up();
 	    do_keys(['+']);
 	}
@@ -753,14 +794,14 @@ function display_coverage(){
 function start_tests(){
     var g = test_guppy;
     g.activate();
-    track_coverage(g);
+    //track_coverage(g);
     var tot = 0, pass = 0;
     for(var i = 0; i < tests.length; i++){
     	if(run_test(i, g)) pass++;
 	tot++;
     }
     document.getElementById("pass_rate").innerHTML = (Math.round(10000*pass/tot)/100)+"% pass rate (" + pass + " pass, " + (tot-pass) + " fails)";
-    display_coverage();
+    //display_coverage();
     g.backend.set_content("<m><e>x</e></m>");
 }
 

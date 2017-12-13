@@ -203,7 +203,7 @@ GuppyAST.to_function = function(ast, functions){
     defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
     defaults["val"] = function(args){return function(vars){ return args[0]; };};
     defaults["var"] = function(args){return function(vars){ if(args[0] == "pi") return Math.PI; if(args[0] == "e") return Math.E; return vars[args[0]]; };};
-    defaults["exponential"] = function(args){return function(vars){return args[0](vars)**args[1](vars)};};
+    defaults["exponential"] = function(args){return function(vars){return Math.pow(args[0](vars),args[1](vars))};};
     defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
     defaults["sin"] = function(args){return function(vars){return Math.sin(args[0](vars))};};
     defaults["cos"] = function(args){return function(vars){return Math.cos(args[0](vars))};};
