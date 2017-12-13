@@ -34,30 +34,34 @@
 	  <li>Download the <a href="#">build</a> folder and place it
 	  in your site's directory.  We'll suppose it is in
 	    /lib/guppy/</li>
-	  <li>Include guppy.min.js and guppy.min.css in your page:
-	  <pre>&lt;link rel="stylesheet" href="/lib/guppy/style/guppy.min.css"&gt;
+	  <li>Include guppy.min.js and guppy-default.min.css in your page:
+	  <pre>&lt;link rel="stylesheet" href="/lib/guppy/style/guppy-default.min.css"&gt;
 &lt;script type="text/javascript" src="/lib/guppy/js/guppy.min.js"&gt;&lt;/script&gt;</pre></li>
 	  <li>Initialise the editor with a list of symbol files you
-	  want it to use: <pre>Guppy.init_symbols(["/lib/guppy/sym/symbols.json"]);</pre></li>
+	  want it to use (this function takes many more arguments as well, allowing
+	  global configuration of all editors on the page.  See the
+	  <a href="../docs/guppymath/2.0.0-alpha/Guppy.html#.init">documentation</a>
+	  for details.) <pre>Guppy.init({"symbols":"/lib/guppy/sym/symbols.json"});</pre>
+	  </li>
 	  <li>Initialise an instance of the editor with the ID of a
-	  div that you want to be turned into the editor, and the
-	  settings you want for that instances.  <pre>var g1 = new Guppy("guppy1");</pre></li>
+	    div that you want to be turned into the editor.
+	    <pre>var g1 = new Guppy("guppy1");</pre></li>
 	  <li>Putting it all together for a complete <a href="../examples/basic">basic example</a>: 
 	    <pre>&lt;!doctype html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;link rel="stylesheet" href="/lib/guppy/style/guppy.min.css"&gt;
+    &lt;link rel="stylesheet" href="/lib/guppy/style/guppy-default.min.css"&gt;
     &lt;script type="text/javascript" src="/lib/guppy/js/guppy.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
      window.onload = function(){
-	 Guppy.init_symbols(["/lib/guppy/sym/symbols.json"]);
+	 Guppy.init({"symbols":"/lib/guppy/sym/symbols.json"});
 	 var g1 = new Guppy("guppy1");
      }
     &lt;/script&gt;
 &lt;/head&gt;
 
 &lt;body&gt;
-    &lt;div id="guppy1" style="width: 400px; border: 2px solid black; padding: 10px; box-shadow: 1px 1px 1px 0 lightgray inset; cursor: text;"&gt;&lt;/div&gt;
+    &lt;div id="guppy1" style="width:400px;"&gt;&lt;/div&gt;
 &lt;/body&gt;
 
 &lt;/html&gt;</pre></li>
