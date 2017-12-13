@@ -37,11 +37,12 @@
 	  <li>Include guppy.min.js and guppy-default.min.css in your page:
 	  <pre>&lt;link rel="stylesheet" href="/lib/guppy/style/guppy-default.min.css"&gt;
 &lt;script type="text/javascript" src="/lib/guppy/js/guppy.min.js"&gt;&lt;/script&gt;</pre></li>
-	  <li>Initialise the editor with a list of symbol files you
-	  want it to use (this function takes many more arguments as well, allowing
+	  <li>Initialise the editor with the path to the "build"
+	  folder, as well as a list of symbol files you want it to use
+	  (this function takes many more arguments as well, allowing
 	  global configuration of all editors on the page.  See the
 	  <a href="../docs/guppymath/2.0.0-alpha/Guppy.html#.init">documentation</a>
-	  for details.) <pre>Guppy.init({"symbols":"/lib/guppy/sym/symbols.json"});</pre>
+	  for details.) <pre>Guppy.init({"path":"/lib/guppy","symbols":"/lib/guppy/sym/symbols.json"});</pre>
 	  </li>
 	  <li>Initialise an instance of the editor with the ID of a
 	    div that you want to be turned into the editor.
@@ -54,7 +55,7 @@
     &lt;script type="text/javascript" src="/lib/guppy/js/guppy.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
      window.onload = function(){
-	 Guppy.init({"symbols":"/lib/guppy/sym/symbols.json"});
+	 Guppy.init({"path":"/lib/guppy","symbols":"/lib/guppy/sym/symbols.json"});
 	 var g1 = new Guppy("guppy1");
      }
     &lt;/script&gt;
