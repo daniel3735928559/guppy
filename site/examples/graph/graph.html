@@ -13,7 +13,7 @@
 	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
 	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
 		 try{
-		     var fn = Guppy.instances.guppy1.backend.get_content("function");
+		     var fn = e.target.backend.get_content("function");
 		     var F = function(x){ return fn.function({"x":x,"pi":Math.PI,"e":Math.E}); };
 		     plot(F);
 		 }

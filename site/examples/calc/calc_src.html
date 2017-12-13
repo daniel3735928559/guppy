@@ -14,7 +14,7 @@
 	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
 		 var a = document.getElementById("ans");
 		 try{
-		     var fn = Guppy.instances.guppy1.backend.get_content("function");
+		     var fn = e.target.backend.get_content("function");
 		     a.innerHTML = fn.function({"pi":Math.PI,"e":Math.E}).toFixed(3);
 		 }
 		 catch(e){ a.innerHTML = "Error"; }

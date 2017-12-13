@@ -13,7 +13,7 @@
      answers = {"ans1":"1", "ans2":"x^2", "ans3":"( 4+ sqrt( 16 - 4 ) )/( 2 )"};
      blank = "\\color{gray}{\\text{Click here to start typing your answer}}";
      check_answer = function(id){
-	 attempt = Guppy.instances[id].backend.get_content('asciimath');
+	 attempt = Guppy(id).backend.get_content('asciimath');
 	 answer = answers[id];
 	 feedback_elt = document.getElementById(id+"_feedback")
 	 try{

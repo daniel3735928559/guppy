@@ -7,8 +7,9 @@ GuppySettings = require('./guppy_settings.js');
 
 /**
    @class
-   @classdesc An instance of Guppy
-   @param {string} guppy_div - The string ID of the element that should be converted to an editor
+   @classdesc An instance of Guppy.  Calling `Guppy(id)` with the ID of
+   an existing editor will simply return that instance.
+   @param {string} id - The string ID of the element that should be converted to an editor.  
    @param {Object} [config] - The configuration options for this instance
    @param {Object} [config.events] - A dictionary of events.
      Available events are as specified in Guppy.init.  Values in this
@@ -21,6 +22,12 @@ GuppySettings = require('./guppy_settings.js');
    @constructor 
  */
 var Guppy = function(id, config){
+    if(Guppy.instances[id]){
+	if(Guppy.instances[id].ready){
+	    return Guppy.instances[id];
+	}
+	return null;
+    }
     var self = this;
     var config = config || {};
     var events = config['events'] || {}

@@ -566,7 +566,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("x-sin(x)");
+	    Guppy("guppy1").backend.import_text("x-sin(x)");
 	}
     },
     {
@@ -574,7 +574,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("x^2!");
+	    Guppy("guppy1").backend.import_text("x^2!");
 	}
     },
     {
@@ -582,7 +582,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("1/(1+1/(1+1/1)))");
+	    Guppy("guppy1").backend.import_text("1/(1+1/(1+1/1)))");
 	}
     },
     {
@@ -590,7 +590,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["*",[["-",[["val",[2]]]],["+",[["val",[1]],["val",[3]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("-2(1+3)");
+	    Guppy("guppy1").backend.import_text("-2(1+3)");
 	}
     },
     {
@@ -598,7 +598,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["+",[["val",[1]],["*",[["val",[2]],["val",[3]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("1+2*3");
+	    Guppy("guppy1").backend.import_text("1+2*3");
 	}
     },
     {
@@ -606,7 +606,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("matrix(list(list(1,2),list(3,4)))");
+	    Guppy("guppy1").backend.import_text("matrix(list(list(1,2),list(3,4)))");
 	}
     },
     {
@@ -614,7 +614,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["+",[["var",["epsilon"]],["var",["theta"]]]]`,
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_text("epsilon()+theta()");
+	    Guppy("guppy1").backend.import_text("epsilon()+theta()");
 	}
     },
     {
@@ -622,7 +622,7 @@ var tests = [
 	"type":"text",
 	"expected":"-sin(((pi * omega) / 2))",
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_ast(["-",[["sin",[["fraction",[["*",[["var",["pi"]],["var",["omega"]]]],["val",[2]]]]]]]]);
+	    Guppy("guppy1").backend.import_ast(["-",[["sin",[["fraction",[["*",[["var",["pi"]],["var",["omega"]]]],["val",[2]]]]]]]]);
 	}
     },
     {
@@ -630,7 +630,7 @@ var tests = [
 	"type":"text",
 	"expected":"vector(list((1 / 2),(2 / 3)))",
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_ast(["vector",[["list",[["fraction",[["val",[1]],["val",[2]]]],["fraction",[["val",[2]],["val",[3]]]]]]]]);
+	    Guppy("guppy1").backend.import_ast(["vector",[["list",[["fraction",[["val",[1]],["val",[2]]]],["fraction",[["val",[2]],["val",[3]]]]]]]]);
 	}
     },
     {
@@ -638,7 +638,7 @@ var tests = [
 	"type":"text",
 	"expected":"matrix(list(list((pi / 2),(x^2)),list(definite_integral(1,2,square_root(x),x),sin(x))))",
 	"run":function(g){
-	    Guppy.instances.guppy1.backend.import_ast(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
+	    Guppy("guppy1").backend.import_ast(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
 	}
     },
     {

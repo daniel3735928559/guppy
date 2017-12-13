@@ -10,11 +10,11 @@
 	 input = function(type){
 	     try{
 		 var data = document.getElementById("input_field").value;
-		 if(type == "clear") Guppy.instances.guppy1.backend.set_content("&lt;m&gt;&lt;e/&gt;&lt;/m&gt;");
-		 if(type == "xml") Guppy.instances.guppy1.backend.set_content(data);
-		 if(type == "ast") Guppy.instances.guppy1.backend.import_ast(JSON.parse(data));
-		 if(type == "text") Guppy.instances.guppy1.backend.import_text(data);
-		 Guppy.instances.guppy1.render(true);
+		 if(type == "clear") Guppy("guppy1").backend.set_content("&lt;m&gt;&lt;e/&gt;&lt;/m&gt;");
+		 if(type == "xml") Guppy("guppy1").backend.set_content(data);
+		 if(type == "ast") Guppy("guppy1").backend.import_ast(JSON.parse(data));
+		 if(type == "text") Guppy("guppy1").backend.import_text(data);
+		 Guppy("guppy1").render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
 	     catch(e){ document.getElementById("res").innerHTML = '&lt;font color="red"&gt;Parsing error&lt;/font&gt;'; console.log(e.stack); }
@@ -22,9 +22,8 @@
 
 	 output = function(type){
 	     try{
-		 content = Guppy.instances['guppy1'].backend.get_content(type);
+		 content = Guppy("guppy1").backend.get_content(type);
 		 if(type == "function") content = "Function with variables: " + JSON.stringify(content.vars);
-		 if(type == "eqns") content = JSON.stringify(content);
 		 document.getElementById("output_field").value = content;
 		 document.getElementById("res").innerHTML = "";
 	     }
