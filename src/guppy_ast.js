@@ -59,6 +59,7 @@ GuppyAST.to_text = function(ast){
     functions["-"] = function(args){return args.length == 1 ? "-"+args[0] : "("+args[0]+" - "+args[1]+")";};
     functions["val"] = function(args){return args[0]+"";};
     functions["var"] = function(args){return args[0];};
+    functions["subscript"] = function(args){return "("+args[0]+"_"+args[1]+")";};
     functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";};
     functions["factorial"] = function(args){return "("+args[0]+")!";};
     functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";};
@@ -133,9 +134,6 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     for(var i = 0; i < ops.length; i++){
 	functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
     }
-    // functions["*"] = function(args){
-    // 	return binop_high(args, "*");
-    // };
     functions["/"] = function(args){
 	return make_sym("fraction",args);
     };
@@ -389,8 +387,8 @@ GuppyAST.tokenise_text = function(s){
     return GuppyAST.tokenise(s, [
 	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
 	{"type":"operator", "re":"^(!=|>=|<=)", "value":function(m){return m;}},
-	{"type":"operator", "re":"^[\-+*/,!^()=<>]", "value":function(m){return m}},
-	{"type":"name", "re":"^[a-zA-Z_]+", "value":function(m){return m}},
+	{"type":"operator", "re":"^[\-+*/,!()=<>_^]", "value":function(m){return m}},
+	{"type":"name", "re":"^[a-zA-Z_]*[a-zA-Z]", "value":function(m){return m}},
 	{"type":"comma", "re":"^,", "value":function(m){return m}},
 	{"type":"space", "re":"^\\s+", "value":function(m){return m}},
     ]);
@@ -541,6 +539,10 @@ GuppyAST.parse_text = function(tokens){
     
     infix("^", 70, function(left){
 	return ["exponential", [left, expression(70)]];
+    });
+    
+    infix("_", 70, function(left){
+	return ["subscript", [left, expression(70)]];
     });
     
     infix("(", 80, mul);
