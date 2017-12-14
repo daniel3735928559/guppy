@@ -495,6 +495,14 @@ var tests = [
 	}
     },
     {
+	"description":"export sub",
+	"type":"text",
+	"expected":`(x_2)`,
+	"run":function(g){
+	    do_keys(['x','_','2']);
+	}
+    },
+    {
 	"description":"left_end",
 	"content":"<m><e>x</e></m>",
 	"type":"asciimath",
@@ -618,6 +626,14 @@ var tests = [
 	}
     },
     {
+	"description":"import_text subscript",
+	"type":"ast",
+	"expected":`["subscript",[["var",["x"]],["val",[2]]]]`,
+	"run":function(g){
+	    Guppy("guppy1").backend.import_text("x_2");
+	}
+    },
+    {
 	"description":"import_ast",
 	"type":"text",
 	"expected":"-sin(((pi * omega) / 2))",
@@ -723,7 +739,7 @@ var tests = [
 	}
     },
     {
-	"description":"cards",
+	"description":"cards x",
 	"type":"asciimath",
 	"expected":"10x10x10x",
 	"run":function(g){
@@ -737,6 +753,28 @@ var tests = [
 		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
 		do_keys([cards+""]);
 		for(var j = 0; j < xs.length; j++) xs[j].click();
+		cards = 0;
+		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
+		do_keys([cards+""]);
+		do_keys(["x"]);
+	    }
+	}
+    },
+    {
+	"description":"cards toggle",
+	"type":"asciimath",
+	"expected":"10x10x10x",
+	"run":function(g){
+	    var bs = document.getElementsByClassName("guppy-button");
+	    var cs = document.getElementsByClassName("guppy_help");
+	    var xs = document.getElementsByClassName("guppy-card-x");
+	    var cards = 0;
+	    for(var i = 0; i < bs.length; i++){
+		bs[i].click();
+		cards = 0;
+		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
+		do_keys([cards+""]);
+		bs[i].click();
 		cards = 0;
 		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
 		do_keys([cards+""]);
@@ -783,62 +821,6 @@ function append_result(name, result, i){
     d.appendChild(rerun);
     d.appendChild(document.createTextNode(": " + result));
     res.appendChild(d);
-}
-
-function patch_object_functions(name, obj, is_class, exclude){
-    var proto = is_class ? obj : Object.getPrototypeOf(obj);
-    var props = Object.getOwnPropertyNames(proto);
-    for(var i = 0; i < props.length; i++){
-	var fun = obj[props[i]]
-	if(typeof fun === 'function' && !exclude[props[i]]){
-	    covered_functions[name + "." + props[i]] = {"calls":0,"fun":fun};
-	    var nf = function(objname, funname, o, f){
-		o[funname] = function(){
-		    covered_functions[objname + "." + funname].calls++;
-		    return f.apply(o, arguments);
-		}
-	    };
-	    nf(name, props[i], obj, fun);
-	}
-    }
-}
-
-function track_coverage(g){
-    // get all functions of a function object
-    var function_functions = {};
-    var f = function(){};
-    var props = Object.getOwnPropertyNames(f);
-    for(var i = 0; i < props.length; i++)
-	if(typeof f[props[i]] === 'function')
-	    function_functions[props[i]] = true;
-    // get all functions of the various target objects
-    patch_object_functions("guppy.backend", g.backend, false, function_functions);
-    patch_object_functions("guppy", g, false, function_functions);
-    //patch_object_functions("GuppyBackend", GuppyBackend, true, function_functions);
-    //patch_object_functions("Guppy", Guppy, true, function_functions);
-    display_coverage();
-}
-
-function display_coverage(){
-    document.getElementById("coverage").innerHTML = "Test coverage: <b><span id='cov'></span></b>";
-    var res = document.getElementById("coverage");
-    var tot = 0, cov = 0;
-    for(var n in covered_functions){
-	tot++;
-	var calls = covered_functions[n].calls;
-	if(calls > 0) cov++;
-	//res.appendChild(document.createElement("br"));
-	s = document.createElement("div");
-	s.setAttribute("style","padding:5px; background-color:" + (calls > 0 ? "#6c0;" : "#f30;"));
-	s.appendChild(document.createTextNode(n + ": " + calls));
-	res.appendChild(s);
-    }
-    document.getElementById("cov").innerHTML = (Math.round(10000*cov/tot)/100)+"% (" + cov + " covered, " + (tot-cov) + " not covered).  ";
-    var re = document.createElement("a");
-    re.setAttribute("onclick","display_coverage()");
-    re.setAttribute("href","#");
-    re.appendChild(document.createTextNode("Recompute"));
-    document.getElementById("cov").appendChild(re);
 }
 
 function start_tests(){

@@ -86,33 +86,26 @@ GuppySettings.init_card = function(card, g){
 	for(var s in GuppySettings.settings_options){
 	    var opt = GuppySettings.settings_options[s];
 	    var val = g.backend.setting(s);
-	    if(opt.length == 0){
-		//make_row("guppy_settings_table",s,`<input id="guppy_settings_input_${s}" type="text" onchange="Guppy.instances['${g.id}'].backend.settings['${s}']=document.getElementById('guppy_settings_input_${s}').value;" value="`+val+`"></input>`);
-		make_row("guppy_settings_table",s,`<input id="guppy_settings_input_${s}" type="text" onchange="GuppySettings.config.settings['${s}']=document.getElementById('guppy_settings_input_${s}').value;" value="`+val+`"></input>`);
-	    }
-	    else{
-		//var selector = `<select id="guppy_settings_select_${s}" onchange="Guppy.instances['${g.id}'].backend.settings['${s}']=document.getElementById('guppy_settings_select_${s}').value;">`;
-		var sel = document.createElement("select");
-		sel.setAttribute("id",`guppy_settings_select_${s}`);
-		sel.onchange = function(ss){
-		    return function(e){
-			GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
-			console.log("ASD",ss,GuppySettings.config.settings[ss]);
-		    }
-		}(s);
-		for(var i = 0; i < opt.length; i++){
-		    var o = document.createElement("option");
-		    o.setAttribute("value",opt[i]);
-		    o.innerHTML = opt[i];
-		    sel.appendChild(o);
+	    var sel = document.createElement("select");
+	    sel.setAttribute("id",`guppy_settings_select_${s}`);
+	    sel.onchange = function(ss){
+		return function(e){
+		    GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
+		    console.log("ASD",ss,GuppySettings.config.settings[ss]);
 		}
-		var row = document.createElement("tr");
-		row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
-		var td = document.createElement("td");
-		td.appendChild(sel);
-		row.appendChild(td);
-		document.getElementById("guppy_settings_table").appendChild(row);
+	    }(s);
+	    for(var i = 0; i < opt.length; i++){
+		var o = document.createElement("option");
+		o.setAttribute("value",opt[i]);
+		o.innerHTML = opt[i];
+		sel.appendChild(o);
 	    }
+	    var row = document.createElement("tr");
+	    row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
+	    var td = document.createElement("td");
+	    td.appendChild(sel);
+	    row.appendChild(td);
+	    document.getElementById("guppy_settings_table").appendChild(row);
 	}
     }
 }
