@@ -4,6 +4,7 @@ var app = express();
 
 app.use('/coverage', coverage.createHandler());
 app.use(express.static('static'));
+app.use('/cover',express.static('cover'));
 app.get('/done', function (req, res) { console.log("DONE"); })
 
 app.listen(8778);

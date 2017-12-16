@@ -640,6 +640,8 @@ Guppy.kb.k_syms = {
     "*":"*",
     "(":"paren",
     "=":"equal",
+    "[":"mat",
+    "{":"vec",
     "<":"less",
     ">":"greater",
     "_":"sub",
@@ -655,13 +657,21 @@ Guppy.kb.k_text = {
     ")":")",
     "<":"<",
     ">":">",
-    "_":"_",
     "|":"|",
     "!":"!",
     ",":",",
     ".":".",
     ";":";",
-    "=":"="
+    "=":"=",
+    "[":"[",
+    "]":"]",
+    "@":"@",
+    "'":"'",
+    "`":"`",
+    ":":":",
+    "\"":"\"",
+    "shift+/":"?",
+    "space":" ",
 };
 Guppy.kb.k_controls = {
     "up":"up",
@@ -722,7 +732,12 @@ Guppy.register_keyboard_handlers = function(){
     	Mousetrap.bind(i,function(i){ return function(){
 	    if(!Guppy.active_guppy) return true;
 	    Guppy.active_guppy.temp_cursor.node = null;
-	    Guppy.active_guppy.backend.insert_string(Guppy.kb.k_chars[i]);
+	    if(GuppyUtils.is_text(Guppy.active_guppy.backend.current) && Guppy.kb.k_text[i]){
+		Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+	    }
+	    else{
+		Guppy.active_guppy.backend.insert_string(Guppy.kb.k_chars[i]);
+	    }
 	    Guppy.active_guppy.render(true);
 	    return false;
 	}}(i));  
@@ -730,11 +745,15 @@ Guppy.register_keyboard_handlers = function(){
     	Mousetrap.bind(i,function(i){ return function(){
 	    if(!Guppy.active_guppy) return true;
 	    Guppy.active_guppy.temp_cursor.node = null;
-	    Guppy.active_guppy.backend.space_caret = 0;
+	    // We always want to skip using this symbol insertion if
+	    // we are in text mode, and additionally we want only to
+	    // insert the corresponding text if there is an overriding
+	    // text representation in Guppy.kb.k_text
 	    if(GuppyUtils.is_text(Guppy.active_guppy.backend.current)){
 		if(Guppy.kb.k_text[i]) Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
 	    }
 	    else{
+		Guppy.active_guppy.backend.space_caret = 0;
 		Guppy.active_guppy.backend.insert_symbol(Guppy.kb.k_syms[i]);
 	    }
 	    Guppy.active_guppy.render(true);
@@ -743,13 +762,31 @@ Guppy.register_keyboard_handlers = function(){
     for(var i in Guppy.kb.k_controls)
     	Mousetrap.bind(i,function(i){ return function(){
 	    if(!Guppy.active_guppy) return true;
-	    Guppy.active_guppy.backend.space_caret = 0;
-	    Guppy.active_guppy.backend[Guppy.kb.k_controls[i]]();
-	    Guppy.active_guppy.temp_cursor.node = null;
+	    // We want to skip using this control sequence only if there is an overriding text representation in Guppy.kb.k_text
+	    if(GuppyUtils.is_text(Guppy.active_guppy.backend.current) && Guppy.kb.k_text[i]){
+		Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+	    }
+	    else{
+		Guppy.active_guppy.backend.space_caret = 0;
+		Guppy.active_guppy.backend[Guppy.kb.k_controls[i]]();
+		Guppy.active_guppy.temp_cursor.node = null;
+	    }
 	    Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0);
-	    Guppy.active_guppy.render(false);
+	    //Guppy.active_guppy.render(false);
 	    return false;
 	}}(i));
+    for(var i in Guppy.kb.k_text)
+	if(!(Guppy.kb.k_chars[i] || Guppy.kb.k_syms[i] || Guppy.kb.k_controls[i])){
+    	    Mousetrap.bind(i,function(i){ return function(){
+		if(!Guppy.active_guppy) return true;
+		Guppy.active_guppy.temp_cursor.node = null;
+		if(GuppyUtils.is_text(Guppy.active_guppy.backend.current)){
+		    Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+		    Guppy.active_guppy.render(true);
+		}
+		return false;
+	    }}(i));
+	}
 }
 
 module.exports = Guppy;

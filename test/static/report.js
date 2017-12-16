@@ -10,6 +10,10 @@ function send_report()
 	    xhr.onreadystatechange = function(){}
 	    xhr.open("get", "/done"); 
 	    xhr.send();
+	    setTimeout(2000,function(){
+		var iframe = document.getElementById("coverage");
+		iframe.src = iframe.src;
+	    });
 	}
 	else console.log("ONO",xmlHttp.readyState, xmlHttp.status);
     }
