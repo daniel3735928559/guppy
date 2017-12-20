@@ -578,6 +578,112 @@ Guppy.prototype.render = function(updated){
 }
 
 /** 
+    Get the content of the editor as LaTeX
+    @memberof Guppy
+*/
+Guppy.prototype.latex = function(){
+    return this.backend.get_content("latex");
+}
+
+/** 
+    Get the content of the editor as a syntax tree, serialised using JSON
+    @memberof Guppy
+*/
+Guppy.prototype.syntax_tree = function(){
+    return this.backend.get_content("ast");
+}
+
+/** 
+    Get the content of the editor as a list of equations, serialised
+    using JSON.  For example, `x < y = z` will be returned as `[["<", [["var", "x"], ["var", "y"]]],["=", [["var", "y"], ["var", "z"]]]]
+    @memberof Guppy
+*/
+Guppy.prototype.equations = function(){
+    return this.backend.get_content("eqns");
+}
+
+/** 
+    Get the content of the editor in a parseable text format.
+    @memberof Guppy
+*/
+Guppy.prototype.text = function(){
+    return this.backend.get_content("text");
+}
+
+
+/** 
+    Get the content of the editor in AsciiMath.
+    @memberof Guppy
+*/
+Guppy.prototype.asciimath = function(){
+    return this.backend.get_content("asciimath");
+}
+
+/** 
+    Get the content of the editor as a Javascript function, with
+    user-supplied interpretations of the various symbols.  If not
+    supplied, default interpretations will be given for the following
+    list of symbols: `*,+,/,-,^,sqrt,sin,cos,tan,log`
+    @param {Object} [evaluators] - An object with keys for each symbol
+    type ("exponential", "indefinite_integral", etc.) whose values are
+    functions that will be passed the appropriate number of parameters
+    for that operator.
+    @memberof Guppy
+*/
+Guppy.prototype.func = function(evaluators){
+    var f = this.backend.get_content("function", evaluators);
+    
+}
+
+/** 
+    Get the content of the editor as a Javascript function
+    @memberof Guppy
+*/
+Guppy.prototype.evaluate = function(evaluators){
+    return this.backend.doc.evaluate(evaluators);
+}
+
+/** 
+    Get a list of the symbols used in the document, in order of
+    appearance, with each kind of symbol appearing only once.  For
+    example, a document representing `sin(x^3)+sqrt(x^2+x)` will
+    have symbols `["sin","exponential","square_root"]`.
+    @param {String[]} [groups] - A list of the groups whose symbols
+      may be included in the output.  If absent, all symbols in the
+      document will be returned.
+    @memberof Guppy
+*/
+Guppy.prototype.symbols = function(groups){
+    return this.backend.doc.get_symbols(groups);
+}
+
+/** 
+    Get a list of the variable names used in the document.  
+    @memberof Guppy
+*/
+Guppy.prototype.vars = function(){
+    return this.backend.get_content("function").vars;
+}
+
+/** 
+    Set the content of the document from text in the format outputted by `guppy.text()`.
+    @param {String} text - A string representing the document to import.
+    @memberof Guppy
+*/
+Guppy.prototype.import_text = function(text){
+    return this.backend.import_text(text);
+}
+
+/** 
+    Import a syntax tree from a JSON object formatted as outputted by `guppy.syntax_tree()`.
+    @param {Object} tree - A JSON object representing the syntax tree to import.
+    @memberof Guppy
+*/
+Guppy.prototype.import_syntax_tree = function(tree){
+    return this.backend.import_ast(tree);
+}
+
+/** 
     Focus this instance of the editor
     @memberof Guppy
 */
@@ -591,7 +697,6 @@ Guppy.prototype.activate = function(){
 	this.backend.fire_event("focus",{"focused":true});
     }
 }
-
 
 /** 
     Unfocus this instance of the editor
