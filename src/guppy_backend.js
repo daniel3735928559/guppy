@@ -826,6 +826,7 @@ GuppyBackend.prototype.list_extend = function(direction, copy){
 	    else nn.parentNode.insertBefore(to_insert.cloneNode(true), before ? nn : nn.nextSibling);
 	    nn.parentNode.setAttribute("s",parseInt(nn.parentNode.getAttribute("s"))+1);
 	}
+	this.sel_clear();
 	this.current = before ? n.previousSibling.lastChild : n.nextSibling.firstChild;
 	this.caret = this.current.firstChild.textContent.length;
 	this.checkpoint();
@@ -852,6 +853,7 @@ GuppyBackend.prototype.list_extend = function(direction, copy){
     }
     n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))+1);
     n.parentNode.insertBefore(to_insert, before ? n : n.nextSibling);
+    this.sel_clear();
     if(vertical) this.current = to_insert.firstChild.firstChild;
     else this.current = to_insert.firstChild;
     this.caret = 0;
@@ -897,6 +899,7 @@ GuppyBackend.prototype.list_remove_col = function(){
 	nn.parentNode.setAttribute("s",parseInt(nn.parentNode.getAttribute("s"))-1);
 	nn.parentNode.removeChild(nn);
     }
+    this.checkpoint();
 }
 
 /** 
@@ -922,6 +925,7 @@ GuppyBackend.prototype.list_remove_row = function(){
 
     n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))-1);
     n.parentNode.removeChild(n);
+    this.checkpoint();
 }
 
 /** 
@@ -949,6 +953,7 @@ GuppyBackend.prototype.list_remove = function(){
     else return;
     n.parentNode.setAttribute("s",parseInt(n.parentNode.getAttribute("s"))-1);
     n.parentNode.removeChild(n);
+    this.checkpoint();
 }
 
 /** 

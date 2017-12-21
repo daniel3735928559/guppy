@@ -118,9 +118,11 @@ GuppyOSK.prototype.attach = function(guppy){
 	var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
 	grouped[group].push({"name":s,"latex":display});
     }
+    var matrix_controls = null;
     for(var g in grouped){
 	var group_container = elt("div",{"class":"guppy_osk_group","id":g});
 	var group_elt = elt("div",{"class":"guppy_osk_group_box","id":g});
+	if(g == "array") matrix_controls = group_elt;
 	tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
 	for(var s in grouped[g]){
 	    var sym = grouped[g][s];
@@ -177,6 +179,13 @@ GuppyOSK.prototype.attach = function(guppy){
 	controls.appendChild(e);
     }
     
+    var add_matrix_control = function(content,fn){
+	var e = elt("span",{"class":"guppy_osk_key"}, content);
+	click_listener(e, fn);
+	matrix_controls.appendChild(e);
+	//katex.render(content, e);
+    }
+    
     add_control("&larr;S", function(e){ e.preventDefault();guppy.backend.sel_left();guppy.render();});
     add_control("S&rarr;", function(e){ e.preventDefault();guppy.backend.sel_right();guppy.render();});
     add_control("cut", function(e){ e.preventDefault();guppy.backend.sel_cut();guppy.render();});
@@ -192,9 +201,21 @@ GuppyOSK.prototype.attach = function(guppy){
     add_control("&uarr;", function(e){ e.preventDefault();guppy.backend.up();guppy.render();});
     add_control("&darr;", function(e){ e.preventDefault();guppy.backend.down();guppy.render();});
     add_control("&rarr;", function(e){ e.preventDefault();guppy.backend.right();guppy.render();});
-    
+
+    matrix_controls.appendChild(elt("br"));
+    add_matrix_control("&larr;+col", function(e){ e.preventDefault();guppy.backend.list_extend_left();guppy.render();});
+    add_matrix_control("+col&rarr;", function(e){ e.preventDefault();guppy.backend.list_extend_right();guppy.render();});
+    add_matrix_control("&uarr;+row", function(e){ e.preventDefault();guppy.backend.list_extend_up();guppy.render();});
+    add_matrix_control("&darr;+row", function(e){ e.preventDefault();guppy.backend.list_extend_down();guppy.render();});
+    add_matrix_control("col&larr;col", function(e){ e.preventDefault();guppy.backend.list_extend_copy_left();guppy.render();});
+    add_matrix_control("col&rarr;col", function(e){ e.preventDefault();guppy.backend.list_extend_copy_right();guppy.render();});
+    add_matrix_control("row&uarr;row", function(e){ e.preventDefault();guppy.backend.list_extend_copy_up();guppy.render();});
+    add_matrix_control("row&darr;row", function(e){ e.preventDefault();guppy.backend.list_extend_copy_down();guppy.render();});
+    add_matrix_control("-col", function(e){ e.preventDefault();guppy.backend.list_remove();guppy.render();});
+    add_matrix_control("-row", function(e){ e.preventDefault();guppy.backend.list_remove_row();guppy.render();});
+
     osk.appendChild(controls);
-    document.body.appendChild(osk);
+    document.body.appendChild(osk);    
 
     this.guppy = guppy;
     this.element = osk;

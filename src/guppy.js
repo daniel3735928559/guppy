@@ -623,20 +623,40 @@ Guppy.prototype.asciimath = function(){
     Get the content of the editor as a Javascript function, with
     user-supplied interpretations of the various symbols.  If not
     supplied, default interpretations will be given for the following
-    list of symbols: `*,+,/,-,^,sqrt,sin,cos,tan,log`
-    @param {Object} [evaluators] - An object with keys for each symbol
-    type ("exponential", "indefinite_integral", etc.) whose values are
-    functions that will be passed the appropriate number of parameters
-    for that operator.
+    symbols: `*,+,/,-,^,sqrt,sin,cos,tan,log`
+    @param {Object} [evaluators] - An object with a key for each
+    possible symbol type ("exponential", "indefinite_integral", etc.)
+    whose values are functions.  These functions take in a single
+    argument, `args`, which is an array of that symbol's arguments,
+    and should return a function that takes in an object argument
+    `vars`.  In this inner function, to compute e.g. the sum of the
+    first and second arguments, you would do
+    `args[0](vars)+args[1](vars)`.  This function should return the
+    result of that symbol's operation.  
+    @returns {function(Object)} - Returns a function that takes in an
+    object with a key for each variable in the expression and whose
+    values are the values that will be passed in for those variables.
+    In addition, this function is augmented with a `vars` member which
+    is a list of the variables that appear in the expression.
     @memberof Guppy
 */
 Guppy.prototype.func = function(evaluators){
-    var f = this.backend.get_content("function", evaluators);
-    
+    var res = this.backend.get_content("function", evaluators);
+    var f = res['function'];
+    f.vars = res.vars;
+    return f;
 }
 
 /** 
-    Get the content of the editor as a Javascript function
+    Recursively evaluate the syntax tree of the editor's contents using specified functions.
+    @param {Object} [evaluators] - An object with a key for each
+    possible symbol type ("exponential", "indefinite_integral", etc.)
+    whose values are functions that will be applied whenever that
+    symbol is encountered in the syntax tree.  These functions take a
+    single argument, `args`, which is a list of the results of
+    evaluating that symbol's arguments.  
+    @returns - Whatever the `evaluators` function for the root symbol
+    in the syntax tree returns.
     @memberof Guppy
 */
 Guppy.prototype.evaluate = function(evaluators){

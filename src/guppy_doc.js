@@ -65,6 +65,10 @@ GuppyDoc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
+GuppyDoc.prototype.evaluate = function(evaluators){
+    return GuppyAST.evaluate(this.syntax_tree(), evaluators);
+}
+
 GuppyDoc.prototype.import_text = function(text, syms, s2n){
     var tokens = GuppyAST.tokenise_text(text);
     console.log("TOKENS",JSON.stringify(tokens));
