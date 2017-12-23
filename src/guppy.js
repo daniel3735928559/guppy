@@ -586,6 +586,14 @@ Guppy.prototype.latex = function(){
 }
 
 /** 
+    Get the content of the editor as XML
+    @memberof Guppy
+*/
+Guppy.prototype.xml = function(){
+    return this.backend.get_content("xml");
+}
+
+/** 
     Get the content of the editor as a syntax tree, serialised using JSON
     @memberof Guppy
 */
@@ -673,7 +681,7 @@ Guppy.prototype.evaluate = function(evaluators){
       document will be returned.
     @memberof Guppy
 */
-Guppy.prototype.symbols = function(groups){
+Guppy.prototype.symbols_used = function(groups){
     return this.backend.doc.get_symbols(groups);
 }
 
@@ -692,6 +700,17 @@ Guppy.prototype.vars = function(){
 */
 Guppy.prototype.import_text = function(text){
     return this.backend.import_text(text);
+}
+
+/** 
+    Set the content of the document from XML in the format outputted
+    by `guppy.xml()`.
+    @param {String} xml - An XML string representing the document to
+      import.
+    @memberof Guppy
+*/
+Guppy.prototype.import_xml = function(xml){
+    return this.backend.set_content(xml);
 }
 
 /** 

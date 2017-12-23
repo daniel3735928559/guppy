@@ -574,7 +574,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("x-sin(x)");
+	    Guppy("guppy1").import_text("x-sin(x)");
 	}
     },
     {
@@ -582,7 +582,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("x^2!");
+	    Guppy("guppy1").import_text("x^2!");
 	}
     },
     {
@@ -590,7 +590,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("1/(1+1/(1+1/1)))");
+	    Guppy("guppy1").import_text("1/(1+1/(1+1/1)))");
 	}
     },
     {
@@ -598,7 +598,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["*",[["-",[["val",[2]]]],["+",[["val",[1]],["val",[3]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("-2(1+3)");
+	    Guppy("guppy1").import_text("-2(1+3)");
 	}
     },
     {
@@ -606,7 +606,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["+",[["val",[1]],["*",[["val",[2]],["val",[3]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("1+2*3");
+	    Guppy("guppy1").import_text("1+2*3");
 	}
     },
     {
@@ -614,7 +614,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("matrix(list(list(1,2),list(3,4)))");
+	    Guppy("guppy1").import_text("matrix(list(list(1,2),list(3,4)))");
 	}
     },
     {
@@ -622,7 +622,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["+",[["var",["epsilon"]],["var",["theta"]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("epsilon()+theta()");
+	    Guppy("guppy1").import_text("epsilon()+theta()");
 	}
     },
     {
@@ -630,7 +630,7 @@ var tests = [
 	"type":"ast",
 	"expected":`["subscript",[["var",["x"]],["val",[2]]]]`,
 	"run":function(g){
-	    Guppy("guppy1").backend.import_text("x_2");
+	    Guppy("guppy1").import_text("x_2");
 	}
     },
     {
@@ -638,7 +638,7 @@ var tests = [
 	"type":"text",
 	"expected":"-sin(((pi * omega) / 2))",
 	"run":function(g){
-	    Guppy("guppy1").backend.import_ast(["-",[["sin",[["fraction",[["*",[["var",["pi"]],["var",["omega"]]]],["val",[2]]]]]]]]);
+	    Guppy("guppy1").import_syntax_tree(["-",[["sin",[["fraction",[["*",[["var",["pi"]],["var",["omega"]]]],["val",[2]]]]]]]]);
 	}
     },
     {
@@ -646,7 +646,7 @@ var tests = [
 	"type":"text",
 	"expected":"vector(list((1 / 2),(2 / 3)))",
 	"run":function(g){
-	    Guppy("guppy1").backend.import_ast(["vector",[["list",[["fraction",[["val",[1]],["val",[2]]]],["fraction",[["val",[2]],["val",[3]]]]]]]]);
+	    Guppy("guppy1").import_syntax_tree(["vector",[["list",[["fraction",[["val",[1]],["val",[2]]]],["fraction",[["val",[2]],["val",[3]]]]]]]]);
 	}
     },
     {
@@ -654,7 +654,7 @@ var tests = [
 	"type":"text",
 	"expected":"matrix(list(list((pi / 2),(x^2)),list(definite_integral(1,2,square_root(x),x),sin(x))))",
 	"run":function(g){
-	    Guppy("guppy1").backend.import_ast(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
+	    Guppy("guppy1").import_syntax_tree(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
 	}
     },
     {
@@ -708,8 +708,7 @@ var tests = [
     {
 	"description":"evaluate basic",
 	"observe":function(g){
-	    var f = g.backend.get_content("function");
-	    return f.function({"x":2,"y":-1})
+	    return g.func()({"x":2,"y":-1})
 	},
 	"expected":1,
 	"run":function(g){
@@ -719,8 +718,7 @@ var tests = [
     {
 	"description":"evaluate trig",
 	"observe":function(g){
-	    var f = g.backend.get_content("function");
-	    return f.function({"x":0})
+	    return g.func()({"x":0})
 	},
 	"expected":-1,
 	"run":function(g){
@@ -730,8 +728,7 @@ var tests = [
     {
 	"description":"evaluate complex",
 	"observe":function(g){
-	    var f = g.backend.get_content("function");
-	    return f.function({"x":4,"y":-5})
+	    return g.func()({"x":4,"y":-5})
 	},
 	"expected":-2,
 	"run":function(g){
@@ -780,6 +777,138 @@ var tests = [
 		do_keys([cards+""]);
 		do_keys(["x"]);
 	    }
+	}
+    },
+    {
+	"description":"simplified API latex",
+	"observe":function(g){
+	    return g.latex();
+	},
+	"expected":"\\sqrt{-x+2y\\phantom{\\tiny{!}}}=z",
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"simplified API syntax tree",
+	"observe":function(g){
+	    return g.syntax_tree();
+	},
+	"expected":`["=",[["square_root",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]`,
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"simplified API asciimath",
+	"observe":function(g){
+	    return g.asciimath();
+	},
+	"expected":"sqrt(-x+2y) = z",
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"simplified API equations",
+	"observe":function(g){
+	    return g.equations();
+	},
+	"expected":`[["=",[["square_root",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]]`,
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"simplified API text",
+	"observe":function(g){
+	    return g.text();
+	},
+	"expected":"square_root((-x + (2 * y))) = z",
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"simplified API xml",
+	"observe":function(g){
+	    return g.xml();
+	},
+	"expected":`<m><e></e><f type="square_root" group="functions"><b p="latex">\\sqrt{<r ref="1"/>\\phantom{\\tiny{!}}}</b><b p="asciimath">sqrt(<r ref="1"/>)</b><c delete="1"><e>-x+2y</e></c></f><e></e><f group="operations" char="yes" type="=" ast_type="operator"><b p="latex">=</b><b p="asciimath"> = </b></f><e>z</e></m>`,
+	"run":function(g){
+	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
+	}
+    },
+    {
+	"description":"symbols used",
+	"observe":function(g){
+	    return JSON.stringify(g.symbols_used());
+	},
+	"expected":`["square_root","sin","exponential"]`,
+	"run":function(g){
+	    do_keys(['s','q','r','t','s','i','n','x','^','2']);
+	}
+    },
+    {
+	"description":"vars used",
+	"observe":function(g){
+	    return JSON.stringify(g.vars());
+	},
+	"expected":`["x","alpha","y"]`,
+	"run":function(g){
+	    do_keys(['x','+','a','l','p','h','a','^','y']);
+	}
+    },
+    {
+	"description":"func",
+	"observe":function(g){
+	    var f = g.func();
+	    vars = {};
+	    for(var i = 0; i < f.vars.length; i++)
+		vars[f.vars[i]] = 2;
+	    return f(vars);
+	},
+	"expected":10,
+	"run":function(g){
+	    do_keys(['x','+','a','^','y','+','1']);
+	}
+    },
+    {
+	"description":"eval",
+	"observe":function(g){
+	    return g.evaluate({
+		"+":function(args){return args[0]+args[1]},
+		"val":function(args){return args[0]}
+	    });
+	},
+	"expected":3,
+	"run":function(g){
+	    do_keys(['1','+','2']);
+	}
+    },
+    {
+	"description":"text weird chars",
+	"type":"text",
+	"expected":"text(1+,!@a\"')",
+	"run":function(g){
+	    do_keys(['t','e','x','t','1','+',',','!','@','a','"',"'"]);
+	}
+    },
+    {
+	"description":"focus",
+	"type":"text",
+	"observe":function(g){
+	    g.activate();
+	    var f = focuses;
+	    var u = unfocuses;
+	    g.deactivate();
+	    ans_u = unfocuses-u;
+	    g.activate();
+	    ans_f = focuses-f;
+	    return ans_u+ans_f;
+	},
+	"expected":2,
+	"run":function(g){
 	}
     }
 ];
@@ -834,14 +963,14 @@ function start_tests(){
     }
     document.getElementById("pass_rate").innerHTML = (Math.round(10000*pass/tot)/100)+"% pass rate (" + pass + " pass, " + (tot-pass) + " fails)";
     //display_coverage();
-    g.backend.set_content("<m><e>x</e></m>");
+    g.import_xml("<m><e>x</e></m>");
 }
 
 function run_test(i, g){
     var t = tests[i];
     test_guppy.activate();
-    if(!t.content) test_guppy.backend.set_content("<m><e></e></m>");
-    else if(t.content != "none") test_guppy.backend.set_content(t.content);
+    if(!t.content) test_guppy.import_xml("<m><e></e></m>");
+    else if(t.content != "none") test_guppy.import_xml(t.content);
     test_guppy.render();
     var observed = ""
     try{

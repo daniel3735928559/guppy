@@ -66,7 +66,7 @@ GuppyDoc.prototype.get_content = function(t,r){
 }
 
 GuppyDoc.prototype.evaluate = function(evaluators){
-    return GuppyAST.evaluate(this.syntax_tree(), evaluators);
+    return GuppyAST.eval(this.syntax_tree(), evaluators);
 }
 
 GuppyDoc.prototype.import_text = function(text, syms, s2n){
@@ -150,7 +150,9 @@ GuppyDoc.prototype.xpath_list = function(xpath, node){
 GuppyDoc.prototype.get_symbols = function(groups){
     var types = {};
     var ans = [];
-    var iterator = groups ? this.xpath_list("//f") : this.xpath_list("//f[@group='"+groups[i]+"']");
+    var groups_selector = "//f";
+    if(groups) groups_selector += "[" + groups.map(function(x){ return ""; }).join(" or ") + "]";
+    var iterator = this.xpath_list(groups_selector)
     for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext())
 	types[nn.getAttribute("type")] = true;
     for(var t in types)
