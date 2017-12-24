@@ -1,3 +1,5 @@
+var katex = require('../lib/katex/katex-modified.min.js');
+
 /** 
     @class
     @classdesc To enable the on-screen keyboard, ensure all Guppy
@@ -7,16 +9,15 @@
     bottom of the screen with tabs for the various groups of symbols.
     @param {Object} [config] - Configuration options for the on-screen keyboard
     @param {string} [config.goto_tab] - The name of the group whose
-      tab the keyboard should jump to every time a key is pressed.
-      For example, the value `"abc"` will cause the keyboard to revert
-      to the lower-case alphanumeric tab every time a key is pressed.
+    tab the keyboard should jump to every time a key is pressed.
+    For example, the value `"abc"` will cause the keyboard to revert
+    to the lower-case alphanumeric tab every time a key is pressed.
     @param {string} [config.attach] - A string describing how the
-      keyboard should be attached to the editor.  Values include
-      `"focus"` for 
+    keyboard should be attached to the editor.  Values include
+    `"focus"` for 
     @constructor
 */
 function GuppyOSK(config){
-    var self = this;
     this.config = config || {};
     this.guppy = null;
     this.element = null;
@@ -44,35 +45,36 @@ function make_tabs(element){
     headers[0].classList.add("active_tab");
     for(var j = 0; j < headers.length; j++){
         if(j != 0) tabs[j].style.display = "none";
-	header = headers[j];
-	click_listener(header, function(e){
-	    for(var i = 0; i < headers.length; i++){
-		tabs[i].style.display = "none";
-		headers[i].classList.remove("active_tab");
-	    }
-	    e.target.classList.add("active_tab")
-	    element.querySelector(e.target.getAttribute("href")).style.display = "block";
-	    e.preventDefault();
-	    return false;
-	});
+        var header = headers[j];
+        click_listener(header, function(e){
+            for(var i = 0; i < headers.length; i++){
+                tabs[i].style.display = "none";
+                headers[i].classList.remove("active_tab");
+            }
+            e.target.classList.add("active_tab")
+            element.querySelector(e.target.getAttribute("href")).style.display = "block";
+            e.preventDefault();
+            return false;
+        });
     }
 }
 
 GuppyOSK.prototype.detach = function(guppy){
     if(this.guppy == guppy){
-	document.body.removeChild(this.element);
-	this.guppy = null;
-	this.element = null;
+        document.body.removeChild(this.element);
+        this.guppy = null;
+        this.element = null;
     }
 }
 
 GuppyOSK.prototype.attach = function(guppy){
     var self = this;
+    var s = null;
     if(this.guppy == guppy) return;
     if(this.guppy){
-	document.body.removeChild(this.element);
-	this.element = null;
-	this.guppy = null;
+        document.body.removeChild(this.element);
+        this.element = null;
+        this.guppy = null;
     }
     
     var syms = guppy.backend.symbols;
@@ -84,106 +86,107 @@ GuppyOSK.prototype.attach = function(guppy){
     var grouped = {"qwerty":[],"QWERTY":[]};
     var abc = "1234567890+-=\n\tqwertyuiop*/\n\t\tasdfghjkl.\n\t\t\tzxcvbnm"
     for(var i = 0; i < abc.length; i++){
-	if(abc[i] == "\n"){
-	    grouped["qwerty"].push({"break":true});
-	    grouped["QWERTY"].push({"break":true});
-	}
-	else if(abc[i] == "\t"){
-	    grouped["qwerty"].push({"tab":true});
-	    grouped["QWERTY"].push({"tab":true});
-	}
-	else if(abc[i] == "*"){
-	    grouped["qwerty"].push({"name":"*","latex":"\\cdot"});
-	    grouped["QWERTY"].push({"name":"*","latex":"\\cdot"});
-	}
-	else if(abc[i] == "/"){
-	    grouped["qwerty"].push({"name":"/","latex":"/"});
-	    grouped["QWERTY"].push({"name":"/","latex":"/"});
-	}
-	else{
-	    var latex = abc[i];
-	    var upper_latex = latex.toUpperCase();
-	    var name = abc[i];
-	    if(latex == "."){
-		latex = "."+GuppyOSK.blank;
-		upper_latex = latex;
-	    }
-	    grouped["qwerty"].push({"name":name, "latex":latex});
-	    grouped["QWERTY"].push({"name":name.toUpperCase(), "latex":upper_latex});
-	}
+        if(abc[i] == "\n"){
+            grouped["qwerty"].push({"break":true});
+            grouped["QWERTY"].push({"break":true});
+        }
+        else if(abc[i] == "\t"){
+            grouped["qwerty"].push({"tab":true});
+            grouped["QWERTY"].push({"tab":true});
+        }
+        else if(abc[i] == "*"){
+            grouped["qwerty"].push({"name":"*","latex":"\\cdot"});
+            grouped["QWERTY"].push({"name":"*","latex":"\\cdot"});
+        }
+        else if(abc[i] == "/"){
+            grouped["qwerty"].push({"name":"/","latex":"/"});
+            grouped["QWERTY"].push({"name":"/","latex":"/"});
+        }
+        else{
+            var latex = abc[i];
+            var upper_latex = latex.toUpperCase();
+            var name = abc[i];
+            if(latex == "."){
+                latex = "."+GuppyOSK.blank;
+                upper_latex = latex;
+            }
+            grouped["qwerty"].push({"name":name, "latex":latex});
+            grouped["QWERTY"].push({"name":name.toUpperCase(), "latex":upper_latex});
+        }
     }
-    for(var s in syms){
-	var group = syms[s].attrs.group;
-	if(!grouped[group]) grouped[group] = [];
-	var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
-	grouped[group].push({"name":s,"latex":display});
+    for(s in syms){
+        var group = syms[s].attrs.group;
+        if(!grouped[group]) grouped[group] = [];
+        var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
+        grouped[group].push({"name":s,"latex":display});
     }
     var matrix_controls = null;
     for(var g in grouped){
-	var group_container = elt("div",{"class":"guppy_osk_group","id":g});
-	var group_elt = elt("div",{"class":"guppy_osk_group_box","id":g});
-	if(g == "array") matrix_controls = group_elt;
-	tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
-	for(var s in grouped[g]){
-	    var sym = grouped[g][s];
-	    if(sym['break']){
-		group_elt.appendChild(elt("br"));
-	    }
-	    else if(sym['tab']){
-		group_elt.appendChild(elt("span",{"class":"spacer"}));
-	    }
-	    else{
-		var key = elt("span",{"class":"guppy_osk_key"});
-		if(g == "qwerty" || g == "QWERTY"){
-		    var f = function(n){
-			click_listener(key, function(e){
-			    e.preventDefault();
-			    guppy.backend.insert_string(n);
-			    guppy.render();
-			    if(self.config.goto_tab){
-				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-			    }
-			    e.preventDefault();
-			    return false;
-			});
-		    };
-		    f(sym.name);
-		} else {
-		    var f = function(n){
-			click_listener(key, function(e){
-			    e.preventDefault();
-			    guppy.backend.insert_symbol(n);
-			    guppy.render();
-			    if(self.config.goto_tab){
-				document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-			    }
-			    e.preventDefault();
-			    return false;
-			});
-		    };
-		    f(sym.name);
-		}
-		group_elt.appendChild(key);
-		katex.render(sym.latex, key);
-	    }
-	}
-	group_container.appendChild(group_elt);
-	sym_tabs.appendChild(group_container);
+        var group_container = elt("div",{"class":"guppy_osk_group","id":g});
+        var group_elt = elt("div",{"class":"guppy_osk_group_box","id":g});
+        if(g == "array") matrix_controls = group_elt;
+        tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
+        for(s in grouped[g]){
+            var sym = grouped[g][s];
+            if(sym['break']){
+                group_elt.appendChild(elt("br"));
+            }
+            else if(sym['tab']){
+                group_elt.appendChild(elt("span",{"class":"spacer"}));
+            }
+            else{
+                var key = elt("span",{"class":"guppy_osk_key"});
+		var f = null;
+                if(g == "qwerty" || g == "QWERTY"){
+                    f = function(n){
+                        click_listener(key, function(e){
+                            e.preventDefault();
+                            guppy.backend.insert_string(n);
+                            guppy.render();
+                            if(self.config.goto_tab){
+                                document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
+                            }
+                            e.preventDefault();
+                            return false;
+                        });
+                    };
+                    f(sym.name);
+                } else {
+                    f = function(n){
+                        click_listener(key, function(e){
+                            e.preventDefault();
+                            guppy.backend.insert_symbol(n);
+                            guppy.render();
+                            if(self.config.goto_tab){
+                                document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
+                            }
+                            e.preventDefault();
+                            return false;
+                        });
+                    };
+                    f(sym.name);
+                }
+                group_elt.appendChild(key);
+                katex.render(sym.latex, key);
+            }
+        }
+        group_container.appendChild(group_elt);
+        sym_tabs.appendChild(group_container);
     }
     make_tabs(sym_tabs);
     osk.appendChild(sym_tabs);
 
     var add_control = function(content,fn){
-	var e = elt("span",{"class":"guppy_osk_key"},content);
-	click_listener(e, fn);
-	controls.appendChild(e);
+        var e = elt("span",{"class":"guppy_osk_key"},content);
+        click_listener(e, fn);
+        controls.appendChild(e);
     }
     
     var add_matrix_control = function(content,fn){
-	var e = elt("span",{"class":"guppy_osk_key"}, content);
-	click_listener(e, fn);
-	matrix_controls.appendChild(e);
-	//katex.render(content, e);
+        var e = elt("span",{"class":"guppy_osk_key"}, content);
+        click_listener(e, fn);
+        matrix_controls.appendChild(e);
+        //katex.render(content, e);
     }
     
     add_control("&larr;S", function(e){ e.preventDefault();guppy.backend.sel_left();guppy.render();});

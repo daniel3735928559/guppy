@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">92.02% </span>
+        <span class="strong">92.24% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>450/489</span>
+        <span class='fraction'>452/490</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">81.25% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>99/120</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">95.23% </span>
+        <span class="strong">95.52% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>379/398</span>
+        <span class='fraction'>384/402</span>
       </div>
     </div>
   </div>
@@ -618,7 +618,14 @@
 573
 574
 575
-576</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+576
+577
+578
+579
+580
+581
+582
+583</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">201×</span>
@@ -637,7 +644,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">223×</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -760,7 +766,13 @@
 <span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">27×</span>
 <span class="cline-any cline-yes">11×</span>
@@ -846,6 +858,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">223×</span>
+<span class="cline-any cline-yes">223×</span>
 <span class="cline-any cline-yes">36×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -878,6 +891,7 @@
 <span class="cline-any cline-yes">2299×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">121×</span>
 <span class="cline-any cline-yes">121×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">121×</span>
@@ -1041,6 +1055,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8×</span>
 <span class="cline-any cline-yes">8×</span>
@@ -1088,7 +1103,6 @@
 <span class="cline-any cline-yes">7×</span>
 <span class="cline-any cline-yes">7×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">67×</span>
 <span class="cline-any cline-yes">67×</span>
 <span class="cline-any cline-yes">67×</span>
 <span class="cline-any cline-yes">67×</span>
@@ -1193,47 +1207,46 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">GuppyAST = {};
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var GuppyAST = {};
 &nbsp;
 GuppyAST.tokenise = function(s, tokens){
-   var ans = [];
+    var ans = [];
     while(s.length &gt; 0){
-	var ok = false;
-	for(var i = 0; i &lt; tokens.length; i++){
-	    var t = tokens[i];
-	    re = RegExp(t.re);
-	    var m = re.exec(s);
-	    if(m){
-		m = m[0];
-		s = s.substring(m.length);
-		ok = true;
-		<span class="missing-if-branch" title="else path not taken" >E</span>if(t.type != "space") ans.push({"type":t.type, "value": t.value(m)})
-		break;
-	    }
-	}
-	<span class="missing-if-branch" title="if path not taken" >I</span>if(!ok){
-<span class="cstat-no" title="statement not covered" >	    console.log("Tokenising error");</span>
-<span class="cstat-no" title="statement not covered" >	    return [];</span>
-	}
+        var ok = false;
+        for(var i = 0; i &lt; tokens.length; i++){
+            var t = tokens[i];
+            var re = RegExp(t.re);
+            var m = re.exec(s);
+            if(m){
+                m = m[0];
+                s = s.substring(m.length);
+                ok = true;
+                <span class="missing-if-branch" title="else path not taken" >E</span>if(t.type != "space") ans.push({"type":t.type, "value": t.value(m)})
+                break;
+            }
+        }
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(!ok){
+<span class="cstat-no" title="statement not covered" >            return [];</span>
+        }
     }
     return ans;
 }
 &nbsp;
 GuppyAST.tokenise_e = function(s){
     return GuppyAST.tokenise(s, [
-	{"type":"number", "re":"^[0-9.]+", "value":function(m){
-	    <span class="missing-if-branch" title="if path not taken" >I</span>if(isNaN(Number(m))) <span class="cstat-no" title="statement not covered" >throw Exception("Invalid number: "+m);</span>
-	    return Number(m);
-	}},
-	{"type":"operator", "re":"^(&lt;=|&gt;=|!=|&gt;|&lt;|=)", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
-	{"type":"operator", "re":"^[\-+*/!]", "value":function(m){return m}},
-	{"type":"name", "re":"^[a-zA-Z]", "value":function(m){return m}},
-	{"type":"space", "re":"^\\s+", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
+        {"type":"number", "re":"^[0-9.]+", "value":function(m){
+            <span class="missing-if-branch" title="if path not taken" >I</span>if(isNaN(Number(m))) <span class="cstat-no" title="statement not covered" >throw "Invalid number: "+m;</span>
+            return Number(m);
+        }},
+        {"type":"operator", "re":"^(&lt;=|&gt;=|!=|&gt;|&lt;|=)", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
+        {"type":"operator", "re":"^[-+*/!]", "value":function(m){return m}},
+        {"type":"name", "re":"^[a-zA-Z]", "value":function(m){return m}},
+        {"type":"space", "re":"^\\s+", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
     ]);
- }
+}
 &nbsp;
 GuppyAST.to_eqlist = function(ast){
-    comparators = ["=","!=","&lt;=","&gt;=","&lt;","&gt;"];
+    var comparators = ["=","!=","&lt;=","&gt;=","&lt;","&gt;"];
     if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) &lt; 0) return [ast];
     return GuppyAST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
 }
@@ -1263,106 +1276,112 @@ GuppyAST.to_text = function(ast){
 &nbsp;
 GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     var prepend_str = function(doc, str){
-	doc.documentElement.firstChild.textContent = str + doc.documentElement.firstChild.textContent;
+        doc.documentElement.firstChild.textContent = str + doc.documentElement.firstChild.textContent;
     }
     var append_str = function(doc, str){
-	doc.documentElement.lastChild.textContent += str;
+        doc.documentElement.lastChild.textContent += str;
     }
     var append_doc = function(doc, doc2){
-	var n = doc.documentElement.lastChild;
-	var nn = doc2.documentElement.firstChild
-	n.firstChild.textContent += nn.firstChild.textContent;
-	for(nn = nn.nextSibling; nn; nn = nn.nextSibling){
-	    n.parentNode.insertBefore(nn.cloneNode(true),null); 
-	}
+        var n = doc.documentElement.lastChild;
+        var nn = doc2.documentElement.firstChild
+        n.firstChild.textContent += nn.firstChild.textContent;
+        for(nn = nn.nextSibling; nn; nn = nn.nextSibling){
+            n.parentNode.insertBefore(nn.cloneNode(true),null); 
+        }
     }
     var ensure_text_nodes = function(base){
-	var l = base.getElementsByTagName("e");
-	for(var i = 0; i &lt; l.length; i++){
-	    if(!(l[i].firstChild)) l[i].appendChild(base.createTextNode(""));
-	}
+        var l = base.getElementsByTagName("e");
+        for(var i = 0; i &lt; l.length; i++){
+            if(!(l[i].firstChild)) l[i].appendChild(base.createTextNode(""));
+        }
     }
     var get_symbol = function(name, symbols){
-	for(var s in symbols){
-	    if(symbols[s].attrs.type == name) return symbols[s];
-	}
+        for(var s in symbols){
+            if(symbols[s].attrs.type == name) return symbols[s];
+        }
     }
     var get_content_array = function(args){
-	var content = {};
-	for(var i = 0; i &lt; args.length; i++){
-	    content[i] = [];
-	    if(args[i].documentElement.nodeName == "l") content[i].push(args[i].documentElement);
-	    else for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
-	}
-	return content;
+        var content = {};
+        for(var i = 0; i &lt; args.length; i++){
+            content[i] = [];
+            if(args[i].documentElement.nodeName == "l") content[i].push(args[i].documentElement);
+            else for(var nn = args[i].documentElement.firstChild; nn; nn = nn.nextSibling) content[i].push(nn);
+        }
+        return content;
     }
     var binop_low = function(args, op, parent){
-	var d = args[0].cloneNode(true);
-	append_str(d, op);
-	append_doc(d, args[1].cloneNode(true));
-	if(parent &amp;&amp; (parent[0] == "*" || (parent[0] == "-" &amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >parent[1].length == 1)</span>))
-	    return make_sym("bracket", [d]);
-	else
-	    return d;
+        var d = args[0].cloneNode(true);
+        append_str(d, op);
+        append_doc(d, args[1].cloneNode(true));
+        if(parent &amp;&amp; (parent[0] == "*" || (parent[0] == "-" &amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >parent[1].length == 1)</span>))
+            return make_sym("bracket", [d]);
+        else
+            return d;
     }
     var binop_high = function(args, op){
-	var d = args[0].cloneNode(true);
-	append_doc(d, make_sym(op,[]));
-	append_doc(d, args[1].cloneNode(true));
-	return d;
+        var d = args[0].cloneNode(true);
+        append_doc(d, make_sym(op,[]));
+        append_doc(d, args[1].cloneNode(true));
+        return d;
     }
     var make_sym = function(name, args){
-	var sym = get_symbol(name, symbols);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if(!sym) <span class="cstat-no" title="statement not covered" >throw "Unrecognised symbol: "+name;</span>
-	var base = (new window.DOMParser()).parseFromString("&lt;c&gt;&lt;e&gt;&lt;/e&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;", "text/xml");
-	ensure_text_nodes(base);
-	var e0 = base.documentElement.firstChild;
-	var content = get_content_array(args);
-	var f = symbol_to_node(sym, content, base)['f'];
-	e0.parentNode.insertBefore(f,e0.nextSibling);
-	ensure_text_nodes(base);
-	return base;
+        var sym = get_symbol(name, symbols);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(!sym) <span class="cstat-no" title="statement not covered" >throw "Unrecognised symbol: "+name;</span>
+        var base = (new window.DOMParser()).parseFromString("&lt;c&gt;&lt;e&gt;&lt;/e&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;", "text/xml");
+        ensure_text_nodes(base);
+        var e0 = base.documentElement.firstChild;
+        var content = get_content_array(args);
+        var f = symbol_to_node(sym, content, base)['f'];
+        e0.parentNode.insertBefore(f,e0.nextSibling);
+        ensure_text_nodes(base);
+        return base;
     }
     var functions = {};
 &nbsp;
     var ops = ["*","&lt;","&gt;","=","&lt;=","&gt;=","!="];
     for(var i = 0; i &lt; ops.length; i++){
-	functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
+        functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
     }
     functions["/"] = function(args){
-	return make_sym("fraction",args);
+        return make_sym("fraction",args);
     };
     functions["+"] = function(args, parent){ return binop_low(args, "+", parent); };
-    functions["-"] = function(args, parent){
-	if(args.length == 1){ var d = args[0].cloneNode(true); prepend_str(d, "-"); return d; }
-	else{ return binop_low(args, "-", parent);};
+    functions["-"] = function(args, parent) {
+        if(args.length == 1) {
+            var d = args[0].cloneNode(true);
+            prepend_str(d, "-");
+            return d;
+        }
+        else {
+            return binop_low(args, "-", parent);
+        }
     }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("&lt;c&gt;&lt;e&gt;" + args[0] + "&lt;/e&gt;&lt;/c&gt;", "text/xml");};
     functions["var"] = function(args){
-	if(args[0].length == 1) return (new window.DOMParser()).parseFromString("&lt;c&gt;&lt;e&gt;" + args[0] + "&lt;/e&gt;&lt;/c&gt;", "text/xml");
-	else return make_sym(args[0], {});
+        if(args[0].length == 1) return (new window.DOMParser()).parseFromString("&lt;c&gt;&lt;e&gt;" + args[0] + "&lt;/e&gt;&lt;/c&gt;", "text/xml");
+        else return make_sym(args[0], {});
     };
     functions["list"] = function(args){
-	var base = (new window.DOMParser()).parseFromString("&lt;l&gt;&lt;/l&gt;", "text/xml");
-	for(var i = 0; i &lt; args.length; i++){
-	    base.documentElement.appendChild(args[i].documentElement.cloneNode(true));
-	}
-	base.documentElement.firstChild.setAttribute("s",String(args.length))
-	return base;
+        var base = (new window.DOMParser()).parseFromString("&lt;l&gt;&lt;/l&gt;", "text/xml");
+        for(var i = 0; i &lt; args.length; i++){
+            base.documentElement.appendChild(args[i].documentElement.cloneNode(true));
+        }
+        base.documentElement.firstChild.setAttribute("s",String(args.length))
+        return base;
     };
     // var comparators = {"&lt;":"less","&gt;":"greater","=":"eq","!=":"neq","&gt;=":"geq","&lt;=":"leq"};
     // for(var c in comparators){
-    // 	functions[c] = function(args){
-    // 	    return make_sym(comparators[c], args);
-    // 	}
+    //     functions[c] = function(args){
+    //         return make_sym(comparators[c], args);
+    //     }
     // }
     functions["_default"] = function(name, args){
-	return make_sym(name, args);
+        return make_sym(name, args);
     }
     var ans = GuppyAST.eval(ast, functions);
     var new_base = (new window.DOMParser()).parseFromString("&lt;m&gt;&lt;/m&gt;", "text/xml");
-    for(nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling){
-	new_base.documentElement.insertBefore(nn.cloneNode(true),null);
+    for(var nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling){
+        new_base.documentElement.insertBefore(nn.cloneNode(true),null);
     }
     return new_base;
 &nbsp;
@@ -1388,13 +1407,13 @@ GuppyAST.get_vars = function(ast){
 &nbsp;
 GuppyAST.to_function = function(ast, functions){
     functions = functions || {}
-    defaults = {}
+    var defaults = {}
     defaults["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
     defaults["+"] = function(args){return function(vars){return args[0](vars)+args[1](vars)};};
     defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["/"] = function(args)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return function(vars)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return args[0](vars)/args[1](vars)}</span>;</span>}</span>;</span>
     defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
-    defaults["val"] = function(args){return function(vars){ return args[0]; };};
+    defaults["val"] = function(args){return function(){ return args[0]; };};
     defaults["var"] = function(args){return function(vars){ <span class="missing-if-branch" title="if path not taken" >I</span>if(args[0] == "pi") <span class="cstat-no" title="statement not covered" >return Math.PI; <span class="missing-if-branch" title="if path not taken" >I</span></span>if(args[0] == "e") <span class="cstat-no" title="statement not covered" >return Math.E; </span>return vars[args[0]]; };};
     defaults["exponential"] = function(args){return function(vars){return Math.pow(args[0](vars),args[1](vars))};};
     defaults["square_root"] = function(args){return function(vars){return Math.sqrt(args[0](vars))};};
@@ -1408,18 +1427,19 @@ GuppyAST.to_function = function(ast, functions){
 &nbsp;
 GuppyAST.eval = function(ast, functions, parent){
     ans = null;
-    if(!functions["_default"]) functions["_default"] = function(name, args)<span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw "Function not implemented: " + name;}</span></span>
+    if(!functions["_default"]) functions["_default"] = function(name, args)<span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw "Function not implemented: " + name + "(" + args + ")";}</span></span>
     
     var args = []
     for(var i = 0; i &lt; ast[1].length; i++){
-	if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
-	    args.push(GuppyAST.eval(ast[1][i], functions, ast));
-	}
-	else{
-	    args.push(ast[1][i]);
-	}
+        if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
+            args.push(GuppyAST.eval(ast[1][i], functions, ast));
+        }
+        else{
+            args.push(ast[1][i]);
+        }
     }
     //console.log("Fn",ast[0],functions[ast[0]]);
+    var ans = null;
     if(functions[ast[0]]) ans = functions[ast[0]](args, parent);
     else <span class="missing-if-branch" title="else path not taken" >E</span>if(functions["_default"]) ans = functions["_default"](ast[0], args, parent);
     
@@ -1431,30 +1451,31 @@ GuppyAST.parse_e = function(tokens){
     var symbol_table = {};
 &nbsp;
     var original_symbol = {
-	nud: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Undefined"); </span>},</span>
-	led: function (left) <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Missing operator"); </span>}</span>
+        nud: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Undefined"); </span>},</span>
+        led: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Missing operator"); </span>}</span>
     };
 &nbsp;
     var mul = function(left){ return ["*", [left, this.nud()]]; };
     
     var symbol = function (id, bp) {
-	var s = symbol_table[id];
-	bp = bp || 0;
-	if (s) {
+        var s = symbol_table[id];
+        bp = bp || 0;
+        if (s) {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (bp &gt;= s.lbp) {
-<span class="cstat-no" title="statement not covered" >		s.lbp = bp;</span>
+<span class="cstat-no" title="statement not covered" >                s.lbp = bp;</span>
             }
-	} else {
+        } else {
             s = Object.create(original_symbol);
             s.id = s.value = id;
             s.lbp = bp;
             symbol_table[id] = s;
-	}
-	return s;
+        }
+        return s;
     };
 &nbsp;
     symbol("(end)");
-&nbsp;
+    var s = null;
+    
     s = symbol("(blank)", 60);
     s.nud = function()<span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >return ["blank"];}</span>;</span>
     
@@ -1479,70 +1500,70 @@ GuppyAST.parse_e = function(tokens){
     var token_nr = 0;
 &nbsp;
     var advance = function (id) {
-	var a, o, t, v;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (id &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >token.id !== id)</span> {
+        var a, o, t, v;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (id &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >token.id !== id)</span> {
 <span class="cstat-no" title="statement not covered" >            throw Error("Expected '" + id + "'");</span>
-	}
-	if (token_nr &gt;= tokens.length) {
+        }
+        if (token_nr &gt;= tokens.length) {
             token = symbol_table["(end)"];
             return;
-	}
-	t = tokens[token_nr];
-	token_nr += 1;
-	v = t.value;
-	var args = null;
-	var kwargs = null;
-	a = t.type;
-	if (a === "name") {
+        }
+        t = tokens[token_nr];
+        token_nr += 1;
+        v = t.value;
+        var args = null;
+        var kwargs = null;
+        a = t.type;
+        if (a === "name") {
             o = symbol_table["(var)"];
-	} else if (a === "operator") {
+        } else if (a === "operator") {
             o = symbol_table[v];
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!o) {
-<span class="cstat-no" title="statement not covered" >		throw Exception("Unknown operator.");</span>
+<span class="cstat-no" title="statement not covered" >                throw "Unknown operator";</span>
             }
-	} else if (a ===  "pass") {
+        } else if (a ===  "pass") {
             a = "pass";
             o = symbol_table["(pass)"];
-	    args = t.args;
-	} else if (a ===  "number") {
+            args = t.args;
+        } else if (a ===  "number") {
             a = "literal";
             o = symbol_table["(literal)"];
-	} else <span class="missing-if-branch" title="else path not taken" >E</span>if (a ===  "function") {
+        } else <span class="missing-if-branch" title="else path not taken" >E</span>if (a ===  "function") {
             a = "function";
             o = symbol_table["(function)"];
-	    args = t.args;
-	    kwargs = t.kwargs;
-	} else {
+            args = t.args;
+            kwargs = t.kwargs;
+        } else {
 <span class="cstat-no" title="statement not covered" >            throw Error("Unexpected token",t);</span>
-	}
-	token = Object.create(o);
-	token.type = a;
-	token.value = v;
-	if(args) token.args = args;
-	if(kwargs) token.kwargs = kwargs;
-	return token;
+        }
+        token = Object.create(o);
+        token.type = a;
+        token.value = v;
+        if(args) token.args = args;
+        if(kwargs) token.kwargs = kwargs;
+        return token;
     };
 &nbsp;
 &nbsp;
     var expression = function (rbp) {
-	var left;
-	var t = token;
-	advance();
-	left = t.nud();
-	while (rbp &lt; token.lbp) {
+        var left;
+        var t = token;
+        advance();
+        left = t.nud();
+        while (rbp &lt; token.lbp) {
             t = token;
             advance();
             left = t.led(left);
-	}
-	return left;
+        }
+        return left;
     };
 &nbsp;
     var infix = function (id, bp, led) {
-	var s = symbol(id, bp);
-	s.led = led || function (left) {
+        var s = symbol(id, bp);
+        s.led = led || function (left) {
             return [this.value, [left, expression(bp)]];
-	};
-	return s;
+        };
+        return s;
     }
 &nbsp;
     
@@ -1558,11 +1579,11 @@ GuppyAST.parse_e = function(tokens){
     infix("*", 60);
     infix("/", 60);
     var prefix = function (id, nud) {
-	var s = symbol(id);
-	s.nud = nud || function () {
+        var s = symbol(id);
+        s.nud = nud || function () {
             return [this.value, [expression(70)]];
-	};
-	return s;
+        };
+        return s;
     }
 &nbsp;
     prefix("-");
@@ -1580,12 +1601,12 @@ GuppyAST.parse_e = function(tokens){
 &nbsp;
 GuppyAST.tokenise_text = function(s){
     return GuppyAST.tokenise(s, [
-	{"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
-	{"type":"operator", "re":"^(!=|&gt;=|&lt;=)", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m;}</span>}</span>,
-	{"type":"operator", "re":"^[\-+*/,!()=&lt;&gt;_^]", "value":function(m){return m}},
-	{"type":"name", "re":"^[a-zA-Z_]*[a-zA-Z]", "value":function(m){return m}},
-	{"type":"comma", "re":"^,", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
-	{"type":"space", "re":"^\\s+", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
+        {"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
+        {"type":"operator", "re":"^(!=|&gt;=|&lt;=)", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m;}</span>}</span>,
+        {"type":"operator", "re":"^[-+*/,!()=&lt;&gt;_^]", "value":function(m){return m}},
+        {"type":"name", "re":"^[a-zA-Z_]*[a-zA-Z]", "value":function(m){return m}},
+        {"type":"comma", "re":"^,", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
+        {"type":"space", "re":"^\\s+", "value":function(m)<span class="fstat-no" title="function not covered" >{<span class="cstat-no" title="statement not covered" >return m}</span>}</span>,
     ]);
 }
 &nbsp;
@@ -1593,30 +1614,31 @@ GuppyAST.parse_text = function(tokens){
     var symbol_table = {};
 &nbsp;
     var original_symbol = {
-	nud: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Undefined"); </span>},</span>
-	led: function (left) <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Missing operator"); </span>}</span>
+        nud: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Undefined"); </span>},</span>
+        led: function () <span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >throw Error("Missing operator"); </span>}</span>
     };
 &nbsp;
     var mul = function(left){ return ["*", [left, this.nud()]]; };
     
     var symbol = function (id, bp) {
-	var s = symbol_table[id];
-	bp = bp || 0;
-	if (s) {
+        var s = symbol_table[id];
+        bp = bp || 0;
+        if (s) {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (bp &gt;= s.lbp) {
-<span class="cstat-no" title="statement not covered" >		s.lbp = bp;</span>
+<span class="cstat-no" title="statement not covered" >                s.lbp = bp;</span>
             }
-	} else {
+        } else {
             s = Object.create(original_symbol);
             s.id = s.value = id;
             s.lbp = bp;
             symbol_table[id] = s;
-	}
-	return s;
+        }
+        return s;
     };
 &nbsp;
     symbol("(end)");
-&nbsp;
+    var s = null;
+    
     s = symbol("(blank)", 60);
     s.nud = function()<span class="fstat-no" title="function not covered" >{ <span class="cstat-no" title="statement not covered" >return ["blank"];}</span>;</span>
     
@@ -1625,95 +1647,94 @@ GuppyAST.parse_text = function(tokens){
     s.nud = function(){ return ["val", [this.value]] };
 &nbsp;
     var get_args = function(){
-	var args = [];
-	advance()
-	if(token.id !== ")"){
-	    while(true){
-		args.push(expression(0));
-		if (token.id !== ",") {
-		    break;
-		}
-		advance(",");
-	    }
-	}
-	advance(")");
-	return args;
+        var args = [];
+        advance()
+        if(token.id !== ")"){
+            while(true){
+                args.push(expression(0));
+                if (token.id !== ",") {
+                    break;
+                }
+                advance(",");
+            }
+        }
+        advance(")");
+        return args;
     }
     
     s = symbol("(var)", 60);
     s.led = mul;
     s.nud = function(){
-	if(token.id == "("){
-	    return [this.value, get_args()];
-	}
-	else{
-	    return ["var", [this.value]]
-	}
+        if(token.id == "("){
+            return [this.value, get_args()];
+        }
+        else{
+            return ["var", [this.value]]
+        }
     };
     
     var token;
     var token_nr = 0;
 &nbsp;
     var advance = function (id) {
-	var a, o, t, v;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (id &amp;&amp; token.id !== id) {
+        var a, o, t, v;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (id &amp;&amp; token.id !== id) {
 <span class="cstat-no" title="statement not covered" >            throw Error("Expected '" + id + "'");</span>
-	}
-	if (token_nr &gt;= tokens.length) {
+        }
+        if (token_nr &gt;= tokens.length) {
             token = symbol_table["(end)"];
             return;
-	}
-	t = tokens[token_nr];
-	token_nr += 1;
-	v = t.value;
-	var args = null;
-	var kwargs = null;
-	a = t.type;
-	if (a === "name") {
+        }
+        t = tokens[token_nr];
+        token_nr += 1;
+        v = t.value;
+        var args = null;
+        a = t.type;
+        if (a === "name") {
             o = symbol_table["(var)"];
-	} else if (a === "operator") {
+        } else if (a === "operator") {
             o = symbol_table[v];
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!o) {
-<span class="cstat-no" title="statement not covered" >		throw Error("Unknown operator.");</span>
+<span class="cstat-no" title="statement not covered" >                throw Error("Unknown operator.");</span>
             }
-	} else <span class="missing-if-branch" title="else path not taken" >E</span>if (a ===  "number") {
+        } else <span class="missing-if-branch" title="else path not taken" >E</span>if (a ===  "number") {
             a = "literal";
             o = symbol_table["(literal)"];
-	} else {
+        } else {
 <span class="cstat-no" title="statement not covered" >            throw Error("Unexpected token",t);</span>
-	}
-	token = Object.create(o);
-	token.type = a;
-	token.value = v;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if(args) <span class="cstat-no" title="statement not covered" >token.args = args;</span>
-	//console.log("ADVD",JSON.stringify(token));
-	return token;
+        }
+        token = Object.create(o);
+        token.type = a;
+        token.value = v;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if(args) <span class="cstat-no" title="statement not covered" >token.args = args;</span>
+        //console.log("ADVD",JSON.stringify(token));
+        return token;
     };
 &nbsp;
 &nbsp;
     var expression = function (rbp) {
-	var left;
-	var t = token;
-	//console.log("T1",JSON.stringify(token));
-	advance();
-	//console.log("T2",JSON.stringify(token));
-	left = t.nud();
-	while (rbp &lt; token.lbp) {
+        var left;
+        var t = token;
+        //console.log("T1",JSON.stringify(token));
+        advance();
+        //console.log("T2",JSON.stringify(token));
+        left = t.nud();
+        while (rbp &lt; token.lbp) {
             t = token;
             advance();
-	    //console.log("RB",JSON.stringify(token));
+            //console.log("RB",JSON.stringify(token));
             left = t.led(left);
-	}
-	//console.log("POW", rbp, token.id, token.lbp);
-	return left;
+        }
+        //console.log("POW", rbp, token.id, token.lbp);
+        return left;
     };
 &nbsp;
     var infix = function (id, bp, led) {
-	var s = symbol(id, bp);
-	s.led = led || function (left) {
+        var s = symbol(id, bp);
+        s.led = led || function (left) {
             return [this.value, [left, expression(bp)]];
-	};
-	return s;
+        };
+        return s;
     }
 &nbsp;
     infix("=", 40);
@@ -1729,33 +1750,33 @@ GuppyAST.parse_text = function(tokens){
     infix("/", 60);
     
     infix("!", 70, function(left){
-	return ["factorial", [left]];
+        return ["factorial", [left]];
     });
     
     infix("^", 70, function(left){
-	return ["exponential", [left, expression(70)]];
+        return ["exponential", [left, expression(70)]];
     });
     
     infix("_", 70, function(left){
-	return ["subscript", [left, expression(70)]];
+        return ["subscript", [left, expression(70)]];
     });
     
     infix("(", 80, mul);
 &nbsp;
     symbol("(").nud = function(){
-	var ans = expression(0);
-	advance(")");
-	return ans;
+        var ans = expression(0);
+        advance(")");
+        return ans;
     }
     symbol(")");
     symbol(",");
     
     var prefix = function (id, nud) {
-	var s = symbol(id);
-	s.nud = nud || function () {
+        var s = symbol(id);
+        s.nud = nud || function () {
             return [this.value, [expression(70)]];
-	};
-	return s;
+        };
+        return s;
     }
 &nbsp;
     prefix("-");
@@ -1774,7 +1795,7 @@ module.exports = GuppyAST;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Dec 23 2017 20:00:21 GMT+0000 (UTC)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Dec 24 2017 23:10:42 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../prettify.js"></script>

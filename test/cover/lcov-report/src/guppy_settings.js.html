@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.78% </span>
+        <span class="strong">98.89% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>88/90</span>
+        <span class='fraction'>89/90</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">83.33% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>8/9</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">97.75% </span>
+        <span class="strong">98.88% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>87/89</span>
+        <span class='fraction'>88/89</span>
       </div>
     </div>
   </div>
@@ -181,11 +181,7 @@
 136
 137
 138
-139
-140
-141</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+139</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -275,7 +271,7 @@
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-yes">6×</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -323,10 +319,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">GuppySymbols = require('./guppy_symbols.js');
-&nbsp;
-&nbsp;
-GuppySettings = {}
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var katex = require('../lib/katex/katex-modified.min.js');
+var GuppySettings = {}
 GuppySettings.config = {};
 GuppySettings.config.path = "/lib/guppy";
 GuppySettings.config.events = {};
@@ -380,65 +374,65 @@ var make_x = function(elt){
     x.setAttribute("class","guppy-card-x");
     x.innerHTML = `&lt;font size="6pt"&gt;&amp;times;&lt;/font&gt;`;
     x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
-    x.onclick = function(e){ elt.style.display = "none"; }
+    x.onclick = function(){ elt.style.display = "none"; }
     elt.appendChild(x);
 }
 &nbsp;
 GuppySettings.hide_all = function(){
     for(var i = 0; i &lt; GuppySettings.div_names.length; i++)
-	GuppySettings.panels[GuppySettings.div_names[i]].style.display = "none";
+        GuppySettings.panels[GuppySettings.div_names[i]].style.display = "none";
 }
 &nbsp;
 GuppySettings.toggle = function(card, g){
     <span class="missing-if-branch" title="else path not taken" >E</span>if(GuppySettings.div_names.indexOf(card) &gt;= 0){
-	GuppySettings.init_card(card, g);
-	if(GuppySettings.panels[card].style.display == "none"){
-	    GuppySettings.hide_all();
-	    var r = g.editor.getBoundingClientRect();
-	    GuppySettings.panels[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
-	    GuppySettings.panels[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
-	    GuppySettings.panels[card].style.display = "block";
-	}
-	else{
-	    GuppySettings.hide_all();
-	}
+        GuppySettings.init_card(card, g);
+        if(GuppySettings.panels[card].style.display == "none"){
+            GuppySettings.hide_all();
+            var r = g.editor.getBoundingClientRect();
+            GuppySettings.panels[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+            GuppySettings.panels[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
+            GuppySettings.panels[card].style.display = "block";
+        }
+        else{
+            GuppySettings.hide_all();
+        }
     }
 }
 &nbsp;
 GuppySettings.init_card = function(card, g){
     if(card == "settings"){
-	document.getElementById("guppy_settings_table").innerHTML = "";
-	for(var s in GuppySettings.settings_options){
-	    var opt = GuppySettings.settings_options[s];
-	    var val = g.backend.setting(s);
-	    var sel = document.createElement("select");
-	    sel.setAttribute("id",`guppy_settings_select_${s}`);
-	    sel.onchange = function(ss){
-		return function(e)<span class="fstat-no" title="function not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >		    GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;</span>
-<span class="cstat-no" title="statement not covered" >		    console.log("ASD",ss,GuppySettings.config.settings[ss]);</span>
-		}
-	    }(s);
-	    for(var i = 0; i &lt; opt.length; i++){
-		var o = document.createElement("option");
-		o.setAttribute("value",opt[i]);
-		o.innerHTML = opt[i];
-		sel.appendChild(o);
-	    }
-	    var row = document.createElement("tr");
-	    row.innerHTML = `&lt;td&gt;&lt;font face="monospace"&gt;${s}&lt;/font&gt;&lt;/td&gt;`;
-	    var td = document.createElement("td");
-	    td.appendChild(sel);
-	    row.appendChild(td);
-	    document.getElementById("guppy_settings_table").appendChild(row);
-	}
+        document.getElementById("guppy_settings_table").innerHTML = "";
+        for(var s in GuppySettings.settings_options){
+            var opt = GuppySettings.settings_options[s];
+            var val = g.backend.setting(s);
+            var sel = document.createElement("select");
+            sel.setAttribute("selected", val);
+            sel.setAttribute("id",`guppy_settings_select_${s}`);
+            sel.onchange = function(ss){
+                return function()<span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >                    GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;</span>
+                }
+            }(s);
+            for(var i = 0; i &lt; opt.length; i++){
+                var o = document.createElement("option");
+                o.setAttribute("value",opt[i]);
+                o.innerHTML = opt[i];
+                sel.appendChild(o);
+            }
+            var row = document.createElement("tr");
+            row.innerHTML = `&lt;td&gt;&lt;font face="monospace"&gt;${s}&lt;/font&gt;&lt;/td&gt;`;
+            var td = document.createElement("td");
+            td.appendChild(sel);
+            row.appendChild(td);
+            document.getElementById("guppy_settings_table").appendChild(row);
+        }
     }
 }
 &nbsp;
 GuppySettings.init = function(symbols){
     for(var i = 0; i &lt; GuppySettings.div_names.length; i++){
-	make_x(GuppySettings.panels[GuppySettings.div_names[i]]);
-	document.body.appendChild(GuppySettings.panels[GuppySettings.div_names[i]])
+        make_x(GuppySettings.panels[GuppySettings.div_names[i]]);
+        document.body.appendChild(GuppySettings.panels[GuppySettings.div_names[i]])
     }
     
     make_row("guppy_help_table","left/right arrows","Move cursor");
@@ -456,9 +450,9 @@ GuppySettings.init = function(symbols){
     
     
     for(var s in symbols){
-	var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
-	var row = make_row("guppy_syms_table",s," ");
-	katex.render(latex, row.lastChild);
+        var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
+        var row = make_row("guppy_syms_table",s," ");
+        katex.render(latex, row.lastChild);
     }
 }
 &nbsp;
@@ -469,7 +463,7 @@ module.exports = GuppySettings;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Dec 23 2017 20:00:21 GMT+0000 (UTC)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Dec 24 2017 23:10:42 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../prettify.js"></script>

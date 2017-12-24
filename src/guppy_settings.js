@@ -1,7 +1,5 @@
-GuppySymbols = require('./guppy_symbols.js');
-
-
-GuppySettings = {}
+var katex = require('../lib/katex/katex-modified.min.js');
+var GuppySettings = {}
 GuppySettings.config = {};
 GuppySettings.config.path = "/lib/guppy";
 GuppySettings.config.events = {};
@@ -55,65 +53,65 @@ var make_x = function(elt){
     x.setAttribute("class","guppy-card-x");
     x.innerHTML = `<font size="6pt">&times;</font>`;
     x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
-    x.onclick = function(e){ elt.style.display = "none"; }
+    x.onclick = function(){ elt.style.display = "none"; }
     elt.appendChild(x);
 }
 
 GuppySettings.hide_all = function(){
     for(var i = 0; i < GuppySettings.div_names.length; i++)
-	GuppySettings.panels[GuppySettings.div_names[i]].style.display = "none";
+        GuppySettings.panels[GuppySettings.div_names[i]].style.display = "none";
 }
 
 GuppySettings.toggle = function(card, g){
     if(GuppySettings.div_names.indexOf(card) >= 0){
-	GuppySettings.init_card(card, g);
-	if(GuppySettings.panels[card].style.display == "none"){
-	    GuppySettings.hide_all();
-	    var r = g.editor.getBoundingClientRect();
-	    GuppySettings.panels[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
-	    GuppySettings.panels[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
-	    GuppySettings.panels[card].style.display = "block";
-	}
-	else{
-	    GuppySettings.hide_all();
-	}
+        GuppySettings.init_card(card, g);
+        if(GuppySettings.panels[card].style.display == "none"){
+            GuppySettings.hide_all();
+            var r = g.editor.getBoundingClientRect();
+            GuppySettings.panels[card].style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+            GuppySettings.panels[card].style.left = (r.left+document.documentElement.scrollLeft) + "px";
+            GuppySettings.panels[card].style.display = "block";
+        }
+        else{
+            GuppySettings.hide_all();
+        }
     }
 }
 
 GuppySettings.init_card = function(card, g){
     if(card == "settings"){
-	document.getElementById("guppy_settings_table").innerHTML = "";
-	for(var s in GuppySettings.settings_options){
-	    var opt = GuppySettings.settings_options[s];
-	    var val = g.backend.setting(s);
-	    var sel = document.createElement("select");
-	    sel.setAttribute("id",`guppy_settings_select_${s}`);
-	    sel.onchange = function(ss){
-		return function(e){
-		    GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
-		    console.log("ASD",ss,GuppySettings.config.settings[ss]);
-		}
-	    }(s);
-	    for(var i = 0; i < opt.length; i++){
-		var o = document.createElement("option");
-		o.setAttribute("value",opt[i]);
-		o.innerHTML = opt[i];
-		sel.appendChild(o);
-	    }
-	    var row = document.createElement("tr");
-	    row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
-	    var td = document.createElement("td");
-	    td.appendChild(sel);
-	    row.appendChild(td);
-	    document.getElementById("guppy_settings_table").appendChild(row);
-	}
+        document.getElementById("guppy_settings_table").innerHTML = "";
+        for(var s in GuppySettings.settings_options){
+            var opt = GuppySettings.settings_options[s];
+            var val = g.backend.setting(s);
+            var sel = document.createElement("select");
+            sel.setAttribute("selected", val);
+            sel.setAttribute("id",`guppy_settings_select_${s}`);
+            sel.onchange = function(ss){
+                return function(){
+                    GuppySettings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
+                }
+            }(s);
+            for(var i = 0; i < opt.length; i++){
+                var o = document.createElement("option");
+                o.setAttribute("value",opt[i]);
+                o.innerHTML = opt[i];
+                sel.appendChild(o);
+            }
+            var row = document.createElement("tr");
+            row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
+            var td = document.createElement("td");
+            td.appendChild(sel);
+            row.appendChild(td);
+            document.getElementById("guppy_settings_table").appendChild(row);
+        }
     }
 }
 
 GuppySettings.init = function(symbols){
     for(var i = 0; i < GuppySettings.div_names.length; i++){
-	make_x(GuppySettings.panels[GuppySettings.div_names[i]]);
-	document.body.appendChild(GuppySettings.panels[GuppySettings.div_names[i]])
+        make_x(GuppySettings.panels[GuppySettings.div_names[i]]);
+        document.body.appendChild(GuppySettings.panels[GuppySettings.div_names[i]])
     }
     
     make_row("guppy_help_table","left/right arrows","Move cursor");
@@ -131,9 +129,9 @@ GuppySettings.init = function(symbols){
     
     
     for(var s in symbols){
-	var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
-	var row = make_row("guppy_syms_table",s," ");
-	katex.render(latex, row.lastChild);
+        var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
+        var row = make_row("guppy_syms_table",s," ");
+        katex.render(latex, row.lastChild);
     }
 }
 

@@ -1,42 +1,43 @@
 {
-   "name": "guppymath",
-   "version": "2.0.0-alpha",
-   "description": "WYSIWYG mathematics equation editor",
-   "directories": {
-      "doc": "site/docs",
-      "test": "test"
-   },
-   "scripts": {
-      "test": "./test.sh",
-      "build": "./make.sh",
-      "build-debug": "./make.sh -d",
-      "generate-docs": "./node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
-   },
-   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/daniel3735928559/guppy.git"
-   },
-   "keywords": [
-      "math",
-      "wysiwyg",
-      "equation",
-      "editor"
-   ],
-   "author": "daniel3735928559",
-   "license": "MIT",
-   "bugs": {
-      "url": "https://github.com/daniel3735928559/guppy/issues"
-   },
-   "homepage": "https://github.com/daniel3735928559/guppy#readme",
-   "devDependencies": {
-      "browserify": "^14.5.0",
-      "browserify-istanbul": "^3.0.1",
-      "docdash": "^0.4.0",
-      "eslint": "^4.13.1",
-      "express": "^4.16.2",
-      "istanbul-middleware": "^0.2.2",
-      "jsdoc": "^3.5.5",
-      "selenium-webdriver": "^3.6.0",
-      "uglify-js": "^3.2.2"
-   }
+    "name": "guppymath",
+    "version": "2.0.0-alpha",
+    "description": "WYSIWYG mathematics equation editor",
+    "directories": {
+	"doc": "site/docs",
+	"test": "test"
+    },
+    "scripts": {
+	"test": "./test.sh",
+	"build": "./make.sh",
+	"build-debug": "./make.sh -d",
+	"lint": "./node_modules/.bin/eslint -c eslintrc.json src",
+	"generate-docs": "./node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
+    },
+    "repository": {
+	"type": "git",
+	"url": "git+https://github.com/daniel3735928559/guppy.git"
+    },
+    "keywords": [
+	"math",
+	"wysiwyg",
+	"equation",
+	"editor"
+    ],
+    "author": "daniel3735928559",
+    "license": "MIT",
+    "bugs": {
+	"url": "https://github.com/daniel3735928559/guppy/issues"
+    },
+    "homepage": "https://github.com/daniel3735928559/guppy#readme",
+    "devDependencies": {
+	"browserify": "^14.5.0",
+	"browserify-istanbul": "^3.0.1",
+	"docdash": "^0.4.0",
+	"eslint": "^4.13.1",
+	"express": "^4.16.2",
+	"istanbul-middleware": "^0.2.2",
+	"jsdoc": "^3.5.5",
+	"selenium-webdriver": "^3.6.0",
+	"uglify-js": "^3.2.2"
+    }
 }
