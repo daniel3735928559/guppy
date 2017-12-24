@@ -1,4 +1,4 @@
-var katex = require('../lib/katex/katex-modified.min.js');
+var katex = require('../lib/katex/katex-modified.min.js')
 
 /** 
     @class
@@ -17,7 +17,7 @@ var katex = require('../lib/katex/katex-modified.min.js');
     `"focus"` for 
     @constructor
 */
-function GuppyOSK(config){
+var GuppyOSK = function(config){
     this.config = config || {};
     this.guppy = null;
     this.element = null;
@@ -167,7 +167,7 @@ GuppyOSK.prototype.attach = function(guppy){
                     f(sym.name);
                 }
                 group_elt.appendChild(key);
-                katex.render(sym.latex, key);
+		katex.render(sym.latex, key);
             }
         }
         group_container.appendChild(group_elt);
@@ -223,3 +223,5 @@ GuppyOSK.prototype.attach = function(guppy){
     this.guppy = guppy;
     this.element = osk;
 }
+
+module.exports = GuppyOSK;
