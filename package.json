@@ -7,6 +7,7 @@
 	"test": "test"
     },
     "scripts": {
+	"build-test": "./make_test.sh",
 	"test": "./test.sh",
 	"build": "./make.sh",
 	"build-debug": "./make.sh -d",

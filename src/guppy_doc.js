@@ -1,3 +1,4 @@
+var katex = require('../lib/katex/katex-modified.min.js');
 var GuppyAST = require('./guppy_ast.js');
 var GuppySymbols = require('./guppy_symbols.js');
 
@@ -169,41 +170,23 @@ GuppyDoc.prototype.set_content = function(xml_data){
     this.ensure_text_nodes();
 }
 
-GuppyDoc.bracket_xpath = "(count(./*) != 1 and not \
-                  ( \
-                            count(./e)=2 and \
-                count(./f)=1 and \
-                count(./e[string-length(text())=0])=2 and \
-                ( \
-                  (\
-                                count(./f/c)=1 and\
-                    count(./f/c[@is_bracket='yes'])=1\
-                  )\
-                  or\
-                  (\
-                    f/@char='yes' and \
-                count(./e[@current='yes'])=0 and \
-                count(./e[@temp='yes'])=0 \
-                  )\
-                )\
-              )\
-            )  \
-            or\
-                (\
-              count(./*) = 1 and \
-              string-length(./e/text()) != 1 and \
-              number(./e/text()) != ./e/text() \
-            ) \
-            or \
-                ( \
-              count(./*) = 1 and \
-              ./e/@current = 'yes' \
-            ) \
-            or \
-                ( \
-              count(./*) = 1 and \
-              ./e/@temp = 'yes' \
-            )"
+GuppyDoc.prototype.auto_bracket = function(n){
+    var e0 = n.firstChild;
+    var e1 = n.lastChild;
+    if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
+	var f = e0.nextSibling;
+	var cs = f.getElementsByTagName("c");
+	if(cs.length == 1 && cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
+	if(f.getAttribute("char") == "yes" && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
+    }
+    else if(n.childElementCount == 1){ // Single e child
+	var s = e0.firstChild.textContent;
+	if(s.length != 1 && Number(s)+"" != s) return true; // If content is neither a single character nor a number, bracket it
+	if(e0.getAttribute("current") == "yes" || e0.getAttribute("temp") == "yes") return true; // If content has the cursor or temp cursor, bracket it
+	return false;
+    }
+    return true;
+}
 
 GuppyDoc.prototype.manual_render = function(t,n,r){
     var ans = "";
@@ -253,11 +236,46 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
     else if(n.nodeName == "c" || n.nodeName == "m"){
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling)
             ans += this.manual_render(t,nn,r);
-        if(t == "latex" && n.getAttribute("bracket") == "yes" && this.base.evaluate(GuppyDoc.bracket_xpath, n, null, XPathResult.BOOLEAN_TYPE, null).booleanValue) {
+        if(t == "latex" && n.getAttribute("bracket") == "yes" && this.auto_bracket(n)) {
             ans = "\\left("+ans+"\\right)";
         }
     }
     return ans;
 }
+
+/** 
+    Render all guppy documents on the page. 
+    @memberof GuppyDoc
+*/
+GuppyDoc.render_all = function(){
+    var l = document.getElementsByTagName("script");
+    var ans = []
+    for(var i = 0; i < l.length; i++){
+        if(l[i].getAttribute("type") == "text/guppy_xml"){
+            var n = l[i];
+            var d = new GuppyDoc(n.innerHTML);
+            var s = document.createElement("span");
+            s.setAttribute("id","eqn1_render");
+            katex.render(d.get_content("latex"), s);
+            n.parentNode.insertBefore(s, n);
+            ans.push({"container":s, "doc":d})
+        }
+    }
+    return ans;
+}
+
+/** 
+    Render a given document into a specified HTML element.
+    @param {string} doc - A GuppyXML string to be rendered
+    @param {string} target_id - The ID of the HTML element to render into
+    @memberof GuppyDoc
+*/
+GuppyDoc.render = function(doc, target_id){
+    var d = new GuppyDoc(doc);
+    var target = document.getElementById(target_id);
+    katex.render(d.get_content("latex"), target);
+    return {"container":target, "doc":d};
+}
+
 
 module.exports = GuppyDoc;

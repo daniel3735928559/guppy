@@ -48,13 +48,12 @@
     height:16px;
     width:16px;
     padding:3px;
+    opacity: 0.5;
 }
 
 .guppy_buttons img:hover{
     opacity: 1;
 }
-
-
 
 @keyframes blink-animation {
   to { visibility: hidden; }
