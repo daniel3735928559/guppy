@@ -226,8 +226,9 @@ Guppy.remove_global_symbol = function(name){
    @param {string} [config.settings.autoreplace="auto"] - Determines
    whether or not to autoreplace typed text with the corresponding
    symbols when possible.
-   @param {string} [config.settings.blank=""] - A LaTeX string that
-   specifies what the caret should look like when in a blank spot.
+   @param {string} [config.settings.blank_caret=""] - A LaTeX string
+   that specifies what the caret should look like when in a blank
+   spot.  If `""`, the default caret is used.
    @param {string} [config.settings.empty_content=\color{red}{[?]}] - A
    LaTeX string that will be displayed when the editor is both
    inactive and contains no content.

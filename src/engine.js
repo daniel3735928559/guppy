@@ -68,11 +68,11 @@ Engine.SEL_CURSOR_AT_END = 2;
 Engine.clipboard = null;
 
 Engine.prototype.setting = function(name){
-    return this.settings[name] || Settings.config.settings[name];
+    return name in this.settings ? this.settings[name] : Settings.config.settings[name];
 }
 
 Engine.prototype.event = function(name){
-    return this.events[name] || Settings.config.events[name];
+    return name in this.events ? this.events[name] : Settings.config.events[name];
 }
 
 /** 

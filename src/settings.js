@@ -6,7 +6,7 @@ Settings.config.events = {};
 Settings.config.settings = {
     "autoreplace":"auto",
     "empty_content":"\\blue{[?]}",
-    "blank_caret":"\\red{[?]}",
+    "blank_caret":"",
     "blacklist":[],
     "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
