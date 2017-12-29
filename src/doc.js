@@ -1,6 +1,6 @@
 var katex = require('../lib/katex/katex-modified.min.js');
-var GuppyAST = require('./guppy_ast.js');
-var GuppySymbols = require('./guppy_symbols.js');
+var AST = require('./ast.js');
+var Symbols = require('./symbols.js');
 
 /**
    @class
@@ -8,12 +8,12 @@ var GuppySymbols = require('./guppy_symbols.js');
    @param {string} [doc=<m><e></e></m>] - An XML string representing the document
    @constructor 
  */
-var GuppyDoc = function(doc){
+var Doc = function(doc){
     doc = doc || "<m><e></e></m>";
     this.set_content(doc);
 }
 
-GuppyDoc.prototype.is_small = function(nn){
+Doc.prototype.is_small = function(nn){
     var n = nn.parentNode;
     while(n != null && n.nodeName != 'm'){
         if(n.getAttribute("small") == "yes") return true;
@@ -23,7 +23,7 @@ GuppyDoc.prototype.is_small = function(nn){
     return false;
 }
 
-GuppyDoc.prototype.ensure_text_nodes = function(){
+Doc.prototype.ensure_text_nodes = function(){
     var l = this.base.getElementsByTagName("e");
     for(var i = 0; i < l.length; i++){
         if(!(l[i].firstChild)) l[i].appendChild(this.base.createTextNode(""));
@@ -32,10 +32,10 @@ GuppyDoc.prototype.ensure_text_nodes = function(){
 
 /** 
     Check if document is empty
-    @memberof GuppyDoc
+    @memberof Doc
     @returns {boolean}
 */
-GuppyDoc.prototype.is_blank = function(){
+Doc.prototype.is_blank = function(){
     if(this.base.getElementsByTagName("f").length > 0) return false;
     var l = this.base.getElementsByTagName("e");
     if(l.length == 1 && (!(l[0].firstChild) || l[0].firstChild.textContent == "")) return true;
@@ -45,47 +45,47 @@ GuppyDoc.prototype.is_blank = function(){
 
 /** 
     Get the document as a DOM object
-    @memberof GuppyDoc
+    @memberof Doc
     @returns {Element}
 */
-GuppyDoc.prototype.root = function(){
+Doc.prototype.root = function(){
     return this.base.documentElement;
 }
 
 /** 
     Get the content of the document as a string
-    @memberof GuppyDoc
+    @memberof Doc
     @param {string} t - The rendering method to use ("latex", "text", "ast" (for syntax tree), or "xml" (for internal XML representation))
     @returns {string}
 */
-GuppyDoc.prototype.get_content = function(t,r){
+Doc.prototype.get_content = function(t,r){
     if(t == "xml") return (new XMLSerializer()).serializeToString(this.base);
     else if(t == "ast") return JSON.stringify(this.syntax_tree());
-    else if(t == "text") return GuppyAST.to_text(this.syntax_tree());
-    else if(t == "function") return GuppyAST.to_function(this.syntax_tree());
-    else if(t == "eqns") return JSON.stringify(GuppyAST.to_eqlist(this.syntax_tree()));
+    else if(t == "text") return AST.to_text(this.syntax_tree());
+    else if(t == "function") return AST.to_function(this.syntax_tree());
+    else if(t == "eqns") return JSON.stringify(AST.to_eqlist(this.syntax_tree()));
     else return this.manual_render(t,this.root(),r);
 }
 
-GuppyDoc.prototype.evaluate = function(evaluators){
-    return GuppyAST.eval(this.syntax_tree(), evaluators);
+Doc.prototype.evaluate = function(evaluators){
+    return AST.eval(this.syntax_tree(), evaluators);
 }
 
-GuppyDoc.prototype.import_text = function(text, syms, s2n){
-    var tokens = GuppyAST.tokenise_text(text);
-    var ast = GuppyAST.parse_text(tokens);
+Doc.prototype.import_text = function(text, syms, s2n){
+    var tokens = AST.tokenise_text(text);
+    var ast = AST.parse_text(tokens);
     this.import_ast(ast, syms, s2n);
 }
 
-GuppyDoc.prototype.import_ast = function(ast, syms, s2n){
-    syms = syms || GuppySymbols.symbols;
-    s2n = s2n || GuppySymbols.symbol_to_node;
-    var doc = GuppyAST.to_xml(ast, syms, s2n);
+Doc.prototype.import_ast = function(ast, syms, s2n){
+    syms = syms || Symbols.symbols;
+    s2n = s2n || Symbols.symbol_to_node;
+    var doc = AST.to_xml(ast, syms, s2n);
     this.base = doc;
     this.ensure_text_nodes();
 }
 
-GuppyDoc.prototype.syntax_tree = function(n){
+Doc.prototype.syntax_tree = function(n){
     n = n || this.root()
     if(n.nodeName == "f"){
         var ans = {"args":[], "kwargs":{}};
@@ -118,36 +118,36 @@ GuppyDoc.prototype.syntax_tree = function(n){
             var tokens = []
             for(nn = n.firstChild; nn != null; nn = nn.nextSibling){
                 if(nn.nodeName == "e"){
-                    tokens = tokens.concat(GuppyAST.tokenise_e(nn.firstChild.textContent));
+                    tokens = tokens.concat(AST.tokenise_e(nn.firstChild.textContent));
                 }
                 else if(nn.nodeName == "f"){
                     tokens.push(this.syntax_tree(nn));
                 }
             }
             //console.log("TOK",tokens);
-            ans = GuppyAST.parse_e(tokens);
+            ans = AST.parse_e(tokens);
         }
     }
     return ans;
 }
 
-GuppyDoc.prototype.xpath_node = function(xpath, node){
+Doc.prototype.xpath_node = function(xpath, node){
     node = node || this.root()
     return this.base.evaluate(xpath, node, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
-GuppyDoc.prototype.xpath_list = function(xpath, node){
+Doc.prototype.xpath_list = function(xpath, node){
     node = node || this.root()
     return this.base.evaluate(xpath, node, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 }
 
 /** 
     Get the names of symbols used in this document
-    @memberof GuppyDoc
+    @memberof Doc
     @param {string[]} [groups] - A list of groups you want strings for
     @returns {string[]}
 */
-GuppyDoc.prototype.get_symbols = function(groups){
+Doc.prototype.get_symbols = function(groups){
     var types = {};
     var ans = [];
     var groups_selector = "//f";
@@ -162,15 +162,15 @@ GuppyDoc.prototype.get_symbols = function(groups){
 
 /** 
     Set the content of the document
-    @memberof GuppyDoc
+    @memberof Doc
     @param {string} xml_data - An XML string representing the content of the document
 */
-GuppyDoc.prototype.set_content = function(xml_data){
+Doc.prototype.set_content = function(xml_data){
     this.base = (new window.DOMParser()).parseFromString(xml_data, "text/xml");
     this.ensure_text_nodes();
 }
 
-GuppyDoc.prototype.auto_bracket = function(n){
+Doc.prototype.auto_bracket = function(n){
     var e0 = n.firstChild;
     var e1 = n.lastChild;
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
@@ -188,7 +188,7 @@ GuppyDoc.prototype.auto_bracket = function(n){
     return true;
 }
 
-GuppyDoc.prototype.manual_render = function(t,n,r){
+Doc.prototype.manual_render = function(t,n,r){
     var ans = "";
     var nn = null;
     var i = null;
@@ -245,15 +245,15 @@ GuppyDoc.prototype.manual_render = function(t,n,r){
 
 /** 
     Render all guppy documents on the page. 
-    @memberof GuppyDoc
+    @memberof Doc
 */
-GuppyDoc.render_all = function(){
+Doc.render_all = function(){
     var l = document.getElementsByTagName("script");
     var ans = []
     for(var i = 0; i < l.length; i++){
         if(l[i].getAttribute("type") == "text/guppy_xml"){
             var n = l[i];
-            var d = new GuppyDoc(n.innerHTML);
+            var d = new Doc(n.innerHTML);
             var s = document.createElement("span");
             s.setAttribute("id","eqn1_render");
             katex.render(d.get_content("latex"), s);
@@ -268,14 +268,14 @@ GuppyDoc.render_all = function(){
     Render a given document into a specified HTML element.
     @param {string} doc - A GuppyXML string to be rendered
     @param {string} target_id - The ID of the HTML element to render into
-    @memberof GuppyDoc
+    @memberof Doc
 */
-GuppyDoc.render = function(doc, target_id){
-    var d = new GuppyDoc(doc);
+Doc.render = function(doc, target_id){
+    var d = new Doc(doc);
     var target = document.getElementById(target_id);
     katex.render(d.get_content("latex"), target);
     return {"container":target, "doc":d};
 }
 
 
-module.exports = GuppyDoc;
+module.exports = Doc;

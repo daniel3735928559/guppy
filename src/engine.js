@@ -1,7 +1,7 @@
-var GuppyUtils = require('./guppy_utils.js');
-var GuppyDoc = require('./guppy_doc.js');
-var GuppySymbols = require('./guppy_symbols.js');
-var GuppySettings = require('./guppy_settings.js');
+var Utils = require('./utils.js');
+var Doc = require('./doc.js');
+var Symbols = require('./symbols.js');
+var Settings = require('./settings.js');
 
 String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this.slice(idx)); };
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
@@ -12,7 +12,7 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
    @classdesc The backend to the editor.  Should never be constructed directly by the user.
    @constructor 
 */
-var GuppyBackend = function(config){
+var Engine = function(config){
     config = config || {};
     var events = config['events'] || {};
     var settings = config['settings'] || {};
@@ -38,7 +38,7 @@ var GuppyBackend = function(config){
     }
 
     this.symbols = {};
-    this.doc = new GuppyDoc(settings["xml_content"]);
+    this.doc = new Doc(settings["xml_content"]);
     
     this.current = this.doc.root().firstChild;
     this.caret = 0;
@@ -47,53 +47,53 @@ var GuppyBackend = function(config){
     this.sel_end = null;
     this.undo_data = [];
     this.undo_now = -1;
-    this.sel_status = GuppyBackend.SEL_NONE;
+    this.sel_status = Engine.SEL_NONE;
     this.checkpoint();
-    if(GuppyBackend.ready && !this.ready){
+    if(Engine.ready && !this.ready){
         this.ready = true;
-        this.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+        this.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
         this.fire_event("ready");
     }
 }
 
-GuppyBackend.ready = false;
-GuppyBackend.SEL_NONE = 0;
-GuppyBackend.SEL_CURSOR_AT_START = 1;
-GuppyBackend.SEL_CURSOR_AT_END = 2;
-GuppyBackend.clipboard = null;
+Engine.ready = false;
+Engine.SEL_NONE = 0;
+Engine.SEL_CURSOR_AT_START = 1;
+Engine.SEL_CURSOR_AT_END = 2;
+Engine.clipboard = null;
 
-GuppyBackend.prototype.setting = function(name){
-    return this.settings[name] || GuppySettings.config.settings[name];
+Engine.prototype.setting = function(name){
+    return this.settings[name] || Settings.config.settings[name];
 }
 
-GuppyBackend.prototype.event = function(name){
-    return this.events[name] || GuppySettings.config.events[name];
+Engine.prototype.event = function(name){
+    return this.events[name] || Settings.config.events[name];
 }
 
 /** 
     Get the content of the editor
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} t - The type of content to render ("latex", "text", or "xml").
 */
-GuppyBackend.prototype.get_content = function(t,r){
+Engine.prototype.get_content = function(t,r){
     return this.doc.get_content(t,r);
 }
 
 /** 
     Set the XML content of the editor
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} xml_data - An XML string of the content to place in the editor
 */
-GuppyBackend.prototype.set_content = function(xml_data){
-    this.set_doc(new GuppyDoc(xml_data));
+Engine.prototype.set_content = function(xml_data){
+    this.set_doc(new Doc(xml_data));
 }
 
 /** 
     Set the document of the editor
-    @memberof GuppyBackend
-    @param {GuppyDoc} doc - The GuppyDoc that will be the editor's source
+    @memberof Engine
+    @param {Doc} doc - The Doc that will be the editor's source
 */
-GuppyBackend.prototype.set_doc = function(doc){
+Engine.prototype.set_doc = function(doc){
     this.doc = doc;
     this.current = this.doc.root().firstChild;
     this.caret = 0;
@@ -101,40 +101,40 @@ GuppyBackend.prototype.set_doc = function(doc){
     this.sel_end = null;
     this.undo_data = [];
     this.undo_now = -1;
-    this.sel_status = GuppyBackend.SEL_NONE;
+    this.sel_status = Engine.SEL_NONE;
     this.checkpoint();
 }
 
-GuppyBackend.prototype.import_text = function(text){
+Engine.prototype.import_text = function(text){
     this.doc.import_text(text, this.symbols);
     this.set_doc(this.doc);
 }
 
-GuppyBackend.prototype.import_ast = function(ast){
+Engine.prototype.import_ast = function(ast){
     this.doc.import_ast(ast, this.symbols);
     this.set_doc(this.doc);
 }
 
-GuppyBackend.prototype.fire_event = function(event, args){
+Engine.prototype.fire_event = function(event, args){
     args = args || {};
     args.target = this.parent || this;
     args.type = event;
     var ev = this.event(event);
-    if(ev && this.ready && GuppyBackend.ready) ev(args);
+    if(ev && this.ready && Engine.ready) ev(args);
 }
 
 /** 
     Remove a symbol from this instance of the editor.
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} name - The name of the symbol to remove.
 */
-GuppyBackend.prototype.remove_symbol = function(name){
+Engine.prototype.remove_symbol = function(name){
     if(this.symbols[name]) delete this.symbols[name];
 }
 
 /** 
     Add a symbol to this instance of the editor.
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} name - param
     @param {Object} symbol - If `template` is present, this is the
     template arguments.  Otherwise, it is a complete specification
@@ -142,39 +142,39 @@ GuppyBackend.prototype.remove_symbol = function(name){
     documentation for Guppy.add_global_symbol.
     @param {string} [template] - The name of the template to use.
 */
-GuppyBackend.prototype.add_symbol = function(name, symbol){
+Engine.prototype.add_symbol = function(name, symbol){
     this.symbols[name] = symbol;
 }
 
-GuppyBackend.prototype.select_to = function(loc, sel_cursor, sel_caret, mouse){
+Engine.prototype.select_to = function(loc, sel_cursor, sel_caret, mouse){
     if(loc.current == sel_cursor && loc.caret == sel_caret){
         this.current = loc.current;
         this.caret = loc.caret;
-        this.sel_status = GuppyBackend.SEL_NONE;
+        this.sel_status = Engine.SEL_NONE;
     }
     else if(loc.pos == "left"){
         this.sel_end = {"node":sel_cursor,"caret":sel_caret};
         this.current = loc.current;
         this.caret = loc.caret;
-        this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_START, mouse);
+        this.set_sel_boundary(Engine.SEL_CURSOR_AT_START, mouse);
     }
     else if(loc.pos == "right"){
         this.sel_start = {"node":sel_cursor,"caret":sel_caret};
         this.current = loc.current;
         this.caret = loc.caret;
-        this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_END, mouse);
+        this.set_sel_boundary(Engine.SEL_CURSOR_AT_END, mouse);
     }
 }
 
-GuppyBackend.prototype.set_sel_start = function(){
+Engine.prototype.set_sel_start = function(){
     this.sel_start = {"node":this.current, "caret":this.caret};
 }
 
-GuppyBackend.prototype.set_sel_end = function(){
+Engine.prototype.set_sel_end = function(){
     this.sel_end = {"node":this.current, "caret":this.caret};
 }
 
-GuppyBackend.prototype.add_paths = function(n,path){
+Engine.prototype.add_paths = function(n,path){
     if(n.nodeName == "e"){
         n.setAttribute("path",path);
     }
@@ -189,24 +189,24 @@ GuppyBackend.prototype.add_paths = function(n,path){
     }
 }
 
-GuppyBackend.prototype.add_classes_cursors = function(n){
+Engine.prototype.add_classes_cursors = function(n){
     if(n.nodeName == "e"){
         var text = n.firstChild.nodeValue;
         var ans = "";
         var sel_cursor;
-        var text_node = GuppyUtils.is_text(n);
-        if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
-        if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
-        if(this.sel_status != GuppyBackend.SEL_NONE){
-            var sel_caret_text = GuppyUtils.is_small(sel_cursor.node) ? GuppyUtils.SMALL_SEL_CARET : GuppyUtils.SEL_CARET;
+        var text_node = Utils.is_text(n);
+        if(this.sel_status == Engine.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
+        if(this.sel_status == Engine.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
+        if(this.sel_status != Engine.SEL_NONE){
+            var sel_caret_text = Utils.is_small(sel_cursor.node) ? Utils.SMALL_SEL_CARET : Utils.SEL_CARET;
             if(!text_node && text.length == 0 && n.parentNode.childElementCount > 1){
                 sel_caret_text = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
             }
             else{
                 sel_caret_text = "\\blue{"+sel_caret_text+"}";
             }
-            if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\"+GuppyUtils.SEL_COLOR+"{";
-            if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
+            if(this.sel_status == Engine.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\"+Utils.SEL_COLOR+"{";
+            if(this.sel_status == Engine.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
         }
         var caret_text = "";
         var temp_caret_text = "";
@@ -214,7 +214,7 @@ GuppyBackend.prototype.add_classes_cursors = function(n){
             if(text_node) caret_text = "\\_";
             else if(n.parentNode.childElementCount == 1){
                 if(this.current == n){
-                    var blank_caret = this.setting("blank_caret") || (GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET);
+                    var blank_caret = this.setting("blank_caret") || (Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET);
                     ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
                 }
                 else if(this.temp_cursor.node == n)
@@ -235,23 +235,23 @@ GuppyBackend.prototype.add_classes_cursors = function(n){
         for(var i = 0; i < text.length+1; i++){
             if(n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
                 if(text_node){
-                    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START)
+                    if(this.sel_status == Engine.SEL_CURSOR_AT_START)
                         caret_text = "[";
-                    else if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END)
+                    else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
                         caret_text = "]";
                     else
                         caret_text = "\\_";
                 }
                 else{
-                    caret_text = GuppyUtils.is_small(this.current) ? GuppyUtils.SMALL_CARET : GuppyUtils.CARET;
+                    caret_text = Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET;
                     if(text.length == 0)
                         caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
                     else{
                         caret_text = "\\red{\\xmlClass{main_cursor}{"+caret_text+"}}"
                     }
-                    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START)
-                        caret_text = caret_text + "\\"+GuppyUtils.SEL_COLOR+"{";
-                    else if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END)
+                    if(this.sel_status == Engine.SEL_CURSOR_AT_START)
+                        caret_text = caret_text + "\\"+Utils.SEL_COLOR+"{";
+                    else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
                         caret_text = "}" + caret_text;
                 }
                 ans += caret_text;
@@ -259,14 +259,14 @@ GuppyBackend.prototype.add_classes_cursors = function(n){
             else if(n == this.current && i == this.caret && text_node){
                 ans += caret_text;
             }
-            else if(this.sel_status != GuppyBackend.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
+            else if(this.sel_status != Engine.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
                 ans += sel_caret_text;
             }
             else if(this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
                 if(text_node) 
                     temp_caret_text = ".";
                 else{
-                    temp_caret_text = GuppyUtils.is_small(this.current) ? GuppyUtils.TEMP_SMALL_CARET : GuppyUtils.TEMP_CARET;
+                    temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
                     if(text.length == 0){
                         temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
                     }
@@ -290,7 +290,7 @@ GuppyBackend.prototype.add_classes_cursors = function(n){
     }
 }
 
-GuppyBackend.prototype.remove_cursors_classes = function(n){
+Engine.prototype.remove_cursors_classes = function(n){
     if(n.nodeName == "e"){
         n.removeAttribute("path");
         n.removeAttribute("render");
@@ -304,7 +304,7 @@ GuppyBackend.prototype.remove_cursors_classes = function(n){
     }
 }
 
-GuppyBackend.prototype.down_from_f = function(){
+Engine.prototype.down_from_f = function(){
     var nn = this.current.firstChild;
     while(nn != null && nn.nodeName != 'c' && nn.nodeName != 'l') nn = nn.nextSibling;
     if(nn != null){
@@ -313,7 +313,7 @@ GuppyBackend.prototype.down_from_f = function(){
     }
 }
 
-GuppyBackend.prototype.down_from_f_to_blank = function(){
+Engine.prototype.down_from_f_to_blank = function(){
     var nn = this.current.firstChild;
     while(nn != null && !(nn.nodeName == 'c' && nn.children.length == 1 && nn.firstChild.firstChild.nodeValue == "")){
         nn = nn.nextSibling;
@@ -331,7 +331,7 @@ GuppyBackend.prototype.down_from_f_to_blank = function(){
     else this.down_from_f();
 }
 
-GuppyBackend.prototype.delete_from_f = function(to_insert){
+Engine.prototype.delete_from_f = function(to_insert){
     var n = this.current;
     var p = n.parentNode;
     var prev = n.previousSibling;
@@ -346,17 +346,17 @@ GuppyBackend.prototype.delete_from_f = function(to_insert){
     p.removeChild(next);
 }
 
-GuppyBackend.prototype.symbol_to_node = function(sym_name, content){
-    return GuppySymbols.symbol_to_node(this.symbols[sym_name], content, this.doc.base);
+Engine.prototype.symbol_to_node = function(sym_name, content){
+    return Symbols.symbol_to_node(this.symbols[sym_name], content, this.doc.base);
 }
 
 /** 
     Insert a symbol into the document at the current cursor position.
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} sym_name - The name of the symbol to insert.
     Should match one of the keys in the symbols JSON object
 */
-GuppyBackend.prototype.insert_symbol = function(sym_name){
+Engine.prototype.insert_symbol = function(sym_name){
     var s = this.symbols[sym_name];
     if(s.attrs && this.is_blacklisted(s.attrs.type)){
         return false;
@@ -370,7 +370,7 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
     
     if(cur > 0){
         cur--;
-        if(this.sel_status != GuppyBackend.SEL_NONE){
+        if(this.sel_status != Engine.SEL_NONE){
             var sel = this.sel_get();
             to_remove = sel.involved;
             left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
@@ -452,8 +452,8 @@ GuppyBackend.prototype.insert_symbol = function(sym_name){
     return true;
 }
 
-GuppyBackend.prototype.sel_get = function(){
-    if(this.sel_status == GuppyBackend.SEL_NONE){
+Engine.prototype.sel_get = function(){
+    if(this.sel_status == Engine.SEL_NONE){
         return null;
     }
     var involved = [];
@@ -483,7 +483,7 @@ GuppyBackend.prototype.sel_get = function(){
             "cursor":0};
 }
 
-GuppyBackend.prototype.make_e = function(text){
+Engine.prototype.make_e = function(text){
     var base = this.doc.base;
     var new_node = base.createElement("e");
     new_node.appendChild(base.createTextNode(text));
@@ -492,12 +492,12 @@ GuppyBackend.prototype.make_e = function(text){
 
 /** 
     Insert a string into the document at the current cursor position.
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} s - The string to insert.
 */
-GuppyBackend.prototype.insert_string = function(s){
+Engine.prototype.insert_string = function(s){
     var self = this;
-    if(this.sel_status != GuppyBackend.SEL_NONE){
+    if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
         this.sel_clear();
     }
@@ -515,17 +515,17 @@ GuppyBackend.prototype.insert_string = function(s){
 /** 
     Copy the current selection, leaving the document unchanged but
     placing the contents of the current selection on the clipboard.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_copy = function(){
+Engine.prototype.sel_copy = function(){
     var sel = this.sel_get();
     if(!sel) return;
-    GuppyBackend.clipboard = [];
+    Engine.clipboard = [];
     var cliptype = this.setting("cliptype");
-    if(cliptype != "none") var clip_doc = new GuppyDoc("<m></m>");
+    if(cliptype != "none") var clip_doc = new Doc("<m></m>");
     for(var i = 0; i < sel.node_list.length; i++){
         var node = sel.node_list[i].cloneNode(true);
-        GuppyBackend.clipboard.push(node);
+        Engine.clipboard.push(node);
         if(cliptype != "none") clip_doc.root().appendChild(node.cloneNode(true));//clip_text += this.doc.manual_render(cliptype, node);
     }
     if(cliptype != "none"){
@@ -539,7 +539,7 @@ GuppyBackend.prototype.sel_copy = function(){
     this.sel_clear();
 }
 
-GuppyBackend.prototype.system_copy = function(text) {
+Engine.prototype.system_copy = function(text) {
     if (window.clipboardData && window.clipboardData.setData)
         return window.clipboardData.setData("Text", text);
     else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
@@ -557,17 +557,17 @@ GuppyBackend.prototype.system_copy = function(text) {
 
 /** 
     Cut the current selection, removing it from the document and placing it in the clipboard.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_cut = function(){
+Engine.prototype.sel_cut = function(){
     var node_list = this.sel_delete();
     if(!node_list) return;
-    GuppyBackend.clipboard = [];
+    Engine.clipboard = [];
     var cliptype = this.setting("cliptype");
     var clip_text = "";
     for(var i = 0; i < node_list.length; i++){
         var node = node_list[i].cloneNode(true);
-        GuppyBackend.clipboard.push(node);
+        Engine.clipboard.push(node);
         if(cliptype != "none") clip_text += this.doc.manual_render(cliptype, node);
     }
     if(cliptype != "none") this.system_copy(clip_text);
@@ -575,7 +575,7 @@ GuppyBackend.prototype.sel_cut = function(){
     this.checkpoint();
 }
 
-GuppyBackend.prototype.insert_nodes = function(node_list, move_cursor){
+Engine.prototype.insert_nodes = function(node_list, move_cursor){
     var real_clipboard = [];
     for(var i = 0; i < node_list.length; i++){
         real_clipboard.push(node_list[i].cloneNode(true));
@@ -603,13 +603,13 @@ GuppyBackend.prototype.insert_nodes = function(node_list, move_cursor){
 
 /** 
     Paste the current contents of the clipboard.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_paste = function(){
+Engine.prototype.sel_paste = function(){
     this.sel_delete();
     this.sel_clear();
-    if(!(GuppyBackend.clipboard) || GuppyBackend.clipboard.length == 0) return;
-    this.insert_nodes(GuppyBackend.clipboard, true);
+    if(!(Engine.clipboard) || Engine.clipboard.length == 0) return;
+    this.insert_nodes(Engine.clipboard, true);
     this.checkpoint();
     return;
 }
@@ -617,19 +617,19 @@ GuppyBackend.prototype.sel_paste = function(){
 /** 
     Clear the current selection, leaving the document unchanged and
     nothing selected.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_clear = function(){
+Engine.prototype.sel_clear = function(){
     this.sel_start = null;    
     this.sel_end = null;
-    this.sel_status = GuppyBackend.SEL_NONE;
+    this.sel_status = Engine.SEL_NONE;
 }
 
 /** 
     Delete the current selection.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_delete = function(){
+Engine.prototype.sel_delete = function(){
     var sel = this.sel_get();
     if(!sel) return null;
     var sel_parent = sel.involved[0].parentNode;
@@ -657,101 +657,101 @@ GuppyBackend.prototype.sel_delete = function(){
 
 /** 
     Select the entire contents of the editor.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_all = function(){
+Engine.prototype.sel_all = function(){
     this.home();
     this.set_sel_start();
     this.end();
     this.set_sel_end();
     if(this.sel_start.node != this.sel_end.node || this.sel_start.caret != this.sel_end.caret)
-        this.sel_status = GuppyBackend.SEL_CURSOR_AT_END;
+        this.sel_status = Engine.SEL_CURSOR_AT_END;
 }
 
 /** 
     function
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} name - param
 */
-GuppyBackend.prototype.sel_right = function(){
-    if(this.sel_status == GuppyBackend.SEL_NONE){
+Engine.prototype.sel_right = function(){
+    if(this.sel_status == Engine.SEL_NONE){
         this.set_sel_start();
-        this.sel_status = GuppyBackend.SEL_CURSOR_AT_END;
+        this.sel_status = Engine.SEL_CURSOR_AT_END;
     }
-    if(this.caret >= GuppyUtils.get_length(this.current)){
+    if(this.caret >= Utils.get_length(this.current)){
         var nn = this.current.nextSibling;
         if(nn != null){
             this.current = nn.nextSibling;
             this.caret = 0;
-            this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_END);
+            this.set_sel_boundary(Engine.SEL_CURSOR_AT_END);
         }
         else{
-            this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_END);
+            this.set_sel_boundary(Engine.SEL_CURSOR_AT_END);
         }
     }
     else{
         this.caret += 1;
-        this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_END);
+        this.set_sel_boundary(Engine.SEL_CURSOR_AT_END);
     }
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
-        this.sel_status = GuppyBackend.SEL_NONE;
+        this.sel_status = Engine.SEL_NONE;
     }
 }
 
-GuppyBackend.prototype.set_sel_boundary = function(sstatus, mouse){
-    if(this.sel_status == GuppyBackend.SEL_NONE || mouse) this.sel_status = sstatus;
-    if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_START)
+Engine.prototype.set_sel_boundary = function(sstatus, mouse){
+    if(this.sel_status == Engine.SEL_NONE || mouse) this.sel_status = sstatus;
+    if(this.sel_status == Engine.SEL_CURSOR_AT_START)
         this.set_sel_start();
-    else if(this.sel_status == GuppyBackend.SEL_CURSOR_AT_END)
+    else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
         this.set_sel_end();
 }
 
 /** 
     Move the cursor to the left, adjusting the selection along with
     the cursor.
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.sel_left = function(){
-    if(this.sel_status == GuppyBackend.SEL_NONE){
+Engine.prototype.sel_left = function(){
+    if(this.sel_status == Engine.SEL_NONE){
         this.set_sel_end();
-        this.sel_status = GuppyBackend.SEL_CURSOR_AT_START;
+        this.sel_status = Engine.SEL_CURSOR_AT_START;
     }
     if(this.caret <= 0){
         var nn = this.current.previousSibling;
         if(nn != null){
             this.current = nn.previousSibling;
             this.caret = this.current.firstChild.nodeValue.length;
-            this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_START);
+            this.set_sel_boundary(Engine.SEL_CURSOR_AT_START);
         }
         else{
-            this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_START);
+            this.set_sel_boundary(Engine.SEL_CURSOR_AT_START);
         }
     }
     else{
         this.caret -= 1;
-        this.set_sel_boundary(GuppyBackend.SEL_CURSOR_AT_START);
+        this.set_sel_boundary(Engine.SEL_CURSOR_AT_START);
     }
     if(this.sel_start.node == this.sel_end.node && this.sel_start.caret == this.sel_end.caret){
-        this.sel_status = GuppyBackend.SEL_NONE;
+        this.sel_status = Engine.SEL_NONE;
     }
 }
 
-GuppyBackend.prototype.list_extend_copy_right = function(){this.list_extend("right", true);}
-GuppyBackend.prototype.list_extend_copy_left = function(){this.list_extend("left", true);}
-GuppyBackend.prototype.list_extend_right = function(){this.list_extend("right", false);}
-GuppyBackend.prototype.list_extend_left = function(){this.list_extend("left", false);}
-GuppyBackend.prototype.list_extend_up = function(){this.list_extend("up", false);}
-GuppyBackend.prototype.list_extend_down = function(){this.list_extend("down", false);}
-GuppyBackend.prototype.list_extend_copy_up = function(){this.list_extend("up", true);}
-GuppyBackend.prototype.list_extend_copy_down = function(){this.list_extend("down", true);}
+Engine.prototype.list_extend_copy_right = function(){this.list_extend("right", true);}
+Engine.prototype.list_extend_copy_left = function(){this.list_extend("left", true);}
+Engine.prototype.list_extend_right = function(){this.list_extend("right", false);}
+Engine.prototype.list_extend_left = function(){this.list_extend("left", false);}
+Engine.prototype.list_extend_up = function(){this.list_extend("up", false);}
+Engine.prototype.list_extend_down = function(){this.list_extend("down", false);}
+Engine.prototype.list_extend_copy_up = function(){this.list_extend("up", true);}
+Engine.prototype.list_extend_copy_down = function(){this.list_extend("down", true);}
 
 /** 
     Move the cursor by one row up or down in a matrix. 
-    @memberof GuppyBackend
+    @memberof Engine
     @param {boolean} down - If `true`, move down in the matrix;
     otherwise, up.
 */
-GuppyBackend.prototype.list_vertical_move = function(down){
+Engine.prototype.list_vertical_move = function(down){
     var n = this.current;
     while(n.parentNode && n.parentNode.parentNode && !(n.nodeName == 'c' && n.parentNode.nodeName == 'l' && n.parentNode.parentNode.nodeName == 'l')){
         n = n.parentNode;
@@ -779,13 +779,13 @@ GuppyBackend.prototype.list_vertical_move = function(down){
     Add an element to a list (or row/column to a matrix) in the
     specified direction.  Can optionally copy the current
     element/row/column to the new one.
-    @memberof GuppyBackend
+    @memberof Engine
     @param {string} direction - One of `"up"`, `"down"`, `"left"`, or
     `"right"`.  
     @param {boolean} copy - Whether or not to copy the current
     element/row/column into the new one.
 */
-GuppyBackend.prototype.list_extend = function(direction, copy){
+Engine.prototype.list_extend = function(direction, copy){
     var base = this.doc.base;
     var vertical = direction == "up" || direction == "down";
     var before = direction == "up" || direction == "left";
@@ -854,9 +854,9 @@ GuppyBackend.prototype.list_extend = function(direction, copy){
 
 /** 
     Remove the current column from a matrix
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.list_remove_col = function(){
+Engine.prototype.list_remove_col = function(){
     var n = this.current;
     while(n.parentNode && n.parentNode.parentNode && !(n.nodeName == 'c' && n.parentNode.nodeName == 'l' && n.parentNode.parentNode.nodeName == 'l')){
         n = n.parentNode;
@@ -897,9 +897,9 @@ GuppyBackend.prototype.list_remove_col = function(){
 
 /** 
     Remove the current row from a matrix
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.list_remove_row = function(){
+Engine.prototype.list_remove_row = function(){
     var n = this.current;
     while(n.parentNode && !(n.nodeName == 'l' && n.parentNode.nodeName == 'l')){
         n = n.parentNode;
@@ -923,9 +923,9 @@ GuppyBackend.prototype.list_remove_row = function(){
 
 /** 
     Remove the current element from a list (or column from a matrix)
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.list_remove = function(){
+Engine.prototype.list_remove = function(){
     var n = this.current;
     while(n.parentNode && !(n.nodeName == 'c' && n.parentNode.nodeName == 'l')){
         n = n.parentNode;
@@ -951,11 +951,11 @@ GuppyBackend.prototype.list_remove = function(){
 
 /** 
     Simulate the right arrow key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.right = function(){
+Engine.prototype.right = function(){
     this.sel_clear();
-    if(this.caret >= GuppyUtils.get_length(this.current)){
+    if(this.caret >= Utils.get_length(this.current)){
         var nn = this.doc.xpath_node("following::e[1]", this.current);
         if(nn != null){
             this.current = nn;
@@ -972,18 +972,18 @@ GuppyBackend.prototype.right = function(){
 
 /** 
     Simulate the spacebar key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.spacebar = function(){
-    if(GuppyUtils.is_text(this.current)) this.insert_string(" ");
+Engine.prototype.spacebar = function(){
+    if(Utils.is_text(this.current)) this.insert_string(" ");
     else this.space_caret = this.caret;
 }
 
 /** 
     Simulate the left arrow key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.left = function(){
+Engine.prototype.left = function(){
     this.sel_clear();
     if(this.caret <= 0){
         var pn = this.doc.xpath_node("preceding::e[1]", this.current);
@@ -1000,7 +1000,7 @@ GuppyBackend.prototype.left = function(){
     }
 }
 
-GuppyBackend.prototype.delete_from_c = function(){
+Engine.prototype.delete_from_c = function(){
     var pos = 0;
     var c = this.current.parentNode;
     while(c && c.nodeName == "c"){
@@ -1018,7 +1018,7 @@ GuppyBackend.prototype.delete_from_c = function(){
     this.insert_nodes(survivor_nodes, pos > idx);
 }
 
-GuppyBackend.prototype.delete_from_e = function(){
+Engine.prototype.delete_from_e = function(){
     // return false if we deleted something, and true otherwise.
     if(this.caret > 0){
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splicen(this.caret-1,"",1);
@@ -1068,7 +1068,7 @@ GuppyBackend.prototype.delete_from_e = function(){
     return true;
 }
 
-GuppyBackend.prototype.delete_forward_from_e = function(){
+Engine.prototype.delete_forward_from_e = function(){
     // return false if we deleted something, and true otherwise.
     if(this.caret < this.current.firstChild.nodeValue.length){
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splicen(this.caret,"",1);
@@ -1090,12 +1090,12 @@ GuppyBackend.prototype.delete_forward_from_e = function(){
 
 /** 
     Simulate the "backspace" key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.backspace = function(){
-    if(this.sel_status != GuppyBackend.SEL_NONE){
+Engine.prototype.backspace = function(){
+    if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
-        this.sel_status = GuppyBackend.SEL_NONE;
+        this.sel_status = Engine.SEL_NONE;
         this.checkpoint();
     }
     else if(this.delete_from_e()){
@@ -1105,12 +1105,12 @@ GuppyBackend.prototype.backspace = function(){
 
 /** 
     Simulate the "delete" key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.delete_key = function(){
-    if(this.sel_status != GuppyBackend.SEL_NONE){
+Engine.prototype.delete_key = function(){
+    if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
-        this.sel_status = GuppyBackend.SEL_NONE;
+        this.sel_status = Engine.SEL_NONE;
         this.checkpoint();
     }
     else if(this.delete_forward_from_e()){
@@ -1118,17 +1118,17 @@ GuppyBackend.prototype.delete_key = function(){
     }
 }
 
-GuppyBackend.prototype.backslash = function(){
-    if(GuppyUtils.is_text(this.current)) return;
+Engine.prototype.backslash = function(){
+    if(Utils.is_text(this.current)) return;
     this.insert_symbol("sym_name");
 }
 
 /** 
     Simulate a tab key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.tab = function(){
-    if(!GuppyUtils.is_symbol(this.current)){
+Engine.prototype.tab = function(){
+    if(!Utils.is_symbol(this.current)){
         this.check_for_symbol();
         return;
     }
@@ -1146,16 +1146,16 @@ GuppyBackend.prototype.tab = function(){
     }
 }
 
-GuppyBackend.prototype.right_paren = function(){
+Engine.prototype.right_paren = function(){
     if(this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;
     else this.right();
 }
 
 /** 
     Simulate an up arrow key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.up = function(){
+Engine.prototype.up = function(){
     this.sel_clear();
     if(this.current.parentNode.hasAttribute("up")){
         var t = parseInt(this.current.parentNode.getAttribute("up"));
@@ -1173,9 +1173,9 @@ GuppyBackend.prototype.up = function(){
 
 /** 
     Simulate a down arrow key press
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.down = function(){
+Engine.prototype.down = function(){
     this.sel_clear();
     if(this.current.parentNode.hasAttribute("down")){
         var t = parseInt(this.current.parentNode.getAttribute("down"));
@@ -1193,23 +1193,23 @@ GuppyBackend.prototype.down = function(){
 
 /** 
     Move the cursor to the beginning of the document
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.home = function(){
+Engine.prototype.home = function(){
     this.current = this.doc.root().firstChild;
     this.caret = 0;
 }
 
 /** 
     Move the cursor to the end of the document
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.end = function(){
+Engine.prototype.end = function(){
     this.current = this.doc.root().lastChild;
     this.caret = this.current.firstChild.nodeValue.length;
 }
 
-GuppyBackend.prototype.checkpoint = function(){
+Engine.prototype.checkpoint = function(){
     var base = this.doc.base;
     this.current.setAttribute("current","yes");
     this.current.setAttribute("caret",this.caret.toString());
@@ -1224,23 +1224,23 @@ GuppyBackend.prototype.checkpoint = function(){
     if(this.parent && this.parent.ready) this.parent.render(true);
 }
 
-GuppyBackend.prototype.restore = function(t){
+Engine.prototype.restore = function(t){
     this.doc.base = this.undo_data[t].cloneNode(true);
     this.find_current();
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
 }
 
-GuppyBackend.prototype.find_current = function(){
+Engine.prototype.find_current = function(){
     this.current = this.doc.xpath_node("//*[@current='yes']");
     this.caret = parseInt(this.current.getAttribute("caret"));
 }
 
 /** 
     Undo the last action
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.undo = function(){
+Engine.prototype.undo = function(){
     this.sel_clear();
     if(this.undo_now <= 0) return;
     this.undo_now--;
@@ -1252,9 +1252,9 @@ GuppyBackend.prototype.undo = function(){
 
 /** 
     Redo the last undone action
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.redo = function(){
+Engine.prototype.redo = function(){
     this.sel_clear();
     if(this.undo_now >= this.undo_data.length-1) return;
     this.undo_now++;
@@ -1266,14 +1266,14 @@ GuppyBackend.prototype.redo = function(){
 
 /** 
     Execute the "done" callback
-    @memberof GuppyBackend
+    @memberof Engine
 */
-GuppyBackend.prototype.done = function(){
-    if(GuppyUtils.is_symbol(this.current)) this.complete_symbol();
+Engine.prototype.done = function(){
+    if(Utils.is_symbol(this.current)) this.complete_symbol();
     else this.fire_event("done");
 }
 
-GuppyBackend.prototype.complete_symbol = function(){
+Engine.prototype.complete_symbol = function(){
     var sym_name = this.current.firstChild.textContent;
     if(!(this.symbols[sym_name])) return;
     this.current = this.current.parentNode.parentNode;
@@ -1281,20 +1281,20 @@ GuppyBackend.prototype.complete_symbol = function(){
     this.insert_symbol(sym_name);
 }
 
-GuppyBackend.prototype.problem = function(message){
+Engine.prototype.problem = function(message){
     this.fire_event("error",{"message":message});
 }
 
-GuppyBackend.prototype.is_blacklisted = function(symb_type){
+Engine.prototype.is_blacklisted = function(symb_type){
     var blacklist = this.setting("blacklist");
     for(var i = 0; i < blacklist.length; i++)
         if(symb_type == blacklist[i]) return true;
     return false;
 }
 
-GuppyBackend.prototype.check_for_symbol = function(whole_node){
+Engine.prototype.check_for_symbol = function(whole_node){
     var instance = this;
-    if(GuppyUtils.is_text(this.current)) return;
+    if(Utils.is_text(this.current)) return;
     var sym = "";
     var n = null;
     if(whole_node){
@@ -1329,4 +1329,4 @@ GuppyBackend.prototype.check_for_symbol = function(whole_node){
     }
 }
 
-module.exports = GuppyBackend;
+module.exports = Engine;

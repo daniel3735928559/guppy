@@ -77,7 +77,7 @@ GuppyOSK.prototype.attach = function(guppy){
         this.guppy = null;
     }
     
-    var syms = guppy.backend.symbols;
+    var syms = guppy.engine.symbols;
     var osk = elt("div",{"class":"guppy_osk"});
     var sym_tabs = elt("div",{"class":"keys tabbed"});
     var controls = elt("div",{"class":"controls"});
@@ -141,7 +141,7 @@ GuppyOSK.prototype.attach = function(guppy){
                     f = function(n){
                         click_listener(key, function(e){
                             e.preventDefault();
-                            guppy.backend.insert_string(n);
+                            guppy.engine.insert_string(n);
                             guppy.render();
                             if(self.config.goto_tab){
                                 document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
@@ -155,7 +155,7 @@ GuppyOSK.prototype.attach = function(guppy){
                     f = function(n){
                         click_listener(key, function(e){
                             e.preventDefault();
-                            guppy.backend.insert_symbol(n);
+                            guppy.engine.insert_symbol(n);
                             guppy.render();
                             if(self.config.goto_tab){
                                 document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
@@ -189,33 +189,33 @@ GuppyOSK.prototype.attach = function(guppy){
         //katex.render(content, e);
     }
     
-    add_control("&larr;S", function(e){ e.preventDefault();guppy.backend.sel_left();guppy.render();});
-    add_control("S&rarr;", function(e){ e.preventDefault();guppy.backend.sel_right();guppy.render();});
-    add_control("cut", function(e){ e.preventDefault();guppy.backend.sel_cut();guppy.render();});
-    add_control("copy", function(e){ e.preventDefault();guppy.backend.sel_copy();guppy.render();});
-    add_control("paste", function(e){ e.preventDefault();guppy.backend.sel_paste();guppy.render();});
-    add_control("undo", function(e){ e.preventDefault();guppy.backend.undo();guppy.render();});
-    add_control("redo", function(e){ e.preventDefault();guppy.backend.redo();guppy.render();});
-    add_control("del", function(e){ e.preventDefault();guppy.backend.backspace();guppy.render();});
-    add_control("spc", function(e){ e.preventDefault();guppy.backend.spacebar();guppy.render();});
-    add_control("tab", function(e){ e.preventDefault();guppy.backend.tab();guppy.render();});
-    add_control("ret", function(e){ e.preventDefault();guppy.backend.done();guppy.render();});
-    add_control("&larr;", function(e){ e.preventDefault();guppy.backend.left();guppy.render();});
-    add_control("&uarr;", function(e){ e.preventDefault();guppy.backend.up();guppy.render();});
-    add_control("&darr;", function(e){ e.preventDefault();guppy.backend.down();guppy.render();});
-    add_control("&rarr;", function(e){ e.preventDefault();guppy.backend.right();guppy.render();});
+    add_control("&larr;S", function(e){ e.preventDefault();guppy.engine.sel_left();guppy.render();});
+    add_control("S&rarr;", function(e){ e.preventDefault();guppy.engine.sel_right();guppy.render();});
+    add_control("cut", function(e){ e.preventDefault();guppy.engine.sel_cut();guppy.render();});
+    add_control("copy", function(e){ e.preventDefault();guppy.engine.sel_copy();guppy.render();});
+    add_control("paste", function(e){ e.preventDefault();guppy.engine.sel_paste();guppy.render();});
+    add_control("undo", function(e){ e.preventDefault();guppy.engine.undo();guppy.render();});
+    add_control("redo", function(e){ e.preventDefault();guppy.engine.redo();guppy.render();});
+    add_control("del", function(e){ e.preventDefault();guppy.engine.backspace();guppy.render();});
+    add_control("spc", function(e){ e.preventDefault();guppy.engine.spacebar();guppy.render();});
+    add_control("tab", function(e){ e.preventDefault();guppy.engine.tab();guppy.render();});
+    add_control("ret", function(e){ e.preventDefault();guppy.engine.done();guppy.render();});
+    add_control("&larr;", function(e){ e.preventDefault();guppy.engine.left();guppy.render();});
+    add_control("&uarr;", function(e){ e.preventDefault();guppy.engine.up();guppy.render();});
+    add_control("&darr;", function(e){ e.preventDefault();guppy.engine.down();guppy.render();});
+    add_control("&rarr;", function(e){ e.preventDefault();guppy.engine.right();guppy.render();});
 
     matrix_controls.appendChild(elt("br"));
-    add_matrix_control("&larr;+col", function(e){ e.preventDefault();guppy.backend.list_extend_left();guppy.render();});
-    add_matrix_control("+col&rarr;", function(e){ e.preventDefault();guppy.backend.list_extend_right();guppy.render();});
-    add_matrix_control("&uarr;+row", function(e){ e.preventDefault();guppy.backend.list_extend_up();guppy.render();});
-    add_matrix_control("&darr;+row", function(e){ e.preventDefault();guppy.backend.list_extend_down();guppy.render();});
-    add_matrix_control("col&larr;col", function(e){ e.preventDefault();guppy.backend.list_extend_copy_left();guppy.render();});
-    add_matrix_control("col&rarr;col", function(e){ e.preventDefault();guppy.backend.list_extend_copy_right();guppy.render();});
-    add_matrix_control("row&uarr;row", function(e){ e.preventDefault();guppy.backend.list_extend_copy_up();guppy.render();});
-    add_matrix_control("row&darr;row", function(e){ e.preventDefault();guppy.backend.list_extend_copy_down();guppy.render();});
-    add_matrix_control("-col", function(e){ e.preventDefault();guppy.backend.list_remove();guppy.render();});
-    add_matrix_control("-row", function(e){ e.preventDefault();guppy.backend.list_remove_row();guppy.render();});
+    add_matrix_control("&larr;+col", function(e){ e.preventDefault();guppy.engine.list_extend_left();guppy.render();});
+    add_matrix_control("+col&rarr;", function(e){ e.preventDefault();guppy.engine.list_extend_right();guppy.render();});
+    add_matrix_control("&uarr;+row", function(e){ e.preventDefault();guppy.engine.list_extend_up();guppy.render();});
+    add_matrix_control("&darr;+row", function(e){ e.preventDefault();guppy.engine.list_extend_down();guppy.render();});
+    add_matrix_control("col&larr;col", function(e){ e.preventDefault();guppy.engine.list_extend_copy_left();guppy.render();});
+    add_matrix_control("col&rarr;col", function(e){ e.preventDefault();guppy.engine.list_extend_copy_right();guppy.render();});
+    add_matrix_control("row&uarr;row", function(e){ e.preventDefault();guppy.engine.list_extend_copy_up();guppy.render();});
+    add_matrix_control("row&darr;row", function(e){ e.preventDefault();guppy.engine.list_extend_copy_down();guppy.render();});
+    add_matrix_control("-col", function(e){ e.preventDefault();guppy.engine.list_remove();guppy.render();});
+    add_matrix_control("-row", function(e){ e.preventDefault();guppy.engine.list_remove_row();guppy.render();});
 
     osk.appendChild(controls);
     document.body.appendChild(osk);    

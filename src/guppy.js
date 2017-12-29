@@ -1,9 +1,9 @@
 var Mousetrap = require('../lib/mousetrap/mousetrap.min.js');
 var katex = require('../lib/katex/katex-modified.min.js');
-var GuppyBackend = require('./guppy_backend.js');
-var GuppyUtils = require('./guppy_utils.js');
-var GuppySymbols = require('./guppy_symbols.js');
-var GuppySettings = require('./guppy_settings.js');
+var Engine = require('./engine.js');
+var Utils = require('./utils.js');
+var Symbols = require('./symbols.js');
+var Settings = require('./settings.js');
 
 /**
    @class
@@ -39,19 +39,19 @@ var Guppy = function(id, config){
     guppy_div.tabIndex = tab_idx;
     Guppy.max_tabIndex = tab_idx+1;
 
-    var buttons = settings['buttons'] || GuppySettings.config.settings['buttons'];
+    var buttons = settings['buttons'] || Settings.config.settings['buttons'];
     this.buttons_div = document.createElement("div");
     this.buttons_div.setAttribute("class","guppy_buttons");
     if(buttons){
         for(var i = 0; i < buttons.length; i++){
-            if(buttons[i] == "osk" && GuppySettings.osk){
+            if(buttons[i] == "osk" && Settings.osk){
                 this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function() {
-                    if(GuppySettings.osk.guppy == self){ GuppySettings.osk.detach(self); }
-                    else{ GuppySettings.osk.attach(self); }}));
+                    if(Settings.osk.guppy == self){ Settings.osk.detach(self); }
+                    else{ Settings.osk.attach(self); }}));
             }
-            else if(buttons[i] == "settings") this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(){ GuppySettings.toggle("settings", self); }));
-            else if(buttons[i] == "symbols") this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(){ GuppySettings.toggle("symbols", self); }));
-            else if(buttons[i] == "controls") this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(){ GuppySettings.toggle("controls", self); }));
+            else if(buttons[i] == "settings") this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(){ Settings.toggle("settings", self); }));
+            else if(buttons[i] == "symbols") this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(){ Settings.toggle("symbols", self); }));
+            else if(buttons[i] == "controls") this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(){ Settings.toggle("controls", self); }));
         }
     }
 
@@ -66,15 +66,15 @@ var Guppy = function(id, config){
 
     config['parent'] = self;
 
-    /**   @member {GuppyBackend} */
-    this.backend = new GuppyBackend(config);
+    /**   @member {Engine} */
+    this.engine = new Engine(config);
     this.temp_cursor = {"node":null,"caret":0}
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
     if(Guppy.ready && !this.ready){
         this.ready = true;
-        this.backend.fire_event("ready");
+        this.engine.fire_event("ready");
         this.render(true);
     }
     this.deactivate();
@@ -89,7 +89,7 @@ Guppy.active_guppy = null;
 Guppy.make_button = function(url, cb){
     var b = document.createElement("img");
     b.setAttribute("class","guppy-button");
-    b.setAttribute("src", GuppySettings.config.path + "/" + url);
+    b.setAttribute("src", Settings.config.path + "/" + url);
     if(cb){
         b.onclick = function(e){
             cb(e);
@@ -167,11 +167,11 @@ Guppy.make_button = function(url, cb){
 */
 Guppy.add_global_symbol = function(name, symbol, template){
     if(template){
-        symbol = GuppySymbols.make_template_symbol(template, name, symbol);
+        symbol = Symbols.make_template_symbol(template, name, symbol);
     }
-    GuppySymbols.symbols[name] = JSON.parse(JSON.stringify(symbol));
+    Symbols.symbols[name] = JSON.parse(JSON.stringify(symbol));
     for(var i in Guppy.instances){
-        Guppy.instances[i].backend.symbols[name] = JSON.parse(JSON.stringify(symbol));
+        Guppy.instances[i].engine.symbols[name] = JSON.parse(JSON.stringify(symbol));
     }
 }
 
@@ -181,11 +181,11 @@ Guppy.add_global_symbol = function(name, symbol, template){
     @param {string} name - The name of the symbol to remove
 */
 Guppy.remove_global_symbol = function(name){
-    if(GuppySymbols.symbols[name]){
-        delete GuppySymbols.symbols[name]
+    if(Symbols.symbols[name]){
+        delete Symbols.symbols[name]
         for(var i in Guppy.instances){
-            if(Guppy.instances[i].backend.symbols[name]){
-                delete Guppy.instances[i].backend.symbols[name];
+            if(Guppy.instances[i].engine.symbols[name]){
+                delete Guppy.instances[i].engine.symbols[name];
             }
         }
     }
@@ -242,45 +242,45 @@ Guppy.remove_global_symbol = function(name){
 */
 Guppy.init = function(config){
     var all_ready = function(){
-        GuppySettings.init(GuppySymbols.symbols);
+        Settings.init(Symbols.symbols);
         Guppy.register_keyboard_handlers();
         for(var i in Guppy.instances){
             Guppy.instances[i].ready = true;
             Guppy.instances[i].render(true);
 
             // Set backend symbols
-            Guppy.instances[i].backend.symbols = JSON.parse(JSON.stringify(GuppySymbols.symbols));
+            Guppy.instances[i].engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
 
             // Set backend settings
-            // for(var s in GuppySettings.config.settings){
-            //     Guppy.instances[i].backend.settings[s] = JSON.parse(JSON.stringify(GuppySettings.config.settings[s]));
+            // for(var s in Settings.config.settings){
+            //     Guppy.instances[i].engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
             // }
 
             // Set backend events
-            for(var e in GuppySettings.config.events){
-                Guppy.instances[i].backend.events[e] = GuppySettings.config.events[e];
+            for(var e in Settings.config.events){
+                Guppy.instances[i].engine.events[e] = Settings.config.events[e];
             }
         }
-        GuppyBackend.ready = true;
+        Engine.ready = true;
         for(var j in Guppy.instances){
-            Guppy.instances[j].backend.ready = true;
-            Guppy.instances[j].backend.fire_event("ready");
+            Guppy.instances[j].engine.ready = true;
+            Guppy.instances[j].engine.fire_event("ready");
         }
     }
     if(config.settings){
         var settings = JSON.parse(JSON.stringify(config.settings));
         for(var s in settings){
-            GuppySettings.config.settings[s] = settings[s];
+            Settings.config.settings[s] = settings[s];
         }
     }
     if(config.events){
-        GuppySettings.config.events = config.events;
+        Settings.config.events = config.events;
     }
     if(config.osk){
-        GuppySettings.osk = config.osk;
+        Settings.osk = config.osk;
         if(config.osk.config.attach == "focus"){
-            var f = GuppySettings.config.events["focus"];
-            GuppySettings.config.events["focus"] = function(e){
+            var f = Settings.config.events["focus"];
+            Settings.config.events["focus"] = function(e){
                 if(f) f(e);
                 if(e.focused) config.osk.attach(e.target);
                 else config.osk.detach(e.target);
@@ -288,7 +288,7 @@ Guppy.init = function(config){
         }
     }
     if(config.path){
-        GuppySettings.config.path = config.path;
+        Settings.config.path = config.path;
     }
     if(config.symbols){
         var symbols = config.symbols;
@@ -302,7 +302,7 @@ Guppy.init = function(config){
                     var req = new XMLHttpRequest();
                     req.onload = function(){
                         var syms = JSON.parse(this.responseText);
-                        GuppySymbols.add_symbols(syms);
+                        Symbols.add_symbols(syms);
                         callback();
                     };
                     req.open("get", symbols[j], true);
@@ -383,7 +383,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
     var bb = g.editor.getElementsByClassName("katex")[0];
     if(!bb) return;
     if(current_node){
-        var current_path = GuppyUtils.path_to(current_node);
+        var current_path = Utils.path_to(current_node);
         var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
     }
     
@@ -421,7 +421,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
     loc = opt.path.substring("guppy_loc".length);
     loc = loc.replace(/_/g,"/");
     loc = loc.replace(/([0-9]+)(?=.*?\/)/g,"[$1]");
-    cur = g.backend.doc.xpath_node(loc.substring(0,loc.lastIndexOf("/")), g.backend.doc.root());
+    cur = g.engine.doc.xpath_node(loc.substring(0,loc.lastIndexOf("/")), g.engine.doc.root());
     car = parseInt(loc.substring(loc.lastIndexOf("/")+1));
     // Check if we want the cursor before or after the element
     if(mid_dist > 0 && !(opt.blank)){
@@ -460,7 +460,7 @@ Guppy.mouse_down = function(e){
                 Guppy.active_guppy.activate();
             }
             var g = Guppy.active_guppy;
-            var b = Guppy.active_guppy.backend;
+            var b = Guppy.active_guppy.engine;
             g.space_caret = 0;
             if(prev_active == g){
                 if(e.shiftKey){
@@ -471,7 +471,7 @@ Guppy.mouse_down = function(e){
                     if(!loc) return;
                     b.current = loc.current;
                     b.caret = loc.caret;
-                    b.sel_status = GuppyBackend.SEL_NONE;
+                    b.sel_status = Engine.SEL_NONE;
                 }
                 g.render(true);
             }
@@ -511,19 +511,19 @@ Guppy.mouse_move = function(e){
 }
 
 Guppy.prototype.select_to = function(x, y, mouse){
-    var sel_caret = this.backend.caret;
-    var sel_cursor = this.backend.current;
-    if(this.backend.sel_status == GuppyBackend.SEL_CURSOR_AT_START){
-        sel_cursor = this.backend.sel_end.node;
-        sel_caret = this.backend.sel_end.caret;
+    var sel_caret = this.engine.caret;
+    var sel_cursor = this.engine.current;
+    if(this.engine.sel_status == Engine.SEL_CURSOR_AT_START){
+        sel_cursor = this.engine.sel_end.node;
+        sel_caret = this.engine.sel_end.caret;
     }
-    else if(this.backend.sel_status == GuppyBackend.SEL_CURSOR_AT_END){
-        sel_cursor = this.backend.sel_start.node;
-        sel_caret = this.backend.sel_start.caret;
+    else if(this.engine.sel_status == Engine.SEL_CURSOR_AT_END){
+        sel_cursor = this.engine.sel_start.node;
+        sel_caret = this.engine.sel_start.caret;
     }
     var loc = Guppy.get_loc(x,y,sel_cursor,sel_caret);
     if(!loc) return;
-    this.backend.select_to(loc, sel_cursor, sel_caret, mouse);
+    this.engine.select_to(loc, sel_cursor, sel_caret, mouse);
 }
 
 
@@ -535,19 +535,19 @@ Guppy.prototype.render_node = function(t){
     // All the interesting work is done by transform.  This function just adds in the cursor and selection-start cursor
     var output = "";
     if(t == "render"){
-        var root = this.backend.doc.root();
-        this.backend.add_paths(root,"m");
-        this.backend.temp_cursor = this.temp_cursor;
-        this.backend.add_classes_cursors(root);
-        this.backend.current.setAttribute("current","yes");
+        var root = this.engine.doc.root();
+        this.engine.add_paths(root,"m");
+        this.engine.temp_cursor = this.temp_cursor;
+        this.engine.add_classes_cursors(root);
+        this.engine.current.setAttribute("current","yes");
         if(this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp","yes");
-        output = this.backend.get_content("latex",true);
-        this.backend.remove_cursors_classes(root);
+        output = this.engine.get_content("latex",true);
+        this.engine.remove_cursors_classes(root);
         output = output.replace(new RegExp('&amp;','g'), '&');
         return output;
     }
     else{
-        output = this.backend.get_content(t);
+        output = this.engine.get_content(t);
     }
     return output
 }
@@ -560,8 +560,8 @@ Guppy.prototype.render_node = function(t){
     elements)
 */
 Guppy.prototype.render = function(updated){
-    if(!this.editor_active && this.backend.doc.is_blank()){
-        katex.render(this.backend.setting("empty_content"),this.editor);
+    if(!this.editor_active && this.engine.doc.is_blank()){
+        katex.render(this.engine.setting("empty_content"),this.editor);
         this.editor.appendChild(this.buttons_div);
         return;
     }
@@ -578,7 +578,7 @@ Guppy.prototype.render = function(updated){
     @memberof Guppy
 */
 Guppy.prototype.latex = function(){
-    return this.backend.get_content("latex");
+    return this.engine.get_content("latex");
 }
 
 /** 
@@ -586,7 +586,7 @@ Guppy.prototype.latex = function(){
     @memberof Guppy
 */
 Guppy.prototype.xml = function(){
-    return this.backend.get_content("xml");
+    return this.engine.get_content("xml");
 }
 
 /** 
@@ -594,7 +594,7 @@ Guppy.prototype.xml = function(){
     @memberof Guppy
 */
 Guppy.prototype.syntax_tree = function(){
-    return this.backend.get_content("ast");
+    return this.engine.get_content("ast");
 }
 
 /** 
@@ -603,7 +603,7 @@ Guppy.prototype.syntax_tree = function(){
     @memberof Guppy
 */
 Guppy.prototype.equations = function(){
-    return this.backend.get_content("eqns");
+    return this.engine.get_content("eqns");
 }
 
 /** 
@@ -611,7 +611,7 @@ Guppy.prototype.equations = function(){
     @memberof Guppy
 */
 Guppy.prototype.text = function(){
-    return this.backend.get_content("text");
+    return this.engine.get_content("text");
 }
 
 
@@ -620,7 +620,7 @@ Guppy.prototype.text = function(){
     @memberof Guppy
 */
 Guppy.prototype.asciimath = function(){
-    return this.backend.get_content("asciimath");
+    return this.engine.get_content("asciimath");
 }
 
 /** 
@@ -645,7 +645,7 @@ Guppy.prototype.asciimath = function(){
     @memberof Guppy
 */
 Guppy.prototype.func = function(evaluators){
-    var res = this.backend.get_content("function", evaluators);
+    var res = this.engine.get_content("function", evaluators);
     var f = res['function'];
     f.vars = res.vars;
     return f;
@@ -664,7 +664,7 @@ Guppy.prototype.func = function(evaluators){
     @memberof Guppy
 */
 Guppy.prototype.evaluate = function(evaluators){
-    return this.backend.doc.evaluate(evaluators);
+    return this.engine.doc.evaluate(evaluators);
 }
 
 /** 
@@ -678,7 +678,7 @@ Guppy.prototype.evaluate = function(evaluators){
     @memberof Guppy
 */
 Guppy.prototype.symbols_used = function(groups){
-    return this.backend.doc.get_symbols(groups);
+    return this.engine.doc.get_symbols(groups);
 }
 
 /** 
@@ -686,7 +686,7 @@ Guppy.prototype.symbols_used = function(groups){
     @memberof Guppy
 */
 Guppy.prototype.vars = function(){
-    return this.backend.get_content("function").vars;
+    return this.engine.get_content("function").vars;
 }
 
 /** 
@@ -695,7 +695,7 @@ Guppy.prototype.vars = function(){
     @memberof Guppy
 */
 Guppy.prototype.import_text = function(text){
-    return this.backend.import_text(text);
+    return this.engine.import_text(text);
 }
 
 /** 
@@ -706,7 +706,7 @@ Guppy.prototype.import_text = function(text){
     @memberof Guppy
 */
 Guppy.prototype.import_xml = function(xml){
-    return this.backend.set_content(xml);
+    return this.engine.set_content(xml);
 }
 
 /** 
@@ -715,7 +715,7 @@ Guppy.prototype.import_xml = function(xml){
     @memberof Guppy
 */
 Guppy.prototype.import_syntax_tree = function(tree){
-    return this.backend.import_ast(tree);
+    return this.engine.import_ast(tree);
 }
 
 /** 
@@ -729,7 +729,7 @@ Guppy.prototype.activate = function(){
     this.editor.focus();
     if(this.ready){
         this.render(true);
-        this.backend.fire_event("focus",{"focused":true});
+        this.engine.fire_event("focus",{"focused":true});
     }
 }
 
@@ -752,7 +752,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.alt_down = false;
     if(this.ready){
         this.render();
-        this.backend.fire_event("focus",{"focused":false});
+        this.engine.fire_event("focus",{"focused":false});
     }
 }
 
@@ -874,11 +874,11 @@ Guppy.register_keyboard_handlers = function(){
         Mousetrap.bind(i,function(i){ return function(){
             if(!Guppy.active_guppy) return true;
             Guppy.active_guppy.temp_cursor.node = null;
-            if(GuppyUtils.is_text(Guppy.active_guppy.backend.current) && Guppy.kb.k_text[i]){
-                Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+            if(Utils.is_text(Guppy.active_guppy.engine.current) && Guppy.kb.k_text[i]){
+                Guppy.active_guppy.engine.insert_string(Guppy.kb.k_text[i]);
             }
             else{
-                Guppy.active_guppy.backend.insert_string(Guppy.kb.k_chars[i]);
+                Guppy.active_guppy.engine.insert_string(Guppy.kb.k_chars[i]);
             }
             Guppy.active_guppy.render(true);
             return false;
@@ -891,12 +891,12 @@ Guppy.register_keyboard_handlers = function(){
             // we are in text mode, and additionally we want only to
             // insert the corresponding text if there is an overriding
             // text representation in Guppy.kb.k_text
-            if(GuppyUtils.is_text(Guppy.active_guppy.backend.current)){
-                if(Guppy.kb.k_text[i]) Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+            if(Utils.is_text(Guppy.active_guppy.engine.current)){
+                if(Guppy.kb.k_text[i]) Guppy.active_guppy.engine.insert_string(Guppy.kb.k_text[i]);
             }
             else{
-                Guppy.active_guppy.backend.space_caret = 0;
-                Guppy.active_guppy.backend.insert_symbol(Guppy.kb.k_syms[i]);
+                Guppy.active_guppy.engine.space_caret = 0;
+                Guppy.active_guppy.engine.insert_symbol(Guppy.kb.k_syms[i]);
             }
             Guppy.active_guppy.render(true);
             return false;
@@ -905,12 +905,12 @@ Guppy.register_keyboard_handlers = function(){
         Mousetrap.bind(i,function(i){ return function(){
             if(!Guppy.active_guppy) return true;
             // We want to skip using this control sequence only if there is an overriding text representation in Guppy.kb.k_text
-            if(GuppyUtils.is_text(Guppy.active_guppy.backend.current) && Guppy.kb.k_text[i]){
-                Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+            if(Utils.is_text(Guppy.active_guppy.engine.current) && Guppy.kb.k_text[i]){
+                Guppy.active_guppy.engine.insert_string(Guppy.kb.k_text[i]);
             }
             else{
-                Guppy.active_guppy.backend.space_caret = 0;
-                Guppy.active_guppy.backend[Guppy.kb.k_controls[i]]();
+                Guppy.active_guppy.engine.space_caret = 0;
+                Guppy.active_guppy.engine[Guppy.kb.k_controls[i]]();
                 Guppy.active_guppy.temp_cursor.node = null;
             }
             Guppy.active_guppy.render(["up","down","right","left","home","end","sel_left","sel_right"].indexOf(i) < 0);
@@ -922,8 +922,8 @@ Guppy.register_keyboard_handlers = function(){
             Mousetrap.bind(i,function(i){ return function(){
                 if(!Guppy.active_guppy) return true;
                 Guppy.active_guppy.temp_cursor.node = null;
-                if(GuppyUtils.is_text(Guppy.active_guppy.backend.current)){
-                    Guppy.active_guppy.backend.insert_string(Guppy.kb.k_text[i]);
+                if(Utils.is_text(Guppy.active_guppy.engine.current)){
+                    Guppy.active_guppy.engine.insert_string(Guppy.kb.k_text[i]);
                     Guppy.active_guppy.render(true);
                 }
                 return false;

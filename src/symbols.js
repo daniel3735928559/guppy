@@ -1,11 +1,11 @@
-var GuppySymbols = {"symbols":{}, "templates":{}};
+var Symbols = {"symbols":{}, "templates":{}};
 
-GuppySymbols.make_template_symbol = function(template_name, name, args){
-    var template = JSON.parse(JSON.stringify(GuppySymbols.templates[template_name]));
-    return GuppySymbols.eval_template(template, name, args);
+Symbols.make_template_symbol = function(template_name, name, args){
+    var template = JSON.parse(JSON.stringify(Symbols.templates[template_name]));
+    return Symbols.eval_template(template, name, args);
 }
 
-GuppySymbols.eval_template = function(template, name, args){
+Symbols.eval_template = function(template, name, args){
     args['name'] = name;
     if(Object.prototype.toString.call(template) == "[object String]") {
         var ans = template;
@@ -16,17 +16,17 @@ GuppySymbols.eval_template = function(template, name, args){
     }
     else {
         for(var x in template) {
-            template[x] = GuppySymbols.eval_template(template[x], name, args)
+            template[x] = Symbols.eval_template(template[x], name, args)
         }
         return template;
     }
 }
 
-GuppySymbols.add_symbols = function(syms){
+Symbols.add_symbols = function(syms){
     var templates = syms["_templates"];
     if(templates){
         for(var t in templates){
-            GuppySymbols.templates[t] = templates[t];
+            Symbols.templates[t] = templates[t];
         }
         delete syms["_templates"];
     }
@@ -43,16 +43,16 @@ GuppySymbols.add_symbols = function(syms){
                     name = v;
                     args = syms[s].values[v];
                 }
-                GuppySymbols.symbols[name] = GuppySymbols.make_template_symbol(syms[s].template, name, args);
+                Symbols.symbols[name] = Symbols.make_template_symbol(syms[s].template, name, args);
             }
         }
         else{
-            GuppySymbols.symbols[s] = syms[s];
+            Symbols.symbols[s] = syms[s];
         }
     }
 }
 
-GuppySymbols.symbol_to_node = function(s, content, base){
+Symbols.symbol_to_node = function(s, content, base){
     
     // s is a symbol
     //
@@ -156,4 +156,4 @@ GuppySymbols.symbol_to_node = function(s, content, base){
 }
 
 
-module.exports = GuppySymbols;
+module.exports = Symbols;

@@ -1,0 +1,43 @@
+<html><body>
+
+<p>Our goal is to solve the cubic equation $x^3 + bx^2 + cx + d = 0$
+  with rational coefficients.  We will start by thinking about a
+  simpler case: the quadratic formula.  $x^2 + bx + c = 0$.
+  Equivalently, if $x^2 + bx + c = (x-alpha()_1)(x-alpha()_2)$, we
+  want an explicit formula for $alpha()_1$ and $alpha()_2$ in terms of
+  $b$ and $c$ that uses only elementary operations (arithmetic
+  operations and taking roots).  </p>
+
+<h3>$x^2 + 1$: Complex Conjugation</h3>
+
+<p>Let's start with an example: $x^2 + 1 = 0$.  We know the solutions
+  to this: $i$ and $-i$.  In fact, we know a relationship between
+  these two solutions: They are complex conjugates of another, which
+  we will denote with a $tau$: $-i = tau(i)$.  This is not a
+  coincidence, but a result of the following observation: If we have a
+  complex number $alpha()$ that is a root of this equation: $alpha()^2
+  + 1 = 0$, then we can take complex conjugates of both sides:</p>
+
+<p>$tau(alpha()^2 + 1) = tau(0)$</p>
+
+<p>Certainly $tau(0) = 0$, but the important point is that complex
+  conjugation commutes with addition: $tau(a+b) = tau(a)+tau(b)$ and
+  similarly for multiplication.  This allows us to rewrite the
+  equation as </p>
+
+<p>$tau(alpha())^2 + 1 = 0$</p>
+
+<p>That is, $tau(alpha())$ is also a root of the equation!  This is a
+  very general fact, if we have a polynomial $f(x)$ with rational
+  coefficients, then $tau(f(alpha())) = f(tau(alpha()))$, so if
+  $alpha()$ is a root of $f(x)$, then so too is $tau(alpha())$.</p>
+
+<h3>$x^2 - 2$: More general conjugation</h3>
+
+Now let's take a different example: $x^2 - 2 = 0$.  Any elementary
+  student will tell you the solutions to this are $square_root(2)$ and
+  $-square_root(2)$.  However </p>
+
+<p>We start with the $alpha()_1 = sig(alpha())$</p>
+    
+</body></html>

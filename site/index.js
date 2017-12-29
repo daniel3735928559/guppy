@@ -30,7 +30,7 @@ function select_output(t){
 
 function update_output(e){
     try{
-	content = e.target.backend.get_content(output_type)+"";
+	content = e.target.engine.get_content(output_type)+"";
 	if(content.replace(/\s/g,"").length == 0) content = "Output " + output_type + " will appear here";
 	document.getElementById("sample_output").value = content;
     }

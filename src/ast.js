@@ -1,6 +1,6 @@
-var GuppyAST = {};
+var AST = {};
 
-GuppyAST.tokenise = function(s, tokens){
+AST.tokenise = function(s, tokens){
     var ans = [];
     while(s.length > 0){
         var ok = false;
@@ -23,8 +23,8 @@ GuppyAST.tokenise = function(s, tokens){
     return ans;
 }
 
-GuppyAST.tokenise_e = function(s){
-    return GuppyAST.tokenise(s, [
+AST.tokenise_e = function(s){
+    return AST.tokenise(s, [
         {"type":"number", "re":"^[0-9.]+", "value":function(m){
             if(isNaN(Number(m))) throw "Invalid number: "+m;
             return Number(m);
@@ -36,13 +36,13 @@ GuppyAST.tokenise_e = function(s){
     ]);
 }
 
-GuppyAST.to_eqlist = function(ast){
+AST.to_eqlist = function(ast){
     var comparators = ["=","!=","<=",">=","<",">"];
     if(ast[1].length == 0 || comparators.indexOf(ast[1][0][0]) < 0) return [ast];
-    return GuppyAST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
+    return AST.to_eqlist(ast[1][0]).concat([[ast[0],[ast[1][0][1][1],ast[1][1]]]]);
 }
 
-GuppyAST.to_text = function(ast){
+AST.to_text = function(ast){
     var functions = {};
     functions["bracket"] = function(args){return "("+args[0]+")";};
     functions["="] = function(args){return args[0]+" = "+args[1];};
@@ -62,10 +62,10 @@ GuppyAST.to_text = function(ast){
     functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";};
     functions["factorial"] = function(args){return "("+args[0]+")!";};
     functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";};
-    return GuppyAST.eval(ast, functions);
+    return AST.eval(ast, functions);
 }
 
-GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
+AST.to_xml = function(ast, symbols, symbol_to_node){
     var prepend_str = function(doc, str){
         doc.documentElement.firstChild.textContent = str + doc.documentElement.firstChild.textContent;
     }
@@ -169,7 +169,7 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
     functions["_default"] = function(name, args){
         return make_sym(name, args);
     }
-    var ans = GuppyAST.eval(ast, functions);
+    var ans = AST.eval(ast, functions);
     var new_base = (new window.DOMParser()).parseFromString("<m></m>", "text/xml");
     for(var nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling){
         new_base.documentElement.insertBefore(nn.cloneNode(true),null);
@@ -178,25 +178,25 @@ GuppyAST.to_xml = function(ast, symbols, symbol_to_node){
 
 }
 
-GuppyAST.get_nodes = function(ast, name){
+AST.get_nodes = function(ast, name){
     if(ast.length < 2) return [];
     var ans = [];
     if(ast[0] == name) ans.push(ast[1]);
     if(ast[0] == "var" || ast[0] == "val") return ans;
-    for(var i = 0; i < ast[1].length; i++) ans = ans.concat(GuppyAST.get_nodes(ast[1][i], name));
+    for(var i = 0; i < ast[1].length; i++) ans = ans.concat(AST.get_nodes(ast[1][i], name));
     return ans;
 }
 
-GuppyAST.get_vars = function(ast){
+AST.get_vars = function(ast){
     var vars = {};
     var ans = [];
-    var l = GuppyAST.get_nodes(ast, "var");
+    var l = AST.get_nodes(ast, "var");
     for(var i = 0; i < l.length; i++) vars[l[i][0]] = true;
     for(var x in vars) ans.push(x);
     return ans;
 }
 
-GuppyAST.to_function = function(ast, functions){
+AST.to_function = function(ast, functions){
     functions = functions || {}
     var defaults = {}
     defaults["*"] = function(args){return function(vars){return args[0](vars)*args[1](vars)};};
@@ -213,17 +213,17 @@ GuppyAST.to_function = function(ast, functions){
     defaults["tan"] = function(args){return function(vars){return Math.tan(args[0](vars))};};
     defaults["log"] = function(args){return function(vars){return Math.log(args[0](vars))};};
     for(var n in defaults) if(!functions[n]) functions[n] = defaults[n];
-    return {"function":GuppyAST.eval(ast, functions),"vars":GuppyAST.get_vars(ast)};
+    return {"function":AST.eval(ast, functions),"vars":AST.get_vars(ast)};
 }
 
-GuppyAST.eval = function(ast, functions, parent){
+AST.eval = function(ast, functions, parent){
     ans = null;
     if(!functions["_default"]) functions["_default"] = function(name, args){ throw "Function not implemented: " + name + "(" + args + ")";}
     
     var args = []
     for(var i = 0; i < ast[1].length; i++){
         if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
-            args.push(GuppyAST.eval(ast[1][i], functions, ast));
+            args.push(AST.eval(ast[1][i], functions, ast));
         }
         else{
             args.push(ast[1][i]);
@@ -238,7 +238,7 @@ GuppyAST.eval = function(ast, functions, parent){
     return ans
 }
 
-GuppyAST.parse_e = function(tokens){
+AST.parse_e = function(tokens){
     var symbol_table = {};
 
     var original_symbol = {
@@ -390,8 +390,8 @@ GuppyAST.parse_e = function(tokens){
 
 
 
-GuppyAST.tokenise_text = function(s){
-    return GuppyAST.tokenise(s, [
+AST.tokenise_text = function(s){
+    return AST.tokenise(s, [
         {"type":"number", "re":"^[0-9.]+", "value":function(m){return Number(m)}},
         {"type":"operator", "re":"^(!=|>=|<=)", "value":function(m){return m;}},
         {"type":"operator", "re":"^[-+*/,!()=<>_^]", "value":function(m){return m}},
@@ -401,7 +401,7 @@ GuppyAST.tokenise_text = function(s){
     ]);
 }
 
-GuppyAST.parse_text = function(tokens){
+AST.parse_text = function(tokens){
     var symbol_table = {};
 
     var original_symbol = {
@@ -579,4 +579,4 @@ GuppyAST.parse_text = function(tokens){
     return expression(10);
 }
 
-module.exports = GuppyAST;
+module.exports = AST;
