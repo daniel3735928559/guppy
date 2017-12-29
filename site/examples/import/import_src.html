@@ -14,7 +14,7 @@
 	     var data = document.getElementById("ascii_input").value;
 	     fn_name = data.indexOf("\\") &gt; -1 ? "fromLaTeX" : "fromText"  
 	     g = Guppy("math_input");
-	     g.backend.set_content(MathExpression[fn_name](data).toXML())
+	     g.import_xml(MathExpression[fn_name](data).toXML())
 	     g.render(true)
 	 }
 	 catch(e){

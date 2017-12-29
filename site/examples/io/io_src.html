@@ -10,10 +10,10 @@
 	 input = function(type){
 	     try{
 		 var data = document.getElementById("input_field").value;
-		 if(type == "clear") Guppy("guppy1").backend.set_content("&lt;m&gt;&lt;e/&gt;&lt;/m&gt;");
-		 if(type == "xml") Guppy("guppy1").backend.set_content(data);
-		 if(type == "ast") Guppy("guppy1").backend.import_ast(JSON.parse(data));
-		 if(type == "text") Guppy("guppy1").backend.import_text(data);
+		 if(type == "clear") Guppy("guppy1").engine.set_content("&lt;m&gt;&lt;e/&gt;&lt;/m&gt;");
+		 if(type == "xml") Guppy("guppy1").engine.set_content(data);
+		 if(type == "ast") Guppy("guppy1").import_syntax_tree(JSON.parse(data));
+		 if(type == "text") Guppy("guppy1").import_text(data);
 		 Guppy("guppy1").render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
@@ -22,7 +22,7 @@
 
 	 output = function(type){
 	     try{
-		 content = Guppy("guppy1").backend.get_content(type);
+		 content = Guppy("guppy1").engine.get_content(type);
 		 if(type == "function") content = "Function with variables: " + JSON.stringify(content.vars);
 		 document.getElementById("output_field").value = content;
 		 document.getElementById("res").innerHTML = "";
