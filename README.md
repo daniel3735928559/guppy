@@ -37,13 +37,13 @@ Of particular note are:
 
 ## How does it work?
 
-Editor content is stored in a specific [XML format](https://daniel3735928559.github.io/gupyp/site/docs/guppymath/2.0.0-alpha/tutorial-format.html).
-Editing operations then correspond to [operations on that XML](https://daniel3735928559.github.io/gupyp/site/docs/guppymath/2.0.0-alpha/tutorial-internals.html).
+Editor content is stored in a specific [XML format](https://daniel3735928559.github.io/guppy/site/docs/guppymath/2.0.0-alpha/tutorial-format.html).
+Editing operations then correspond to [operations on that XML](https://daniel3735928559.github.io/guppy/site/docs/guppymath/2.0.0-alpha/tutorial-internals.html).
 
 ## Can I help?
 
 Yes!  See the [contributors page](https://daniel3735928559.github.io/guppy/site/contribute) for how, and the
-[roadmap](https://daniel3735928559.github.io/gupyp/site/docs/guppymath/2.0.0-alpha/tutorial-roadmap.html)
+[roadmap](https://daniel3735928559.github.io/guppy/site/docs/guppymath/2.0.0-alpha/tutorial-roadmap.html)
 for an idea of where the project is heading.
 
 ## License
