@@ -1,6 +1,81 @@
 <html><body>
 
-<p>Our goal is to solve the cubic equation $x^3 + bx^2 + cx + d = 0$
+    <p>Remember the quadratic formula?  It looks something like
+    this:</p>
+
+    <p>$fraction(-b+square_root(b^2-4ac), 2a)$</p>
+
+    <p>But that's just some expression.  If you think a little harder,
+    you might remember its immediate context and meaning: If you have
+    three known quantites $a, b, c$ and some unknown $x$, but you know
+    that $ax^2 + bx + c = 0$, then you can deduce the value of $x$--it
+    is the expression you see above.</p>
+
+    <p>But when does that happen?  Mathematics is always concerned
+    with "finding $x$" almost as a game in its own right, but really
+    the quest for $x$ most often starts with a real problem.  Maybe we
+    want to predict the motion of a canonball.  We intuitively know
+    the arc through the air resenbles a parabola, and maybe even
+    remember that the quadratic equation above also looks like a
+    parabola.  So if we know some physics maybe we can model the
+    canonball with a quadratic equation, whereupon this formula will
+    let us deduce things about it's trajectory.</p>
+
+    <p>We start with a real-world problem, model it as a mathematical
+      one, use mathematics to solve the model, and then interpret the
+      results as predictions about the real world.  In the case of the
+      canonball, the mathematical model is an equation, and the
+      mathematical technology that takes us through the bottom half of
+      that picture is the quadratic formula.</p>
+
+    <p>This is not uncommon: An equation simply captures the numerical
+      relationships between numbers.  If we can solve equations, that
+      simply means that we can deduce numerical consequences from
+      these relationships.  Scientific laws are often about
+      relationships between measurable quanities--that is, equations.
+      Applying scientific laws, then, is about deducing the
+      consequences of those relationships in various specific
+      situations.  That is, solving equations.  </p>
+
+    <p>The lowly quadratic formula makes a very brash claim, then: Any
+      time you have a relationship between numbers that is quadratic,
+      a single formula will furnish all the consequences of that
+      relationship without exception.  When we happen on something so
+      powerful and striking, it is valuable to ask how this came about
+      and how far we can push that mechanism to get even more powerful
+      results.</p>
+
+    <p>This document will be a journey of thinking deeply about simple
+      things.  Broadly, the direction of this journey will be toward
+      the generalisation of the quadratic formula to cubic equations:
+      $ax^3 + bx^2 + cx + d$.  However, the real goal is an effective
+      understanding of equations of this kind, and the technology that
+      helps to solve them not just numerically, but in a way that
+      gives us a precise understanding of how those solutions depend
+      on the situation we were given and change with it.  </p>
+    
+    <p>We will gently but unapologetically introduce abstractions from
+      the field of abstract algebra when useful, and will equally
+      unapologetically gloss over others.  By the end, you will have
+      exposure to high level ideas from group theory, discrete
+      harmonic analysis, and Galois theory.  Those names, however,
+      will still more or less be just words, as that's all they ever
+      really are.</p>
+    
+<!--    
+    <p>
+      You know
+    the classic formula: $speed() = fraction(distance(), time())$.  If
+    you know how fast you're going, and how long you've been going,
+    this lets you find out how far you've gone: $distance() = speed()
+      time()$.  </p>
+
+    <p>But speed is rarely constant.  For example, if an object is
+    falling, speed is increasing by roughly 10 m/s every second.  So
+    in fact $speed() = 10 time()$.  So now $distance = 10 time()^2$.
+    But what if we started off with some speed?  Then </p>
+-->
+      <p>Our goal is to solve the cubic equation $x^3 + bx^2 + cx + d = 0$
   with rational coefficients.  We will start by thinking about a
   simpler case: the quadratic formula.  $x^2 + bx + c = 0$.
   Equivalently, if $x^2 + bx + c = (x-alpha()_1)(x-alpha()_2)$, we
@@ -8,7 +83,7 @@
   $b$ and $c$ that uses only elementary operations (arithmetic
   operations and taking roots).  </p>
 
-<h3>$x^2 + 1$: Complex Conjugation</h3>
+<h3>Chapter $x^2 + 1$: Complex Conjugation</h3>
 
 <p>Let's start with an example: $x^2 + 1 = 0$.  We know the solutions
   to this: $i$ and $-i$.  In fact, we know a relationship between
@@ -20,24 +95,45 @@
 
 <p>$tau(alpha()^2 + 1) = tau(0)$</p>
 
-<p>Certainly $tau(0) = 0$, but the important point is that complex
-  conjugation commutes with addition: $tau(a+b) = tau(a)+tau(b)$ and
-  similarly for multiplication.  This allows us to rewrite the
+<p>Certainly $tau(0) = 0$, so the right side is easy to simplify.  But
+  the left side also simplifies: The important point is that with
+  complex conjugation, it doesn't matter whether you first add two
+  numbers and then conjugate them (like $tau(a+b)$) or conjugate them
+  first and then add them (like $tau(a)+tau(b)$)--the result is the
+  same: $tau(a+b) = tau(a)+tau(b)$.  And similarly for multiplication.
+  This property is really quite rare in the world of mathematics:
+  $square_root(1) + square_root(4)$ is 3, and not $square_root(5)$,
+  $sin(pi())+sin(pi())$ is -2, and not $sin(2pi())$ (which is 0), and
+  $1^2 + 2^2 = 5$ and not $3^2$.  This property is also pretty rare in
+  the real world: If you put on your socks and then your shoes, the
+  result will be quite different to if you put on your shoes first and
+  then your socks!  When an operation can be done before or after
+  both addition and multiplication, it is quite special and is called
+  a "homomorphism" (literally "same shape").  </p>
+
+  The fact that $tau()$ is a homomorphism allows us to rewrite the
   equation as </p>
 
 <p>$tau(alpha())^2 + 1 = 0$</p>
 
-<p>That is, $tau(alpha())$ is also a root of the equation!  This is a
-  very general fact, if we have a polynomial $f(x)$ with rational
-  coefficients, then $tau(f(alpha())) = f(tau(alpha()))$, so if
-  $alpha()$ is a root of $f(x)$, then so too is $tau(alpha())$.</p>
+<p>That is, $tau(alpha())$ is also a solution to $x^2 + 1 = 0$!  This
+  is a very general fact: If we have any polynomial $f(x)$ with
+  rational coefficients, then $tau(f(alpha())) = f(tau(alpha()))$, so
+  if $2+i$ is a root of $f(x)$, then you know immediately that so too
+  is $2-i$.</p>
 
-<h3>$x^2 - 2$: More general conjugation</h3>
+<h3>Chapter $x^2 - 2$: More general conjugation</h3>
 
 Now let's take a different example: $x^2 - 2 = 0$.  Any elementary
   student will tell you the solutions to this are $square_root(2)$ and
   $-square_root(2)$.  However </p>
 
 <p>We start with the $alpha()_1 = sig(alpha())$</p>
-    
+
+<h3>Chapter $(x^2+1)(x^2 - 2)$: Groups of symmetries</h3>
+
+<h3>Chapter $x^3-2$: Cubic symmetries</h3>
+
+<h3>Chapter $(x+1)^3-2$: Fields are better than polynomials</h3>
+
 </body></html>
