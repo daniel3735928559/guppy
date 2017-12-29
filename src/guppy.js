@@ -4,6 +4,7 @@ var Engine = require('./engine.js');
 var Utils = require('./utils.js');
 var Symbols = require('./symbols.js');
 var Settings = require('./settings.js');
+var Doc = require('./doc.js');
 
 /**
    @class
@@ -16,9 +17,10 @@ var Settings = require('./settings.js');
    dictionary will, for this instance of the editor, override events
    specified through Guppy.init.
    @param {Object} [config.settings] - A dictionary of settings.
-   Available settings are as specified in Guppy.init.  Values in
-   this dictionary will, for this instance of the editor, override
-   settings specified through Guppy.init.
+   Values in this dictionary will override any global settings
+   specified in `Guppy.init`.  This dictionary takes the same keys as
+   the `config.settings` dictionary passed to `Guppy.init`.  See that
+   function's documentation for the complete list.
    @constructor 
 */
 var Guppy = function(id, config){
@@ -83,7 +85,7 @@ var Guppy = function(id, config){
 
 Guppy.instances = {};
 Guppy.ready = false;
-
+Guppy.Doc = Doc;
 Guppy.active_guppy = null;
 
 Guppy.make_button = function(url, cb){
@@ -277,6 +279,7 @@ Guppy.init = function(config){
         Settings.config.events = config.events;
     }
     if(config.osk){
+	Guppy.OSK = config.osk;
         Settings.osk = config.osk;
         if(config.osk.config.attach == "focus"){
             var f = Settings.config.events["focus"];
@@ -621,6 +624,14 @@ Guppy.prototype.text = function(){
 */
 Guppy.prototype.asciimath = function(){
     return this.engine.get_content("asciimath");
+}
+
+/** 
+    Get the Doc object representing the editor's contents.
+    @memberof Guppy
+*/
+Guppy.prototype.doc = function(){
+    return this.engine.doc;
 }
 
 /** 

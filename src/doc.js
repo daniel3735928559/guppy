@@ -4,7 +4,9 @@ var Symbols = require('./symbols.js');
 
 /**
    @class
-   @classdesc A class representing a Guppy document
+   @classdesc A class representing a Guppy document.  To access this
+   class, use `Guppy.Doc`.  To get the document for a particular guppy
+   instance, say called `"guppy1"`, do `Guppy("guppy1").doc()`.
    @param {string} [doc=<m><e></e></m>] - An XML string representing the document
    @constructor 
  */

@@ -13,8 +13,11 @@ var katex = require('../lib/katex/katex-modified.min.js')
     For example, the value `"abc"` will cause the keyboard to revert
     to the lower-case alphanumeric tab every time a key is pressed.
     @param {string} [config.attach] - A string describing how the
-    keyboard should be attached to the editor.  Values include
-    `"focus"` for 
+    keyboard should be attached to the editor.  Currently, the only
+    supported value is `"focus"`, meaning the keyboard will be
+    attached when the editor is focused and detached when unfocused.
+    If this value is absent, the OSK button in the editor will be the
+    only way to trigger it.
     @constructor
 */
 var GuppyOSK = function(config){

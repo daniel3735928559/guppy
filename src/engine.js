@@ -9,8 +9,13 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
 
 /**
    @class
-   @classdesc The backend to the editor.  Should never be constructed directly by the user.
-   @constructor 
+   @classdesc The engine for scripting the editor.  To access the
+   engine for scripting a particular Guppy instance, say called
+   `"guppy1"`, do `Guppy("guppy1").engine`.  
+
+   At that point, you can, for example, move that editor's cursor
+   one spot to the left with `Guppy("guppy1").engine.left()`.
+
 */
 var Engine = function(config){
     config = config || {};

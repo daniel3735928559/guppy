@@ -261,9 +261,9 @@ var tests = [
 	"type":"asciimath",
 	"expected":"xsin* sin(x)",
 	"run":function(g){
-	    g.backend.settings.autoreplace="whole";
+	    g.engine.settings.autoreplace="whole";
 	    do_keys(['x','s','i','n','*','s','i','n','x']);
-	    g.backend.settings.autoreplace="auto";
+	    g.engine.settings.autoreplace="auto";
 	}
     },
     {
@@ -271,9 +271,9 @@ var tests = [
 	"type":"asciimath",
 	"expected":"sinx",
 	"run":function(g){
-	    g.backend.settings.autoreplace="delay";
+	    g.engine.settings.autoreplace="delay";
 	    do_keys(['s','i','n','x']);
-	    g.backend.settings.autoreplace="auto";
+	    g.engine.settings.autoreplace="auto";
 	}
     },
     {
@@ -439,7 +439,7 @@ var tests = [
 	"type":"asciimath",
 	"expected":"!z",
 	"run":function(g){
-	    test_guppy.backend.problem("!z");
+	    test_guppy.engine.problem("!z");
 	}
     },
     {
@@ -447,7 +447,7 @@ var tests = [
 	"type":"asciimath",
 	"expected":" tan^(2)(x)",
 	"run":function(g){
-	    test_guppy.backend.add_symbol("pta",{
+	    test_guppy.engine.add_symbol("pta",{
 		"output":{
 		    "latex":"\\tan^{{$1}}({$2})",
 		    "asciimath":" tan^({$1})({$2})"
@@ -463,7 +463,7 @@ var tests = [
 	"type":"asciimath",
 	"expected":"tanx",
 	"run":function(g){
-	    test_guppy.backend.remove_symbol("tan");
+	    test_guppy.engine.remove_symbol("tan");
 	    do_keys(['t','a','n','x']);
 	}
     },
@@ -977,7 +977,7 @@ function run_test(i, g){
 	t.run(test_guppy);
 	test_guppy.render();
 	if(t.observe) observed = t.observe(test_guppy);
-	else observed = test_guppy.backend.get_content(t.type);
+	else observed = test_guppy.engine.get_content(t.type);
 	console.log(observed);
     } catch(e) {
 	observed = e + "\n" + e.stack;

@@ -6,20 +6,20 @@
     <p>$fraction(-b+square_root(b^2-4ac), 2a)$</p>
 
     <p>But that's just some expression.  If you think a little harder,
-    you might remember its immediate context and meaning: If you have
-    three known quantites $a, b, c$ and some unknown $x$, but you know
-    that $ax^2 + bx + c = 0$, then you can deduce the value of $x$--it
-    is the expression you see above.</p>
+      you might remember its immediate context and meaning: If you
+      have three known quantites $a, b, c$ and some unknown $x$, but
+      you know that $ax^2 + bx + c = 0$, then you can deduce the value
+      of $x$--it is the expression you see above.</p>
 
     <p>But when does that happen?  Mathematics is always concerned
-    with "finding $x$" almost as a game in its own right, but really
-    the quest for $x$ most often starts with a real problem.  Maybe we
-    want to predict the motion of a canonball.  We intuitively know
-    the arc through the air resenbles a parabola, and maybe even
-    remember that the quadratic equation above also looks like a
-    parabola.  So if we know some physics maybe we can model the
-    canonball with a quadratic equation, whereupon this formula will
-    let us deduce things about it's trajectory.</p>
+      with "finding $x$" almost as a game in its own right, but really
+      the quest for $x$ most often starts with a real problem.  Maybe
+      we want to predict the motion of a canonball.  We intuitively
+      know the arc through the air resenbles a parabola, and maybe
+      even remember that the quadratic equation above also looks like
+      a parabola.  So if we know some physics maybe we can model the
+      canonball with a quadratic equation, whereupon this formula will
+      let us deduce things about it's trajectory.</p>
 
     <p>We start with a real-world problem, model it as a mathematical
       one, use mathematics to solve the model, and then interpret the
@@ -75,58 +75,63 @@
     in fact $speed() = 10 time()$.  So now $distance = 10 time()^2$.
     But what if we started off with some speed?  Then </p>
 -->
-      <p>Our goal is to solve the cubic equation $x^3 + bx^2 + cx + d = 0$
-  with rational coefficients.  We will start by thinking about a
-  simpler case: the quadratic formula.  $x^2 + bx + c = 0$.
-  Equivalently, if $x^2 + bx + c = (x-alpha()_1)(x-alpha()_2)$, we
-  want an explicit formula for $alpha()_1$ and $alpha()_2$ in terms of
-  $b$ and $c$ that uses only elementary operations (arithmetic
-  operations and taking roots).  </p>
+    <p>Our goal is to solve the cubic equation $x^3 + bx^2 + cx + d =
+      0$ with rational coefficients.  We will start by thinking about
+      a simpler case: the quadratic formula.  $x^2 + bx + c = 0$.
+      Equivalently, if $x^2 + bx + c = (x-alpha()_1)(x-alpha()_2)$, we
+      want an explicit formula for $alpha()_1$ and $alpha()_2$ in
+      terms of $b$ and $c$ that uses only elementary operations
+      (arithmetic operations and taking roots).  </p>
 
-<h3>Chapter $x^2 + 1$: Complex Conjugation</h3>
+      <h3>Chapter $x^2 + 1$: Complex Conjugation</h3>
+      
+    <p>Let's start with an example: $x^2 + 1 = 0$.  We know the
+      solutions to this: $i$ and $-i$.  In fact, we know a
+      relationship between these two solutions: They are complex
+      conjugates of another, which we will denote with a $tau$: $-i =
+      tau(i)$.  This is not a coincidence, but a result of the
+      following observation: If we have a complex number $alpha()$
+      that is a root of this equation: $alpha()^2 + 1 = 0$, then we
+      can take complex conjugates of both sides:</p>
 
-<p>Let's start with an example: $x^2 + 1 = 0$.  We know the solutions
-  to this: $i$ and $-i$.  In fact, we know a relationship between
-  these two solutions: They are complex conjugates of another, which
-  we will denote with a $tau$: $-i = tau(i)$.  This is not a
-  coincidence, but a result of the following observation: If we have a
-  complex number $alpha()$ that is a root of this equation: $alpha()^2
-  + 1 = 0$, then we can take complex conjugates of both sides:</p>
+    <p>$tau(alpha()^2 + 1) = tau(0)$</p>
 
-<p>$tau(alpha()^2 + 1) = tau(0)$</p>
+    <p>Certainly $tau(0) = 0$, so the right side is easy to simplify.
+      But the left side also simplifies: The important point is that
+      with complex conjugation, it doesn't matter whether you first
+      add two numbers and then conjugate them (like $tau(a+b)$) or
+      conjugate them first and then add them (like
+      $tau(a)+tau(b)$)--the result is the same: $tau(a+b) =
+      tau(a)+tau(b)$.  And similarly for multiplication.</p>
 
-<p>Certainly $tau(0) = 0$, so the right side is easy to simplify.  But
-  the left side also simplifies: The important point is that with
-  complex conjugation, it doesn't matter whether you first add two
-  numbers and then conjugate them (like $tau(a+b)$) or conjugate them
-  first and then add them (like $tau(a)+tau(b)$)--the result is the
-  same: $tau(a+b) = tau(a)+tau(b)$.  And similarly for multiplication.
-  This property is really quite rare in the world of mathematics:
-  $square_root(1) + square_root(4)$ is 3, and not $square_root(5)$,
-  $sin(pi())+sin(pi())$ is -2, and not $sin(2pi())$ (which is 0), and
-  $1^2 + 2^2 = 5$ and not $3^2$.  This property is also pretty rare in
-  the real world: If you put on your socks and then your shoes, the
-  result will be quite different to if you put on your shoes first and
-  then your socks!  When an operation can be done before or after
-  both addition and multiplication, it is quite special and is called
-  a "homomorphism" (literally "same shape").  </p>
+    <p>This property is really quite rare in the world of mathematics:
+      $square_root(1) + square_root(4)$ is 3, and not
+      $square_root(5)$, $sin(pi())+sin(pi())$ is -2, and not
+      $sin(2pi())$ (which is 0), and $1^2 + 2^2 = 5$ and not $3^2$.
+      This property is also pretty rare in the real world: If you put
+      on your socks and then your shoes, the result will be quite
+      different to if you put on your shoes first and then your socks!
+      When an operation can be done before or after both addition and
+      multiplication with the same result, it is therefore quite
+      special.  Such operators are called "homomorphisms" (literally
+      "same shape").  </p>
 
-  The fact that $tau()$ is a homomorphism allows us to rewrite the
-  equation as </p>
+    <p>The fact that $tau()$ is a homomorphism allows us to rewrite
+      the equation as </p>
 
-<p>$tau(alpha())^2 + 1 = 0$</p>
-
-<p>That is, $tau(alpha())$ is also a solution to $x^2 + 1 = 0$!  This
-  is a very general fact: If we have any polynomial $f(x)$ with
-  rational coefficients, then $tau(f(alpha())) = f(tau(alpha()))$, so
-  if $2+i$ is a root of $f(x)$, then you know immediately that so too
-  is $2-i$.</p>
-
-<h3>Chapter $x^2 - 2$: More general conjugation</h3>
-
-Now let's take a different example: $x^2 - 2 = 0$.  Any elementary
-  student will tell you the solutions to this are $square_root(2)$ and
-  $-square_root(2)$.  However </p>
+    <p>$tau(alpha())^2 + 1 = 0$</p>
+    
+    <p>That is, $tau(alpha())$ is also a solution to $x^2 + 1 = 0$!
+      This is a very general fact: If we have any polynomial $f(x)$
+      with rational coefficients, then $tau(f(alpha())) =
+      f(tau(alpha()))$, so if $2+i$ is a root of $f(x)$, then you know
+      immediately that so too is $2-i$.</p>
+    
+    <h3>Chapter $x^2 - 2$: More general conjugation</h3>
+    
+    <p>Now let's take a different example: $x^2 - 2 = 0$.  Any
+      elementary student will tell you the solutions to this are
+      $square_root(2)$ and $-square_root(2)$.  However </p>
 
 <p>We start with the $alpha()_1 = sig(alpha())$</p>
 
