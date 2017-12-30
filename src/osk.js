@@ -62,14 +62,26 @@ function make_tabs(element){
     }
 }
 
+/** 
+    Detach the keyboard from the currently attached editor (if any) and hide it.
+    @memberof GuppyOSK
+*/
 GuppyOSK.prototype.detach = function(guppy){
-    if(this.guppy == guppy){
-        document.body.removeChild(this.element);
-        this.guppy = null;
-        this.element = null;
+    if(this.element){
+	if((!guppy && this.guppy) || this.guppy == guppy){
+            document.body.removeChild(this.element);
+            this.guppy = null;
+            this.element = null;
+	}
     }
 }
 
+/** 
+    Attach the keyboard to a Guppy instance and display it.
+    @param {Guppy} [guppy] - The instance of Guppy to which the
+    keyboard will attach.
+    @memberof GuppyOSK
+*/
 GuppyOSK.prototype.attach = function(guppy){
     var self = this;
     var s = null;

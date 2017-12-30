@@ -8,14 +8,13 @@ String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + 
 String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.length,idx) == s); };
 
 /**
-   @class
-   @classdesc The engine for scripting the editor.  To access the
-   engine for scripting a particular Guppy instance, say called
-   `"guppy1"`, do `Guppy("guppy1").engine`.  
-
-   At that point, you can, for example, move that editor's cursor
-   one spot to the left with `Guppy("guppy1").engine.left()`.
-
+ * @class
+ * @classdesc The engine for scripting the editor.  To access the
+ * engine for scripting a particular Guppy instance, say called
+ * `"guppy1"`, do `Guppy("guppy1").engine`.  
+ *
+ * At that point, you can, for example, move that editor's cursor
+ * one spot to the left with `Guppy("guppy1").engine.left()`.
 */
 var Engine = function(config){
     config = config || {};
@@ -515,6 +514,15 @@ Engine.prototype.insert_string = function(s){
         if(this.delayed_check) clearTimeout(this.delayed_check);
         this.delayed_check = setTimeout(function(){ self.check_for_symbol(false); }, 200);
     }
+}
+
+/** 
+    Insert a copy of the given document into the editor at the current cursor position.
+    @memberof Engine
+    @param {Doc} doc - The document to insert.
+*/
+Engine.prototype.insert_doc = function(doc){
+    this.insert_nodes(doc.root().childNodes, true);
 }
 
 /** 

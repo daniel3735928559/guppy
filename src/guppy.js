@@ -787,20 +787,20 @@ Guppy.kb.k_chars = {
     "shift+=":"+",
 };
 Guppy.kb.k_syms = {
-    "/":"slash",
-    "^":"exp",
+    "/":"fraction",
+    "^":"exponential",
     "*":"*",
-    "(":"paren",
-    "=":"equal",
-    "[":"mat",
-    "{":"vec",
-    "<":"less",
-    ">":"greater",
-    "_":"sub",
-    "|":"abs",
+    "(":"bracket",
+    "=":"=",
+    "[":"matrix",
+    "{":"vector",
+    "<":"<",
+    ">":">",
+    "_":"subscript",
+    "|":"absolute_value",
     "!":"factorial",
-    "shift+up":"exp",
-    "shift+down":"sub"
+    "shift+up":"exponential",
+    "shift+down":"subscript"
 };
 Guppy.kb.k_text = {
     "/":"/",
@@ -908,7 +908,8 @@ Guppy.register_keyboard_handlers = function(){
             }
             else{
                 Guppy.active_guppy.engine.space_caret = 0;
-                Guppy.active_guppy.engine.insert_symbol(Guppy.kb.k_syms[i]);
+                //Guppy.active_guppy.engine.insert_symbol(Guppy.kb.k_syms[i]);
+		Guppy.active_guppy.engine.insert_symbol(Symbols.lookup_type(Guppy.kb.k_syms[i]));
             }
             Guppy.active_guppy.render(true);
             return false;

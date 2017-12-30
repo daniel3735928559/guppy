@@ -1,4 +1,6 @@
 {
+    "_version": "2",
+    "_name": "base",
     "norm":
     {"output":{
         "latex":"||{$1}||",
@@ -127,17 +129,6 @@
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
 	"asciimath":"({$1})/({$2})"},
-     "attrs":{
-	 "type":"fraction",
-	 "group":"functions"},
-     "args":[
-	 {"up":"1","down":"2","name":"numerator"},
-	 {"up":"1","down":"2","delete":"1","name":"denominator"}
-     ]
-    },
-    
-    "slash":
-    {"output":{"latex":"\\dfrac{{$1}}{{$2}}","small_latex":"\\frac{{$1}}{{$2}}","asciimath":"({$1})/({$2})"},
      "current":{
 	 "index":1},
      "attrs":{
@@ -145,7 +136,7 @@
 	 "group":"functions"},
      "args":[
 	 {"up":"1","down":"2","name":"numerator"},
-	 {"up":"1","down":"2","name":"denominator","delete":"1"}
+	 {"up":"1","down":"2","delete":"1","name":"denominator"}
      ]
     },
         
@@ -275,8 +266,17 @@
     
     "_templates":
     {
-	"func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
+	"latex_func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
 			  "asciimath":" {$name}({$1})"},
+		"attrs":{
+		    "type":"{$name}",
+		    "group":"functions"},
+		"args":[
+		    {"delete":"1"}
+		]},
+	
+	"func":{"output":{"latex":"{$latex}\\left({$1}\\right)",
+			  "asciimath":" {$asciimath}({$1})"},
 		"attrs":{
 		    "type":"{$name}",
 		    "group":"functions"},
@@ -302,7 +302,7 @@
     },
 
     "functions":{
-	"template":"func",
+	"template":"latex_func",
 	"values":["sin","cos","tan","sec","csc","cot","log","ln"]},
     
     "greek":{

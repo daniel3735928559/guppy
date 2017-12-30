@@ -10,9 +10,11 @@ var Symbols = require('./symbols.js');
    @param {string} [doc=<m><e></e></m>] - An XML string representing the document
    @constructor 
  */
-var Doc = function(doc){
-    doc = doc || "<m><e></e></m>";
-    this.set_content(doc);
+var Doc = function(doc, type){
+    type = type || "xml";
+    if(type == "xml") this.set_content(doc || "<m><e></e></m>");
+    else if(type == "text") this.import_text(doc);
+    else if(type == "ast") this.import_ast(doc);
 }
 
 Doc.prototype.is_small = function(nn){

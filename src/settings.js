@@ -21,29 +21,29 @@ Settings.panels = {};
 Settings.panels.controls = document.createElement("div");
 Settings.panels.controls.setAttribute("class","guppy_help");
 Settings.panels.controls.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.controls.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
-<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
-<h3>Controls</h3><table id="guppy_help_table"><tr><td><b>Press...</b></td><td><b>...to do</b></td></tr></table>`;
+Settings.panels.controls.innerHTML = "<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, \"sqrt\" for root, \"mat\" for matrix, or \"defi\" for definite integral.)</p>\n\
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>\n\
+<h3>Controls</h3><table id=\"guppy_help_table\"><tr><td><b>Press...</b></td><td><b>...to do</b></td></tr></table>";
 
 Settings.panels.symbols = document.createElement("div");
 Settings.panels.symbols.setAttribute("class","guppy_help");
 Settings.panels.symbols.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.symbols.innerHTML = `<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)</p>
-<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
-<h3>Symbols</h3><table id="guppy_syms_table"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>`;
+Settings.panels.symbols.innerHTML = "<p>Start typing the name of a mathematical function to automatically insert it.  </p><p>(For example, \"sqrt\" for root, \"mat\" for matrix, or \"defi\" for definite integral.)</p>\n\
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>\n\
+<h3>Symbols</h3><table id=\"guppy_syms_table\"><tr><td><b>Type...</b></td><td><b>...to get</b></td></tr></table>";
 
 Settings.panels.settings = document.createElement("div");
 Settings.panels.settings.setAttribute("class","guppy_help");
 Settings.panels.settings.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.settings.innerHTML = `<p>Global settings: </p>
-<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>
-<h3>Settings</h3><table id="guppy_settings_table"></table>`;
+Settings.panels.settings.innerHTML = "<p>Global settings: </p>\n\
+<style>div.guppy_help td{ vertical-align:top;padding: 2px;}</style>\n\
+<h3>Settings</h3><table id=\"guppy_settings_table\"></table>";
 
 Settings.div_names = ["controls","symbols","settings"];
 
 var make_row = function(table_id, c1, c2){
     var row = document.createElement("tr");
-    row.innerHTML = `<td><font face="monospace">`+c1+`</font></td><td>`+c2+`</td>`;
+    row.innerHTML = "<td><font face=\"monospace\">"+c1+"</font></td><td>"+c2+"</td>";
     document.getElementById(table_id).appendChild(row);
     return row;
 }
@@ -51,7 +51,7 @@ var make_row = function(table_id, c1, c2){
 var make_x = function(elt){
     var x = document.createElement("div");
     x.setAttribute("class","guppy-card-x");
-    x.innerHTML = `<font size="6pt">&times;</font>`;
+    x.innerHTML = "<font size=\"6pt\">&times;</font>";
     x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
     x.onclick = function(){ elt.style.display = "none"; }
     elt.appendChild(x);
@@ -86,10 +86,10 @@ Settings.init_card = function(card, g){
             var val = g.engine.setting(s);
             var sel = document.createElement("select");
             sel.setAttribute("selected", val);
-            sel.setAttribute("id",`guppy_settings_select_${s}`);
+            sel.setAttribute("id","guppy_settings_select_"+s);
             sel.onchange = function(ss){
                 return function(){
-                    Settings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;
+                    Settings.config.settings[ss] = document.getElementById("guppy_settings_select_"+ss).value;
                 }
             }(s);
             for(var i = 0; i < opt.length; i++){
@@ -99,7 +99,7 @@ Settings.init_card = function(card, g){
                 sel.appendChild(o);
             }
             var row = document.createElement("tr");
-            row.innerHTML = `<td><font face="monospace">${s}</font></td>`;
+            row.innerHTML = "<td><font face=\"monospace\">"+s+"</font></td>";
             var td = document.createElement("td");
             td.appendChild(sel);
             row.appendChild(td);

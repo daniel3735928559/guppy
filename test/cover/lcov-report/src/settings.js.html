@@ -225,10 +225,10 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">81×</span>
-<span class="cline-any cline-yes">81×</span>
-<span class="cline-any cline-yes">81×</span>
-<span class="cline-any cline-yes">81×</span>
+<span class="cline-any cline-yes">80×</span>
+<span class="cline-any cline-yes">80×</span>
+<span class="cline-any cline-yes">80×</span>
+<span class="cline-any cline-yes">80×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -312,9 +312,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">70×</span>
-<span class="cline-any cline-yes">70×</span>
-<span class="cline-any cline-yes">70×</span>
+<span class="cline-any cline-yes">69×</span>
+<span class="cline-any cline-yes">69×</span>
+<span class="cline-any cline-yes">69×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -342,29 +342,29 @@ Settings.panels = {};
 Settings.panels.controls = document.createElement("div");
 Settings.panels.controls.setAttribute("class","guppy_help");
 Settings.panels.controls.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.controls.innerHTML = `&lt;p&gt;Start typing the name of a mathematical function to automatically insert it.  &lt;/p&gt;&lt;p&gt;(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)&lt;/p&gt;
-&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;
-&lt;h3&gt;Controls&lt;/h3&gt;&lt;table id="guppy_help_table"&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Press...&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;...to do&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;`;
+Settings.panels.controls.innerHTML = "&lt;p&gt;Start typing the name of a mathematical function to automatically insert it.  &lt;/p&gt;&lt;p&gt;(For example, \"sqrt\" for root, \"mat\" for matrix, or \"defi\" for definite integral.)&lt;/p&gt;\n\
+&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;\n\
+&lt;h3&gt;Controls&lt;/h3&gt;&lt;table id=\"guppy_help_table\"&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Press...&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;...to do&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;";
 &nbsp;
 Settings.panels.symbols = document.createElement("div");
 Settings.panels.symbols.setAttribute("class","guppy_help");
 Settings.panels.symbols.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.symbols.innerHTML = `&lt;p&gt;Start typing the name of a mathematical function to automatically insert it.  &lt;/p&gt;&lt;p&gt;(For example, "sqrt" for root, "mat" for matrix, or "defi" for definite integral.)&lt;/p&gt;
-&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;
-&lt;h3&gt;Symbols&lt;/h3&gt;&lt;table id="guppy_syms_table"&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Type...&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;...to get&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;`;
+Settings.panels.symbols.innerHTML = "&lt;p&gt;Start typing the name of a mathematical function to automatically insert it.  &lt;/p&gt;&lt;p&gt;(For example, \"sqrt\" for root, \"mat\" for matrix, or \"defi\" for definite integral.)&lt;/p&gt;\n\
+&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;\n\
+&lt;h3&gt;Symbols&lt;/h3&gt;&lt;table id=\"guppy_syms_table\"&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Type...&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;...to get&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;";
 &nbsp;
 Settings.panels.settings = document.createElement("div");
 Settings.panels.settings.setAttribute("class","guppy_help");
 Settings.panels.settings.style = "padding:10px;border:1px solid black; background-color: #fff;position:absolute;top:0;left:0;display:none;";
-Settings.panels.settings.innerHTML = `&lt;p&gt;Global settings: &lt;/p&gt;
-&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;
-&lt;h3&gt;Settings&lt;/h3&gt;&lt;table id="guppy_settings_table"&gt;&lt;/table&gt;`;
+Settings.panels.settings.innerHTML = "&lt;p&gt;Global settings: &lt;/p&gt;\n\
+&lt;style&gt;div.guppy_help td{ vertical-align:top;padding: 2px;}&lt;/style&gt;\n\
+&lt;h3&gt;Settings&lt;/h3&gt;&lt;table id=\"guppy_settings_table\"&gt;&lt;/table&gt;";
 &nbsp;
 Settings.div_names = ["controls","symbols","settings"];
 &nbsp;
 var make_row = function(table_id, c1, c2){
     var row = document.createElement("tr");
-    row.innerHTML = `&lt;td&gt;&lt;font face="monospace"&gt;`+c1+`&lt;/font&gt;&lt;/td&gt;&lt;td&gt;`+c2+`&lt;/td&gt;`;
+    row.innerHTML = "&lt;td&gt;&lt;font face=\"monospace\"&gt;"+c1+"&lt;/font&gt;&lt;/td&gt;&lt;td&gt;"+c2+"&lt;/td&gt;";
     document.getElementById(table_id).appendChild(row);
     return row;
 }
@@ -372,7 +372,7 @@ var make_row = function(table_id, c1, c2){
 var make_x = function(elt){
     var x = document.createElement("div");
     x.setAttribute("class","guppy-card-x");
-    x.innerHTML = `&lt;font size="6pt"&gt;&amp;times;&lt;/font&gt;`;
+    x.innerHTML = "&lt;font size=\"6pt\"&gt;&amp;times;&lt;/font&gt;";
     x.style = "cursor:pointer;position:absolute;top:0;right:0;padding-right:5px;line-height:1;";
     x.onclick = function(){ elt.style.display = "none"; }
     elt.appendChild(x);
@@ -407,10 +407,10 @@ Settings.init_card = function(card, g){
             var val = g.engine.setting(s);
             var sel = document.createElement("select");
             sel.setAttribute("selected", val);
-            sel.setAttribute("id",`guppy_settings_select_${s}`);
+            sel.setAttribute("id","guppy_settings_select_"+s);
             sel.onchange = function(ss){
                 return function()<span class="fstat-no" title="function not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >                    Settings.config.settings[ss] = document.getElementById(`guppy_settings_select_${ss}`).value;</span>
+<span class="cstat-no" title="statement not covered" >                    Settings.config.settings[ss] = document.getElementById("guppy_settings_select_"+ss).value;</span>
                 }
             }(s);
             for(var i = 0; i &lt; opt.length; i++){
@@ -420,7 +420,7 @@ Settings.init_card = function(card, g){
                 sel.appendChild(o);
             }
             var row = document.createElement("tr");
-            row.innerHTML = `&lt;td&gt;&lt;font face="monospace"&gt;${s}&lt;/font&gt;&lt;/td&gt;`;
+            row.innerHTML = "&lt;td&gt;&lt;font face=\"monospace\"&gt;"+s+"&lt;/font&gt;&lt;/td&gt;";
             var td = document.createElement("td");
             td.appendChild(sel);
             row.appendChild(td);
@@ -463,7 +463,7 @@ module.exports = Settings;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Dec 29 2017 21:40:00 GMT+0000 (UTC)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Dec 30 2017 05:51:45 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../prettify.js"></script>

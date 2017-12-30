@@ -481,7 +481,7 @@ var tests = [
 	"type":"text",
 	"expected":"Re(i)",
 	"run":function(g){
-	    Guppy.add_global_symbol("Re",{},"func");
+	    Guppy.add_global_symbol("Re",{},"latex_func");
 	    do_keys(['shift+r','e','i']);
 	}
     },
@@ -575,6 +575,16 @@ var tests = [
 	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
 	"run":function(g){
 	    Guppy("guppy1").import_text("x-sin(x)");
+	}
+    },
+    {
+	"description":"insert_doc",
+	"content":"<m><e>x</e></m>",
+	"type":"ast",
+	"expected":`["*",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
+	"run":function(g){
+	    Guppy("guppy1").engine.right();
+	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("sin(x)","text"));
 	}
     },
     {

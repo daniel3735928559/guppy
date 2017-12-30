@@ -1,4 +1,4 @@
-var Symbols = {"symbols":{}, "templates":{}};
+var Symbols = {"version":"2", "symbols":{}, "templates":{}};
 
 Symbols.make_template_symbol = function(template_name, name, args){
     var template = JSON.parse(JSON.stringify(Symbols.templates[template_name]));
@@ -22,7 +22,18 @@ Symbols.eval_template = function(template, name, args){
     }
 }
 
+Symbols.lookup_type = function(type){
+    for(var s in Symbols.symbols){
+	if(Symbols.symbols[s].attrs.type == type) return s;
+    }
+}
+
 Symbols.add_symbols = function(syms){
+    var version = syms["_version"];
+    var collection_name = syms["_name"];
+    delete syms["_version"];
+    delete syms["_name"];
+    if(!version || version != Symbols.version) throw "Mismatched symbol file version: Expected '" + Symbols.version + "' but found '" + version +"' in symbol collection: " + collection_name;
     var templates = syms["_templates"];
     if(templates){
         for(var t in templates){
@@ -51,6 +62,14 @@ Symbols.add_symbols = function(syms){
         }
     }
 }
+
+// Symbols.validate(){
+//     for(var sym in Symbols.symbols){
+// 	for(var i = 0; i < sym.length; i++){
+// 	    if(sym.substring(0,i) in Symbols.symbols) throw "WARNING: Symbols are not prefix free: '" + sym.substring(0,i) + "' and '" + sym + "' are both symbols";
+// 	}
+//     }
+// }
 
 Symbols.symbol_to_node = function(s, content, base){
     
