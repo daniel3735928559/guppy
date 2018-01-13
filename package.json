@@ -35,6 +35,7 @@
 						"express": "^4.16.2",
 						"istanbul-middleware": "^0.2.2",
 						"jsdoc": "^3.5.5",
+						"marked": "^0.3.12",
 						"selenium-webdriver": "^3.6.0",
 						"uglify-js": "^3.2.2"
 			}
