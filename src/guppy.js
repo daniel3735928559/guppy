@@ -87,6 +87,7 @@ Guppy.instances = {};
 Guppy.ready = false;
 Guppy.Doc = Doc;
 Guppy.active_guppy = null;
+Guppy.Symbols = Symbols;
 
 Guppy.make_button = function(url, cb){
     var b = document.createElement("img");
@@ -112,18 +113,22 @@ Guppy.make_button = function(url, cb){
     @param {Object} symbol - If `template` is present, this is just
     the template arguments.  Otherwise, it is the complete symbol specification
     @param {Object} symbol.output - Key/value pairs where the key is
-    the output type (such as "latex" or "asciimath") and the value
-    is the string by which the output will be rendered in that
-    format.  In this string, {$n} will be substituted with the
-    rendering of the nth argument.  If the nth argument is a
-    d-dimensional list, then the argument should be specified as
-    {$n{sep_1}{sep_2}...{sep_d}} where sep_i will be the separator
-    used to separate entries in the ith dimension.  Note that keys
-    are not necessary to describe the AST or plain-text outputs.
-    @param {Object} symbol.attrs - A specification of the attributes of the symbol
+    the output type (such as "latex" or "asciimath") and the value is
+    the string by which the output will be rendered in that format.
+    In this string, {$n} will be substituted with the rendering of the
+    nth argument.  If the nth argument is a d-dimensional list, then
+    the argument should be specified as {$n{sep_1}{sep_2}...{sep_d}}
+    where sep_i will be the separator used to separate entries in the
+    ith dimension.  Note that keys are not necessary to describe the
+    AST or plain-text outputs.
+    @param {Object} symbol.attrs - A specification of the attributes
+    of the symbol
     @param {string} symbol.attrs.type - A longer description of the
     symbol type, suitable for searching and text rendering.
-    @param {string} [symbol.attrs.group.char] - `"yes"` or `"no"`.  Whether or not the symbol is a       character (such as pi).
+    @param {string} symbol.attrs.group - The group in which to place
+    this symbol (for OSK)
+    @param {string} [symbol.attrs.char] - `"yes"` or `"no"`.  Whether
+    or not the symbol is a character (such as pi).
     @param {Object} [symbol.current] - If the symbol should subsume
     part of the existing content of the editor (as in, for example,
     the case of exponent), this object will describe how.
@@ -565,11 +570,13 @@ Guppy.prototype.render_node = function(t){
 */
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.engine.doc.is_blank()){
+	console.log("A",this.engine.setting("empty_content"));
         katex.render(this.engine.setting("empty_content"),this.editor);
         this.editor.appendChild(this.buttons_div);
         return;
     }
     var tex = this.render_node("render");
+    console.log(tex);
     katex.render(tex,this.editor);
     this.editor.appendChild(this.buttons_div);
     if(updated){

@@ -588,6 +588,26 @@ var tests = [
 	}
     },
     {
+	"description":"insert_doc_number",
+	"content":"<m><e>2</e></m>",
+	"type":"ast",
+	"expected":`["val",[23]]`,
+	"run":function(g){
+	    Guppy("guppy1").engine.right();
+	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("3","text"));
+	}
+    },
+    {
+	"description":"insert_doc_subtract",
+	"content":"<m><e>x</e></m>",
+	"type":"ast",
+	"expected":`["-",[["var",["x"]],["sin",[["var",["y"]]]]]]`,
+	"run":function(g){
+	    Guppy("guppy1").engine.right();
+	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("-sin(y)","text"));
+	}
+    },
+    {
 	"description":"import_text arithmetic",
 	"type":"ast",
 	"expected":`["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]`,

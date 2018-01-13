@@ -24,7 +24,7 @@ Symbols.eval_template = function(template, name, args){
 
 Symbols.lookup_type = function(type){
     for(var s in Symbols.symbols){
-	if(Symbols.symbols[s].attrs.type == type) return s;
+        if(Symbols.symbols[s].attrs.type == type) return s;
     }
 }
 
@@ -63,13 +63,57 @@ Symbols.add_symbols = function(syms){
     }
 }
 
-// Symbols.validate(){
-//     for(var sym in Symbols.symbols){
-// 	for(var i = 0; i < sym.length; i++){
-// 	    if(sym.substring(0,i) in Symbols.symbols) throw "WARNING: Symbols are not prefix free: '" + sym.substring(0,i) + "' and '" + sym + "' are both symbols";
-// 	}
-//     }
-// }
+Symbols.validate = function(){
+    for(var sym in Symbols.symbols){
+	if(!Symbols.symbols[sym].output.latex) throw "Symbol " + sym + " missing output.latex (needed for display)";
+	if(!Symbols.symbols[sym].attrs.name) throw "Symbol " + sym + " missing attrs.name (needed for text output)";
+	if(!Symbols.symbols[sym].attrs.group) throw "Symbol " + sym + " missing attrs.group (needed for mobile)";
+        //for(var i = 0; i < sym.length; i++)
+        //    if(sym.substring(0,i) in Symbols.symbols) throw "WARNING: Symbols are not prefix free: '" + sym.substring(0,i) + "' and '" + sym + "' are both symbols";
+    }
+}
+
+// Returns an array with alternating text and argument elements of the form
+// {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...]}
+Symbols.split_output = function(output){
+    var regex = /\{\$([0-9]+)/g, result, starts = [], indices = [], i;
+    var ans = [];
+    while ((result = regex.exec(output))){
+        starts.push(result.index);
+        indices.push(parseInt(result[1]));
+    }
+    ans.push({"type":"text","val":output.substring(0,starts.length > 0 ? starts[0] : output.length)}); // Push the first text bit
+    for(i = 0; i < starts.length; i++){
+        var idx = starts[i]+1;
+        var separators = [];
+        var sep = "";
+        var opens = 1
+        while(opens > 0 && idx < output.length){
+            if(output[idx] == "}"){
+                if(opens == 2){ separators.push(sep); sep = ""; }
+                opens--; }
+            if(opens >= 2){ sep += output[idx]; }
+            if(output[idx] == "{"){ opens++; }
+            idx++;
+        }
+        ans.push({"type":"arg","index":indices[i],"separators":separators});
+        var next = (i == starts.length - 1) ? output.length : starts[i+1];
+        ans.push({"type":"text","val":output.substring(idx,next)}); // Push the next text bit
+    }
+    return ans;
+}
+
+Symbols.add_blanks = function(output, blank){
+    var out = Symbols.split_output(output);
+    var ans = "";
+    for(i = 0; i < out.length; i++){
+        if(out[i]["type"] == "text"){
+            ans += out[i]['val'];
+        }
+	else ans += blank;
+    }
+    return ans;
+}
 
 Symbols.symbol_to_node = function(s, content, base){
     
@@ -77,8 +121,8 @@ Symbols.symbol_to_node = function(s, content, base){
     //
     // content is a list of nodes to insert
     var f = base.createElement("f");
-    for(var a in s.attrs){
-        f.setAttribute(a, s.attrs[a]);
+    for(var attr in s.attrs){
+        f.setAttribute(attr, s.attrs[attr]);
     }
     if("ast" in s){
         if("type" in s.ast) f.setAttribute("ast_type",s.ast["type"])
@@ -86,91 +130,72 @@ Symbols.symbol_to_node = function(s, content, base){
     }
     //if(s['char']) f.setAttribute("c","yes");
     
-    var first_ref = -1;
-    var refs_count = 0;
-    var lists = {}
-    var first;
-
+    var first_ref=-1, arglist = [];
+    var first, i;
+    
     // Make the b nodes for rendering each output    
     for(var t in s["output"]){
         var b = base.createElement("b");
         b.setAttribute("p",t);
 
-        var out = s["output"][t];
-        if(typeof out == 'string'){
-            out = out.split(/(\{\$[0-9]+(?:\{[^}]+\})*\})/g);
-            for(var i = 0; i < out.length; i++){
-                var m = out[i].match(/^\{\$([0-9]+)((?:\{[^}]+\})*)\}$/);
-                if(m){
-                    out[i] = {'ref':parseInt(m[1])};
-                    if(m[2].length > 0){
-                        var mm = m[2].match(/\{[^}]*\}/g);
-                        out[i]['d'] = mm.length;
-                        for(var j = 0; j < mm.length; j++){
-                            out[i]['sep'+j] = mm[j].substring(1,mm[j].length-1);
-                        }
-                    }
-                }
-            }
-        }
+        var out = Symbols.split_output(s["output"][t]);
+        console.log("OUT",out);
         for(i = 0; i < out.length; i++){
-            var nt = null;
-            if(typeof out[i] == 'string' || out[i] instanceof String){
-                nt = base.createTextNode(out[i]);
-                b.appendChild(nt);
+            if(out[i]["type"] == "text"){
+                if(out[i]["val"].length > 0) b.appendChild(base.createTextNode(out[i]['val']));
             }
             else{
-                nt = base.createElement("r");
-                for(var attr in out[i]){
-                    nt.setAttribute(attr,out[i][attr]);
-                }
-                if(t == 'latex') {
-                    if(first_ref == -1) first_ref = out[i]['ref'];
-                    if('d' in out[i]) lists[refs_count] = out[i]['d']
-                    refs_count++;
-                }
+                if(t == 'latex') arglist.push(out[i]);
+                var nt = base.createElement("r");
+                nt.setAttribute("ref",out[i]["index"]);
+                if(out[i]["separators"].length > 0) nt.setAttribute("d",out[i]["separators"].length);
+                for(var j = 0; j < out[i]["separators"].length; j++) nt.setAttribute("sep"+j,out[i]["separators"][j]);
+                if(t == 'latex' && first_ref == -1) first_ref = out[i]["index"];
                 b.appendChild(nt);
             }
         }
         f.appendChild(b);
     }
-    // Now make the c nodes for storing the content
-    for(i = 0; i < refs_count; i++){
-        var nc = base.createElement("c");
-        if(i in content){
-            var node_list = content[i];
-            for(var se = 0; se < node_list.length; se++){
+    // Now make the c/l nodes for storing the content
+    for(i = 0; i < arglist.length; i++){
+        var a = arglist[i];
+        var nc;
+	if(i in content && a['separators'].length > 0) {  // If the content for this node is provided and is an array, then dig down to find the first c child
+	    f.appendChild(content[i][0]);
+	    nc = content[i][0];
+	    while(nc.nodeName != "c")
+		nc = nc.firstChild;
+	}
+	else if(i in content) {	                          // If the content for this node is provided and not an array, create the c node and populate its content
+	    var node_list = content[i];
+	    nc = base.createElement("c");
+	    for(var se = 0; se < node_list.length; se++)
                 nc.appendChild(node_list[se].cloneNode(true));
-            }
+	    f.appendChild(nc)
         }
-        else{
+        else{                                             // Otherwise create the c node and possibly l nodes
+	    nc = base.createElement("c");
             var new_e = base.createElement("e");
             new_e.appendChild(base.createTextNode(""));
             nc.appendChild(new_e);
+            var par = f;                                  // Now we add nested l elements if this is an array of dimension > 0
+	    for(j = 0; j < a['separators'].length; j++){
+		var nl = base.createElement("l");
+		nl.setAttribute("s","1");
+		par.appendChild(nl);
+		par = nl;
+            }
+            par.appendChild(nc);
         }
-        if(i+1 == first_ref) first = nc.lastChild;
-        if(s['args']){
-            for(a in (s['args'][i] || {})){
-                nc.setAttribute(a,s['args'][i][a]);
+        if(i+1 == first_ref) first = nc.lastChild;        // Note the first node we should visit based on the LaTeX output
+        if(s['args'] && s['args'][i]){                    // Set the arguments for the c node based on the symbol
+            for(arg in s['args'][i]){
+                nc.setAttribute(arg,s['args'][i][arg]);
             }
         }
-        if(i in lists){
-            var par = f;
-            if(i in content && content[i][0].nodeName == "l"){
-                par.appendChild(content[i][0]);
-            }
-            else{
-                for(j = 0; j < lists[i]; j++){
-                    var nl = base.createElement("l");
-                    nl.setAttribute("s","1");
-                    par.appendChild(nl);
-                    par = nl;
-                    if(j == lists[i]-1) nl.appendChild(nc);
-                }
-            }
-        }
-        else f.appendChild(nc);
+	console.log(JSON.stringify(a),arglist);
     }
+    console.log(f);
     return {"f":f, "first":first};
 }
 

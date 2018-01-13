@@ -1,4 +1,5 @@
 var katex = require('../lib/katex/katex-modified.min.js');
+var Symbols = require('./symbols.js');
 var Settings = {}
 Settings.config = {};
 Settings.config.path = "/lib/guppy";
@@ -129,8 +130,9 @@ Settings.init = function(symbols){
     
     
     for(var s in symbols){
-        var latex = symbols[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, "\\blue{[?]}");
+        var latex = Symbols.add_blanks(symbols[s].output.latex, "\\blue{[?]}");
         var row = make_row("guppy_syms_table",s," ");
+	console.log("S",latex);
         katex.render(latex, row.lastChild);
     }
 }

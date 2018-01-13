@@ -122,6 +122,7 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
         ensure_text_nodes(base);
         var e0 = base.documentElement.firstChild;
         var content = get_content_array(args);
+	console.log(":CONTENT",content);
         var f = symbol_to_node(sym, content, base)['f'];
         e0.parentNode.insertBefore(f,e0.nextSibling);
         ensure_text_nodes(base);
@@ -157,7 +158,7 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
         for(var i = 0; i < args.length; i++){
             base.documentElement.appendChild(args[i].documentElement.cloneNode(true));
         }
-        base.documentElement.firstChild.setAttribute("s",String(args.length))
+        base.documentElement.setAttribute("s",String(args.length))
         return base;
     };
     // var comparators = {"<":"less",">":"greater","=":"eq","!=":"neq",">=":"geq","<=":"leq"};

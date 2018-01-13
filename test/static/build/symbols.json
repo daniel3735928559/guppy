@@ -94,7 +94,7 @@
 	 {"bracket":"yes","delete":"1"}]
     },
     
-    "exponent":
+    "exp":
     {"output":{
         "latex":"{{$1}}^{{$2}}",
 	"asciimath":"({$1})^({$2})"},

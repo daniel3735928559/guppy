@@ -84,6 +84,7 @@ Doc.prototype.import_text = function(text, syms, s2n){
 Doc.prototype.import_ast = function(ast, syms, s2n){
     syms = syms || Symbols.symbols;
     s2n = s2n || Symbols.symbol_to_node;
+    console.log("AST",ast);
     var doc = AST.to_xml(ast, syms, s2n);
     this.base = doc;
     this.ensure_text_nodes();
