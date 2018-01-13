@@ -6,7 +6,7 @@
     "source": {
         "include": ["src", "package.json", "README.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs)"
+        "excludePattern": "(node_modules/)"
     },
     "plugins": [
         "plugins/markdown"
@@ -18,10 +18,10 @@
         "showInheritedInNav": true
     },
     "opts": {
-        "destination": "./site/docs",
+        "destination": "./site/api",
         "encoding": "utf8",
         "private": true,
         "recurse": true,
-        "template": "./node_modules/docdash",
+        "template": "./node_modules/docdash"
     }
 }

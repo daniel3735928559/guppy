@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Guppy</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../build/guppy-default-osk.min.css">
+    <script type="text/javascript" src="../build/guppy.min.js"></script>
+    <script type="text/javascript" src="../build/guppy_osk.js"></script>
+
+    <script type="text/javascript" src="index.js"></script>
+    <link rel="stylesheet" href="../style/guppy.css">
+    <link rel="stylesheet" href="../index.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <nav class="navbar">
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="/">Guppy <font color="red">(ALPHA)</font></a>
+	</div>
+	
+	<ul class="nav navbar-nav pull-right">
+	  <li><a href="../doc/quickstart.html">Quick start</a></li>
+	  <li><a href="../examples/">Examples</a></li>
+	  <li><a href="../doc/">Docs</a></li>
+	  <li><a href="../api/guppymath/2.0.0-alpha/">API</a></li>
+	  <li><a href="https://github.com/daniel3735928559/guppy">Source</a></li>
+	  <li><a href="../contribute/">Contributing</a></li>
+	</ul>
+    </nav>
+<h2 id="symbol-definition-reference">Symbol definition reference</h2>
+<p><code>symbols.json</code> is a dictionary whose keys are the symbol names (i.e.&#160;the strings that will get auto-replaced by the symbol in the editor) and whose values are dictionaries with the following keys:</p>
+<ul>
+<li><p><code>output</code>: A dictionary with keys <code>latex</code>, <code>text</code>, and an optional <code>small_latex</code>. The values are strings which will comprise the LaTeX, ASCII, or small LaTeX (respectively) representations of the symbol. A symbol may have editable components, the ith of which is represented by <code>{$i}</code> appearing in the string. For example, the LaTeX representation of the <code>sqrt</code> symbol is <code>&quot;\\sqrt{{$1}}&quot;</code>, indicating that it has one editable component, namely the inside of the square root.</p>
+<ul>
+<li><p>If the ith entry is intended to be an array, with commas rendered between elements of the array, then that entry should be represented by <code>{$i{,}}</code>. See the <code>vec</code> symbol in <a href="https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json">/sym/extra_symbols.json</a> for an example of this.</p></li>
+<li><p>If the ith entry is intended to be a 2D array, with, say, commas separating elements of each row and semicolons separating columns, then that entry is represented by <code>{$i{,}{;}}</code>. See the <code>mx</code> symbol in <a href="https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json">/sym/extra_symbols.json</a> for an example of this.</p></li>
+</ul></li>
+<li><p><code>type</code>: A string name for the symbol (will appear in the XML and can used for searching).</p></li>
+<li><p><code>group</code>: A string group name for the symbol (will be used to group symbols in button interface).</p></li>
+<li><p><code>current</code>: If this is non-zero, then if the symbol is inserted while something is selected, then that selection will become this component of the symbol. For example, if the current state is <code>x+1+2</code> and you select <code>x+1</code> and press <code>^</code>, then because the exponent symbol has <code>&quot;current&quot;:1</code>, the selection will become component 1 of the exponent (i.e.&#160;the base) and you will get <code>(x+1)^{}+2</code>.</p></li>
+<li><p>[optional] <code>current_type</code>: If this is <code>&quot;token&quot;</code> and current is non-zero, then when the symbol is inserted, the first token to the left of the cursor when the symbol is inserted will become the component specified in <code>current</code>. For example, the exponent symbol has <code>&quot;current&quot;:1,&quot;current_type&quot;:&quot;token&quot;</code>, so if the current state of the editor is <code>pi+sin(x)</code> and the cursor is just after the pi, then if <code>^</code> is pressed, the state will become <code>{pi}^{}+sin(x)</code>.</p></li>
+<li><p>[optional] <code>attrs</code>: This is an array of dictionaries describing the XML attributes that will be given to each of the symbol&#8217;s editable components. Each key/value pair in the ith dictionary in this array will be set as an attribute name/value pair on the ith editable component. For example, if the <code>attrs</code> list has first entry <code>{&quot;small&quot;:&quot;yes&quot;}</code>, then the first component will get a &#8220;small&#8221; attribute with value &#8220;yes&#8221;. You can include whatever attribute names you want, but the following names are treated specially in Guppy if they are present:</p>
+<ul>
+<li><p><code>mode</code>: This should be set to &#8220;text&#8221; for any components that should be rendered as text (rather than in math mode).</p></li>
+<li><p><code>up</code>: Which component to jump to when the up arrow key is pressed (or 0 for the default behaviour). For example, in a definite integral, we want the up arrow key to take us from the integrand or the variable of integration directly to the upper limit. Since the upper limit of integration is component 2, we use <code>&quot;up&quot;:[2,2,2,2]</code>.</p></li>
+<li><p><code>down</code>: Which component to jump to when the down arrow key is pressed (or 0 for the default behaviour).</p></li>
+<li><p><code>delete</code>: The index of which component should be used to replace the entire symbol if the backspace key is pressed when the cursor is at the start of this component. If 0 or absent, then the default backspace behaviour will be used (namely, that it behaves like the left arrow when at the start of any component except the first, where it deletes the entire symbol). For example, in an exponent such as <code>x^2</code>, we want a backspace from just before the 2 to delete just the exponent, leaving the base. That is, we want component number 1 to be left. However, if backspace is used in the base, we want the default behaviour. So we use <code>&quot;delete&quot;:[0,1]</code> to get the default behaviour in the first component, and deleting the second component to leave us with the first only.</p></li>
+<li><p><code>bracket</code>: If <code>bracket</code> is <code>&quot;yes&quot;</code>, then this component will be surrounded in parentheses if it contains more than one character in it. For example, the first component of an exponent has <code>bracket=&quot;yes&quot;</code>, so will render as <code>x^{y}</code> if the first component is <code>x</code> and the second <code>y</code>, but will render as <code>(x+1)^{y+2}</code> if the first component is <code>x+1</code> and the second <code>y+2</code>.</p></li>
+<li><p><code>small</code>: If <code>small</code> is <code>&quot;yes&quot;</code>, then when rendering to LaTeX, anything in this component (or any descendant) will be rendered using its <code>small_latex</code> output mode if available. For example, the exponent symbol has <code>attrs[1] = {&quot;small&quot;:&quot;yes&quot;,...}</code>, so the second component (the thing in the exponent) is marked as being small. Thus, for instance, fractions and integrals (to name two) that appear inside that exponent will not render at their normal, large size.</p></li>
+</ul></li>
+</ul>
+<p>The following symbol names are treated specially:</p>
+<ul>
+<li><p><code>_raw</code>: The value under this key should be an array of objects with keys:</p>
+<ul>
+<li><p><code>group</code>: The string name of the group</p></li>
+<li><p><code>symbols</code>: An array of objects with keys:</p>
+<ul>
+<li><p><code>name</code>: The name of the symbol (the string used to enter it)</p></li>
+<li><p><code>latex</code>: The LaTeX rendering of the symbol</p></li>
+<li><p><code>text</code>: The text rendering of the symbol</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>_func</code>: The value under this key should be an array of objects with keys:</p>
+<ul>
+<li><p><code>group</code>: The string name of the group</p></li>
+<li><p><code>symbols</code>: An array of string names of the functions (which will take a single argument and whose latex rendering will be <code>\name(&lt;argument&gt;)</code> and text rendering will be <code>name(&lt;argument&gt;)</code>.</p></li>
+</ul></li>
+<li><p><code>_literal</code>: The value under this key should be an array of objects with keys:</p>
+<ul>
+<li><p><code>group</code>: The string name of the group</p></li>
+<li><p><code>symbols</code>: An array of string names of the functions (which will take a single argument and whose latex rendering will be <code>\name</code> and text rendering will be <code>$name</code>.</p></li>
+</ul></li>
+</ul>
+  </div>
+</body>
+
+</html>

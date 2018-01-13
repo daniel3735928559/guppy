@@ -12,7 +12,7 @@
 						"build": "./dev.sh build-final",
 						"build-debug": "./dev.sh build-debug",
 						"lint": "./node_modules/.bin/eslint -c .eslintrc.json src",
-						"generate-docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+						"generate-docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose && (cd site; ./build.sh)"
 			},
 			"repository": "git+https://github.com/daniel3735928559/guppy.git",
 			"keywords": [

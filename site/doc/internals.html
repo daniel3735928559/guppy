@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Guppy</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../build/guppy-default-osk.min.css">
+    <script type="text/javascript" src="../build/guppy.min.js"></script>
+    <script type="text/javascript" src="../build/guppy_osk.js"></script>
+
+    <script type="text/javascript" src="index.js"></script>
+    <link rel="stylesheet" href="../style/guppy.css">
+    <link rel="stylesheet" href="../index.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <nav class="navbar">
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="/">Guppy <font color="red">(ALPHA)</font></a>
+	</div>
+	
+	<ul class="nav navbar-nav pull-right">
+	  <li><a href="../doc/quickstart.html">Quick start</a></li>
+	  <li><a href="../examples/">Examples</a></li>
+	  <li><a href="../doc/">Docs</a></li>
+	  <li><a href="../api/guppymath/2.0.0-alpha/">API</a></li>
+	  <li><a href="https://github.com/daniel3735928559/guppy">Source</a></li>
+	  <li><a href="../contribute/">Contributing</a></li>
+	</ul>
+    </nav>
+<h2 id="internals">Internals</h2>
+<p>The majority of the code in Guppy is implementing the logic involved with modifying the XML tree (described above) via an editor which displays a kind of flattened version of this tree to the user. Specifically, the functions that contribute many of the lines are <code>left</code>, <code>right</code>, <code>sel_left</code>, <code>sel_right</code>, <code>sel_cut</code>, <code>sel_copy</code>, <code>sel_paste</code>, <code>backspace</code>, and <code>insert_symbol</code> functions.</p>
+<p>These fall into two major categories: Moving the cursor around within the tree, and adding/removing/changing fragments of the tree. We&#8217;ll discuss a few examples of each:</p>
+<h3 id="cursor-functions">Cursor functions</h3>
+<p>In Guppy, the cursor is only allowed to be inside <code>&lt;e&gt;</code> nodes. Since these only contain text, we can describe the cursor position by a reference to an <code>&lt;e&gt;</code> node within the tree, (<code>this.current</code> in the code), and a numerical offset indicating where the cursor sits within the text (<code>this.caret</code> in the code).</p>
+<p>We outline here the basic flow of two of the cursor-related functions:</p>
+<ul>
+<li><p><code>left</code>: First, since this is not a selection operation, this should clear the current selection no matter what. Then, if the <code>this.caret</code> is bigger than 0, then we&#8217;re not at the left of the current <code>&lt;e&gt;</code> node and so can just decrement <code>this.caret</code> and be done. If, on the other hand, <code>this.caret</code> is 0, then we need to jump to the previous <code>&lt;e&gt;</code> node, whatever that is. So we set <code>this.current</code> to be that <code>&lt;e&gt;</code> node, and <code>this.caret</code> to be the length of that node&#8217;s text (as we should start out at the very right-most position in that node).</p>
+<p>All the work, then, is in finding this &#8220;previous <code>&lt;e&gt;</code> node&#8221;, which basically amounts to looking for the one right before us in document order. Ideally, we could use the XPath <code>preceding</code> axis, but this did not seem to work. However, there are only a few possible situations for the current <code>&lt;e&gt;</code> node:</p>
+<ul>
+<li><p><code>&lt;m&gt;&lt;e&gt;current&lt;/e&gt;...&lt;/m&gt;</code>: If it is the first child of its parent and its parent is an <code>&lt;m&gt;</code> node, then we&#8217;re at the beginning and should call <code>this.left_callback</code>.</p></li>
+<li><p><code>&lt;e&gt;target&lt;/e&gt;&lt;f&gt;&lt;b/&gt;&lt;b/&gt;&lt;c&gt;&lt;e&gt;current&lt;/e&gt;&lt;/c&gt;&lt;c/&gt;...&lt;/f&gt;</code>: If it is the first child of its parent and its parent is a <code>&lt;c&gt;</code> node which is also the first child of its parent <code>&lt;f&gt; node, then we need to move to the</code><c><code>node immediately before that</code><f>` node.</p></li>
+<li><p><code>&lt;f&gt;&lt;b/&gt;&lt;b/&gt;&lt;c&gt;...&lt;e&gt;target&lt;/e&gt;&lt;/c&gt;&lt;c&gt;&lt;e&gt;current&lt;/e&gt;&lt;/c&gt;&lt;c/&gt;...&lt;/f&gt;</code>: If it is the first child of its parent and its parent is a <code>&lt;c&gt;</code> node which is not the first child of its parent <code>&lt;f&gt; node, then we need to move to the last</code><e><code>node in the previous</code><c>` node.</p></li>
+<li><p><code>&lt;f&gt;&lt;b/&gt;&lt;b/&gt;...&lt;c&gt;...&lt;e&gt;target&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;current&lt;/e&gt;</code>: If it follows an <code>&lt;f&gt;</code> node, and that <code>&lt;f&gt;</code> node has editable components (i.e. <code>&lt;c&gt;</code> children), then we need to move to the last node of the last <code>&lt;c&gt; child of that</code><f>` node.</p></li>
+<li><p><code>&lt;e&gt;target&lt;/e&gt;&lt;f&gt;&lt;b/&gt;&lt;b/&gt;&lt;/f&gt;&lt;e&gt;current&lt;/e&gt;</code>: If it follows an <code>&lt;f&gt;</code> node, and that <code>&lt;f&gt;</code> node has no editable components (i.e.&#160;no <code>&lt;c&gt;</code> children), then we need to move the <code>&lt;e&gt;</code> node immediately preceding that <code>&lt;f&gt;</code> node.</p></li>
+</ul></li>
+<li><p><code>sel_left</code>: When we are selecting (e.g.&#160;holding shift and pressing arrow keys), we are moving the cursor around, but somewhere else is the &#8220;start of selection&#8221; cursor, so that the selection is the region between the current cursor and this selection-start cursor. For sanity, we want to require that these two cursors always be in the same level of the tree.</p>
+<p><code>sel_left</code>, therefore, will first check if the &#8220;start of selection&#8221; cursor is present, and if not, it will place it at the current cursor location. Then, it will move the cursor to the left as before, but keeping it at the same level of the tree with the selection cursor and normal cursor always having the same immediate parent. If we&#8217;re not at the beginning of an <code>&lt;e&gt;</code> node, this is still easy. If we are at the beginning, then there are again cases:</p>
+<ul>
+<li><p><code>&lt;m&gt;&lt;e&gt;current&lt;/e&gt;...&lt;/m&gt;</code>: If it is the first child of its parent and its parent is an <code>&lt;m&gt;</code> node, then we&#8217;re at the beginning and should again call <code>this.left_callback</code>.</p></li>
+<li><p><code>&lt;c&gt;&lt;e&gt;current&lt;/e&gt;&lt;/c&gt;</code>: If it is the first child of its parent and its parent is a <code>&lt;c&gt;</code> node, then we cannot go left without leaving our current level in the tree, so we do not go anywhere.</p></li>
+<li><p><code>&lt;e&gt;target&lt;/e&gt;&lt;f&gt;...&lt;/f&gt;&lt;e&gt;current&lt;/e&gt;</code>: If it follows an <code>&lt;f&gt;</code> node, and that <code>&lt;f&gt;</code> node, then we need to move the <code>&lt;e&gt;</code> node immediately preceding that <code>&lt;f&gt;</code> node.</p></li>
+</ul></li>
+</ul>
+<h3 id="editing-functions">Editing functions</h3>
+<ul>
+<li><p><code>backspace</code>: Again, if the cursor is in the middle of an <code>&lt;e&gt;</code> node, this is easy. If the cursor is at the beginning of an <code>&lt;e&gt;</code> node, then we simply choose to have the backspace operation move the cursor left as described above.</p></li>
+<li><p><code>sel_cut</code>: Because the selection can only be from somewhere in one <code>&lt;e&gt;</code> node to somewhere in another <em>sibling</em> <code>&lt;e&gt;</code> node, we need only to understand what fragment we&#8217;re cutting out and what we should be left with. This can be visualised thus:</p>
+<p><code>&lt;m&gt;...&lt;e&gt;stuff1 [sel_start] stuff2&lt;/e&gt;...more stuff...&lt;e&gt;stuff3 [sel_end] stuff4&lt;/e&gt;...&lt;/m&gt;</code></p>
+<p>should transform to:</p>
+<p><code>&lt;m&gt;...&lt;e&gt;stuff1 stuff4&lt;/e&gt;...&lt;/m&gt;</code></p>
+<p>with the clipboard containing the fragment:</p>
+<p><code>&lt;e&gt;stuff2&lt;/e&gt;...more stuff...&lt;e&gt;stuff3&lt;/e&gt;</code></p>
+<p>There is another simpler case in which the selection start and end are in the same <code>&lt;e&gt;</code> node, but this is much easier.</p></li>
+<li><p><code>sel_paste</code>: If the clipboard contains a fragment like</p>
+<p><code>&lt;e&gt;stuff2&lt;/e&gt;...more stuff...&lt;e&gt;stuff3&lt;/e&gt;</code></p>
+<p>then when we paste, the cursor will be in the middle of an <code>&lt;e&gt;</code> node, such as:</p>
+<p><code>&lt;m&gt;...&lt;e&gt;stuff1 [cursor] stuff4&lt;/e&gt;...&lt;/m&gt;</code></p>
+<p>So the basic idea will be to merge the stuff to the left of the cursor (stuff1), with the first <code>&lt;e&gt;</code> node of the fragment, and merge the stuff to the right of the cursor (stuff2) with the last <code>&lt;e&gt;</code> node of the fragment, resulting in:</p>
+<p><code>&lt;m&gt;...&lt;e&gt;stuff1 stuff2&lt;/e&gt;...more stuff...&lt;e&gt;stuff3 [cursor] stuff4&lt;/e&gt;...&lt;/m&gt;</code></p></li>
+</ul>
+  </div>
+</body>
+
+</html>
