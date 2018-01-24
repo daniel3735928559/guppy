@@ -646,7 +646,7 @@ Guppy.prototype.doc = function(){
     supplied, default interpretations will be given for the following
     symbols: `*,+,/,-,^,sqrt,sin,cos,tan,log`
     @param {Object} [evaluators] - An object with a key for each
-    possible symbol type ("exponential", "indefinite_integral", etc.)
+    possible symbol type ("exponential", "integral", etc.)
     whose values are functions.  These functions take in a single
     argument, `args`, which is an array of that symbol's arguments,
     and should return a function that takes in an object argument
@@ -671,7 +671,7 @@ Guppy.prototype.func = function(evaluators){
 /** 
     Recursively evaluate the syntax tree of the editor's contents using specified functions.
     @param {Object} [evaluators] - An object with a key for each
-    possible symbol type ("exponential", "indefinite_integral", etc.)
+    possible symbol type ("exponential", "integral", etc.)
     whose values are functions that will be applied whenever that
     symbol is encountered in the syntax tree.  These functions take a
     single argument, `args`, which is a list of the results of
@@ -719,7 +719,7 @@ Guppy.prototype.import_text = function(text){
     Set the content of the document from input text in "semantic
     LaTeX" format.  That is, all functions are represented as
     `\funcname{arg1}{arg2}`.  For example,
-    `\definite_integral{1}{2}{x^2}{x}`.
+    `\defintegral{1}{2}{x^2}{x}`.
     @param {String} text - A string representing the document to import.
     @memberof Guppy
 */

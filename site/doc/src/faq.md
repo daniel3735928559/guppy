@@ -41,29 +41,7 @@ Yes.  Many elements are tagged with CSS classes so that you can write CSS to cus
 
 ## What are the future plans for this editor?
 
-If PostScript is the assembly language of typesetting
-mathematics, then perhaps LaTeX is the C and this XML format
-can be one of many competing higher-level languages for
-specifying mathematical formulae--not optimal for all
-use-cases, but addressing positively the needs of a few.
-
-One possibly undesirable consequence of leaving plaintext
-input is a reliance on tooling beyond a basic text editor,
-both for creating and consuming content.  We have ideas
-surrounding both of these:
-
-* Creating: To make it easier to create whole documents using the
-  editor will require plugins for existing document editors such as,
-  among others, Quill.js, CodeMirror, TiddlyWiki, emacs (!)
-    
-* Consuming: To ensure that users can take advantage of the semantic
-  understanding of equations now available, we envision a tool a bit
-  like a programming IDE, except for reading mathematics.  For
-  example, a tool that allows cross-referencing any symbol in an
-  expression with its definition and other occurences in the document.
-    
-  
-
+See the [roadmap](./roadmap.html).
 
 ## Is it secure?
 
