@@ -1,4 +1,4 @@
-var katex = require('../lib/katex/katex-modified.min.js')
+var katex = require('../lib/katex/katex-modified.min.js');
 
 /** 
     @class

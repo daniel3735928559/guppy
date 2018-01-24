@@ -11,11 +11,11 @@ case "$op" in
   cp -r lib/icons/ build
   ;;
 "build-final")
-  ./node_modules/.bin/browserify src/guppy.js -o build/guppy.min.js --standalone Guppy
-  ./node_modules/.bin/browserify src/osk.js -o build/guppy_osk.js --standalone GuppyOSK
-  cat lib/katex/katex-modified.min.css > build/guppy-none.min.css
-  cat lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css
-  cat lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
+  ./node_modules/.bin/browserify src/guppy.js --standalone Guppy | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false > build/guppy.min.js
+  ./node_modules/.bin/browserify src/osk.js --standalone GuppyOSK | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false  > build/guppy_osk.js
+  ./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css > build/guppy-none.min.css
+  ./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css
+  ./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
   cp -r lib/katex/fonts build
   cp -r lib/icons/ build
   ;;
