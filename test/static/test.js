@@ -988,7 +988,7 @@ function do_mouse_up(){
 function append_result(name, result, i){
     var res = document.getElementById("results");
     var d = document.createElement("div");
-    d.setAttribute("style","padding:5px;background-color:"+(result == "PASS" ? "#6c0" : "#f30"));
+    d.setAttribute("style","white-space:pre;font-family:monospace;padding:5px;background-color:"+(result == "PASS" ? "#6c0" : "#f30"));
     var rerun = document.createElement("a");
     rerun.appendChild(document.createTextNode(name));
     rerun.setAttribute("href","#");

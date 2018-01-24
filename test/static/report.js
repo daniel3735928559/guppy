@@ -1,7 +1,7 @@
 function send_report()
 {
     var data = window.__coverage__;
-    console.log("A",data);
+    console.log("Reporting", data);
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function(){
         if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
@@ -15,7 +15,7 @@ function send_report()
 		iframe.src = iframe.src;
 	    });
 	}
-	else console.log("ONO",xmlHttp.readyState, xmlHttp.status);
+	else console.log("Reporting to coverage server failed", xmlHttp.readyState, xmlHttp.status);
     }
     xmlHttp.open("post", "/coverage/client"); 
     xmlHttp.setRequestHeader("Content-Type", "application/json");
