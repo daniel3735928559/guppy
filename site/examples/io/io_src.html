@@ -14,6 +14,7 @@
 		 if(type == "xml") Guppy("guppy1").engine.set_content(data);
 		 if(type == "ast") Guppy("guppy1").import_syntax_tree(JSON.parse(data));
 		 if(type == "text") Guppy("guppy1").import_text(data);
+		 if(type == "latex") Guppy("guppy1").import_latex(data);
 		 Guppy("guppy1").render(true);
 		 document.getElementById("res").innerHTML = "";
 	     }
@@ -43,6 +44,7 @@
       &lt;div class="label"&gt;Input: &lt;/div&gt;&lt;input type="text" id="input_field" placeholder="Enter math here"&gt;&lt;/input&gt;&lt;br /&gt;
 	&lt;div class="label"&gt;Import: &lt;/div&gt;&lt;div class="button" onclick="input('clear')"&gt;Clear&lt;/div&gt;
 	&lt;div class="button" onclick="input('text')"&gt;Plain text&lt;/div&gt;
+	&lt;div class="button" onclick="input('latex')"&gt;Semantic LaTeX&lt;/div&gt;
 	&lt;div class="button" onclick="input('ast')"&gt;AST&lt;/div&gt;
 	&lt;div class="button" onclick="input('xml')"&gt;XML&lt;/div&gt;&lt;br /&gt;
 	&lt;div class="label"&gt;Edit: &lt;/div&gt;&lt;div id="guppy1" class="answerbox"&gt;&lt;/div&gt;&lt;br /&gt;

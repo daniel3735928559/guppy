@@ -1,6 +1,7 @@
 var katex = require('../lib/katex/katex-modified.min.js');
 var AST = require('./ast.js');
 var Symbols = require('./symbols.js');
+var Parsers = require('./parser.js');
 
 /**
    @class
@@ -76,15 +77,18 @@ Doc.prototype.evaluate = function(evaluators){
 }
 
 Doc.prototype.import_text = function(text, syms, s2n){
-    var tokens = AST.tokenise_text(text);
-    var ast = AST.parse_text(tokens);
+    var ast = Parsers.TextParser.tokenise_and_parse(text);
+    this.import_ast(ast, syms, s2n);
+}
+
+Doc.prototype.import_latex = function(text, syms, s2n){
+    var ast = Parsers.LaTeXParser.tokenise_and_parse(text);
     this.import_ast(ast, syms, s2n);
 }
 
 Doc.prototype.import_ast = function(ast, syms, s2n){
     syms = syms || Symbols.symbols;
     s2n = s2n || Symbols.symbol_to_node;
-    console.log("AST",ast);
     var doc = AST.to_xml(ast, syms, s2n);
     this.base = doc;
     this.ensure_text_nodes();
@@ -106,7 +110,6 @@ Doc.prototype.syntax_tree = function(n){
             //else ans.args.push(this.syntax_tree(nn))
             ans.args.push(this.syntax_tree(nn))
         }
-        //console.log("F",JSON.stringify(ans))
     }
     else if(n.nodeName == "l"){
         ans = [];
@@ -123,14 +126,13 @@ Doc.prototype.syntax_tree = function(n){
             var tokens = []
             for(nn = n.firstChild; nn != null; nn = nn.nextSibling){
                 if(nn.nodeName == "e"){
-                    tokens = tokens.concat(AST.tokenise_e(nn.firstChild.textContent));
+                    tokens = tokens.concat(Parsers.EParser.tokenise(nn.firstChild.textContent));
                 }
                 else if(nn.nodeName == "f"){
                     tokens.push(this.syntax_tree(nn));
                 }
             }
-            //console.log("TOK",tokens);
-            ans = AST.parse_e(tokens);
+            ans = Parsers.EParser.parse(tokens);
         }
     }
     return ans;

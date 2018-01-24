@@ -570,13 +570,11 @@ Guppy.prototype.render_node = function(t){
 */
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.engine.doc.is_blank()){
-	console.log("A",this.engine.setting("empty_content"));
         katex.render(this.engine.setting("empty_content"),this.editor);
         this.editor.appendChild(this.buttons_div);
         return;
     }
     var tex = this.render_node("render");
-    console.log(tex);
     katex.render(tex,this.editor);
     this.editor.appendChild(this.buttons_div);
     if(updated){
@@ -715,6 +713,18 @@ Guppy.prototype.vars = function(){
 */
 Guppy.prototype.import_text = function(text){
     return this.engine.import_text(text);
+}
+
+/** 
+    Set the content of the document from input text in "semantic
+    LaTeX" format.  That is, all functions are represented as
+    `\funcname{arg1}{arg2}`.  For example,
+    `\definite_integral{1}{2}{x^2}{x}`.
+    @param {String} text - A string representing the document to import.
+    @memberof Guppy
+*/
+Guppy.prototype.import_latex = function(text){
+    return this.engine.import_latex(text);
 }
 
 /** 

@@ -540,7 +540,7 @@ var tests = [
     {
 	"description":"export_text",
 	"type":"text",
-	"expected":"definite_integral(1,2,((x^2) + 1),x)",
+	"expected":"defintegral(1,2,((x^2) + 1),x)",
 	"run":function(g){
 	    do_keys(['d','e','f','i','1','right','2','right','x','^','2','right','+','1','right','x']);
 	}
@@ -556,7 +556,7 @@ var tests = [
     {
 	"description":"export_ast",
 	"type":"ast",
-	"expected":`["definite_integral",[["val",[1]],["val",[2]],["+",[["exponential",[["var",["x"]],["val",[2]]]],["val",[1]]]],["var",["x"]]]]`,
+	"expected":`["defintegral",[["val",[1]],["val",[2]],["+",[["exponential",[["var",["x"]],["val",[2]]]],["val",[1]]]],["var",["x"]]]]`,
 	"run":function(g){
 	    do_keys(['d','e','f','i','1','right','2','right','x','^','2','right','+','1','right','x']);
 	}
@@ -575,6 +575,22 @@ var tests = [
 	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
 	"run":function(g){
 	    Guppy("guppy1").import_text("x-sin(x)");
+	}
+    },
+    {
+	"description":"import_latex",
+	"type":"ast",
+	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
+	"run":function(g){
+	    Guppy("guppy1").import_latex("x-\\sin{x}");
+	}
+    },
+    {
+	"description":"import_latex_matrix",
+	"type":"ast",
+	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
+	"run":function(g){
+	    Guppy("guppy1").import_latex("\\matrix{\\list{\\list{1}{2}}{\\list{3}{4}}}");
 	}
     },
     {
@@ -682,9 +698,9 @@ var tests = [
     {
 	"description":"import_ast matrix",
 	"type":"text",
-	"expected":"matrix(list(list((pi / 2),(x^2)),list(definite_integral(1,2,square_root(x),x),sin(x))))",
+	"expected":"matrix(list(list((pi / 2),(x^2)),list(defintegral(1,2,squareroot(x),x),sin(x))))",
 	"run":function(g){
-	    Guppy("guppy1").import_syntax_tree(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["definite_integral",[["val",[1]],["val",[2]],["square_root",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
+	    Guppy("guppy1").import_syntax_tree(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["defintegral",[["val",[1]],["val",[2]],["squareroot",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
 	}
     },
     {
@@ -824,7 +840,7 @@ var tests = [
 	"observe":function(g){
 	    return g.syntax_tree();
 	},
-	"expected":`["=",[["square_root",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]`,
+	"expected":`["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]`,
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -844,7 +860,7 @@ var tests = [
 	"observe":function(g){
 	    return g.equations();
 	},
-	"expected":`[["=",[["square_root",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]]`,
+	"expected":`[["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]]`,
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -854,7 +870,7 @@ var tests = [
 	"observe":function(g){
 	    return g.text();
 	},
-	"expected":"square_root((-x + (2 * y))) = z",
+	"expected":"squareroot((-x + (2 * y))) = z",
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -864,7 +880,7 @@ var tests = [
 	"observe":function(g){
 	    return g.xml();
 	},
-	"expected":`<m><e></e><f type="square_root" group="functions"><b p="latex">\\sqrt{<r ref="1"/>\\phantom{\\tiny{!}}}</b><b p="asciimath">sqrt(<r ref="1"/>)</b><c delete="1"><e>-x+2y</e></c></f><e></e><f group="operations" char="yes" type="=" ast_type="operator"><b p="latex">=</b><b p="asciimath"> = </b></f><e>z</e></m>`,
+	"expected":`<m><e></e><f type="squareroot" group="functions"><b p="latex">\\sqrt{<r ref="1"/>\\phantom{\\tiny{!}}}</b><b p="asciimath">sqrt(<r ref="1"/>)</b><c delete="1"><e>-x+2y</e></c></f><e></e><f group="operations" char="yes" type="=" ast_type="operator"><b p="latex">=</b><b p="asciimath"> = </b></f><e>z</e></m>`,
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -874,7 +890,7 @@ var tests = [
 	"observe":function(g){
 	    return JSON.stringify(g.symbols_used());
 	},
-	"expected":`["square_root","sin","exponential"]`,
+	"expected":`["squareroot","sin","exponential"]`,
 	"run":function(g){
 	    do_keys(['s','q','r','t','s','i','n','x','^','2']);
 	}

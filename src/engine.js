@@ -114,6 +114,11 @@ Engine.prototype.import_text = function(text){
     this.set_doc(this.doc);
 }
 
+Engine.prototype.import_latex = function(text){
+    this.doc.import_latex(text, this.symbols);
+    this.set_doc(this.doc);
+}
+
 Engine.prototype.import_ast = function(ast){
     this.doc.import_ast(ast, this.symbols);
     this.set_doc(this.doc);

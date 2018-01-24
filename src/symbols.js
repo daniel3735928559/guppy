@@ -106,11 +106,11 @@ Symbols.split_output = function(output){
 Symbols.add_blanks = function(output, blank){
     var out = Symbols.split_output(output);
     var ans = "";
-    for(i = 0; i < out.length; i++){
+    for(var i = 0; i < out.length; i++){
         if(out[i]["type"] == "text"){
             ans += out[i]['val'];
         }
-	else ans += blank;
+        else ans += blank;
     }
     return ans;
 }
@@ -139,7 +139,6 @@ Symbols.symbol_to_node = function(s, content, base){
         b.setAttribute("p",t);
 
         var out = Symbols.split_output(s["output"][t]);
-        console.log("OUT",out);
         for(i = 0; i < out.length; i++){
             if(out[i]["type"] == "text"){
                 if(out[i]["val"].length > 0) b.appendChild(base.createTextNode(out[i]['val']));
@@ -160,42 +159,40 @@ Symbols.symbol_to_node = function(s, content, base){
     for(i = 0; i < arglist.length; i++){
         var a = arglist[i];
         var nc;
-	if(i in content && a['separators'].length > 0) {  // If the content for this node is provided and is an array, then dig down to find the first c child
-	    f.appendChild(content[i][0]);
-	    nc = content[i][0];
-	    while(nc.nodeName != "c")
-		nc = nc.firstChild;
-	}
-	else if(i in content) {	                          // If the content for this node is provided and not an array, create the c node and populate its content
-	    var node_list = content[i];
-	    nc = base.createElement("c");
-	    for(var se = 0; se < node_list.length; se++)
+        if(i in content && a['separators'].length > 0) {  // If the content for this node is provided and is an array, then dig down to find the first c child
+            f.appendChild(content[i][0]);
+            nc = content[i][0];
+            while(nc.nodeName != "c")
+                nc = nc.firstChild;
+        }
+        else if(i in content) {                                  // If the content for this node is provided and not an array, create the c node and populate its content
+            var node_list = content[i];
+            nc = base.createElement("c");
+            for(var se = 0; se < node_list.length; se++)
                 nc.appendChild(node_list[se].cloneNode(true));
-	    f.appendChild(nc)
+            f.appendChild(nc)
         }
         else{                                             // Otherwise create the c node and possibly l nodes
-	    nc = base.createElement("c");
+            nc = base.createElement("c");
             var new_e = base.createElement("e");
             new_e.appendChild(base.createTextNode(""));
             nc.appendChild(new_e);
             var par = f;                                  // Now we add nested l elements if this is an array of dimension > 0
-	    for(j = 0; j < a['separators'].length; j++){
-		var nl = base.createElement("l");
-		nl.setAttribute("s","1");
-		par.appendChild(nl);
-		par = nl;
+            for(j = 0; j < a['separators'].length; j++){
+                var nl = base.createElement("l");
+                nl.setAttribute("s","1");
+                par.appendChild(nl);
+                par = nl;
             }
             par.appendChild(nc);
         }
         if(i+1 == first_ref) first = nc.lastChild;        // Note the first node we should visit based on the LaTeX output
         if(s['args'] && s['args'][i]){                    // Set the arguments for the c node based on the symbol
-            for(arg in s['args'][i]){
+            for(var arg in s['args'][i]){
                 nc.setAttribute(arg,s['args'][i][arg]);
             }
         }
-	console.log(JSON.stringify(a),arglist);
     }
-    console.log(f);
     return {"f":f, "first":first};
 }
 

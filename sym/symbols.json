@@ -39,7 +39,7 @@
         "latex":"\\left|{$1}\\right|",
 	"asciimath":"|{$1}|"},
      "attrs":{
-	 "type":"absolute_value",
+	 "type":"absolutevalue",
 	 "group":"functions"},
      "args":[
 	 {"delete":"1"}]
@@ -50,7 +50,7 @@
         "latex":"\\sqrt{{$1}\\phantom{\\tiny{!}}}",
         "asciimath":"sqrt({$1})"},
      "attrs":{
-	 "type":"square_root",
+	 "type":"squareroot",
 	 "group":"functions"},
      "args":[
 	 {"delete":"1"}]
@@ -146,7 +146,7 @@
         "small_latex":"\\int{{$1}}d{$2}",
 	"asciimath":"int {$1} d{$2}"},
      "attrs":{
-	 "type":"indefinite_integral",
+	 "type":"integral",
 	 "group":"calculus"},
      "args":[
 	 {"delete":"1","name":"integrand"},
@@ -160,7 +160,7 @@
         "small_latex":"\\int_{{$1}}^{{$2}}{$3}d{$4}",
 	"asciimath":"int_{{$1}}^{{$2}} {$3} d{$4}"},
      "attrs":{
-	 "type":"definite_integral",
+	 "type":"defintegral",
 	 "group":"calculus"},
      "args":[
 	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},

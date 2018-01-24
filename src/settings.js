@@ -132,7 +132,6 @@ Settings.init = function(symbols){
     for(var s in symbols){
         var latex = Symbols.add_blanks(symbols[s].output.latex, "\\blue{[?]}");
         var row = make_row("guppy_syms_table",s," ");
-	console.log("S",latex);
         katex.render(latex, row.lastChild);
     }
 }
