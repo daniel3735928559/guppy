@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../../build/guppy-default.min.css">
+    <script type="text/javascript" src="../../../build/guppy.min.js"></script>
+    <script type="text/javascript">
+     window.onload = function(){
+	 Guppy.init({"path":"../../../build",
+		     "symbols":"../../../sym/symbols.json",
+		     "callback":function(){ Guppy.Doc.render_all("text","$$"); }});
+     }
+    </script>
+</head>
+
+<body>
+    <p>You can use Guppy to render equations like $$x^2$$ and $$defintegral(0,infinity(),sin(x^2),x)$$.  </p>
+</body>
+
+</html>

@@ -247,6 +247,8 @@ Guppy.remove_global_symbol = function(name){
    will be rendered into either plain text or LaTeX (depending on
    the value of this option) and an attempt will be made to copy
    the result to the system clipboard.
+   @param {function} [config.callback] - A function to be called when
+   initialisation is complete.
 */
 Guppy.init = function(config){
     var all_ready = function(){
@@ -274,6 +276,7 @@ Guppy.init = function(config){
             Guppy.instances[j].engine.ready = true;
             Guppy.instances[j].engine.fire_event("ready");
         }
+	if(config.callback) config.callback();
     }
     if(config.settings){
         var settings = JSON.parse(JSON.stringify(config.settings));

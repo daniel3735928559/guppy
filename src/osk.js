@@ -63,7 +63,8 @@ function make_tabs(element){
 }
 
 /** 
-    Detach the keyboard from the currently attached editor (if any) and hide it.
+    Detach the keyboard from the currently attached editor (if any)
+    and hide it.
     @memberof GuppyOSK
 */
 GuppyOSK.prototype.detach = function(guppy){
