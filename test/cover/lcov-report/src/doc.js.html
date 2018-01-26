@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">74.58% </span>
+        <span class="strong">74.68% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>176/236</span>
+        <span class='fraction'>177/237</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">81.29% </span>
+        <span class="strong">81.01% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>126/155</span>
+        <span class='fraction'>128/158</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">81.82% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>18/22</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">74.27% </span>
+        <span class="strong">74.4% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>153/206</span>
+        <span class='fraction'>154/207</span>
       </div>
     </div>
   </div>
@@ -389,7 +389,10 @@
 344
 345
 346
-347</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+347
+348
+349</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -670,7 +673,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -707,6 +709,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -740,6 +744,7 @@ var AST = require('./ast.js');
 var Symbols = require('./symbols.js');
 var Utils = require('./utils.js');
 var Parsers = require('./parser.js');
+var Guppy = Guppy || {"instances":{}};
 &nbsp;
 /**
    @class
@@ -920,16 +925,16 @@ Doc.prototype.auto_bracket = function(n){
     var e0 = n.firstChild;
     var e1 = n.lastChild;
     if(n.childElementCount == 3 &amp;&amp; e0.firstChild.textContent == "" &amp;&amp; e1.firstChild.textContent == ""){ // single f child, all e children empty
-	var f = e0.nextSibling;
-	var cs = f.getElementsByTagName("c");
-	if(cs.length == 1 &amp;&amp; cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
-	if(Utils.is_char(f) &amp;&amp; e0.getAttribute("current") != "yes" &amp;&amp; e0.getAttribute("temp") != "yes" &amp;&amp; e1.getAttribute("current") != "yes" &amp;&amp; e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
+        var f = e0.nextSibling;
+        var cs = f.getElementsByTagName("c");
+        if(cs.length == 1 &amp;&amp; cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
+        if(Utils.is_char(f) &amp;&amp; e0.getAttribute("current") != "yes" &amp;&amp; e0.getAttribute("temp") != "yes" &amp;&amp; e1.getAttribute("current") != "yes" &amp;&amp; e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
     }
     else <span class="missing-if-branch" title="else path not taken" >E</span>if(n.childElementCount == 1){ // Single e child
-	var s = e0.firstChild.textContent;
-	if(s.length != 1 &amp;&amp; Number(s)+"" != s) return true; // If content is neither a single character nor a number, bracket it
-	if(e0.getAttribute("current") == "yes" || e0.getAttribute("temp") == "yes") return true; // If content has the cursor or temp cursor, bracket it
-	return false;
+        var s = e0.firstChild.textContent;
+        if(s.length != 1 &amp;&amp; Number(s)+"" != s) return true; // If content is neither a single character nor a number, bracket it
+        if(e0.getAttribute("current") == "yes" || e0.getAttribute("temp") == "yes") return true; // If content has the cursor or temp cursor, bracket it
+        return false;
     }
     return true;
 }
@@ -996,72 +1001,73 @@ Doc.prototype.manual_render = function(t,n,r){
 Doc.render_all = function(t, delim)<span class="fstat-no" title="function not covered" >{</span>
     var l,i,n,d,s,ans = <span class="cstat-no" title="statement not covered" >[];</span>
 <span class="cstat-no" title="statement not covered" >    if(t == "xml"){</span>
-<span class="cstat-no" title="statement not covered" >	l = document.getElementsByTagName("script");</span>
-<span class="cstat-no" title="statement not covered" >	for(i = 0; i &lt; l.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >        l = document.getElementsByTagName("script");</span>
+<span class="cstat-no" title="statement not covered" >        for(i = 0; i &lt; l.length; i++){</span>
 <span class="cstat-no" title="statement not covered" >            if(l[i].getAttribute("type") == "text/guppy_xml"){</span>
-<span class="cstat-no" title="statement not covered" >		n = l[i];</span>
-<span class="cstat-no" title="statement not covered" >		d = new Doc(n.innerHTML);</span>
-<span class="cstat-no" title="statement not covered" >		s = document.createElement("span");</span>
-<span class="cstat-no" title="statement not covered" >		s.setAttribute("id","guppy-xml-render-"+ans.length);</span>
-<span class="cstat-no" title="statement not covered" >		katex.render(d.get_content("latex"), s);</span>
-<span class="cstat-no" title="statement not covered" >		n.parentNode.insertBefore(s, n);</span>
-<span class="cstat-no" title="statement not covered" >		n.parentNode.removeChild(n);</span>
-<span class="cstat-no" title="statement not covered" >		ans.push({"container":s, "doc":d})</span>
+<span class="cstat-no" title="statement not covered" >                n = l[i];</span>
+<span class="cstat-no" title="statement not covered" >                d = new Doc(n.innerHTML);</span>
+<span class="cstat-no" title="statement not covered" >                s = document.createElement("span");</span>
+<span class="cstat-no" title="statement not covered" >                s.setAttribute("id","guppy-xml-render-"+ans.length);</span>
+<span class="cstat-no" title="statement not covered" >                katex.render(d.get_content("latex"), s);</span>
+<span class="cstat-no" title="statement not covered" >                n.parentNode.insertBefore(s, n);</span>
+<span class="cstat-no" title="statement not covered" >                n.parentNode.removeChild(n);</span>
+<span class="cstat-no" title="statement not covered" >                ans.push({"container":s, "doc":d})</span>
             }
-	}
+        }
     }
     else {
-	var subs = <span class="cstat-no" title="statement not covered" >function(node) <span class="fstat-no" title="function not covered" >{</span></span>
-<span class="cstat-no" title="statement not covered" >	    if(!node) <span class="cstat-no" title="statement not covered" >return;</span></span>
-	    var excludeElements = <span class="cstat-no" title="statement not covered" >['script', 'style', 'iframe', 'canvas'];</span>
-	    var child = <span class="cstat-no" title="statement not covered" >node.firstChild;</span>
-<span class="cstat-no" title="statement not covered" >	    do {</span>
-<span class="cstat-no" title="statement not covered" >		switch (node.nodeType) {</span>
-		case 1:
-		    // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
-<span class="cstat-no" title="statement not covered" >		    if (excludeElements.indexOf(node.tagName.toLowerCase()) &gt; -1 || (" "+n.getAttribute("class")+" ").indexOf(" katex ") &gt; -1 || Guppy.instances[n.getAttribute("id")]) {</span>
-<span class="cstat-no" title="statement not covered" >		    	continue;</span>
-		    }
-<span class="cstat-no" title="statement not covered" >		    subs(node.firstChild);</span>
-<span class="cstat-no" title="statement not covered" >		    break;</span>
-		case 3:
-		    var text_node = <span class="cstat-no" title="statement not covered" >node;</span>
-<span class="cstat-no" title="statement not covered" >		    offset = text_node.textContent.indexOf(delim);</span>
-<span class="cstat-no" title="statement not covered" >		    while(offset &gt; -1){</span>
-			var next = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length).indexOf(delim);</span>
-<span class="cstat-no" title="statement not covered" >			if(next == -1) <span class="cstat-no" title="statement not covered" >break;</span></span>
-			var before = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(0,offset);</span>
-			var content = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length,offset+delim.length+next);</span>
-			var after = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length+next+delim.length);</span>
+        var subs = <span class="cstat-no" title="statement not covered" >function(node) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >            if(!node) <span class="cstat-no" title="statement not covered" >return;</span></span>
+            var excludeElements = <span class="cstat-no" title="statement not covered" >['script', 'style', 'iframe', 'canvas'];</span>
+<span class="cstat-no" title="statement not covered" >            do {</span>
+<span class="cstat-no" title="statement not covered" >                switch (node.nodeType) {</span>
+                case 1:
+                    // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
+<span class="cstat-no" title="statement not covered" >                    if (excludeElements.indexOf(node.tagName.toLowerCase()) &gt; -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") &gt; -1 || Guppy.instances[node.getAttribute("id")]) {</span>
+<span class="cstat-no" title="statement not covered" >                            continue;</span>
+                    }
+<span class="cstat-no" title="statement not covered" >                    subs(node.firstChild);</span>
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+                case 3:
+                    var text_node = <span class="cstat-no" title="statement not covered" >node;</span>
+                    var offset = <span class="cstat-no" title="statement not covered" >text_node.textContent.indexOf(delim);</span>
+<span class="cstat-no" title="statement not covered" >                    while(offset &gt; -1){</span>
+                        var next = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length).indexOf(delim);</span>
+<span class="cstat-no" title="statement not covered" >                        if(next == -1) <span class="cstat-no" title="statement not covered" >break;</span></span>
+                        var before = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(0,offset);</span>
+                        var content = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length,offset+delim.length+next);</span>
+                        var after = <span class="cstat-no" title="statement not covered" >text_node.textContent.substring(offset+delim.length+next+delim.length);</span>
 &nbsp;
-			// Make the span to render the doc in
-			var s = <span class="cstat-no" title="statement not covered" >document.createElement("span");</span>
-<span class="cstat-no" title="statement not covered" >			s.setAttribute("id","guppy-"+t+"-render-"+ans.length);</span>
+                        // Make the span to render the doc in
+                        var s = <span class="cstat-no" title="statement not covered" >document.createElement("span");</span>
+<span class="cstat-no" title="statement not covered" >                        s.setAttribute("id","guppy-"+t+"-render-"+ans.length);</span>
 &nbsp;
-			// Create the document
-<span class="cstat-no" title="statement not covered" >			d = new Doc(content,t);</span>
-			
-			// Render the doc
-<span class="cstat-no" title="statement not covered" >			katex.render(d.get_content("latex"), s);</span>
-			var new_node = <span class="cstat-no" title="statement not covered" >document.createTextNode(after)</span>
-<span class="cstat-no" title="statement not covered" >			text_node.parentNode.insertBefore(document.createTextNode(before), text_node);</span>
-<span class="cstat-no" title="statement not covered" >			text_node.parentNode.insertBefore(s, text_node);</span>
-<span class="cstat-no" title="statement not covered" >			text_node.parentNode.insertBefore(new_node, text_node);</span>
-<span class="cstat-no" title="statement not covered" >			text_node.parentNode.removeChild(text_node);</span>
-<span class="cstat-no" title="statement not covered" >			text_node = new_node;</span>
-<span class="cstat-no" title="statement not covered" >			ans.push({"container":s, "doc":d})</span>
+                        // Create the document
+<span class="cstat-no" title="statement not covered" >                        d = new Doc(content,t);</span>
+                        
+                        // Render the doc
+<span class="cstat-no" title="statement not covered" >                        katex.render(d.get_content("latex"), s);</span>
+                        var new_node = <span class="cstat-no" title="statement not covered" >document.createTextNode(after)</span>
+<span class="cstat-no" title="statement not covered" >                        text_node.parentNode.insertBefore(document.createTextNode(before), text_node);</span>
+<span class="cstat-no" title="statement not covered" >                        text_node.parentNode.insertBefore(s, text_node);</span>
+<span class="cstat-no" title="statement not covered" >                        text_node.parentNode.insertBefore(new_node, text_node);</span>
+<span class="cstat-no" title="statement not covered" >                        text_node.parentNode.removeChild(text_node);</span>
+<span class="cstat-no" title="statement not covered" >                        text_node = new_node;</span>
+<span class="cstat-no" title="statement not covered" >                        ans.push({"container":s, "doc":d})</span>
 &nbsp;
-			// Place the right data in the remainder of the node
-<span class="cstat-no" title="statement not covered" >			text_node.textContent = text_node.textContent.substring(next-offset+delim.length);</span>
-<span class="cstat-no" title="statement not covered" >			offset = text_node.textContent.indexOf(delim);</span>
-		    }
-<span class="cstat-no" title="statement not covered" >		    break;</span>
-		}
-	    } while (node = node.nextSibling);
+                        // Place the right data in the remainder of the node
+<span class="cstat-no" title="statement not covered" >                        text_node.textContent = text_node.textContent.substring(next-offset+delim.length);</span>
+<span class="cstat-no" title="statement not covered" >                        offset = text_node.textContent.indexOf(delim);</span>
+                    }
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+		default:
+<span class="cstat-no" title="statement not covered" >                    break;</span>
+                }
+            } while ((node = node.nextSibling));
 &nbsp;
-	}
-<span class="cstat-no" title="statement not covered" >	delim = delim || "$$";</span>
-<span class="cstat-no" title="statement not covered" >	subs(document.documentElement);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        delim = delim || "$$";</span>
+<span class="cstat-no" title="statement not covered" >        subs(document.documentElement);</span>
     }
 <span class="cstat-no" title="statement not covered" >    return ans;</span>
 }
@@ -1087,7 +1093,7 @@ module.exports = Doc;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 26 2018 04:52:52 GMT+0000 (UTC)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 26 2018 06:41:09 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../prettify.js"></script>

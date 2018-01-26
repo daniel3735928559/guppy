@@ -2,6 +2,7 @@ op="$1"
 
 case "$op" in
 "build-debug")
+  [[ ! -d build ]] && mkdir build
   ./node_modules/.bin/browserify src/guppy.js -o build/guppy.min.js --standalone Guppy -d
   ./node_modules/.bin/browserify src/osk.js -o build/guppy_osk.js --standalone GuppyOSK -d
   cat lib/katex/katex-modified.min.css > build/guppy-none.min.css
@@ -11,6 +12,7 @@ case "$op" in
   cp -r lib/icons/ build
   ;;
 "build-final")
+  [[ ! -d build ]] && mkdir build
   ./node_modules/.bin/browserify src/guppy.js --standalone Guppy | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false > build/guppy.min.js
   ./node_modules/.bin/browserify src/osk.js --standalone GuppyOSK | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false  > build/guppy_osk.js
   ./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css > build/guppy-none.min.css

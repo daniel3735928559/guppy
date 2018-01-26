@@ -376,11 +376,12 @@ Engine.prototype.insert_symbol = function(sym_name){
     var to_remove = [];
     var to_replace = null;
     var replace_f = false;
+    var sel;
     
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
-            var sel = this.sel_get();
+            sel = this.sel_get();
             to_remove = sel.involved;
             left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
             right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
@@ -408,7 +409,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     }
     if(!replace_f && (left_piece == null || right_piece == null)){
         if(this.sel_status != Engine.SEL_NONE){
-            var sel = this.sel_get();
+            sel = this.sel_get();
             to_remove = sel.involved;
             left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
             right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));

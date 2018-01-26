@@ -3,6 +3,7 @@ var AST = require('./ast.js');
 var Symbols = require('./symbols.js');
 var Utils = require('./utils.js');
 var Parsers = require('./parser.js');
+var Guppy = Guppy || {"instances":{}};
 
 /**
    @class
@@ -183,16 +184,16 @@ Doc.prototype.auto_bracket = function(n){
     var e0 = n.firstChild;
     var e1 = n.lastChild;
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
-	var f = e0.nextSibling;
-	var cs = f.getElementsByTagName("c");
-	if(cs.length == 1 && cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
-	if(Utils.is_char(f) && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
+        var f = e0.nextSibling;
+        var cs = f.getElementsByTagName("c");
+        if(cs.length == 1 && cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
+        if(Utils.is_char(f) && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
     }
     else if(n.childElementCount == 1){ // Single e child
-	var s = e0.firstChild.textContent;
-	if(s.length != 1 && Number(s)+"" != s) return true; // If content is neither a single character nor a number, bracket it
-	if(e0.getAttribute("current") == "yes" || e0.getAttribute("temp") == "yes") return true; // If content has the cursor or temp cursor, bracket it
-	return false;
+        var s = e0.firstChild.textContent;
+        if(s.length != 1 && Number(s)+"" != s) return true; // If content is neither a single character nor a number, bracket it
+        if(e0.getAttribute("current") == "yes" || e0.getAttribute("temp") == "yes") return true; // If content has the cursor or temp cursor, bracket it
+        return false;
     }
     return true;
 }
@@ -259,72 +260,73 @@ Doc.prototype.manual_render = function(t,n,r){
 Doc.render_all = function(t, delim){
     var l,i,n,d,s,ans = [];
     if(t == "xml"){
-	l = document.getElementsByTagName("script");
-	for(i = 0; i < l.length; i++){
+        l = document.getElementsByTagName("script");
+        for(i = 0; i < l.length; i++){
             if(l[i].getAttribute("type") == "text/guppy_xml"){
-		n = l[i];
-		d = new Doc(n.innerHTML);
-		s = document.createElement("span");
-		s.setAttribute("id","guppy-xml-render-"+ans.length);
-		katex.render(d.get_content("latex"), s);
-		n.parentNode.insertBefore(s, n);
-		n.parentNode.removeChild(n);
-		ans.push({"container":s, "doc":d})
+                n = l[i];
+                d = new Doc(n.innerHTML);
+                s = document.createElement("span");
+                s.setAttribute("id","guppy-xml-render-"+ans.length);
+                katex.render(d.get_content("latex"), s);
+                n.parentNode.insertBefore(s, n);
+                n.parentNode.removeChild(n);
+                ans.push({"container":s, "doc":d})
             }
-	}
+        }
     }
     else {
-	var subs = function(node) {
-	    if(!node) return;
-	    var excludeElements = ['script', 'style', 'iframe', 'canvas'];
-	    var child = node.firstChild;
-	    do {
-		switch (node.nodeType) {
-		case 1:
-		    // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
-		    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+n.getAttribute("class")+" ").indexOf(" katex ") > -1 || Guppy.instances[n.getAttribute("id")]) {
-		    	continue;
-		    }
-		    subs(node.firstChild);
-		    break;
-		case 3:
-		    var text_node = node;
-		    offset = text_node.textContent.indexOf(delim);
-		    while(offset > -1){
-			var next = text_node.textContent.substring(offset+delim.length).indexOf(delim);
-			if(next == -1) break;
-			var before = text_node.textContent.substring(0,offset);
-			var content = text_node.textContent.substring(offset+delim.length,offset+delim.length+next);
-			var after = text_node.textContent.substring(offset+delim.length+next+delim.length);
+        var subs = function(node) {
+            if(!node) return;
+            var excludeElements = ['script', 'style', 'iframe', 'canvas'];
+            do {
+                switch (node.nodeType) {
+                case 1:
+                    // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
+                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1 || Guppy.instances[node.getAttribute("id")]) {
+                            continue;
+                    }
+                    subs(node.firstChild);
+                    break;
+                case 3:
+                    var text_node = node;
+                    var offset = text_node.textContent.indexOf(delim);
+                    while(offset > -1){
+                        var next = text_node.textContent.substring(offset+delim.length).indexOf(delim);
+                        if(next == -1) break;
+                        var before = text_node.textContent.substring(0,offset);
+                        var content = text_node.textContent.substring(offset+delim.length,offset+delim.length+next);
+                        var after = text_node.textContent.substring(offset+delim.length+next+delim.length);
 
-			// Make the span to render the doc in
-			var s = document.createElement("span");
-			s.setAttribute("id","guppy-"+t+"-render-"+ans.length);
+                        // Make the span to render the doc in
+                        var s = document.createElement("span");
+                        s.setAttribute("id","guppy-"+t+"-render-"+ans.length);
 
-			// Create the document
-			d = new Doc(content,t);
-			
-			// Render the doc
-			katex.render(d.get_content("latex"), s);
-			var new_node = document.createTextNode(after)
-			text_node.parentNode.insertBefore(document.createTextNode(before), text_node);
-			text_node.parentNode.insertBefore(s, text_node);
-			text_node.parentNode.insertBefore(new_node, text_node);
-			text_node.parentNode.removeChild(text_node);
-			text_node = new_node;
-			ans.push({"container":s, "doc":d})
+                        // Create the document
+                        d = new Doc(content,t);
+                        
+                        // Render the doc
+                        katex.render(d.get_content("latex"), s);
+                        var new_node = document.createTextNode(after)
+                        text_node.parentNode.insertBefore(document.createTextNode(before), text_node);
+                        text_node.parentNode.insertBefore(s, text_node);
+                        text_node.parentNode.insertBefore(new_node, text_node);
+                        text_node.parentNode.removeChild(text_node);
+                        text_node = new_node;
+                        ans.push({"container":s, "doc":d})
 
-			// Place the right data in the remainder of the node
-			text_node.textContent = text_node.textContent.substring(next-offset+delim.length);
-			offset = text_node.textContent.indexOf(delim);
-		    }
-		    break;
-		}
-	    } while (node = node.nextSibling);
+                        // Place the right data in the remainder of the node
+                        text_node.textContent = text_node.textContent.substring(next-offset+delim.length);
+                        offset = text_node.textContent.indexOf(delim);
+                    }
+                    break;
+		default:
+                    break;
+                }
+            } while ((node = node.nextSibling));
 
-	}
-	delim = delim || "$$";
-	subs(document.documentElement);
+        }
+        delim = delim || "$$";
+        subs(document.documentElement);
     }
     return ans;
 }
