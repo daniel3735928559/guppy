@@ -214,8 +214,8 @@ arrow should bring us to the second argument (the first subscript):
 ```
 "RCT":
 {"output":{
-    "latex":"R^{{$1}}_{{$2}{$3}{$4}}",
-	"asciimath":"R^{{$1}}_{{$2}{$3}{$4}}"},
+    "latex":"R^{{$1}}_{ {$2}{$3}{$4} }",
+	"asciimath":"R^{{$1}}_{ {$2}{$3}{$4} }"},
  "attrs":{
     "type":"riemanncurvature",
 	"group":"physics"},
