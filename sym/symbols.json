@@ -85,8 +85,7 @@
     {"output":{
         "latex":"{$1}!",
 	"asciimath":"({$1})!"},
-     "current":{
-	 "index":1},
+     "input":1,
      "attrs":{
 	 "type":"factorial",
 	 "group":"functions"},
@@ -98,8 +97,7 @@
     {"output":{
         "latex":"{{$1}}^{{$2}}",
 	"asciimath":"({$1})^({$2})"},
-     "current":{
-	 "index":1},
+     "input":1,
      "attrs":{
 	 "type":"exponential",
 	 "group":"functions"},
@@ -113,8 +111,7 @@
     {"output":{
         "latex":"{{$1}}_{{$2}}",
 	"asciimath":"{$1}{$2}"},
-     "current":{
-	 "index":1},
+     "input":1,
      "attrs":{
 	 "type":"subscript",
 	 "group":"functions"},
@@ -129,8 +126,7 @@
         "latex":"\\dfrac{{$1}}{{$2}}",
         "small_latex":"\\frac{{$1}}{{$2}}",
 	"asciimath":"({$1})/({$2})"},
-     "current":{
-	 "index":1},
+     "input":1,
      "attrs":{
 	 "type":"fraction",
 	 "group":"functions"},
@@ -250,7 +246,6 @@
         "latex":"\\cdot",
 	"asciimath":"*"},
      "attrs":{
-	 "char":"yes",
 	 "group":"operations",
 	 "type":"*"},
      "ast":{
@@ -260,7 +255,6 @@
     "infinity":{"output":{"latex":"\\infty",
 			  "asciimath":"oo"},
 		"attrs":{"group":"qwerty",
-			 "char":"yes",
 			 "type":"infinity"}
 	       },
     
@@ -288,14 +282,12 @@
 			   "asciimath":" {$name} "},
 		 "attrs":{
 		     "group":"greek",
-		     "char":"yes",
 		     "type":"{$name}"}},
 
 	"binop":{"output":{"latex":"{$latex}",
 			   "asciimath":"{$asciimath}"},
 		 "attrs":{
 		     "group":"operations",
-		     "char":"yes",
 		     "type":"{$type}"},
 		 "ast":{
 		     "type":"operator"}}

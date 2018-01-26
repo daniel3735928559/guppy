@@ -193,7 +193,7 @@ Symbols.symbol_to_node = function(s, content, base){
             }
         }
     }
-    return {"f":f, "first":first};
+    return {"f":f, "first":first, "args":arglist};
 }
 
 

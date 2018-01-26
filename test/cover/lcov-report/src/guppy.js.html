@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.85% </span>
+        <span class="strong">87.47% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>405/461</span>
+        <span class='fraction'>405/463</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">66.18% </span>
+        <span class="strong">65.55% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>137/207</span>
+        <span class='fraction'>137/209</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">94.23% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>49/52</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">91.06% </span>
+        <span class="strong">91.08% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>377/414</span>
+        <span class='fraction'>378/415</span>
       </div>
     </div>
   </div>
@@ -1178,9 +1178,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
@@ -1202,6 +1199,8 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1283,6 +1282,7 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1507,8 +1507,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -2100,13 +2100,10 @@ Guppy.make_button = function(url, cb){
     symbol type, suitable for searching and text rendering.
     @param {string} symbol.attrs.group - The group in which to place
     this symbol (for OSK)
-    @param {string} [symbol.attrs.char] - `"yes"` or `"no"`.  Whether
-    or not the symbol is a character (such as pi).
-    @param {Object} [symbol.current] - If the symbol should subsume
-    part of the existing content of the editor (as in, for example,
-    the case of exponent), this object will describe how.
-    @param {Object} [symbol.current.index] - The index of the argument
-    (starting with 1) in which the content should be placed.
+    @param {Object} [symbol.input] - If the symbol should subsume part
+    of the existing content of the editor (as in, for example, the
+    case of exponent), this object will contain the (1-based) index of
+    the argument in which that content should be placed.
     @param {Object} [symbol.ast] - Modifies the default construction
     of an entry in the AST for this symbol.  
     @param {Object} [symbol.ast.type="operator"] - The type of symbol
@@ -2220,6 +2217,8 @@ Guppy.remove_global_symbol = function(name){
    will be rendered into either plain text or LaTeX (depending on
    the value of this option) and an attempt will be made to copy
    the result to the system clipboard.
+   @param {function} [config.callback] - A function to be called when
+   initialisation is complete.
 */
 Guppy.init = function(config){
     var all_ready = function(){
@@ -2247,6 +2246,7 @@ Guppy.init = function(config){
             Guppy.instances[j].engine.ready = true;
             Guppy.instances[j].engine.fire_event("ready");
         }
+	<span class="missing-if-branch" title="if path not taken" >I</span>if(config.callback) <span class="cstat-no" title="statement not covered" >config.callback();</span>
     }
     <span class="missing-if-branch" title="if path not taken" >I</span>if(config.settings){
         var settings = <span class="cstat-no" title="statement not covered" >JSON.parse(JSON.stringify(config.settings));</span>
@@ -2472,7 +2472,7 @@ Guppy.mouse_down = function(e){
 &nbsp;
 Guppy.mouse_move = function(e){
     var g = Guppy.active_guppy;
-    if(!g) return;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if(!g) <span class="cstat-no" title="statement not covered" >return;</span>
     <span class="missing-if-branch" title="else path not taken" >E</span>if(!Guppy.kb.is_mouse_down){
         var bb = g.editor;
         var rect = bb.getBoundingClientRect();
@@ -2619,7 +2619,7 @@ Guppy.prototype.doc = function()<span class="fstat-no" title="function not cover
     supplied, default interpretations will be given for the following
     symbols: `*,+,/,-,^,sqrt,sin,cos,tan,log`
     @param {Object} [evaluators] - An object with a key for each
-    possible symbol type ("exponential", "indefinite_integral", etc.)
+    possible symbol type ("exponential", "integral", etc.)
     whose values are functions.  These functions take in a single
     argument, `args`, which is an array of that symbol's arguments,
     and should return a function that takes in an object argument
@@ -2644,7 +2644,7 @@ Guppy.prototype.func = function(evaluators){
 /** 
     Recursively evaluate the syntax tree of the editor's contents using specified functions.
     @param {Object} [evaluators] - An object with a key for each
-    possible symbol type ("exponential", "indefinite_integral", etc.)
+    possible symbol type ("exponential", "integral", etc.)
     whose values are functions that will be applied whenever that
     symbol is encountered in the syntax tree.  These functions take a
     single argument, `args`, which is a list of the results of
@@ -2692,7 +2692,7 @@ Guppy.prototype.import_text = function(text){
     Set the content of the document from input text in "semantic
     LaTeX" format.  That is, all functions are represented as
     `\funcname{arg1}{arg2}`.  For example,
-    `\definite_integral{1}{2}{x^2}{x}`.
+    `\defintegral{1}{2}{x^2}{x}`.
     @param {String} text - A string representing the document to import.
     @memberof Guppy
 */
@@ -2941,7 +2941,7 @@ module.exports = Guppy;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Jan 24 2018 05:11:03 GMT+0000 (UTC)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 26 2018 04:52:52 GMT+0000 (UTC)
 </div>
 </div>
 <script src="../prettify.js"></script>

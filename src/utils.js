@@ -29,6 +29,13 @@ Utils.is_text = function(nn){
     return nn.parentNode.hasAttribute("mode") && (nn.parentNode.getAttribute("mode") == "text" || nn.parentNode.getAttribute("mode") == "symbol");
 }
 
+Utils.is_char = function(nn){
+    for(var n = nn.firstChild; n; n = n.nextSibling){
+	if(n.nodeName == "c" || n.nodeName == "l") return false;
+    }
+    return true;
+}
+
 Utils.is_symbol = function(nn){
     return nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "symbol";
 }

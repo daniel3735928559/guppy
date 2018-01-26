@@ -127,13 +127,10 @@ Guppy.make_button = function(url, cb){
     symbol type, suitable for searching and text rendering.
     @param {string} symbol.attrs.group - The group in which to place
     this symbol (for OSK)
-    @param {string} [symbol.attrs.char] - `"yes"` or `"no"`.  Whether
-    or not the symbol is a character (such as pi).
-    @param {Object} [symbol.current] - If the symbol should subsume
-    part of the existing content of the editor (as in, for example,
-    the case of exponent), this object will describe how.
-    @param {Object} [symbol.current.index] - The index of the argument
-    (starting with 1) in which the content should be placed.
+    @param {Object} [symbol.input] - If the symbol should subsume part
+    of the existing content of the editor (as in, for example, the
+    case of exponent), this object will contain the (1-based) index of
+    the argument in which that content should be placed.
     @param {Object} [symbol.ast] - Modifies the default construction
     of an entry in the AST for this symbol.  
     @param {Object} [symbol.ast.type="operator"] - The type of symbol

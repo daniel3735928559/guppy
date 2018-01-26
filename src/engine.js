@@ -372,7 +372,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     }
     var content = {};
     var left_piece,right_piece;
-    var cur = (s.current) ? s.current.index || 0 : 0;
+    var cur = "input" in s ? s.input : 0;
     var to_remove = [];
     var to_replace = null;
     var replace_f = false;
@@ -386,7 +386,7 @@ Engine.prototype.insert_symbol = function(sym_name){
             right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
             content[cur] = sel.node_list;
         }
-        else if(s.current){
+        else if("input" in s){
             // If we're at the beginning, then the token is the previous f node
             if(this.caret == 0 && this.current.previousSibling != null){
                 content[cur] = [this.make_e(""), this.current.previousSibling, this.make_e("")];
@@ -407,9 +407,18 @@ Engine.prototype.insert_symbol = function(sym_name){
         }
     }
     if(!replace_f && (left_piece == null || right_piece == null)){
-        left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));
-        right_piece = this.make_e(this.current.firstChild.nodeValue.slice(this.caret));
-        to_remove = [this.current];
+        if(this.sel_status != Engine.SEL_NONE){
+            var sel = this.sel_get();
+            to_remove = sel.involved;
+            left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
+            right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
+            content = [sel.node_list];
+	}
+	else{
+            left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));
+            right_piece = this.make_e(this.current.firstChild.nodeValue.slice(this.caret));
+            to_remove = [this.current];
+	}
     }
 
     // By now:
@@ -423,10 +432,9 @@ Engine.prototype.insert_symbol = function(sym_name){
     // Thus all we should have to do now is symbol_to_node(sym_type,
     // content) and then add the left_piece, resulting node, and
     // right_piece in that order.
-    
+    var sym = this.symbol_to_node(sym_name,content);
     var current_parent = this.current.parentNode;
     
-    var sym = this.symbol_to_node(sym_name,content);
     var f = sym.f;
 
     var next = this.current.nextSibling;
@@ -448,7 +456,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     
     this.caret = 0;
     this.current = f;
-    if(s.attrs['char'] == "yes" || (s.current && s.attrs && s.current.index >= s.args.length)){
+    if(sym.args.length == 0 || ("input" in s && s.input >= sym.args.length)){
         this.current = this.current.nextSibling;
     }
     else{
@@ -1044,7 +1052,7 @@ Engine.prototype.delete_from_e = function(){
     }
     else{
         // The order of these is important
-        if(this.current.previousSibling != null && this.current.previousSibling.getAttribute("char") == "yes"){
+        if(this.current.previousSibling != null && Utils.is_char(this.current.previousSibling)){
             // The previous node is an f node but is really just a character.  Delete it.
             this.current = this.current.previousSibling;
             this.delete_from_f();

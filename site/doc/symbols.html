@@ -32,51 +32,169 @@
 	  <li><a href="../contribute/">Contributing</a></li>
 	</ul>
     </nav>
-<h2 id="symbol-definition-reference">Symbol definition reference</h2>
-<p><code>symbols.json</code> is a dictionary whose keys are the symbol names (i.e.&#160;the strings that will get auto-replaced by the symbol in the editor) and whose values are dictionaries with the following keys:</p>
+<h2 id="adding-your-own-symbol">Adding your own symbol</h2>
+<h3 id="when-to-add-a-symbol">When to add a symbol</h3>
+<p>One of the goals of Guppy is to make it possible that documents are semantically meaningful. For this reason, Guppy does not accept arbitrary LaTeX, but requires that all special notation be defined as a &#8220;symbol&#8221;, which specifies the rendering of the object and what arguments are required to create the object.</p>
+<p>For example, Guppy does not support typing an integral sign, but rather has a symbol for definite integral (and a separate one for indefinite integral). The definite integral symbol is added when the user types &#8220;defi&#8221;, and takes four arguments: the lower limit, upper limit, integrand, and variable of integration.</p>
+<h3 id="how-to-add-a-symbol">How to add a symbol</h3>
+<p>If you&#8217;re adding a custom symbol, the preferred method is to have a separate json file (or even several) for your symbols such as <code>my_symbols.json</code>. When you initialise Guppy, you can specify multiple symbol files to load symbols from:</p>
+<pre><code>Guppy.init({&quot;path&quot;:&quot;/lib/guppy&quot;,
+            &quot;symbols&quot;:[&quot;/lib/guppy/symbols.json&quot;, &quot;/data/my_symbols.json&quot;]});</code></pre>
+<p>This will load the <code>symbols.json</code> file that comes with Guppy as well as your custom symbols.</p>
+<p>A JSON symbols file contains a single dictionary of symbols. They keys in this dictionary are the strings the user would type to insert the symbol, and the values are themselves dictionaries that describe the symbols. For example, somewhere in the <code>symbols.json</code> file we find the definite integral symbol:</p>
+<pre><code>    &quot;defi&quot;:
+    {&quot;output&quot;:{
+        &quot;latex&quot;:&quot;\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}&quot;},
+     &quot;attrs&quot;:{ &quot;type&quot;:&quot;defintegral&quot;, &quot;group&quot;:&quot;calculus&quot;}
+    },</code></pre>
+<p>This tells us a few things:</p>
 <ul>
-<li><p><code>output</code>: A dictionary with keys <code>latex</code>, <code>text</code>, and an optional <code>small_latex</code>. The values are strings which will comprise the LaTeX, ASCII, or small LaTeX (respectively) representations of the symbol. A symbol may have editable components, the ith of which is represented by <code>{$i}</code> appearing in the string. For example, the LaTeX representation of the <code>sqrt</code> symbol is <code>&quot;\\sqrt{{$1}}&quot;</code>, indicating that it has one editable component, namely the inside of the square root.</p>
+<li><p>The key tells us that &#8220;defi&#8221; is what the user must input to create a definite integral,</p></li>
+<li><p>In the dictionary, the &#8220;output&#8221; key has entries for each rendering method we want to support (&#8220;latex&#8221; being the only one required, as we need that to display the symbol in the editor). The <code>{$n}</code> notation in the ouptut refers to arguments. For instnace, <code>{$1}</code> is used where we want the user to input the lower limit. This symbol, then, has four arguments.</p></li>
+<li><p>The &#8220;attrs&#8221; key specifies certain attributes of the symbol:</p>
 <ul>
-<li><p>If the ith entry is intended to be an array, with commas rendered between elements of the array, then that entry should be represented by <code>{$i{,}}</code>. See the <code>vec</code> symbol in <a href="https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json">/sym/extra_symbols.json</a> for an example of this.</p></li>
-<li><p>If the ith entry is intended to be a 2D array, with, say, commas separating elements of each row and semicolons separating columns, then that entry is represented by <code>{$i{,}{;}}</code>. See the <code>mx</code> symbol in <a href="https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json">/sym/extra_symbols.json</a> for an example of this.</p></li>
-</ul></li>
-<li><p><code>type</code>: A string name for the symbol (will appear in the XML and can used for searching).</p></li>
-<li><p><code>group</code>: A string group name for the symbol (will be used to group symbols in button interface).</p></li>
-<li><p><code>current</code>: If this is non-zero, then if the symbol is inserted while something is selected, then that selection will become this component of the symbol. For example, if the current state is <code>x+1+2</code> and you select <code>x+1</code> and press <code>^</code>, then because the exponent symbol has <code>&quot;current&quot;:1</code>, the selection will become component 1 of the exponent (i.e.&#160;the base) and you will get <code>(x+1)^{}+2</code>.</p></li>
-<li><p>[optional] <code>current_type</code>: If this is <code>&quot;token&quot;</code> and current is non-zero, then when the symbol is inserted, the first token to the left of the cursor when the symbol is inserted will become the component specified in <code>current</code>. For example, the exponent symbol has <code>&quot;current&quot;:1,&quot;current_type&quot;:&quot;token&quot;</code>, so if the current state of the editor is <code>pi+sin(x)</code> and the cursor is just after the pi, then if <code>^</code> is pressed, the state will become <code>{pi}^{}+sin(x)</code>.</p></li>
-<li><p>[optional] <code>attrs</code>: This is an array of dictionaries describing the XML attributes that will be given to each of the symbol&#8217;s editable components. Each key/value pair in the ith dictionary in this array will be set as an attribute name/value pair on the ith editable component. For example, if the <code>attrs</code> list has first entry <code>{&quot;small&quot;:&quot;yes&quot;}</code>, then the first component will get a &#8220;small&#8221; attribute with value &#8220;yes&#8221;. You can include whatever attribute names you want, but the following names are treated specially in Guppy if they are present:</p>
-<ul>
-<li><p><code>mode</code>: This should be set to &#8220;text&#8221; for any components that should be rendered as text (rather than in math mode).</p></li>
-<li><p><code>up</code>: Which component to jump to when the up arrow key is pressed (or 0 for the default behaviour). For example, in a definite integral, we want the up arrow key to take us from the integrand or the variable of integration directly to the upper limit. Since the upper limit of integration is component 2, we use <code>&quot;up&quot;:[2,2,2,2]</code>.</p></li>
-<li><p><code>down</code>: Which component to jump to when the down arrow key is pressed (or 0 for the default behaviour).</p></li>
-<li><p><code>delete</code>: The index of which component should be used to replace the entire symbol if the backspace key is pressed when the cursor is at the start of this component. If 0 or absent, then the default backspace behaviour will be used (namely, that it behaves like the left arrow when at the start of any component except the first, where it deletes the entire symbol). For example, in an exponent such as <code>x^2</code>, we want a backspace from just before the 2 to delete just the exponent, leaving the base. That is, we want component number 1 to be left. However, if backspace is used in the base, we want the default behaviour. So we use <code>&quot;delete&quot;:[0,1]</code> to get the default behaviour in the first component, and deleting the second component to leave us with the first only.</p></li>
-<li><p><code>bracket</code>: If <code>bracket</code> is <code>&quot;yes&quot;</code>, then this component will be surrounded in parentheses if it contains more than one character in it. For example, the first component of an exponent has <code>bracket=&quot;yes&quot;</code>, so will render as <code>x^{y}</code> if the first component is <code>x</code> and the second <code>y</code>, but will render as <code>(x+1)^{y+2}</code> if the first component is <code>x+1</code> and the second <code>y+2</code>.</p></li>
-<li><p><code>small</code>: If <code>small</code> is <code>&quot;yes&quot;</code>, then when rendering to LaTeX, anything in this component (or any descendant) will be rendered using its <code>small_latex</code> output mode if available. For example, the exponent symbol has <code>attrs[1] = {&quot;small&quot;:&quot;yes&quot;,...}</code>, so the second component (the thing in the exponent) is marked as being small. Thus, for instance, fractions and integrals (to name two) that appear inside that exponent will not render at their normal, large size.</p></li>
-</ul></li>
-</ul>
-<p>The following symbol names are treated specially:</p>
-<ul>
-<li><p><code>_raw</code>: The value under this key should be an array of objects with keys:</p>
-<ul>
-<li><p><code>group</code>: The string name of the group</p></li>
-<li><p><code>symbols</code>: An array of objects with keys:</p>
-<ul>
-<li><p><code>name</code>: The name of the symbol (the string used to enter it)</p></li>
-<li><p><code>latex</code>: The LaTeX rendering of the symbol</p></li>
-<li><p><code>text</code>: The text rendering of the symbol</p></li>
-</ul></li>
-</ul></li>
-<li><p><code>_func</code>: The value under this key should be an array of objects with keys:</p>
-<ul>
-<li><p><code>group</code>: The string name of the group</p></li>
-<li><p><code>symbols</code>: An array of string names of the functions (which will take a single argument and whose latex rendering will be <code>\name(&lt;argument&gt;)</code> and text rendering will be <code>name(&lt;argument&gt;)</code>.</p></li>
-</ul></li>
-<li><p><code>_literal</code>: The value under this key should be an array of objects with keys:</p>
-<ul>
-<li><p><code>group</code>: The string name of the group</p></li>
-<li><p><code>symbols</code>: An array of string names of the functions (which will take a single argument and whose latex rendering will be <code>\name</code> and text rendering will be <code>$name</code>.</p></li>
+<li><p>&#8220;type&#8221; is its semantically meaningful name that can be used, for example, to search for occurances of this symbol</p></li>
+<li><p>&#8220;group&#8221; is the tab under which to group this symbol when displaying the on-screen keyboard for mobile editing.</p></li>
 </ul></li>
 </ul>
+<p>The actual definite integral symbol is slightly more complicated for reasons that will become clear as we go through some examples.</p>
+<h3 id="example-permittivity-of-free-space-epsilon_0">Example: permittivity of free space <code>\epsilon_0</code></h3>
+<p>Guppy already allows one to input <code>\epsilon_0</code> using the subscript notation. There are two reasons we might want a separate symbol for this regardless:</p>
+<ul>
+<li><p>Elsewhere in the document is a list of values that are denoted by <code>\epsilon_0, \epsilon_1, ..., \epsilon_n</code> and we want to distinguish &#8220;the first <code>\epsilon</code> value in that list from the permittivity of free space.</p></li>
+<li><p>To input <code>\epsilon_0</code> repeatedly is a lot of typing, and maybe if we could just type &#8220;perm&#8221;, life would be easier.</p></li>
+</ul>
+<p>To add such a symbol, we make a few decisions:</p>
+<ul>
+<li><p>The user should input it by typing &#8220;perm&#8221;</p></li>
+<li><p>In LaTeX, it should render as <code>\epsilon_0</code></p></li>
+<li><p>In ASCIImath it should render as <code>e_0</code></p></li>
+<li><p>It should be searchable via the string <code>&quot;permittivity&quot;</code></p></li>
+<li><p>It should be grouped with other physics-related symbols in the mobile interface.</p></li>
+</ul>
+<p>These decisions manifest in the JSON symbol file as the following entry in the dictionary:</p>
+<pre><code>    &quot;perm&quot;:
+    {&quot;output&quot;:{
+        &quot;latex&quot;:&quot;\\epsilon_0&quot;,
+        &quot;asciimath&quot;:&quot;e_0&quot;}
+     &quot;attrs&quot;:{ &quot;type&quot;:&quot;permittivity&quot;, &quot;group&quot;:&quot;physics&quot;}
+    },</code></pre>
+<h3 id="example-finite-fields-mathbff_q">Example: finite fields <code>\mathbf{F}_q</code></h3>
+<p>Guppy does not have any &#8220;bold-face&#8221; notation, so if we want the finite field notation <code>\mathbf{F}_q</code>, we need a custom symbol. We make a few decisions:</p>
+<ul>
+<li><p>The user should input it by typing &#8220;Fq&#8221;</p></li>
+<li><p>We want the user to be able to specify the cardinality of the field</p></li>
+<li><p>In LaTeX, it should render as <code>\mathbf{F}_{CARDINALITY}</code></p></li>
+<li><p>In ASCIImath it should render as <code>F_{CARDINALITY}</code></p></li>
+<li><p>It should be searchable via the string <code>&quot;finitefield&quot;</code></p></li>
+<li><p>It should be grouped with other number theory-related symbols in the mobile interface.</p></li>
+</ul>
+<p>These decisions manifest in the JSON symbol file as the following entry in the dictionary:</p>
+<pre><code>    &quot;Fq&quot;:
+    {&quot;output&quot;:{
+        &quot;latex&quot;:&quot;\\mathbb{F}_{{$1}}&quot;,
+        &quot;asciimath&quot;:&quot;F_{$1}&quot;}
+     &quot;attrs&quot;:{ &quot;type&quot;:&quot;finitefield&quot;, &quot;group&quot;:&quot;number_theory&quot;}
+    },</code></pre>
+<h3 id="example-tensor-product-otimes">Example: tensor product <code>\otimes</code></h3>
+<p>The tensor product is a simple symbol like the permittivity of free space in that it has no arguments. However, unlike <code>\epsilon_0</code>, it behaves as an operator. When Guppy generates a syntax free for an input like <code>V \otimes W</code>, we don&#8217;t want this to be interpreted as &#8220;V times tensorproduct times W&#8221;, but rather as &#8220;V tensorproduct W&#8221;.</p>
+<p>So we can start with a spec very similar to the permittivity of free space example:</p>
+<pre><code>    &quot;tensor&quot;:
+    {&quot;output&quot;:{
+        &quot;latex&quot;:&quot;\\otimes&quot;,
+        &quot;asciimath&quot;:&quot; o &quot;}
+     &quot;attrs&quot;:{ &quot;type&quot;:&quot;tensor&quot;, &quot;group&quot;:&quot;operations&quot;}
+    },</code></pre>
+<p>However, in order to specify that, semantically, this is an operator and not an object, we add an &#8220;ast&#8221; entry to the spec declaring the the type for the purposes of building the AST is &#8220;operator&#8221;:</p>
+<pre><code>    &quot;tensor&quot;:
+    {&quot;output&quot;:{
+        &quot;latex&quot;:&quot;\\otimes&quot;,
+        &quot;asciimath&quot;:&quot; o &quot;}
+     &quot;attrs&quot;:{ &quot;type&quot;:&quot;tensor&quot;, &quot;group&quot;:&quot;operations&quot;},
+     &quot;ast&quot;:{&quot;type&quot;:&quot;operator&quot;}
+    },</code></pre>
+<h3 id="example-riemann-curvature-tensor-ri_jkl">Example: Riemann curvature tensor: <code>R^{i}_{jkl}</code></h3>
+<p>While Guppy has support for exponents and subscripts, entering <code>R_1^2</code> will render as <code>(R_1)^2</code>, making explicit the fact that the superscript refers to exponentiation. If we want some notation with both sub- and superscripts as indices, we make a special symbol.</p>
+<p>An example is the Riemann curvature tensor <code>R^i_{jkl}</code> which is notated with one superscript index and three subscript indices. Since we want the user to be able to specify the values of these indices, this starts off as a four-argument symbol similar to the definite integral:</p>
+<pre><code>&quot;RCT&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;R^{{$1}}_{{$2}{$3}{$4}}&quot;,
+    &quot;asciimath&quot;:&quot;R^{{$1}}_{{$2}{$3}{$4}}&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;curvaturetensor&quot;,
+    &quot;group&quot;:&quot;physics&quot;}
+},</code></pre>
+<p>However, when we&#8217;re editing we want a few additional behaviours:</p>
+<ul>
+<li><p>When we press the &#8220;up&#8221; arrow in any of the subscripts, we want the cursor to move to the superscript</p></li>
+<li><p>Likewise, when we press the &#8220;down&#8221; arrow in the superscript, we want the cursor to move to the subscripts</p></li>
+<li><p>We need to make explicit the fact that the sub- and superscript arguments should be rendered as small (for example, integrals in the superscript should not be rendered at full size.</p></li>
+</ul>
+<p>All these can be specified using the &#8220;args&#8221; key in the symbol specification, which is a list of dictionaries where the nth dictionary in the list describes the behaviour for argument n. For example, the first dictionary can have an entry <code>&quot;down&quot;:&quot;2&quot;</code> to specify that, in the first argument (i.e.&#160;the superscript) the down arrow should bring us to the second argument (the first subscript):</p>
+<pre><code>&quot;RCT&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;R^{{$1}}_{{$2}{$3}{$4}}&quot;,
+    &quot;asciimath&quot;:&quot;R^{{$1}}_{{$2}{$3}{$4}}&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;riemanncurvature&quot;,
+    &quot;group&quot;:&quot;physics&quot;},
+ &quot;args&quot;:[
+   {&quot;down&quot;:&quot;2&quot;,&quot;small&quot;:&quot;yes&quot;},
+   {&quot;up&quot;:&quot;1&quot;,&quot;small&quot;:&quot;yes&quot;},
+   {&quot;up&quot;:&quot;1&quot;,&quot;small&quot;:&quot;yes&quot;},
+   {&quot;up&quot;:&quot;1&quot;,&quot;small&quot;:&quot;yes&quot;}
+ ]
+},</code></pre>
+<h3 id="example-newtons-notation-for-derivative-fx">Example: Newton&#8217;s notation for derivative: <code>f'(x)</code></h3>
+<p>The &#8220;prime&#8221; notation for derivatives is not built into Guppy, and the editor doesn&#8217;t naturally accept inputting the apostrophe character. In order to allow this, we can create a symbol for the derivative of a function expressed this way:</p>
+<pre><code>&quot;prime&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;{$1}&#39;({$2})&quot;,
+    &quot;asciimath&quot;:&quot;{$1}&#39;({$2})&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;derivative2&quot;,
+    &quot;group&quot;:&quot;calculus&quot;}
+},</code></pre>
+<p>However, this does not fully work: When we input the symbol, we want whatever came immediately before it to pre-populate the first argument (i.e.&#160;the function whose derivative we&#8217;re taking). To wit, if we input <code>fprime</code>, we are presented with <code>f[?]'([?])</code> rather than <code>f'([?])</code>. We can fix this with the &#8220;input&#8221; key, which specifies the index of the argument that should be pre-populated with the previous token:</p>
+<pre><code>&quot;&#39;&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;{$1}&#39;({$2})&quot;,
+    &quot;asciimath&quot;:&quot;{$1}&#39;({$2})&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;derivative2&quot;,
+    &quot;group&quot;:&quot;calculus&quot;},
+ &quot;input&quot;:1
+},</code></pre>
+<h3 id="example-column-vectors">Example: Column vectors</h3>
+<p>We can add a column vector entry, which is rendered as <code>\left(\begin{matrix}ARGS\end{matrix}\right)</code>. We can start with a simple one-argument symbol:</p>
+<pre><code>&quot;cvec&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;\\left( \begin{matrix} {$1} \end{matrix}\\right)&quot;,
+    &quot;asciimath&quot;:&quot;vec({$1})&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;colvector&quot;,
+    &quot;group&quot;:&quot;array&quot;}
+},</code></pre>
+<p>However this allows only a single entry in our column vector. To allow many, we specify that this first argument is actually a one-dimensional list by changing <code>{$1}</code> to <code>{$1{separator}}</code>, where &#8220;separator&#8221; is the whatever we want to separate the elements of the list. For LaTeX rendering of a column vector, we want the entries to be separated with <code>\\</code>, and for ASCIImath, a comma will do. So we end up with:</p>
+<pre><code>&quot;cvec&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;\\left( \begin{matrix} {$1{\\\\}} \end{matrix}\\right)&quot;,
+    &quot;asciimath&quot;:&quot;cvec({$1{,}})&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;colvector&quot;,
+    &quot;group&quot;:&quot;array&quot;}
+},</code></pre>
+<h3 id="example-cases">Example: <code>\cases</code></h3>
+<p>We can continue to add more separators to get higher-dimensional arrays. For example, if we want to have a &#8220;cases&#8221; environment to express, for example, &#8220;f(x) = 0 if x is rational and 1 if x is irrational&#8221; using the LaTeX <code>\begin{cases}</code>, we can do it thus:</p>
+<pre><code>&quot;cases&quot;:
+{&quot;output&quot;:{
+    &quot;latex&quot;:&quot;\\begin{cases} {$1{ &amp; \\text{ if }}{\\\\}} \\end{cases}&quot;,
+    &quot;asciimath&quot;:&quot;cases({$1{ if }{;}})&quot;},
+ &quot;attrs&quot;:{
+    &quot;type&quot;:&quot;cases&quot;,
+    &quot;group&quot;:&quot;array&quot;}
+},</code></pre>
+<p>This example starts to show the limitations of the editor: In principle there should be two columns only in this environment, but there is no syntax for constraining the array to only two columns in the current version of the editor.</p>
   </div>
 </body>
 

@@ -1,9 +1,9 @@
-# FAQ
-## What is it?
+## FAQ
+### What is it?
 
 A WYSIWYG mathematical expression editor with output that is suited to computer as well as human use, and that is easier than raw LaTeX.
 
-## Who is it for?
+### Who is it for?
 
 Anyone who wants math input that is easy for novices to enter (such as in an educational context) and/or that is readable by computers (such as in a web based calculator application).
 
@@ -15,13 +15,13 @@ Specifically, the needs of two target audiences have guided the development to d
   
 
  
-## How is it different from other equation editors?
+### How is it different from other equation editors?
 
 The output is semantically tagged.  Now, you can distinguish whether dy/dx means "derivative of y with respect to x" or "quotient of the product d times y by the product d times x".
 
 Also, in its default configuration it requires neither backslashes nor use of the mouse to enter expressions.
 
-## Why can't it output to Maple/SymPy/Sage/[My favourite language]?
+### Why can't it output to Maple/SymPy/Sage/[My favourite language]?
 
 The simple answer is that you could make it do so.
 
@@ -35,15 +35,15 @@ example via the "ast" syntax tree output) and evaluate them
 with the usual recursive process.  Convenience methods exist
 in the GuppyDoc class for doing this in Javascript.
 
-## Can I make the cursor orange?
+### Can I make the cursor orange?
 
 Yes.  Many elements are tagged with CSS classes so that you can write CSS to customise the editor's appearance.  !important.
 
-## What are the future plans for this editor?
+### What are the future plans for this editor?
 
 See the [roadmap](./roadmap.html).
 
-## Is it secure?
+### Is it secure?
 
 There are two threat models we have explicitly designed
 against:
@@ -62,17 +62,17 @@ against:
   releases.
 
 
-## Is it mobile friendly?
+### Is it mobile friendly?
 
 It comes with an on-screen keyboard module that can be used to
 input from a phone or tablet.  Try it
 out [here](/site/examples/osk).
 
-## Can it do linear algebra?
+### Can it do linear algebra?
 
 Yes!  Type "mat" for a matrix, and "vec" for a vector
 
-## Why XML?
+### Why XML?
 
 Because it is easy to get out of.  When the day comes that a
 nicer format comes along that can be as easily and
@@ -80,24 +80,24 @@ declaratively queried and transformed, it will be a simple
 matter to XSLT any lingering XML specimens into the new hot
 sauce.
 
-## Why Javascript?
+### Why Javascript?
 
 Because it was there.
 
-## Why "guppy"?
+### Why "guppy"?
 
 I truly don't remember.  /usr/share/dict/words may have played a role.
 
-## It doesn't work on my browser!
+### It doesn't work on my browser!
 
 I've tested it on recent versions of Firefox and Chrome and some
 version of Safari.  Also, on IE11.  It didn't work on IE11.
 
-## I miss backslashes!
+### I miss backslashes!
 
 Fine.  Have it your way.  They are included, but optional, with a
 configuration option to make them required if you choose.
 
-## Is it Web 3.0 compliant?
+### Is it Web 3.0 compliant?
 
 The planned port to HTML9 Responsive Boilerstrap JS is planned.

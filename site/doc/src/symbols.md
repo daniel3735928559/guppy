@@ -1,132 +1,326 @@
-## Symbol definition reference
+## Adding your own symbol
 
-`symbols.json` is a dictionary whose keys are the symbol names
-(i.e. the strings that will get auto-replaced by the symbol in the
-editor) and whose values are dictionaries with the following keys:
+### When to add a symbol
 
-* `output`: A dictionary with keys `latex`, `text`, and an optional
-  `small_latex`.  The values are strings which will comprise the
-  LaTeX, ASCII, or small LaTeX (respectively) representations of the
-  symbol.  A symbol may have editable components, the ith of which is
-  represented by `{$i}` appearing in the string.  For example, the
-  LaTeX representation of the `sqrt` symbol is `"\\sqrt{{$1}}"`,
-  indicating that it has one editable component, namely the inside of
-  the square root.
+One of the goals of Guppy is to make it possible that documents are
+semantically meaningful.  For this reason, Guppy does not accept
+arbitrary LaTeX, but requires that all special notation be defined as
+a "symbol", which specifies the rendering of the object and what
+arguments are required to create the object.
 
-  * If the ith entry is intended to be an array, with commas rendered
-    between elements of the array, then that entry should be
-    represented by `{$i{,}}`.  See the `vec` symbol in
-    [/sym/extra_symbols.json](https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json)
-    for an example of this.
+For example, Guppy does not support typing an integral sign, but
+rather has a symbol for definite integral (and a separate one for
+indefinite integral).  The definite integral symbol is added when the
+user types "defi", and takes four arguments: the lower limit, upper
+limit, integrand, and variable of integration.
 
-  * If the ith entry is intended to be a 2D array, with, say, commas
-    separating elements of each row and semicolons separating columns,
-    then that entry is represented by `{$i{,}{;}}`.  See the `mx`
-    symbol in
-    [/sym/extra_symbols.json](https://github.com/daniel3735928559/guppy/blob/master/sym/extra_symbols.json)
-    for an example of this.
+### How to add a symbol
 
-* `type`: A string name for the symbol (will appear in the XML and can
-  used for searching).
+If you're adding a custom symbol, the preferred method is to have a
+separate json file (or even several) for your symbols such as
+`my_symbols.json`.  When you initialise Guppy, you can specify
+multiple symbol files to load symbols from:
 
-* `group`: A string group name for the symbol (will be used to group
-  symbols in button interface).
+```
+Guppy.init({"path":"/lib/guppy",
+            "symbols":["/lib/guppy/symbols.json", "/data/my_symbols.json"]});
+```
 
-* `current`: If this is non-zero, then if the symbol is inserted while
-  something is selected, then that selection will become this
-  component of the symbol.  For example, if the current state is
-  `x+1+2` and you select `x+1` and press `^`, then because the
-  exponent symbol has `"current":1`, the selection will become
-  component 1 of the exponent (i.e. the base) and you will get
-  `(x+1)^{}+2`.
+This will load the `symbols.json` file that comes with Guppy as well
+as your custom symbols.
 
-* [optional] `current_type`: If this is `"token"` and current is
-  non-zero, then when the symbol is inserted, the first token to the
-  left of the cursor when the symbol is inserted will become the
-  component specified in `current`.  For example, the exponent symbol
-  has `"current":1,"current_type":"token"`, so if the current state of
-  the editor is `pi+sin(x)` and the cursor is just after the pi, then
-  if `^` is pressed, the state will become `{pi}^{}+sin(x)`.  
+A JSON symbols file contains a single dictionary of symbols.  They
+keys in this dictionary are the strings the user would type to insert
+the symbol, and the values are themselves dictionaries that describe
+the symbols.  For example, somewhere in the `symbols.json` file we
+find the definite integral symbol:
 
-* [optional] `attrs`: This is an array of dictionaries describing the
-  XML attributes that will be given to each of the symbol's editable
-  components.  Each key/value pair in the ith dictionary in this array
-  will be set as an attribute name/value pair on the ith editable
-  component.  For example, if the `attrs` list has first entry
-  `{"small":"yes"}`, then the first component will get a "small"
-  attribute with value "yes".  You can include whatever attribute
-  names you want, but the following names are treated specially in
-  Guppy if they are present:
+```
+    "defi":
+    {"output":{
+        "latex":"\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}"},
+     "attrs":{ "type":"defintegral", "group":"calculus"}
+    },
+```
+
+This tells us a few things: 
+
+* The key tells us that "defi" is what the user must input to create a
+  definite integral,
+
+* In the dictionary, the "output" key has entries for each rendering
+  method we want to support ("latex" being the only one required, as
+  we need that to display the symbol in the editor).  The `{$n}`
+  notation in the ouptut refers to arguments.  For instnace, `{$1}` is
+  used where we want the user to input the lower limit.  This symbol,
+  then, has four arguments.
+
+* The "attrs" key specifies certain attributes of the symbol:
+
+  * "type" is its semantically meaningful name that can be used, for
+    example, to search for occurances of this symbol
+
+  * "group" is the tab under which to group this symbol when
+    displaying the on-screen keyboard for mobile editing.
+
+The actual definite integral symbol is slightly more complicated for
+reasons that will become clear as we go through some examples.
+
+### Example: permittivity of free space `\epsilon_0`
+
+Guppy already allows one to input `\epsilon_0` using the subscript
+notation.  There are two reasons we might want a separate symbol for
+this regardless:
+
+* Elsewhere in the document is a list of values that are denoted by
+  `\epsilon_0, \epsilon_1, ..., \epsilon_n` and we want to distinguish
+  "the first `\epsilon` value in that list from the permittivity of
+  free space.
   
-  * `mode`: This should be set to "text" for any components that
-    should be rendered as text (rather than in math mode).  
+* To input `\epsilon_0` repeatedly is a lot of typing, and maybe if we
+  could just type "perm", life would be easier.
+
+To add such a symbol, we make a few decisions:
+
+* The user should input it by typing "perm"
+
+* In LaTeX, it should render as `\epsilon_0`
+
+* In ASCIImath it should render as `e_0`
+
+* It should be searchable via the string `"permittivity"`
+
+* It should be grouped with other physics-related symbols in the
+  mobile interface.
   
-  * `up`: Which component to jump to when the up arrow key is pressed
-    (or 0 for the default behaviour).  For example, in a definite
-    integral, we want the up arrow key to take us from the integrand
-    or the variable of integration directly to the upper limit.  Since
-    the upper limit of integration is component 2, we use
-    `"up":[2,2,2,2]`.
+These decisions manifest in the JSON symbol file as the following
+entry in the dictionary: 
+
+```
+    "perm":
+    {"output":{
+        "latex":"\\epsilon_0",
+		"asciimath":"e_0"}
+     "attrs":{ "type":"permittivity", "group":"physics"}
+    },
+```
+### Example: finite fields `\mathbf{F}_q`
+
+Guppy does not have any "bold-face" notation, so if we want the finite
+field notation `\mathbf{F}_q`, we need a custom symbol.  We make a few
+decisions:
+
+* The user should input it by typing "Fq"
+
+* We want the user to be able to specify the cardinality of the field
+
+* In LaTeX, it should render as `\mathbf{F}_{CARDINALITY}`
+
+* In ASCIImath it should render as `F_{CARDINALITY}`
+
+* It should be searchable via the string `"finitefield"`
+
+* It should be grouped with other number theory-related symbols in the
+  mobile interface.
   
-  * `down`: Which component to jump to when the down arrow key is
-    pressed (or 0 for the default behaviour).
+These decisions manifest in the JSON symbol file as the following
+entry in the dictionary: 
+
+```
+    "Fq":
+    {"output":{
+        "latex":"\\mathbb{F}_{{$1}}",
+		"asciimath":"F_{$1}"}
+     "attrs":{ "type":"finitefield", "group":"number_theory"}
+    },
+```
+
+### Example: tensor product `\otimes`
+
+The tensor product is a simple symbol like the permittivity of free
+space in that it has no arguments.  However, unlike `\epsilon_0`, it
+behaves as an operator.  When Guppy generates a syntax free for an
+input like `V \otimes W`, we don't want this to be interpreted as "V
+times tensorproduct times W", but rather as "V tensorproduct W".
+
+So we can start with a spec very similar to the permittivity of free
+space example: 
+
+```
+    "tensor":
+    {"output":{
+        "latex":"\\otimes",
+		"asciimath":" o "}
+     "attrs":{ "type":"tensor", "group":"operations"}
+    },
+```
+
+However, in order to specify that, semantically, this is an operator
+and not an object, we add an "ast" entry to the spec declaring the the
+type for the purposes of building the AST is "operator": 
+```
+    "tensor":
+    {"output":{
+        "latex":"\\otimes",
+		"asciimath":" o "}
+     "attrs":{ "type":"tensor", "group":"operations"},
+	 "ast":{"type":"operator"}
+    },
+```
+
+### Example: Riemann curvature tensor: `R^{i}_{jkl}`
+
+While Guppy has support for exponents and subscripts, entering `R_1^2`
+will render as `(R_1)^2`, making explicit the fact that the
+superscript refers to exponentiation.  If we want some notation with
+both sub- and superscripts as indices, we make a special symbol.  
+
+An example is the Riemann curvature tensor `R^i_{jkl}` which is
+notated with one superscript index and three subscript indices.  Since
+we want the user to be able to specify the values of these indices,
+this starts off as a four-argument symbol similar to the definite
+integral:
+
+```
+"RCT":
+{"output":{
+    "latex":"R^{{$1}}_{{$2}{$3}{$4}}",
+	"asciimath":"R^{{$1}}_{{$2}{$3}{$4}}"},
+ "attrs":{
+    "type":"curvaturetensor",
+	"group":"physics"}
+},
+```
+
+However, when we're editing we want a few additional behaviours: 
+
+* When we press the "up" arrow in any of the subscripts, we want the
+  cursor to move to the superscript
   
-  * `delete`: The index of which component should be used to replace
-    the entire symbol if the backspace key is pressed when the cursor
-    is at the start of this component.  If 0 or absent, then the
-    default backspace behaviour will be used (namely, that it behaves
-    like the left arrow when at the start of any component except the
-    first, where it deletes the entire symbol).  For example, in an
-    exponent such as `x^2`, we want a backspace from just before the 2
-    to delete just the exponent, leaving the base.  That is, we want
-    component number 1 to be left.  However, if backspace is used in
-    the base, we want the default behaviour.  So we use
-    `"delete":[0,1]` to get the default behaviour in the first
-    component, and deleting the second component to leave us with the
-    first only.  
+* Likewise, when we press the "down" arrow in the superscript, we want
+  the cursor to move to the subscripts
 
-  * `bracket`: If `bracket` is `"yes"`, then this component will be
-    surrounded in parentheses if it contains more than one character
-    in it.  For example, the first component of an exponent has
-    `bracket="yes"`, so will render as `x^{y}` if the first component is
-    `x` and the second `y`, but will render as `(x+1)^{y+2}` if the first
-    component is `x+1` and the second `y+2`.  
+* We need to make explicit the fact that the sub- and superscript
+  arguments should be rendered as small (for example, integrals in the
+  superscript should not be rendered at full size.
   
-  * `small`: If `small` is `"yes"`, then when rendering to LaTeX,
-    anything in this component (or any descendant) will be rendered
-    using its `small_latex` output mode if available.  For example,
-    the exponent symbol has `attrs[1] = {"small":"yes",...}`, so the
-    second component (the thing in the exponent) is marked as being
-    small.  Thus, for instance, fractions and integrals (to name two)
-    that appear inside that exponent will not render at their normal,
-    large size.
+All these can be specified using the "args" key in the symbol
+specification, which is a list of dictionaries where the nth
+dictionary in the list describes the behaviour for argument n.  For
+example, the first dictionary can have an entry `"down":"2"` to
+specify that, in the first argument (i.e. the superscript) the down
+arrow should bring us to the second argument (the first subscript):
 
-The following symbol names are treated specially:
+```
+"RCT":
+{"output":{
+    "latex":"R^{{$1}}_{{$2}{$3}{$4}}",
+	"asciimath":"R^{{$1}}_{{$2}{$3}{$4}}"},
+ "attrs":{
+    "type":"riemanncurvature",
+	"group":"physics"},
+ "args":[
+   {"down":"2","small":"yes"},
+   {"up":"1","small":"yes"},
+   {"up":"1","small":"yes"},
+   {"up":"1","small":"yes"}
+ ]
+},
+```
 
-* `_raw`: The value under this key should be an array of objects with keys:
+### Example: Newton's notation for derivative: `f'(x)`
 
-  * `group`: The string name of the group
+The "prime" notation for derivatives is not built into Guppy, and the
+editor doesn't naturally accept inputting the apostrophe character.
+In order to allow this, we can create a symbol for the derivative of a
+function expressed this way: 
 
-  * `symbols`: An array of objects with keys:
+```
+"prime":
+{"output":{
+    "latex":"{$1}'({$2})",
+	"asciimath":"{$1}'({$2})"},
+ "attrs":{
+    "type":"derivative2",
+	"group":"calculus"}
+},
+```
 
-    * `name`: The name of the symbol (the string used to enter it)
+However, this does not fully work: When we input the symbol, we want
+whatever came immediately before it to pre-populate the first argument
+(i.e. the function whose derivative we're taking).  To wit, if we
+input `fprime`, we are presented with `f[?]'([?])` rather than
+`f'([?])`.  We can fix this with the "input" key, which specifies the
+index of the argument that should be pre-populated with the previous
+token:
 
-    * `latex`: The LaTeX rendering of the symbol
-    
-    * `text`: The text rendering of the symbol
+```
+"'":
+{"output":{
+    "latex":"{$1}'({$2})",
+	"asciimath":"{$1}'({$2})"},
+ "attrs":{
+    "type":"derivative2",
+	"group":"calculus"},
+ "input":1
+},
+```
 
-* `_func`: The value under this key should be an array of objects with keys:
+### Example: Column vectors
 
-  * `group`: The string name of the group
+We can add a column vector entry, which is rendered as
+`\left(\begin{matrix}ARGS\end{matrix}\right)`.  We can start with a
+simple one-argument symbol: 
 
-  * `symbols`: An array of string names of the functions (which will
-    take a single argument and whose latex rendering will be
-    `\name(<argument>)` and text rendering will be ` name(<argument>) `.  
+```
+"cvec":
+{"output":{
+    "latex":"\\left( \begin{matrix} {$1} \end{matrix}\\right)",
+    "asciimath":"vec({$1})"},
+ "attrs":{
+    "type":"colvector",
+    "group":"array"}
+},
+```
 
-* `_literal`: The value under this key should be an array of objects with keys:
+However this allows only a single entry in our column vector.  To
+allow many, we specify that this first argument is actually a
+one-dimensional list by changing `{$1}` to `{$1{separator}}`, where
+"separator" is the whatever we want to separate the elements of the
+list.  For LaTeX rendering of a column vector, we want the entries to
+be separated with `\\`, and for ASCIImath, a comma will do.  So we
+end up with: 
 
-  * `group`: The string name of the group
+```
+"cvec":
+{"output":{
+    "latex":"\\left( \begin{matrix} {$1{\\\\}} \end{matrix}\\right)",
+    "asciimath":"cvec({$1{,}})"},
+ "attrs":{
+    "type":"colvector",
+    "group":"array"}
+},
+```
 
-  * `symbols`: An array of string names of the functions (which will
-    take a single argument and whose latex rendering will be
-    `\name` and text rendering will be ` $name `.  
+### Example: `\cases`
+
+We can continue to add more separators to get higher-dimensional
+arrays.  For example, if we want to have a "cases" environment to
+express, for example, "f(x) = 0 if x is rational and 1 if x is
+irrational" using the LaTeX `\begin{cases}`, we can do it thus: 
+
+```
+"cases":
+{"output":{
+    "latex":"\\begin{cases} {$1{ & \\text{ if }}{\\\\}} \\end{cases}",
+    "asciimath":"cases({$1{ if }{;}})"},
+ "attrs":{
+    "type":"cases",
+    "group":"array"}
+},
+```
+
+This example starts to show the limitations of the editor: In
+principle there should be two columns only in this environment, but
+there is no syntax for constraining the array to only two columns in
+the current version of the editor.

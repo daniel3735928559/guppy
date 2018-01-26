@@ -66,7 +66,6 @@ Here, we present the stylesheet for the example Guppy page
     display: none;
 }
 
-
 .guppy_buttons {
     position:absolute;
     bottom:0;
