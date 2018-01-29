@@ -1,4 +1,4 @@
-## Roadmap
+% Roadmap
 
 The high-level goals of this project are that mathematics should be
 stored in a way that is easy for both computers and humans to

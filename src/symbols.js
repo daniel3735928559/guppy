@@ -1,4 +1,5 @@
-var Symbols = {"version":"2", "symbols":{}, "templates":{}};
+var Version = require('./version.js');
+var Symbols = {"symbols":{}, "templates":{}};
 
 Symbols.make_template_symbol = function(template_name, name, args){
     var template = JSON.parse(JSON.stringify(Symbols.templates[template_name]));
@@ -33,7 +34,7 @@ Symbols.add_symbols = function(syms){
     var collection_name = syms["_name"];
     delete syms["_version"];
     delete syms["_name"];
-    if(!version || version != Symbols.version) throw "Mismatched symbol file version: Expected '" + Symbols.version + "' but found '" + version +"' in symbol collection: " + collection_name;
+    if(!version || version != Version.SYMBOL_VERSION) Version.SYMBOL_ERROR(collection_name, version);
     var templates = syms["_templates"];
     if(templates){
         for(var t in templates){

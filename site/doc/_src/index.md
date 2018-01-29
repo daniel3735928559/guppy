@@ -1,6 +1,6 @@
-# Documentation
+% Documentation
 
-## Usage
+### Usage
 
 * [Quickstart](quickstart.html):
   Quickly get started using the editor
@@ -17,10 +17,13 @@
 * [Creating a new symbol](symbols.html):
   How to add a symbol to the editor
 
+* [Document/symbol spec changelog](version.html):
+  Version changelogs for document and symbol formats
+
 * [Frequently asked questions](faq.html):
   Other questions
 
-## API
+### API
 
 * [Guppy](../api/guppymath/2.0.0-alpha/Guppy.html): 
   The API for working with the editor object
@@ -34,7 +37,7 @@
 * [GuppyOSK](../api/guppymath/2.0.0-alpha/GuppyOSK.html)
   The API for the built-in on-screen keyboard (e.g. for mobile input)
 
-## Internals
+### Internals
 
 * [XML Format](format.html):
   The editor's XML storage format

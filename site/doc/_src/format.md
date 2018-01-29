@@ -1,4 +1,6 @@
-## XML data format
+% XML data format
+
+### Specification
 
 The XML format by which mathematical expressions are internally
 represented is specified as follows:
@@ -13,7 +15,9 @@ represented is specified as follows:
 
 * `<f>` nodes represent symbols and have one attribute: `type`, whose
   value comes from the `type` field in `symbols.json`.  They look like
-  ```<f type="symbol_type">[sequence of b nodes][sequence of c or l nodes]</f>```
+  ```
+  <f type="symbol_type">[sequence of b nodes][sequence of c or l nodes]</f>
+  ```
 
 * `<b>` nodes represent methods for rendering a symbol, specified in
   the `p` attribute.  They contain text interspersed with `<r>` nodes
@@ -40,7 +44,7 @@ represented is specified as follows:
   children it has (e.g., in the case of a 1D array, how many elements
   the array has, represented by the number of `<c>` nodes).
 
-## Examples
+### Example: `x+1`
 
 The simple expression `x+1` is represented as:
 
@@ -49,6 +53,8 @@ The simple expression `x+1` is represented as:
   <e>x+1</e>
 </m>
 ```
+
+### Example: `sin(x)`
 
 `sin(x)` is represented as: 
 
@@ -64,6 +70,8 @@ The simple expression `x+1` is represented as:
 </m>
 ```
 
+### Example: `sqrt(x+1)`
+
 The square root of `x+1` is:
 
 ```
@@ -77,6 +85,8 @@ The square root of `x+1` is:
   <e></e>
 </m>
 ```
+
+### Example: `1+(1-x)/sin(x)`
 
 `1+(1-x)/sin(x)` would be represented as:
 
@@ -101,6 +111,8 @@ The square root of `x+1` is:
   <e></e>
 </m>
 ```
+
+### Example: Matrix
 
 The 2x3 matrix `[1, 2, 3; x, y, z]` would be represented by:
 

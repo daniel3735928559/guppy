@@ -1,4 +1,4 @@
-## Internals
+% Internals
 
 The majority of the code in Guppy is implementing the logic involved
 with modifying the XML tree (described above) via an editor which

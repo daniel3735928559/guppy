@@ -1,4 +1,4 @@
-## CSS styling
+% CSS styling
 
 The following CSS selectors will provide access to various elements of the editor:
 
@@ -22,11 +22,9 @@ The following CSS selectors will provide access to various elements of the edito
 
 * `.guppy_buttons`: The container for the configuration/help buttons
   in the editor.
-
-
-### Example
-
-Here, we present the stylesheet for the example Guppy page
+  
+For example, we present here the stylesheet for the example Guppy
+page:
 
 ```
 .guppy_active {

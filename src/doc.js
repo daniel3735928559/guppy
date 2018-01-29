@@ -3,6 +3,7 @@ var AST = require('./ast.js');
 var Symbols = require('./symbols.js');
 var Utils = require('./utils.js');
 var Parsers = require('./parser.js');
+var Version = require('./version.js');
 var Guppy = Guppy || {"instances":{}};
 
 /**
@@ -19,6 +20,10 @@ var Doc = function(doc, type){
     else if(type == "latex") this.import_latex(doc);
     else if(type == "text") this.import_text(doc);
     else if(type == "ast") this.import_ast(doc);
+    if(this.root().hasAttribute("v") && this.root().getAttribute("v") != Version.DOC_VERSION)
+	throw Version.DOC_ERROR;
+    else
+	this.root().setAttribute("v",Version.DOC_VERSION);
 }
 
 Doc.prototype.is_small = function(nn){

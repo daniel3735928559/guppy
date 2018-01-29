@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Guppy</title>
+    <title>Guppy: Adding your own symbol</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="../build/guppy-default-osk.min.css">
@@ -32,8 +32,19 @@
 	  <li><a href="../contribute/">Contributing</a></li>
 	</ul>
     </nav>
-<h2 id="adding-your-own-symbol">Adding your own symbol</h2>
-<h3 id="when-to-add-a-symbol">When to add a symbol</h3>
+    <h2>Adding your own symbol</h2>
+        <ul>
+    <li><a href="#when-to-add-a-symbol">When to add a symbol</a></li>
+    <li><a href="#how-to-add-a-symbol">How to add a symbol</a></li>
+    <li><a href="#example-permittivity-of-free-space-epsilon_0">Example: permittivity of free space <code>\epsilon_0</code></a></li>
+    <li><a href="#example-finite-fields-mathbff_q">Example: finite fields <code>\mathbf{F}_q</code></a></li>
+    <li><a href="#example-tensor-product-otimes">Example: tensor product <code>\otimes</code></a></li>
+    <li><a href="#example-riemann-curvature-tensor-ri_jkl">Example: Riemann curvature tensor: <code>R^{i}_{jkl}</code></a></li>
+    <li><a href="#example-newtons-notation-for-derivative-fx">Example: Newton&#8217;s notation for derivative: <code>f'(x)</code></a></li>
+    <li><a href="#example-column-vectors">Example: Column vectors</a></li>
+    <li><a href="#example-cases">Example: <code>\cases</code></a></li>
+    </ul>
+        <h3 id="when-to-add-a-symbol">When to add a symbol</h3>
 <p>One of the goals of Guppy is to make it possible that documents are semantically meaningful. For this reason, Guppy does not accept arbitrary LaTeX, but requires that all special notation be defined as a &#8220;symbol&#8221;, which specifies the rendering of the object and what arguments are required to create the object.</p>
 <p>For example, Guppy does not support typing an integral sign, but rather has a symbol for definite integral (and a separate one for indefinite integral). The definite integral symbol is added when the user types &#8220;defi&#8221;, and takes four arguments: the lower limit, upper limit, integrand, and variable of integration.</p>
 <h3 id="how-to-add-a-symbol">How to add a symbol</h3>

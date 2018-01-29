@@ -1,4 +1,5 @@
-## FAQ
+% FAQ
+
 ### What is it?
 
 A WYSIWYG mathematical expression editor with output that is suited to computer as well as human use, and that is easier than raw LaTeX.

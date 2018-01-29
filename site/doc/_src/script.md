@@ -1,4 +1,4 @@
-## Scripting the editor
+% Scripting the editor
 
 Any Guppy instance can be controlled from javascript.  For example,
 you can create some buttons that perform actions in the editor (such

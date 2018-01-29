@@ -1,4 +1,4 @@
-## Adding your own symbol
+% Adding your own symbol
 
 ### When to add a symbol
 

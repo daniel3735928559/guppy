@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Guppy: Format version changelogs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../build/guppy-default-osk.min.css">
+    <script type="text/javascript" src="../build/guppy.min.js"></script>
+    <script type="text/javascript" src="../build/guppy_osk.js"></script>
+
+    <script type="text/javascript" src="index.js"></script>
+    <link rel="stylesheet" href="../style/guppy.css">
+    <link rel="stylesheet" href="../index.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <nav class="navbar">
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="/">Guppy <font color="red">(ALPHA)</font></a>
+	</div>
+	
+	<ul class="nav navbar-nav pull-right">
+	  <li><a href="../doc/quickstart.html">Quick start</a></li>
+	  <li><a href="../examples/">Examples</a></li>
+	  <li><a href="../doc/">Docs</a></li>
+	  <li><a href="../api/guppymath/2.0.0-alpha/">API</a></li>
+	  <li><a href="https://github.com/daniel3735928559/guppy">Source</a></li>
+	  <li><a href="../contribute/">Contributing</a></li>
+	</ul>
+    </nav>
+    <h2>Format version changelogs</h2>
+        <ul>
+    <li><a href="#symbol">Symbol</a><ul>
+    <li><a href="#alpha.2">2.0.0-alpha.2</a></li>
+    <li><a href="#alpha.1">2.0.0-alpha.1</a></li>
+    <li><a href="#section">1.0.0</a></li>
+    </ul></li>
+    <li><a href="#document">Document</a><ul>
+    <li><a href="#alpha.1-1">2.0.0-alpha.1</a></li>
+    <li><a href="#section-1">1.1.0</a></li>
+    <li><a href="#section-2">1.0.0</a></li>
+    </ul></li>
+    </ul>
+        <h3 id="symbol">Symbol</h3>
+<h4 id="alpha.2">2.0.0-alpha.2</h4>
+<ul>
+<li><p>Removed <code>attrs.char</code> as redundant</p></li>
+<li><p>Replaced <code>current.index</code> with <code>input</code></p></li>
+</ul>
+<h4 id="alpha.1">2.0.0-alpha.1</h4>
+<ul>
+<li><p>Added top-level keys <code>_version</code>, <code>_name</code>, and <code>_templates</code>.</p></li>
+<li><p>Moved <code>attrs</code> to <code>args</code></p></li>
+<li><p>Moved <code>char</code>, <code>type</code>, and <code>group</code> to subkeys of <code>attrs</code></p></li>
+<li><p>Added <code>template</code></p></li>
+<li><p>Added <code>ast.type</code> and <code>ast.value</code></p></li>
+<li><p>Transposed <code>attrs</code> (now <code>args</code>) from</p>
+<pre><code>{
+  attr1: [arg1attr1val, arg2attr1val],
+  attr2: [arg1attr2val, arg2attr2val]
+}</code></pre>
+<p>to</p>
+<pre><code>[
+  arg1: {attr1:val,attr2:val},
+  arg2: {attr1:val,attr2:val}
+]</code></pre>
+<p>since the attributes used by different arguments are frequently different.</p></li>
+</ul>
+<h4 id="section">1.0.0</h4>
+<p>Initial version</p>
+<h3 id="document">Document</h3>
+<h4 id="alpha.1-1">2.0.0-alpha.1</h4>
+<ul>
+<li><p>Added <code>m/@v</code> to specify version.</p></li>
+<li><p>Removed <code>f/@c</code></p></li>
+</ul>
+<h4 id="section-1">1.1.0</h4>
+<ul>
+<li>Added <code>l</code> nodes as valid children of <code>f</code> and <code>l</code> nodes, with valid children either <code>l</code> or <code>c</code>.</li>
+</ul>
+<h4 id="section-2">1.0.0</h4>
+<p>Initial version</p>
+  </div>
+</body>
+
+</html>
