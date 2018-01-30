@@ -4,7 +4,6 @@ var Symbols = require('./symbols.js');
 var Utils = require('./utils.js');
 var Parsers = require('./parser.js');
 var Version = require('./version.js');
-var Guppy = Guppy || {"instances":{}};
 
 /**
    @class
@@ -43,11 +42,6 @@ Doc.prototype.ensure_text_nodes = function(){
     }
 }
 
-/** 
-    Check if document is empty
-    @memberof Doc
-    @returns {boolean}
-*/
 Doc.prototype.is_blank = function(){
     if(this.base.getElementsByTagName("f").length > 0) return false;
     var l = this.base.getElementsByTagName("e");
@@ -80,6 +74,17 @@ Doc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
+/** 
+    Evaluate the document using user-supplied functions to interpret symbols
+    @memberof Doc
+    @param {Object} evaluators - A dictionary where each key is a node
+    type in the AST ("var", "val", "sin", "cos", etc.) and the
+    corresponding value is a function that takes a list of argument
+    (the results of evaluating that AST node's arguments) as well as,
+    optionally, a second argument for the parent AST node to the one
+    currently being evaluated.
+    @returns {Object}
+*/
 Doc.prototype.evaluate = function(evaluators){
     return AST.eval(this.syntax_tree(), evaluators);
 }
@@ -264,14 +269,18 @@ Doc.prototype.manual_render = function(t,n,r){
 */
 Doc.render_all = function(t, delim){
     var l,i,n,d,s,ans = [];
-    if(t == "xml"){
+    if(!t || t == "xml"){
         l = document.getElementsByTagName("script");
         for(i = 0; i < l.length; i++){
             if(l[i].getAttribute("type") == "text/guppy_xml"){
                 n = l[i];
                 d = new Doc(n.innerHTML);
                 s = document.createElement("span");
-                s.setAttribute("id","guppy-xml-render-"+ans.length);
+		var l = ans.length;
+		var new_id = "guppy-"+t+"-render-"+l;
+		while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++l);
+                s.setAttribute("id",new_id);
+                s.setAttribute("class","guppy-render");
                 katex.render(d.get_content("latex"), s);
                 n.parentNode.insertBefore(s, n);
                 n.parentNode.removeChild(n);
@@ -287,7 +296,7 @@ Doc.render_all = function(t, delim){
                 switch (node.nodeType) {
                 case 1:
                     // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
-                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1 || Guppy.instances[node.getAttribute("id")]) {
+                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1) {
                             continue;
                     }
                     subs(node.firstChild);
@@ -304,7 +313,11 @@ Doc.render_all = function(t, delim){
 
                         // Make the span to render the doc in
                         var s = document.createElement("span");
-                        s.setAttribute("id","guppy-"+t+"-render-"+ans.length);
+			var l = ans.length;
+			var new_id = "guppy-"+t+"-render-"+l;
+			while(document.getElementById(new_id)) new_id = "guppy-"+t+"-render-"+(++l);
+                        s.setAttribute("id",new_id);
+			s.setAttribute("class","guppy-render");
 
                         // Create the document
                         d = new Doc(content,t);
@@ -317,7 +330,7 @@ Doc.render_all = function(t, delim){
                         text_node.parentNode.insertBefore(new_node, text_node);
                         text_node.parentNode.removeChild(text_node);
                         text_node = new_node;
-                        ans.push({"container":s, "doc":d})
+                        ans.push({"id":new_id, "doc":d})
 
                         // Place the right data in the remainder of the node
                         text_node.textContent = text_node.textContent.substring(next-offset+delim.length);

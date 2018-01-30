@@ -33,7 +33,28 @@
 	</ul>
     </nav>
     <h2>Rendering documents</h2>
+        <ul>
+    <li><a href="#rendering-pre-existing-xml">Rendering pre-existing XML</a></li>
+    <li><a href="#rendering-plain-text-or-latex">Rendering plain text or LaTeX</a></li>
+    <li><a href="#accessing-rendered-document-objects">Accessing rendered document objects</a></li>
+    </ul>
         <p>Guppy has the ability to render pre-existing mathematical expression on a page, where those expressions may be specified as XML documents, JSON syntax trees, plain text, or semantic LaTeX.</p>
+<p>In all cases, equations get rendered into a <code>&lt;span&gt;</code> element with a unique ID and class <code>guppy-render</code>. To render many Guppy documents on a page, you call <code>render_all</code> (parameters described below), which will return a list of objects of the form <code>{&quot;id&quot;:id, &quot;doc&quot;:doc}</code>, where <code>id</code> is the string ID of the span containing the rendered document, and <code>doc</code> is the Guppy.Doc object there rendered.</p>
+<h3 id="rendering-pre-existing-xml">Rendering pre-existing XML</h3>
+<p>If you have a GuppyXML document, say <code>&lt;m v=&quot;2.0.0&quot;&gt;&lt;e&gt;x+1&lt;/e&gt;&lt;/m&gt;</code>, then you can place it in an HTML as valid HTML by enclosing it in a script tag:</p>
+<pre><code>&lt;script type=&quot;text/guppy_xml&quot;&gt;
+  &lt;m v=&quot;2.0.0&quot;&gt;&lt;e&gt;x+1&lt;/e&gt;&lt;/m&gt;
+&lt;/script&gt;</code></pre>
+<p>On such a page, a call to <code>Guppy.Doc.render_all()</code> will render all such tags as documents, and will return the list of <code>{&quot;id&quot;:id, &quot;doc&quot;:doc}</code> objects as described above.</p>
+<h3 id="rendering-plain-text-or-latex">Rendering plain text or LaTeX</h3>
+<p>If you have equations on a page in a format that Guppy can import&#8211;plain text or semantic LaTeX, and those equations are delimited by some string such as <code>&quot;$$&quot;</code>, <code>Guppy.Doc.render_all</code> can also render these. The first arguemnt is the format in which the equations are specified (<code>&quot;latex&quot;</code> or <code>&quot;text&quot;</code>) and the second is the delimited string (e.g. <code>&quot;$$&quot;</code>).</p>
+<pre><code>&lt;p&gt;This is a paragraph about $$m^(a^(t^h))$$&lt;/p&gt;</code></pre>
+<p>Can be rendered with <code>Guppy.Doc.render_all(&quot;text&quot;, &quot;$$&quot;)</code>.</p>
+<h3 id="accessing-rendered-document-objects">Accessing rendered document objects</h3>
+<p>The function <code>render_all</code> returns a list of objects that specify both the id of the span into which the expression was rendered and the Guppy.Doc object that contains the information. So, for example, if you had rendered <code>x^2</code> on the page and wanted to evaluate it in response to user input, you could do:</p>
+<pre><code>var eqns = Guppy.Doc.render_all(&quot;text&quot;, &quot;$$&quot;)
+var x = prompt(&quot;Enter a value for x&quot;);
+alert(eqns[0].get_content(&quot;function&quot;)({&quot;x&quot;:x}));</code></pre>
   </div>
 </body>
 

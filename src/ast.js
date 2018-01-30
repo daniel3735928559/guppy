@@ -183,7 +183,7 @@ AST.to_function = function(ast, functions){
 
 AST.eval = function(ast, functions, parent){
     ans = null;
-    if(!functions["_default"]) functions["_default"] = function(name, args){ throw "Function not implemented: " + name + "(" + args + ")";}
+    if(!functions["_default"]) functions["_default"] = function(name, args){ throw Error("Function not implemented: " + name + "(" + args + ")");}
     
     var args = []
     for(var i = 0; i < ast[1].length; i++){

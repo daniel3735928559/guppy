@@ -40,12 +40,18 @@
     <li><a href="#section">1.0.0</a></li>
     </ul></li>
     <li><a href="#document">Document</a><ul>
-    <li><a href="#alpha.1-1">2.0.0-alpha.1</a></li>
-    <li><a href="#section-1">1.1.0</a></li>
-    <li><a href="#section-2">1.0.0</a></li>
+    <li><a href="#section-1">1.2.0</a></li>
+    <li><a href="#section-2">1.1.0</a></li>
+    <li><a href="#section-3">1.0.0</a></li>
     </ul></li>
     </ul>
-        <h3 id="symbol">Symbol</h3>
+        <p>Here we describe the various versions of Guppy XML documents and symbol specifications that may exist in the wild with the following caveats:</p>
+<ul>
+<li><p>Any symbol file not containing a <code>_version</code> top-level key may be assumed to be version 1.0.0.</p></li>
+<li><p>Any Guppy XML document not containing <code>m/@v</code> may be assumed to be 1.1.0.</p></li>
+<li><p>Document and symbol version numbers need not correlate with version numbers of Guppy itself.</p></li>
+</ul>
+<h3 id="symbol">Symbol</h3>
 <h4 id="alpha.2">2.0.0-alpha.2</h4>
 <ul>
 <li><p>Removed <code>attrs.char</code> as redundant</p></li>
@@ -68,21 +74,23 @@
   arg1: {attr1:val,attr2:val},
   arg2: {attr1:val,attr2:val}
 ]</code></pre>
-<p>since the attributes used by different arguments are frequently different.</p></li>
+<p>since the attributes used by different arguments are frequently different. Breaks compatibility with 1.0.0.</p></li>
 </ul>
 <h4 id="section">1.0.0</h4>
 <p>Initial version</p>
 <h3 id="document">Document</h3>
-<h4 id="alpha.1-1">2.0.0-alpha.1</h4>
+<h4 id="section-1">1.2.0</h4>
 <ul>
 <li><p>Added <code>m/@v</code> to specify version.</p></li>
 <li><p>Removed <code>f/@c</code></p></li>
+<li><p>Backwards-compatible with 1.1.0 and 1.0.0</p></li>
 </ul>
-<h4 id="section-1">1.1.0</h4>
+<h4 id="section-2">1.1.0</h4>
 <ul>
-<li>Added <code>l</code> nodes as valid children of <code>f</code> and <code>l</code> nodes, with valid children either <code>l</code> or <code>c</code>.</li>
+<li><p>Added <code>l</code> nodes as valid children of <code>f</code> and <code>l</code> nodes, with valid children either <code>l</code> or <code>c</code>.</p></li>
+<li><p>Backwards-compatible with 1.0.0</p></li>
 </ul>
-<h4 id="section-2">1.0.0</h4>
+<h4 id="section-3">1.0.0</h4>
 <p>Initial version</p>
   </div>
 </body>
