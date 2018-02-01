@@ -31,7 +31,7 @@
 	 "type":"symbol",
 	 "group":"editor"},
      "args":[
-	 {"mode":"symbol"}]
+	 {"mode":"symbol","is_bracket":"yes"}]
     },
     
     "abs":
@@ -42,7 +42,7 @@
 	 "type":"absolutevalue",
 	 "group":"functions"},
      "args":[
-	 {"delete":"1"}]
+	 {"delete":"1","is_bracket":"yes"}]
     },
     
     "sqrt":

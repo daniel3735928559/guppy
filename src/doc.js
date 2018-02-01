@@ -195,8 +195,11 @@ Doc.prototype.auto_bracket = function(n){
     var e1 = n.lastChild;
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
         var f = e0.nextSibling;
-        var cs = f.getElementsByTagName("c");
-        if(cs.length == 1 && cs[0].getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
+	var cs = 0;
+	var c = null;
+	// Count immediate children of f that are c nodes in cs and store the last one in c
+	for(var nn = f.firstChild; nn; nn = nn.nextSibling) if(nn.tagName == "c"){ c = nn; cs++; }
+        if(cs == 1 && c.getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
         if(Utils.is_char(f) && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
     }
     else if(n.childElementCount == 1){ // Single e child
@@ -276,9 +279,9 @@ Doc.render_all = function(t, delim){
                 n = l[i];
                 d = new Doc(n.innerHTML);
                 s = document.createElement("span");
-		var l = ans.length;
-		var new_id = "guppy-"+t+"-render-"+l;
-		while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++l);
+		var len = ans.length;
+		var new_id = "guppy-"+t+"-render-"+len;
+		while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++len);
                 s.setAttribute("id",new_id);
                 s.setAttribute("class","guppy-render");
                 katex.render(d.get_content("latex"), s);

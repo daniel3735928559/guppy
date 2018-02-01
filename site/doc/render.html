@@ -41,7 +41,7 @@
         <p>Guppy has the ability to render pre-existing mathematical expression on a page, where those expressions may be specified as XML documents, JSON syntax trees, plain text, or semantic LaTeX.</p>
 <p>In all cases, equations get rendered into a <code>&lt;span&gt;</code> element with a unique ID and class <code>guppy-render</code>. To render many Guppy documents on a page, you call <code>render_all</code> (parameters described below), which will return a list of objects of the form <code>{&quot;id&quot;:id, &quot;doc&quot;:doc}</code>, where <code>id</code> is the string ID of the span containing the rendered document, and <code>doc</code> is the Guppy.Doc object there rendered.</p>
 <h3 id="rendering-pre-existing-xml">Rendering pre-existing XML</h3>
-<p>If you have a GuppyXML document, say <code>&lt;m v=&quot;2.0.0&quot;&gt;&lt;e&gt;x+1&lt;/e&gt;&lt;/m&gt;</code>, then you can place it in an HTML as valid HTML by enclosing it in a script tag:</p>
+<p>If you have a GuppyXML document, say <code>&lt;m v=&quot;2.0.0&quot;&gt;&lt;e&gt;x+1&lt;/e&gt;&lt;/m&gt;</code>, then you can include it in an HTML document as valid HTML by enclosing it in a script tag:</p>
 <pre><code>&lt;script type=&quot;text/guppy_xml&quot;&gt;
   &lt;m v=&quot;2.0.0&quot;&gt;&lt;e&gt;x+1&lt;/e&gt;&lt;/m&gt;
 &lt;/script&gt;</code></pre>

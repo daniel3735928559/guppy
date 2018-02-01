@@ -814,7 +814,7 @@ Guppy.kb.k_syms = {
     "<":"<",
     ">":">",
     "_":"subscript",
-    "|":"absolute_value",
+    "|":"absolutevalue",
     "!":"factorial",
     "shift+up":"exponential",
     "shift+down":"subscript"
