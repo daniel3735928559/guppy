@@ -111,7 +111,8 @@ Guppy.make_button = function(url, cb){
     @param {string} name - The name of the symbol to add.  This is
     also the string that will be autoreplaced with the symbol.
     @param {Object} symbol - If `template` is present, this is just
-    the template arguments.  Otherwise, it is the complete symbol specification
+    the template arguments.  Otherwise, it is the complete symbol
+    specification
     @param {Object} symbol.output - Key/value pairs where the key is
     the output type (such as "latex" or "asciimath") and the value is
     the string by which the output will be rendered in that format.
@@ -121,6 +122,10 @@ Guppy.make_button = function(url, cb){
     where sep_i will be the separator used to separate entries in the
     ith dimension.  Note that keys are not necessary to describe the
     AST or plain-text outputs.
+    @param {Array} symbol.keys - A list of strings representing
+    keystrokes that can be used to trigger the insertion of this
+    symbol.  For example, `"^" or `"shift+up"` for the `exponential`
+    symbol.
     @param {Object} symbol.attrs - A specification of the attributes
     of the symbol
     @param {string} symbol.attrs.type - A longer description of the
@@ -803,22 +808,6 @@ Guppy.kb.k_chars = {
     "shift+/":"/",
     "shift+=":"+",
 };
-Guppy.kb.k_syms = {
-    "/":"fraction",
-    "^":"exponential",
-    "*":"*",
-    "(":"bracket",
-    "=":"=",
-    "[":"matrix",
-    "{":"vector",
-    "<":"<",
-    ">":">",
-    "_":"subscript",
-    "|":"absolutevalue",
-    "!":"factorial",
-    "shift+up":"exponential",
-    "shift+down":"subscript"
-};
 Guppy.kb.k_text = {
     "/":"/",
     "*":"*",
@@ -882,6 +871,9 @@ Guppy.kb.k_controls = {
     "tab":"tab"
 };
 
+// Will populate keyboard shortcuts for symbols from symbol files
+Guppy.kb.k_syms = {};
+
 var i = 0;
 
 // letters
@@ -898,7 +890,14 @@ for(i = 48; i <= 57; i++)
 
 Guppy.register_keyboard_handlers = function(){
     Mousetrap.addKeycodes({173: '-'}); // Firefox's special minus (needed for _ = sub binding)
-    var i = 0;
+    var i, name;
+    // Pull symbol shortcuts from Symbols:
+    for(name in Symbols.symbols){
+	var s = Symbols.symbols[name];
+	if(s.keys)
+	    for(i = 0; i < s.keys.length; i++)
+		Guppy.kb.k_syms[s.keys[i]] = s.attrs.type;
+    }
     for(i in Guppy.kb.k_chars)
         Mousetrap.bind(i,function(i){ return function(){
             if(!Guppy.active_guppy) return true;
@@ -911,7 +910,7 @@ Guppy.register_keyboard_handlers = function(){
             }
             Guppy.active_guppy.render(true);
             return false;
-        }}(i));  
+        }}(i));
     for(i in Guppy.kb.k_syms)
         Mousetrap.bind(i,function(i){ return function(){
             if(!Guppy.active_guppy) return true;
@@ -926,7 +925,7 @@ Guppy.register_keyboard_handlers = function(){
             else{
                 Guppy.active_guppy.engine.space_caret = 0;
                 //Guppy.active_guppy.engine.insert_symbol(Guppy.kb.k_syms[i]);
-		Guppy.active_guppy.engine.insert_symbol(Symbols.lookup_type(Guppy.kb.k_syms[i]));
+    		Guppy.active_guppy.engine.insert_symbol(Symbols.lookup_type(Guppy.kb.k_syms[i]));
             }
             Guppy.active_guppy.render(true);
             return false;

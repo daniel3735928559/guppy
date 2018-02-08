@@ -1,6 +1,6 @@
 {
-			"name": "guppymath",
-			"version": "2.0.0-alpha",
+			"name": "guppy-dev",
+			"version": "2.0.0-alpha.1",
 			"description": "WYSIWYG mathematics equation editor",
 			"directories": {
 						"doc": "site/docs",

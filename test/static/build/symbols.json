@@ -38,6 +38,7 @@
     {"output":{
         "latex":"\\left|{$1}\\right|",
 	"asciimath":"|{$1}|"},
+     "keys":["|"],
      "attrs":{
 	 "type":"absolutevalue",
 	 "group":"functions"},
@@ -60,6 +61,7 @@
     {"output":{
         "latex":"\\left({$1}\\right)",
 	"asciimath":"({$1})"},
+     "keys":["("],
      "attrs":{
 	 "type":"bracket",
 	 "group":"functions"},
@@ -86,6 +88,7 @@
         "latex":"{$1}!",
 	"asciimath":"({$1})!"},
      "input":1,
+     "keys":["!"],
      "attrs":{
 	 "type":"factorial",
 	 "group":"functions"},
@@ -98,6 +101,7 @@
         "latex":"{{$1}}^{{$2}}",
 	"asciimath":"({$1})^({$2})"},
      "input":1,
+     "keys":["^","shift+up"],
      "attrs":{
 	 "type":"exponential",
 	 "group":"functions"},
@@ -112,6 +116,7 @@
         "latex":"{{$1}}_{{$2}}",
 	"asciimath":"{$1}{$2}"},
      "input":1,
+     "keys":["_","shift+down"],
      "attrs":{
 	 "type":"subscript",
 	 "group":"functions"},
@@ -127,6 +132,7 @@
         "small_latex":"\\frac{{$1}}{{$2}}",
 	"asciimath":"({$1})/({$2})"},
      "input":1,
+     "keys":["/"],
      "attrs":{
 	 "type":"fraction",
 	 "group":"functions"},
@@ -227,6 +233,7 @@
     {"output":{
         "latex":"\\left\\langle {$1{,}} \\right\\rangle",
 	"asciimath":"vec({$1{,}})"},
+     "keys":["{"],
      "attrs":{
 	 "group":"array",
 	 "type":"vector"}
@@ -236,6 +243,7 @@
     {"output":{
         "latex":"\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
 	"asciimath":"matrix({$1{,}{;}})"},
+     "keys":["["],
      "attrs":{
 	 "group":"array",
 	 "type":"matrix"}
@@ -245,6 +253,7 @@
     {"output":{
         "latex":"\\cdot",
 	"asciimath":"*"},
+     "keys":["*"],
      "attrs":{
 	 "group":"operations",
 	 "type":"*"},
@@ -261,7 +270,7 @@
     "_templates":
     {
 	"latex_func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
-			  "asciimath":" {$name}({$1})"},
+				"asciimath":" {$name}({$1})"},
 		"attrs":{
 		    "type":"{$name}",
 		    "group":"functions"},
@@ -286,6 +295,7 @@
 
 	"binop":{"output":{"latex":"{$latex}",
 			   "asciimath":"{$asciimath}"},
+		 "keys":["{$type}"],
 		 "attrs":{
 		     "group":"operations",
 		     "type":"{$type}"},

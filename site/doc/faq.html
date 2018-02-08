@@ -27,7 +27,7 @@
 	  <li><a href="../doc/quickstart.html">Quick start</a></li>
 	  <li><a href="../examples/">Examples</a></li>
 	  <li><a href="../doc/">Docs</a></li>
-	  <li><a href="../api/guppymath/2.0.0-alpha/">API</a></li>
+	  <li><a href="../api/guppy-js/2.0.0-alpha.1/">API</a></li>
 	  <li><a href="https://github.com/daniel3735928559/guppy">Source</a></li>
 	  <li><a href="../contribute/">Contributing</a></li>
 	</ul>
@@ -56,26 +56,26 @@
 <p>Anyone who wants math input that is easy for novices to enter (such as in an educational context) and/or that is readable by computers (such as in a web based calculator application).</p>
 <p>Specifically, the needs of two target audiences have guided the development to date:</p>
 <ul>
-<li><p>Students learning mathematics online: It is intended make it easy both for students to input and for software to validate mathematical expressions. The input interface should be simpler than LaTeX, faster than clicking through menus of symbol options, and the results should be parseable so that inputs can be evaluated.</p></li>
+<li><p>Students learning mathematics online: It is intended make it easy both for students to input and for software to validate mathematical expressions. The input interface should be simpler than LaTeX, faster than clicking through menus of symbol options, and the results should be parseable so that inputs can be symbolically understood.</p></li>
 <li><p>Research mathematicians: It should be easier for researchers to search for mathematics. More computer-readable storage for mathematical expressions may allow search engines of the future to discern whether &#8220;H^2&#8221; is &#8220;H squared&#8221; or &#8220;degree-2 cohomology&#8221;. This project aims to make entering both of these interpretations easier than LaTeX would, while also including the information needed to distinguish them.</p></li>
 </ul>
 <h3 id="how-is-it-different-from-other-equation-editors">How is it different from other equation editors?</h3>
-<p>The output is semantically tagged. Now, you can distinguish whether dy/dx means &#8220;derivative of y with respect to x&#8221; or &#8220;quotient of the product d times y by the product d times x&#8221;.</p>
-<p>Also, in its default configuration it requires neither backslashes nor use of the mouse to enter expressions.</p>
+<p>The output is semantically tagged. Now, you can distinguish whether <code>dy/dx</code> means &#8220;derivative of y with respect to x&#8221; or &#8220;quotient of the product d times y by the product d times x&#8221;.</p>
+<p>Also, in its default configuration it requires neither backslashes nor use of the mouse to enter expressions (though both of these are options, when needed).</p>
 <h3 id="why-cant-it-output-to-maplesympysagemy-favourite-language">Why can&#8217;t it output to Maple/SymPy/Sage/[My favourite language]?</h3>
-<p>The simple answer is that you could make it do so.</p>
+<p>The simple answer is that you could make it do so (for example, by adding appropriate &#8220;sympy&#8221; outputs to your <code>symbols.json</code>).</p>
 <p>The much better answer is that, in most cases, you shouldn&#8217;t.</p>
-<p>Specifically, if you want to take user input and have the editor output it as, say, SymPy for processing on the server side, then this has been intentionally made difficult since such a setup almost always permits a malicious (or merely curious) user to easily take over the server. Removing builtins will not save you, chroot will not save you, and containers will also probably not save you. If the significance of <code>().__class__.__base__.__subclasses__()</code> is lost on you, you definitely shouldn&#8217;t do this. Even if you understand why that is relevant, you still most likely should not do this.</p>
-<p>If you want to process your mathematical expressions server-side, our advice is that you consume them as data, (for example via the &#8220;ast&#8221; syntax tree output) and evaluate them with the usual recursive process. Convenience methods exist in the GuppyDoc class for doing this in Javascript.</p>
+<p>If you want to process your mathematical expressions server-side, our advice is that you consume expressions from the editor as data, (for example via the &#8220;ast&#8221; syntax tree output) and evaluate them with the standard recursive process. Convenience methods exist in the GuppyDoc class for doing this in Javascript.</p>
+<p>We have intentionally omitted any code outputs (SymPy, etc) that might get passed to a server because because such a setup almost always permits a malicious (or merely curious) user to easily take over the server. Removing builtins will not save you, chroot will not save you, and containers will also probably not save you. If the significance of <code>().__class__.__base__.__subclasses__()</code> is lost on you, you definitely shouldn&#8217;t do this. Even if you understand why that is relevant, you still most likely should not do this.</p>
 <h3 id="can-i-make-the-cursor-orange">Can I make the cursor orange?</h3>
-<p>Yes. Many elements are tagged with CSS classes so that you can write CSS to customise the editor&#8217;s appearance. !important.</p>
+<p>Yes. Many elements are tagged with CSS classes so that you can write CSS to customise the editor&#8217;s appearance. See the <a href="./style.html">style tutorial</a>. !important.</p>
 <h3 id="what-are-the-future-plans-for-this-editor">What are the future plans for this editor?</h3>
-<p>See the <a href="./roadmap.html">roadmap</a>.</p>
+<p>Broadly, to integrate it with other software used for creating mathematical content, and to develop applications taking advantage of the computer-friendly storage format. See the <a href="./roadmap.html">roadmap</a> for details.</p>
 <h3 id="is-it-secure">Is it secure?</h3>
 <p>There are two threat models we have explicitly designed against:</p>
 <ul>
-<li><p>XSS: In anticipation of the use-case where user input is displayed to other users, we assume XML documents generated by the editor may be rendered by the editor for other users. All XML documents handled by the editor are parsed by DOMParser only and are never added to the root document.</p></li>
-<li><p>NPM-based attacks: Many components of modern web apps are deployed using npm install, which will recursively fetch all the component&#8217;s dependencies. Rather than specify dependencies and hope that when these are resolved by NPM at install time they are not compromised, we have audited our dependencies and packaged them with our releases.</p></li>
+<li><p>XSS: In anticipation of content from one user&#8217;s editor being displayed to other users, all XML documents handled by the editor are parsed by <code>DOMParser</code> only and are never added to the root document.</p></li>
+<li><p>NPM-based attacks: Many components of modern web apps are deployed using npm install, which will recursively fetch all the component&#8217;s dependencies. Rather than specify dependencies and hope that when these are resolved by NPM at install time they are not compromised, we have performed a limited audit of our dependencies and packaged them with our releases.</p></li>
 </ul>
 <h3 id="is-it-mobile-friendly">Is it mobile friendly?</h3>
 <p>It comes with an on-screen keyboard module that can be used to input from a phone or tablet. Try it out <a href="/site/examples/osk">here</a>.</p>
@@ -88,7 +88,7 @@
 <h3 id="why-guppy">Why &#8220;guppy&#8221;?</h3>
 <p>I truly don&#8217;t remember. /usr/share/dict/words may have played a role.</p>
 <h3 id="it-doesnt-work-on-my-browser">It doesn&#8217;t work on my browser!</h3>
-<p>I&#8217;ve tested it on recent versions of Firefox and Chrome and some version of Safari. Also, on IE11. It didn&#8217;t work on IE11.</p>
+<p>I&#8217;ve tested it on recent versions of Firefox and Chrome and some version of Safari. Also, on IE11. It didn&#8217;t work on IE11. If you have a browser for which it is broken and shouldn&#8217;t be, open an <a href="https://github.com/daniel3735928559/guppy/issues">issue</a>.</p>
 <h3 id="i-miss-backslashes">I miss backslashes!</h3>
 <p>Fine. Have it your way. They are included, but optional, with a configuration option to make them required if you choose.</p>
 <h3 id="is-it-web-3.0-compliant">Is it Web 3.0 compliant?</h3>

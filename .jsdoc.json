@@ -22,6 +22,7 @@
         "encoding": "utf8",
         "private": true,
         "recurse": true,
-        "template": "./node_modules/docdash"
+        "template": "./node_modules/docdash",
+	"package": "deploy.json"
     }
 }
