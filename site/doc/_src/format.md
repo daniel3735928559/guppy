@@ -5,10 +5,10 @@
 The XML format by which mathematical expressions are internally
 represented is specified as follows:
 
-* The document is `<m v="version">[component]</m>`
+* The document is `<m v="[version]">[component]</m>`
 
-* The `v` attribute contains the Guppy document spec version in use.
-  See [version information](./version.html).
+* The `v` attribute contains the Guppy document version in use.  See
+  [version information](./version.html).
 
 * A `[component]` consists of alternating `<e>` and `<f>` nodes, always
   starting and ending with `<e>` nodes.

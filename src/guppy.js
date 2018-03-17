@@ -47,13 +47,13 @@ var Guppy = function(id, config){
     if(buttons){
         for(var i = 0; i < buttons.length; i++){
             if(buttons[i] == "osk" && Settings.osk){
-                this.buttons_div.appendChild(Guppy.make_button("icons/keyboard.png", function() {
+                Guppy.make_button("icons/keyboard.png", this.buttons_div, function() {
                     if(Settings.osk.guppy == self){ Settings.osk.detach(self); }
-                    else{ Settings.osk.attach(self); }}));
+                    else{ Settings.osk.attach(self); }});
             }
-            else if(buttons[i] == "settings") this.buttons_div.appendChild(Guppy.make_button("icons/settings.png", function(){ Settings.toggle("settings", self); }));
-            else if(buttons[i] == "symbols") this.buttons_div.appendChild(Guppy.make_button("icons/symbols.png", function(){ Settings.toggle("symbols", self); }));
-            else if(buttons[i] == "controls") this.buttons_div.appendChild(Guppy.make_button("icons/help.png", function(){ Settings.toggle("controls", self); }));
+            else if(buttons[i] == "settings") Guppy.make_button("icons/settings.png", this.buttons_div, function(){ Settings.toggle("settings", self); });
+            else if(buttons[i] == "symbols") Guppy.make_button("icons/symbols.png", this.buttons_div, function(){ Settings.toggle("symbols", self); });
+            else if(buttons[i] == "controls") Guppy.make_button("icons/help.png", this.buttons_div, function(){ Settings.toggle("controls", self); });
         }
     }
 
@@ -89,18 +89,19 @@ Guppy.Doc = Doc;
 Guppy.active_guppy = null;
 Guppy.Symbols = Symbols;
 
-Guppy.make_button = function(url, cb){
+Guppy.make_button = function(url, parent, cb){
     var b = document.createElement("img");
     b.setAttribute("class","guppy-button");
     b.setAttribute("src", Settings.config.path + "/" + url);
+    parent.appendChild(b);
     if(cb){
-        b.onclick = function(e){
+        b.addEventListener("mouseup", function(e){
             cb(e);
             if(e.cancelBubble!=null) e.cancelBubble = true;
             if(e.stopPropagation) e.stopPropagation();
             e.preventDefault();
             return false;
-        };
+        }, false);
     }
     return b;
 }
@@ -541,8 +542,8 @@ Guppy.prototype.select_to = function(x, y, mouse){
 }
 
 
-window.addEventListener("mousedown",Guppy.mouse_down, false);
-window.addEventListener("mouseup",Guppy.mouse_up, false);
+window.addEventListener("mousedown",Guppy.mouse_down, true);
+window.addEventListener("mouseup",Guppy.mouse_up, true);
 window.addEventListener("mousemove",Guppy.mouse_move, false);
 
 Guppy.prototype.render_node = function(t){
@@ -895,8 +896,8 @@ Guppy.register_keyboard_handlers = function(){
     for(name in Symbols.symbols){
 	var s = Symbols.symbols[name];
 	if(s.keys)
-	    for(i = 0; i < s.keys.length; i++)
-		Guppy.kb.k_syms[s.keys[i]] = s.attrs.type;
+                for(i = 0; i < s.keys.length; i++)
+                Guppy.kb.k_syms[s.keys[i]] = s.attrs.type;
     }
     for(i in Guppy.kb.k_chars)
         Mousetrap.bind(i,function(i){ return function(){
@@ -925,7 +926,7 @@ Guppy.register_keyboard_handlers = function(){
             else{
                 Guppy.active_guppy.engine.space_caret = 0;
                 //Guppy.active_guppy.engine.insert_symbol(Guppy.kb.k_syms[i]);
-    		Guppy.active_guppy.engine.insert_symbol(Symbols.lookup_type(Guppy.kb.k_syms[i]));
+                Guppy.active_guppy.engine.insert_symbol(Symbols.lookup_type(Guppy.kb.k_syms[i]));
             }
             Guppy.active_guppy.render(true);
             return false;

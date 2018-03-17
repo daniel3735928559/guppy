@@ -16,7 +16,7 @@
 	 focuses = 0;
 	 unfocuses = 0;
 	 Guppy.init({"symbols":"build/symbols.json",
-		     "path":"../build",
+		     "path":"./build",
 		     "events":{
 			 "error":function(e){e.target.import_xml("<m><e>"+e.message+"</e></m>");},
 			 "left_end":function(e){e.target.import_xml("<m><e>LEFT</e></m>");},

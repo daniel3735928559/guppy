@@ -33,6 +33,8 @@ case "$op" in
 	./node_modules/.bin/browserify -t browserify-istanbul src/guppy.js -o test/static/build/guppy_test.js --standalone Guppy
 	cat lib/katex/katex-modified.min.css style/guppy.css > test/static/build/guppy-test.min.css
 	cp -r sym/symbols.json test/static/build/
+	cp -r lib/katex/fonts test/static/build/
+	cp -r lib/icons/ test/static/build/
 	;;
     "test")
 	cd test

@@ -1,4 +1,6 @@
 var covered_functions = {};
+var DOC_VERSION = "1.2.0";
+
 var tests = [
     {
 	"description":"Ready",
@@ -427,6 +429,14 @@ var tests = [
 	}
     },
     {
+	"description":"abs bracket",
+	"type":"latex",
+	"expected":"{\\left|x+y\\right|}^{2}",
+	"run":function(g){
+	    do_keys(['|','x','+','y','right','^','2']);
+	}
+    },
+    {
 	"description":"delete exponent",
 	"type":"asciimath",
 	"expected":"x",
@@ -488,7 +498,7 @@ var tests = [
     {
 	"description":"symbol_char",
 	"type":"ast",
-	"expected":`["var",["sim"]]`,
+	"expected":'["var",["sim"]]',
 	"run":function(g){
 	    Guppy.add_global_symbol("sim",{},"char");
 	    do_keys(['s','i','m']);
@@ -497,7 +507,7 @@ var tests = [
     {
 	"description":"export sub",
 	"type":"text",
-	"expected":`(x_2)`,
+	"expected":"(x_2)",
 	"run":function(g){
 	    do_keys(['x','_','2']);
 	}
@@ -532,7 +542,7 @@ var tests = [
     {
 	"description":"matrix nav",
 	"type":"ast",
-	"expected":`["*",[["*",[["var",["x"]],["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]]],["var",["y"]]]]`,
+	"expected":'["*",[["*",[["var",["x"]],["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]]],["var",["y"]]]]',
 	"run":function(g){
 	    do_keys(['m','a','t','1',',','2',';','3','right','4','right','y','left','left','left','left','left','left','left','left','left','left','x']);
 	}
@@ -548,7 +558,7 @@ var tests = [
     {
 	"description":"export_xml",
 	"type":"xml",
-	"expected":"<m v=\"2.0.0-alpha.1\"><e>xy</e></m>",
+	"expected":"<m v=\""+DOC_VERSION+"\"><e>xy</e></m>",
 	"run":function(g){
 	    do_keys(['x','y']);
 	}
@@ -556,7 +566,7 @@ var tests = [
     {
 	"description":"export_ast",
 	"type":"ast",
-	"expected":`["defintegral",[["val",[1]],["val",[2]],["+",[["exponential",[["var",["x"]],["val",[2]]]],["val",[1]]]],["var",["x"]]]]`,
+	"expected":'["defintegral",[["val",[1]],["val",[2]],["+",[["exponential",[["var",["x"]],["val",[2]]]],["val",[1]]]],["var",["x"]]]]',
 	"run":function(g){
 	    do_keys(['d','e','f','i','1','right','2','right','x','^','2','right','+','1','right','x']);
 	}
@@ -572,7 +582,7 @@ var tests = [
     {
 	"description":"import_text",
 	"type":"ast",
-	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
+	"expected":'["-",[["var",["x"]],["sin",[["var",["x"]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("x-sin(x)");
 	}
@@ -580,7 +590,7 @@ var tests = [
     {
 	"description":"import_latex",
 	"type":"ast",
-	"expected":`["-",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
+	"expected":'["-",[["var",["x"]],["sin",[["var",["x"]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_latex("x-\\sin{x}");
 	}
@@ -588,7 +598,7 @@ var tests = [
     {
 	"description":"import_latex_matrix",
 	"type":"ast",
-	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
+	"expected":'["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_latex("\\matrix{\\list{\\list{1}{2}}{\\list{3}{4}}}");
 	}
@@ -597,7 +607,7 @@ var tests = [
 	"description":"insert_doc",
 	"content":"<m><e>x</e></m>",
 	"type":"ast",
-	"expected":`["*",[["var",["x"]],["sin",[["var",["x"]]]]]]`,
+	"expected":'["*",[["var",["x"]],["sin",[["var",["x"]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").engine.right();
 	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("sin(x)","text"));
@@ -607,7 +617,7 @@ var tests = [
 	"description":"insert_doc_number",
 	"content":"<m><e>2</e></m>",
 	"type":"ast",
-	"expected":`["val",[23]]`,
+	"expected":'["val",[23]]',
 	"run":function(g){
 	    Guppy("guppy1").engine.right();
 	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("3","text"));
@@ -617,7 +627,7 @@ var tests = [
 	"description":"insert_doc_subtract",
 	"content":"<m><e>x</e></m>",
 	"type":"ast",
-	"expected":`["-",[["var",["x"]],["sin",[["var",["y"]]]]]]`,
+	"expected":'["-",[["var",["x"]],["sin",[["var",["y"]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").engine.right();
 	    Guppy("guppy1").engine.insert_doc(new Guppy.Doc("-sin(y)","text"));
@@ -626,7 +636,7 @@ var tests = [
     {
 	"description":"import_text arithmetic",
 	"type":"ast",
-	"expected":`["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]`,
+	"expected":'["factorial",[["exponential",[["var",["x"]],["val",[2]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("x^2!");
 	}
@@ -634,7 +644,7 @@ var tests = [
     {
 	"description":"import_text frac",
 	"type":"ast",
-	"expected":`["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]`,
+	"expected":'["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["+",[["val",[1]],["fraction",[["val",[1]],["val",[1]]]]]]]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("1/(1+1/(1+1/1)))");
 	}
@@ -642,7 +652,7 @@ var tests = [
     {
 	"description":"import_text calc",
 	"type":"ast",
-	"expected":`["*",[["-",[["val",[2]]]],["+",[["val",[1]],["val",[3]]]]]]`,
+	"expected":'["*",[["-",[["val",[2]]]],["+",[["val",[1]],["val",[3]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("-2(1+3)");
 	}
@@ -650,7 +660,7 @@ var tests = [
     {
 	"description":"import_text order of operations",
 	"type":"ast",
-	"expected":`["+",[["val",[1]],["*",[["val",[2]],["val",[3]]]]]]`,
+	"expected":'["+",[["val",[1]],["*",[["val",[2]],["val",[3]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("1+2*3");
 	}
@@ -658,7 +668,7 @@ var tests = [
     {
 	"description":"import_text matrix",
 	"type":"ast",
-	"expected":`["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]`,
+	"expected":'["matrix",[["list",[["list",[["val",[1]],["val",[2]]]],["list",[["val",[3]],["val",[4]]]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("matrix(list(list(1,2),list(3,4)))");
 	}
@@ -666,7 +676,7 @@ var tests = [
     {
 	"description":"import_text char",
 	"type":"ast",
-	"expected":`["+",[["var",["epsilon"]],["var",["theta"]]]]`,
+	"expected":'["+",[["var",["epsilon"]],["var",["theta"]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("epsilon()+theta()");
 	}
@@ -674,7 +684,7 @@ var tests = [
     {
 	"description":"import_text subscript",
 	"type":"ast",
-	"expected":`["subscript",[["var",["x"]],["val",[2]]]]`,
+	"expected":'["subscript",[["var",["x"]],["val",[2]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("x_2");
 	}
@@ -706,7 +716,7 @@ var tests = [
     {
 	"description":"Comparisons",
 	"type":"ast",
-	"expected":`["=",[["<",[[">",[["var",["x"]],["var",["y"]]]],["var",["z"]]]],["var",["w"]]]]`,
+	"expected":'["=",[["<",[[">",[["var",["x"]],["var",["y"]]]],["var",["z"]]]],["var",["w"]]]]',
 	"run":function(g){
 	    do_keys(['x','>','y','<','z','=','w']);
 	}
@@ -714,7 +724,7 @@ var tests = [
     {
 	"description":"Simple comparisons list",
 	"type":"eqns",
-	"expected":`[[">",[["var",["x"]],["var",["y"]]]],["<",[["var",["y"]],["var",["z"]]]]]`,
+	"expected":'[[">",[["var",["x"]],["var",["y"]]]],["<",[["var",["y"]],["var",["z"]]]]]',
 	"run":function(g){
 	    do_keys(['x','>','y','<','z']);
 	}
@@ -722,7 +732,7 @@ var tests = [
     {
 	"description":"Simple comparisons text",
 	"type":"text",
-	"expected":`x > y < z`,
+	"expected":'x > y < z',
 	"run":function(g){
 	    do_keys(['x','>','y','<','z']);
 	}
@@ -746,7 +756,7 @@ var tests = [
     {
 	"description":"Comparisons list",
 	"type":"eqns",
-	"expected":`[[">=",[["var",["x"]],["var",["y"]]]],["<=",[["var",["y"]],["var",["z"]]]],["!=",[["var",["z"]],["var",["w"]]]]]`,
+	"expected":'[[">=",[["var",["x"]],["var",["y"]]]],["<=",[["var",["y"]],["var",["z"]]]],["!=",[["var",["z"]],["var",["w"]]]]]',
 	"run":function(g){
 	    do_keys(['x','g','e','q','y','l','e','q','z','n','e','q','w']);
 	}
@@ -786,12 +796,14 @@ var tests = [
 	"type":"asciimath",
 	"expected":"10x10x10x",
 	"run":function(g){
+	    var evt = document.createEvent("MouseEvents");
+	    evt.initEvent("mouseup", true, true);
 	    var bs = document.getElementsByClassName("guppy-button");
 	    var cs = document.getElementsByClassName("guppy_help");
 	    var xs = document.getElementsByClassName("guppy-card-x");
 	    var cards = 0;
 	    for(var i = 0; i < bs.length; i++){
-		bs[i].click();
+		bs[i].dispatchEvent(evt);
 		cards = 0;
 		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
 		do_keys([cards+""]);
@@ -808,16 +820,18 @@ var tests = [
 	"type":"asciimath",
 	"expected":"10x10x10x",
 	"run":function(g){
+	    var evt = document.createEvent("MouseEvents");
+	    evt.initEvent("mouseup", true, true);
 	    var bs = document.getElementsByClassName("guppy-button");
 	    var cs = document.getElementsByClassName("guppy_help");
 	    var xs = document.getElementsByClassName("guppy-card-x");
 	    var cards = 0;
 	    for(var i = 0; i < bs.length; i++){
-		bs[i].click();
+		bs[i].dispatchEvent(evt);
 		cards = 0;
 		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
 		do_keys([cards+""]);
-		bs[i].click();
+		bs[i].dispatchEvent(evt);
 		cards = 0;
 		for(var j = 0; j < cs.length; j++) if(cs[j].style.display != "none") cards++;
 		do_keys([cards+""]);
@@ -840,7 +854,7 @@ var tests = [
 	"observe":function(g){
 	    return g.syntax_tree();
 	},
-	"expected":`["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]`,
+	"expected":'["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]',
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -860,7 +874,7 @@ var tests = [
 	"observe":function(g){
 	    return g.equations();
 	},
-	"expected":`[["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]]`,
+	"expected":'[["=",[["squareroot",[["+",[["-",[["var",["x"]]]],["*",[["val",[2]],["var",["y"]]]]]]]],["var",["z"]]]]]',
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -880,7 +894,7 @@ var tests = [
 	"observe":function(g){
 	    return g.xml();
 	},
-	"expected":`<m v=\"2.0.0-alpha.1\"><e></e><f type="squareroot" group="functions"><b p="latex">\\sqrt{<r ref="1"/>\\phantom{\\tiny{!}}}</b><b p="asciimath">sqrt(<r ref="1"/>)</b><c delete="1"><e>-x+2y</e></c></f><e></e><f group="operations" type="=" ast_type="operator"><b p="latex">=</b><b p="asciimath"> = </b></f><e>z</e></m>`,
+	"expected":'<m v=\"'+DOC_VERSION+'\"><e></e><f type="squareroot" group="functions"><b p="latex">\\sqrt{<r ref="1"/>\\phantom{\\tiny{!}}}</b><b p="asciimath">sqrt(<r ref="1"/>)</b><c delete="1"><e>-x+2y</e></c></f><e></e><f group="operations" type="=" ast_type="operator"><b p="latex">=</b><b p="asciimath"> = </b></f><e>z</e></m>',
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -890,7 +904,7 @@ var tests = [
 	"observe":function(g){
 	    return JSON.stringify(g.symbols_used());
 	},
-	"expected":`["squareroot","sin","exponential"]`,
+	"expected":'["squareroot","sin","exponential"]',
 	"run":function(g){
 	    do_keys(['s','q','r','t','s','i','n','x','^','2']);
 	}
@@ -900,7 +914,7 @@ var tests = [
 	"observe":function(g){
 	    return JSON.stringify(g.vars());
 	},
-	"expected":`["x","alpha","y"]`,
+	"expected":'["x","alpha","y"]',
 	"run":function(g){
 	    do_keys(['x','+','a','l','p','h','a','^','y']);
 	}

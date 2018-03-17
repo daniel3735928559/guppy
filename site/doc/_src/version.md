@@ -15,6 +15,15 @@ caveats:
 
 ### Symbol
 
+The complete specification for the current version is described in the
+documentation for
+[`Guppy.add_global_symbol`](../api/guppy-js/2.0.0-alpha.1/Guppy.html#.add_global_symbol).
+
+#### 2.0.0-alpha.3
+
+* Added `keys` to symbol dictionary to specify keyboard input
+  combinations for that symbol.
+
 #### 2.0.0-alpha.2
 
 * Removed `attrs.char` as redundant
@@ -55,6 +64,9 @@ caveats:
 Initial version
 
 ### Document
+
+The complete specification for the current version is described in the
+[XML format](./format.html) page.
 
 #### 1.2.0
 
