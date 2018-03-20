@@ -29,23 +29,13 @@ We seek to allow people to use the editor in contexts in which they
 already create mathematical content.  Some (by no means all) platforms
 that I wish to explore specifically are:
 
-* Jupyter notebooks
+* Programming tools: Jupyter notebooks, Sage workbooks
 
-* Sage workbooks
+* Javascript libraries/frameworks: Quill.js, ReactJS, CodeMirror
 
-* TiddlyWiki
+* Content management systems: TiddlyWiki, Moodle, WordPress, Emacs
 
-* Quill.js 
-
-* CodeMirror
-
-* Moodle
-
-* WordPress
-
-* Emacs
-
-### Application
+### Applications
 
 When mathematical content is stored in a computer-friendly way, there
 should be ways of leveraging that extra understanding to help those

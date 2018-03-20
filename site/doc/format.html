@@ -20,7 +20,7 @@
   <div class="container">
     <nav class="navbar">
 	<div class="navbar-header">
-	  <a class="navbar-brand" href="/">Guppy <font color="red">(ALPHA)</font></a>
+	  <a class="navbar-brand" href="/">Guppy <font color="red">(BETA)</font></a>
 	</div>
 	
 	<ul class="nav navbar-nav pull-right">
@@ -44,8 +44,8 @@
         <h3 id="specification">Specification</h3>
 <p>The XML format by which mathematical expressions are internally represented is specified as follows:</p>
 <ul>
-<li><p>The document is <code>&lt;m v=&quot;version&quot;&gt;[component]&lt;/m&gt;</code></p></li>
-<li><p>The <code>v</code> attribute contains the Guppy document spec version in use. See <a href="./version.html">version information</a>.</p></li>
+<li><p>The document is <code>&lt;m v=&quot;[version]&quot;&gt;[component]&lt;/m&gt;</code></p></li>
+<li><p>The <code>v</code> attribute contains the Guppy document version in use. See <a href="./version.html">version information</a>.</p></li>
 <li><p>A <code>[component]</code> consists of alternating <code>&lt;e&gt;</code> and <code>&lt;f&gt;</code> nodes, always starting and ending with <code>&lt;e&gt;</code> nodes.</p></li>
 <li><p><code>&lt;e&gt;</code> nodes represent expressions and contain only text, as in <code>&lt;e&gt;x+1&lt;/e&gt;</code></p></li>
 <li><p><code>&lt;f&gt;</code> nodes represent symbols and have one attribute: <code>type</code>, whose value comes from the <code>type</code> field in <code>symbols.json</code>. They look like</p>

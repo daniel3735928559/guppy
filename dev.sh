@@ -15,13 +15,14 @@ case "$op" in
 	npm run-script build
 	cp deploy.json build/package.json
 	cd build
-	npm deploy
+	npm publish
 	;;
     "build-final")
 	[[ ! -d build ]] && mkdir build
-	./node_modules/.bin/browserify src/guppy.js --standalone Guppy | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false > build/guppy.min.js
-	./node_modules/.bin/browserify src/osk.js --standalone GuppyOSK | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false  > build/guppy_osk.js
+	./node_modules/.bin/browserify src/guppy.js --standalone Guppy | tee build/guppy.js | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false > build/guppy.min.js
+	./node_modules/.bin/browserify src/osk.js --standalone GuppyOSK | ./node_modules/.bin/uglifyjs --mangle --beautify ascii_only=true,beautify=false > build/guppy_osk.js
 	./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css > build/guppy-none.min.css
+	./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/osk.css > build/guppy-none-osk.min.css
 	./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css
 	./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
 	cp -r lib/katex/fonts build
