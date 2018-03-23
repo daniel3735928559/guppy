@@ -27,6 +27,7 @@ case "$op" in
 	./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css
 	cp -r lib/katex/fonts build
 	cp -r lib/icons/ build
+	cp -r sym/ build
 	;;
     "build-test")
 	mkdir test/static/build 2>/dev/null
