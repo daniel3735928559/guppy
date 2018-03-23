@@ -532,7 +532,7 @@ Doc.render_all = function(t, delim){
                 case 1:
                     // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
                     if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1) {
-                            continue;
+                        continue;
                     }
                     subs(node.firstChild);
                     break;
@@ -554,11 +554,16 @@ Doc.render_all = function(t, delim){
                         s.setAttribute("id",new_id);
 			s.setAttribute("class","guppy-render");
 
-                        // Create the document
-                        d = new Doc(content,t);
-                        
-                        // Render the doc
-                        katex.render(d.get_content("latex"), s);
+			try {
+                            // Create the document
+                            d = new Doc(content,t);
+                            
+                            // Render the doc
+                            katex.render(d.get_content("latex"), s);
+			}
+			catch (e) {
+			    s.innerHTML = "ERROR: "+e.message;
+			}
                         var new_node = document.createTextNode(after)
                         text_node.parentNode.insertBefore(document.createTextNode(before), text_node);
                         text_node.parentNode.insertBefore(s, text_node);
@@ -2770,8 +2775,7 @@ Guppy.kb.k_chars = {
     "-":"-",
     "*":"*",
     ".":".",
-    "shift+/":"/",
-    "shift+=":"+",
+    "shift-/":"/"
 };
 Guppy.kb.k_text = {
     "/":"/",
@@ -2793,7 +2797,7 @@ Guppy.kb.k_text = {
     "`":"`",
     ":":":",
     "\"":"\"",
-    "shift+/":"?",
+    "?":"?",
     "space":" ",
 };
 Guppy.kb.k_controls = {
