@@ -93,10 +93,15 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     }
     var functions = {};
 
-    var ops = ["*","<",">","=","<=",">=","!="];
+    var ops = ["<",">","=","<=",">=","!="];
     for(var i = 0; i < ops.length; i++){
         functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
     }
+    functions["*"] = function(args){
+        var d = args[0].cloneNode(true);
+        append_doc(d, args[1].cloneNode(true));
+        return d;
+    };
     functions["/"] = function(args){
         return make_sym("fraction",args);
     };

@@ -467,7 +467,7 @@ Doc.prototype.manual_render = function(t,n,r){
         for(nn = par.firstChild; nn != null; nn = nn.nextSibling)
             if(nn.nodeName == "c" || nn.nodeName == "l") cs[i++] = this.manual_render(t,nn,r);
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling){
-            if(nn.nodeType == 3) ans += nn.textContent;
+            if(nn.nodeType == 3) ans += nn.textContent + " ";
             else if(nn.nodeType == 1){
                 if(nn.hasAttribute("d")){
                     var dim = parseInt(nn.getAttribute("d"));
@@ -475,9 +475,9 @@ Doc.prototype.manual_render = function(t,n,r){
                         if(d > 1) for(var k = 0; k < l.length; k++) l[k] = joiner(d-1,l[k]);
                         return l.join(nn.getAttribute('sep'+(d-1)));
                     }
-                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]);
+                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]) + " ";
                 }
-                else ans += cs[parseInt(nn.getAttribute("ref"))];
+                else ans += cs[parseInt(nn.getAttribute("ref"))] + " ";
             }
         }
     }
@@ -490,7 +490,7 @@ Doc.prototype.manual_render = function(t,n,r){
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling)
-            ans += this.manual_render(t,nn,r);
+            ans += this.manual_render(t,nn,r) + " ";
         if(t == "latex" && n.getAttribute("bracket") == "yes" && this.auto_bracket(n)) {
             ans = "\\left("+ans+"\\right)";
         }

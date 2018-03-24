@@ -235,7 +235,7 @@ Doc.prototype.manual_render = function(t,n,r){
         for(nn = par.firstChild; nn != null; nn = nn.nextSibling)
             if(nn.nodeName == "c" || nn.nodeName == "l") cs[i++] = this.manual_render(t,nn,r);
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling){
-            if(nn.nodeType == 3) ans += nn.textContent;
+            if(nn.nodeType == 3) ans += nn.textContent + " ";
             else if(nn.nodeType == 1){
                 if(nn.hasAttribute("d")){
                     var dim = parseInt(nn.getAttribute("d"));
@@ -243,9 +243,9 @@ Doc.prototype.manual_render = function(t,n,r){
                         if(d > 1) for(var k = 0; k < l.length; k++) l[k] = joiner(d-1,l[k]);
                         return l.join(nn.getAttribute('sep'+(d-1)));
                     }
-                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]);
+                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]) + " ";
                 }
-                else ans += cs[parseInt(nn.getAttribute("ref"))];
+                else ans += cs[parseInt(nn.getAttribute("ref"))] + " ";
             }
         }
     }
@@ -258,7 +258,7 @@ Doc.prototype.manual_render = function(t,n,r){
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling)
-            ans += this.manual_render(t,nn,r);
+            ans += this.manual_render(t,nn,r) + " ";
         if(t == "latex" && n.getAttribute("bracket") == "yes" && this.auto_bracket(n)) {
             ans = "\\left("+ans+"\\right)";
         }
@@ -299,7 +299,7 @@ Doc.render_all = function(t, delim){
                 switch (node.nodeType) {
                 case 1:
                     // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
-                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1) {
+                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1 || (""+node.getAttribute("class")).indexOf("guppy") > -1) {
                         continue;
                     }
                     subs(node.firstChild);
@@ -338,10 +338,8 @@ Doc.render_all = function(t, delim){
                         text_node.parentNode.insertBefore(new_node, text_node);
                         text_node.parentNode.removeChild(text_node);
                         text_node = new_node;
-                        ans.push({"id":new_id, "doc":d})
+                        ans.push({"id":new_id, "doc":d});
 
-                        // Place the right data in the remainder of the node
-                        text_node.textContent = text_node.textContent.substring(next-offset+delim.length);
                         offset = text_node.textContent.indexOf(delim);
                     }
                     break;
