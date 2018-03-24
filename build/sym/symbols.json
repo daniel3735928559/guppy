@@ -46,6 +46,18 @@
 	 {"delete":"1","is_bracket":"yes"}]
     },
     
+    "eval":
+    {"output":{
+        "latex":"{$1}({$2})",
+	"asciimath":"{$1}({$2})"},
+     "attrs":{
+	 "type":"eval",
+	 "group":"functions"},
+     "args":[
+	 {"delete":"2","name":"function"},
+	 {"delete":"1","name":"argument"}]
+    },
+    
     "sqrt":
     {"output":{
         "latex":"\\sqrt{{$1}\\phantom{\\tiny{!}}}",
@@ -174,9 +186,9 @@
     
     "deriv":
     {"output":{
-        "latex":"\\displaystyle\\frac{d}{d{$1}}{$2}",
-        "small_latex":"\\frac{d}{d{$1}}{$2}",
-	"asciimath":"diff({$2},{$1})"},
+        "latex":"\\displaystyle\\frac{d{$1}}{d{$2}}",
+        "small_latex":"\\frac{d{$1}}{d{$2}}",
+	"asciimath":"diff({$1},{$2})"},
      "attrs":{
 	 "type":"derivative",
 	 "group":"calculus"},
@@ -305,7 +317,7 @@
 
     "functions":{
 	"template":"latex_func",
-	"values":["sin","cos","tan","sec","csc","cot","log","ln"]},
+	"values":["sin","cos","tan","sec","csc","cot","log","ln","arcsin","arccos","arctan","sinh","cosh","tanh"]},
     
     "greek":{
 	"template":"char",

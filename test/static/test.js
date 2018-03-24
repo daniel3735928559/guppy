@@ -431,7 +431,7 @@ var tests = [
     {
 	"description":"abs bracket",
 	"type":"latex",
-	"expected":"{\\left|x+y\\right|}^{2}",
+	"expected":" { \\left| x+y \\right| }^{ 2 } ",
 	"run":function(g){
 	    do_keys(['|','x','+','y','right','^','2']);
 	}
@@ -844,7 +844,7 @@ var tests = [
 	"observe":function(g){
 	    return g.latex();
 	},
-	"expected":"\\sqrt{-x+2y\\phantom{\\tiny{!}}}=z",
+	"expected":" \\sqrt{ -x+2y \\phantom{\\tiny{!}}} = z ",
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
@@ -1038,12 +1038,12 @@ function run_test(i, g){
 	test_guppy.render();
 	if(t.observe) observed = t.observe(test_guppy);
 	else observed = test_guppy.engine.get_content(t.type);
-	console.log(observed);
+	console.log(observed,t.type);
     } catch(e) {
 	observed = e + "\n" + e.stack;
     }
     test_guppy.deactivate();
-    if(t.expected == observed){
+    if(t.expected == observed || (t.type == "latex" && t.expected.replace("/ /g","") == observed.replace("/ /g",""))){
 	append_result(t.description,"PASS", i);
 	return true;
     }

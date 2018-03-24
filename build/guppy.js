@@ -62,6 +62,14 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     var append_str = function(doc, str){
         doc.documentElement.lastChild.textContent += str;
     }
+    var tail = function(doc){
+        var n = doc.documentElement.lastChild;
+        return n.firstChild.textContent.slice(-1);
+    }
+    var head = function(doc){
+        var n = doc.documentElement.firstChild;
+        return n.firstChild.textContent.slice(0,1);
+    }
     var append_doc = function(doc, doc2){
         var n = doc.documentElement.lastChild;
         var nn = doc2.documentElement.firstChild
@@ -119,10 +127,16 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     }
     var functions = {};
 
-    var ops = ["*","<",">","=","<=",">=","!="];
+    var ops = ["<",">","=","<=",">=","!="];
     for(var i = 0; i < ops.length; i++){
         functions[ops[i]] = function(o){ return function(args){ return binop_high(args, o); }}(ops[i]);
     }
+    functions["*"] = function(args){
+        var d = args[0].cloneNode(true);
+	if(/[\d.]/.test(tail(args[0])) && /[\d.]/.test(head(args[1]))) append_doc(d, make_sym("*",[]));
+        append_doc(d, args[1].cloneNode(true));
+        return d;
+    };
     functions["/"] = function(args){
         return make_sym("fraction",args);
     };
@@ -447,6 +461,7 @@ Doc.prototype.manual_render = function(t,n,r){
     var ans = "";
     var nn = null;
     var i = null;
+    var spacer = t == "latex" ? " " : "";
     if(n.nodeName == "e"){
         if(t == "latex" && r){
             ans = n.getAttribute("render");
@@ -467,7 +482,7 @@ Doc.prototype.manual_render = function(t,n,r){
         for(nn = par.firstChild; nn != null; nn = nn.nextSibling)
             if(nn.nodeName == "c" || nn.nodeName == "l") cs[i++] = this.manual_render(t,nn,r);
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling){
-            if(nn.nodeType == 3) ans += nn.textContent + " ";
+            if(nn.nodeType == 3) ans += nn.textContent + spacer;
             else if(nn.nodeType == 1){
                 if(nn.hasAttribute("d")){
                     var dim = parseInt(nn.getAttribute("d"));
@@ -475,9 +490,9 @@ Doc.prototype.manual_render = function(t,n,r){
                         if(d > 1) for(var k = 0; k < l.length; k++) l[k] = joiner(d-1,l[k]);
                         return l.join(nn.getAttribute('sep'+(d-1)));
                     }
-                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]) + " ";
+                ans += joiner(dim,cs[parseInt(nn.getAttribute("ref"))]) + spacer;
                 }
-                else ans += cs[parseInt(nn.getAttribute("ref"))] + " ";
+                else ans += cs[parseInt(nn.getAttribute("ref"))] + spacer;
             }
         }
     }
@@ -490,7 +505,7 @@ Doc.prototype.manual_render = function(t,n,r){
     }
     else if(n.nodeName == "c" || n.nodeName == "m"){
         for(nn = n.firstChild; nn != null; nn = nn.nextSibling)
-            ans += this.manual_render(t,nn,r) + " ";
+            ans += this.manual_render(t,nn,r) + spacer;
         if(t == "latex" && n.getAttribute("bracket") == "yes" && this.auto_bracket(n)) {
             ans = "\\left("+ans+"\\right)";
         }
@@ -531,7 +546,7 @@ Doc.render_all = function(t, delim){
                 switch (node.nodeType) {
                 case 1:
                     // Don't process KaTeX elements, Guppy instances, Javascript, or CSS
-                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1) {
+                    if (excludeElements.indexOf(node.tagName.toLowerCase()) > -1 || (" "+node.getAttribute("class")+" ").indexOf(" katex ") > -1 || (""+node.getAttribute("class")).indexOf("guppy") > -1) {
                         continue;
                     }
                     subs(node.firstChild);
@@ -570,10 +585,8 @@ Doc.render_all = function(t, delim){
                         text_node.parentNode.insertBefore(new_node, text_node);
                         text_node.parentNode.removeChild(text_node);
                         text_node = new_node;
-                        ans.push({"id":new_id, "doc":d})
+                        ans.push({"id":new_id, "doc":d});
 
-                        // Place the right data in the remainder of the node
-                        text_node.textContent = text_node.textContent.substring(next-offset+delim.length);
                         offset = text_node.textContent.indexOf(delim);
                     }
                     break;

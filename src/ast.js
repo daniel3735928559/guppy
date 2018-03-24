@@ -36,6 +36,14 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     var append_str = function(doc, str){
         doc.documentElement.lastChild.textContent += str;
     }
+    var tail = function(doc){
+        var n = doc.documentElement.lastChild;
+        return n.firstChild.textContent.slice(-1);
+    }
+    var head = function(doc){
+        var n = doc.documentElement.firstChild;
+        return n.firstChild.textContent.slice(0,1);
+    }
     var append_doc = function(doc, doc2){
         var n = doc.documentElement.lastChild;
         var nn = doc2.documentElement.firstChild
@@ -99,6 +107,7 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     }
     functions["*"] = function(args){
         var d = args[0].cloneNode(true);
+	if(/[\d.]/.test(tail(args[0])) && /[\d.]/.test(head(args[1]))) append_doc(d, make_sym("*",[]));
         append_doc(d, args[1].cloneNode(true));
         return d;
     };
