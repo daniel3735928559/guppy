@@ -48,8 +48,8 @@
     
     "eval":
     {"output":{
-        "latex":"{$1}({$2})",
-	"asciimath":"{$1}({$2})"},
+        "latex":"{$1}({$2{,}})",
+	"asciimath":"{$1}({$2{,}})"},
      "attrs":{
 	 "type":"eval",
 	 "group":"functions"},
@@ -244,11 +244,21 @@
     "vec":
     {"output":{
         "latex":"\\left\\langle {$1{,}} \\right\\rangle",
-	"asciimath":"vec({$1{,}})"},
+	"asciimath":"<{$1{,}}>"},
      "keys":["{"],
      "attrs":{
 	 "group":"array",
 	 "type":"vector"}
+    },
+
+    "point":
+    {"output":{
+        "latex":"\\left( {$1{,}} \\right)",
+	"asciimath":"({$1{,}})"},
+     "keys":["{"],
+     "attrs":{
+	 "group":"array",
+	 "type":"point"}
     },
 
     "mat":

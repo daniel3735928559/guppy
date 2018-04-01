@@ -430,8 +430,8 @@ var tests = [
     },
     {
 	"description":"abs bracket",
-	"type":"latex",
-	"expected":" { \\left| x+y \\right| }^{ 2 } ",
+	"type":"text",
+	"expected":"(absolutevalue((x + y))^2)",
 	"run":function(g){
 	    do_keys(['|','x','+','y','right','^','2']);
 	}
@@ -842,9 +842,9 @@ var tests = [
     {
 	"description":"simplified API latex",
 	"observe":function(g){
-	    return g.latex();
+	    return g.latex().replace(/ /g,"");
 	},
-	"expected":" \\sqrt{ -x+2y \\phantom{\\tiny{!}}} = z ",
+	"expected":"\\sqrt{-x+2y\\phantom{\\tiny{!}}}=z",
 	"run":function(g){
 	    do_keys(['s','q','r','t','-','x','+','2','y','right','=','z']);
 	}
