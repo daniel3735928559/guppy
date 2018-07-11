@@ -17,7 +17,7 @@ caveats:
 
 The complete specification for the current version is described in the
 documentation for
-[`Guppy.add_global_symbol`](../api/guppy-js/2.0.0-beta.1/Guppy.html#.add_global_symbol).
+[`Guppy.add_global_symbol`](../api/guppy-js/2.0.0-beta.3/Guppy.html#.add_global_symbol).
 
 #### 2.0.0-alpha.3
 
