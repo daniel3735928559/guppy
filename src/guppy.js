@@ -216,7 +216,7 @@ Guppy.remove_global_symbol = function(name){
    @param {function} [config.events.ready] - Called when the instance is ready to render things. 
    @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively. 
    @param {function} [config.events.left_end] - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
-   @param {function} [config.events.left_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
+   @param {function} [config.events.right_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
    @param {function} [config.events.done] - Called when the enter key is pressed in the editor.
    @param {function} [config.events.completion] - Called when the editor outputs tab completion
    options.  Argument is a dictionary with the key `candidates`, a
