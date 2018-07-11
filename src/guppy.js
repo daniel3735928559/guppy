@@ -88,6 +88,7 @@ Guppy.ready = false;
 Guppy.Doc = Doc;
 Guppy.active_guppy = null;
 Guppy.Symbols = Symbols;
+Guppy.Mousetrap = Mousetrap;
 
 Guppy.make_button = function(url, parent, cb){
     var b = document.createElement("img");
