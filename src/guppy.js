@@ -234,7 +234,11 @@ Guppy.remove_global_symbol = function(name){
    string with which to initialise the editor's state.
    @param {string} [config.settings.autoreplace="auto"] - Determines
    whether or not to autoreplace typed text with the corresponding
-   symbols when possible.
+   symbols when possible.  Can be `"whole"` to replace only entire
+   tokens, `"auto"` to replace symbols greedily, or `"delay"` to
+   behave the same as `"whole"` except with a 200ms delay to allow for
+   entering, e.g. a symbol called `cost` without triggering the symbol
+   `cos` (if typed quickly enough).  
    @param {string} [config.settings.blank_caret=""] - A LaTeX string
    that specifies what the caret should look like when in a blank
    spot.  If `""`, the default caret is used.
