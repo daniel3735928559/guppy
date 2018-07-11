@@ -21,7 +21,7 @@ A standalone basic demo can be found at
 
 ## How do I get started?
 
-Go to the [quickstart page](https://daniel3735928559.github.io/guppy/site/quickstart).
+Go to the [quickstart page](https://daniel3735928559.github.io/guppy/site/doc/quickstart).
 
 ## Can I see some examples?
 
