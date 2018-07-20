@@ -257,7 +257,7 @@ var Version = require('./version.js');
    class, use `Guppy.Doc`.  To get the document for a particular guppy
    instance, say called `"guppy1"`, do `Guppy("guppy1").doc()`.
    @param {string} [doc=<m><e></e></m>] - An XML string representing the document
-   @constructor 
+   @constructor
  */
 var Doc = function(doc, type){
     type = type || "xml";
@@ -266,9 +266,9 @@ var Doc = function(doc, type){
     else if(type == "text") this.import_text(doc);
     else if(type == "ast") this.import_ast(doc);
     if(this.root().hasAttribute("v") && this.root().getAttribute("v") != Version.DOC_VERSION)
-	throw Version.DOC_ERROR;
+    throw Version.DOC_ERROR;
     else
-	this.root().setAttribute("v",Version.DOC_VERSION);
+    this.root().setAttribute("v",Version.DOC_VERSION);
 }
 
 Doc.prototype.is_small = function(nn){
@@ -296,7 +296,7 @@ Doc.prototype.is_blank = function(){
 }
 
 
-/** 
+/**
     Get the document as a DOM object
     @memberof Doc
     @returns {Element}
@@ -305,7 +305,7 @@ Doc.prototype.root = function(){
     return this.base.documentElement;
 }
 
-/** 
+/**
     Get the content of the document as a string
     @memberof Doc
     @param {string} t - The rendering method to use ("latex", "text", "ast" (for syntax tree), or "xml" (for internal XML representation))
@@ -320,7 +320,7 @@ Doc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
-/** 
+/**
     Evaluate the document using user-supplied functions to interpret symbols
     @memberof Doc
     @param {Object} evaluators - A dictionary where each key is a node
@@ -362,7 +362,7 @@ Doc.prototype.syntax_tree = function(n){
         if(n.hasAttribute("ast_value")) ans['value'] = n.getAttribute("ast_value");
         if(n.hasAttribute("ast_type")) ans['type'] = n.getAttribute("ast_type");
         else if(Utils.is_char(n)) ans['type'] = "name";
-        
+
         var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
         for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
             //if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
@@ -407,7 +407,7 @@ Doc.prototype.xpath_list = function(xpath, node){
     return this.base.evaluate(xpath, node, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 }
 
-/** 
+/**
     Get the names of symbols used in this document
     @memberof Doc
     @param {string[]} [groups] - A list of groups you want strings for
@@ -426,7 +426,7 @@ Doc.prototype.get_symbols = function(groups){
     return ans;
 }
 
-/** 
+/**
     Set the content of the document
     @memberof Doc
     @param {string} xml_data - An XML string representing the content of the document
@@ -441,10 +441,10 @@ Doc.prototype.auto_bracket = function(n){
     var e1 = n.lastChild;
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
         var f = e0.nextSibling;
-	var cs = 0;
-	var c = null;
-	// Count immediate children of f that are c nodes in cs and store the last one in c
-	for(var nn = f.firstChild; nn; nn = nn.nextSibling) if(nn.tagName == "c"){ c = nn; cs++; }
+    var cs = 0;
+    var c = null;
+    // Count immediate children of f that are c nodes in cs and store the last one in c
+    for(var nn = f.firstChild; nn; nn = nn.nextSibling) if(nn.tagName == "c"){ c = nn; cs++; }
         if(cs == 1 && c.getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
         if(Utils.is_char(f) && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
     }
@@ -513,8 +513,8 @@ Doc.prototype.manual_render = function(t,n,r){
     return ans;
 }
 
-/** 
-    Render all guppy documents on the page. 
+/**
+    Render all guppy documents on the page.
     @param {string} type - The type of content to render
     @param {string} [delim] - The string to delimit mathematical symbols
     @param {string} [root_node] - The DOM Element object within which to do the rendering
@@ -529,9 +529,9 @@ Doc.render_all = function(t, delim, root_node){
                 n = l[i];
                 d = new Doc(n.innerHTML);
                 s = document.createElement("span");
-		var len = ans.length;
-		var new_id = "guppy-"+t+"-render-"+len;
-		while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++len);
+        var len = ans.length;
+        var new_id = "guppy-"+t+"-render-"+len;
+        while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++len);
                 s.setAttribute("id",new_id);
                 s.setAttribute("class","guppy-render");
                 katex.render(d.get_content("latex"), s);
@@ -566,35 +566,35 @@ Doc.render_all = function(t, delim, root_node){
 
                         // Make the span to render the doc in
                         var s = document.createElement("span");
-			var l = ans.length;
-			var new_id = "guppy-"+t+"-render-"+l;
-			while(document.getElementById(new_id)) new_id = "guppy-"+t+"-render-"+(++l);
+            var l = ans.length;
+            var new_id = "guppy-"+t+"-render-"+l;
+            while(document.getElementById(new_id)) new_id = "guppy-"+t+"-render-"+(++l);
                         s.setAttribute("id",new_id);
-			s.setAttribute("class","guppy-render");
+            s.setAttribute("class","guppy-render");
 
-			try {
+            try {
                             // Create the document
                             d = new Doc(content,t);
-                            
+
                             // Render the doc
                             katex.render(d.get_content("latex"), s);
-			}
-			catch (e) {
-			    s.innerHTML = "ERROR: "+e.message;
-			}
+            }
+            catch (e) {
+                s.innerHTML = "ERROR: "+e.message;
+            }
                         var new_node = document.createTextNode(after)
                         text_node.parentNode.insertBefore(document.createTextNode(before), text_node);
                         text_node.parentNode.insertBefore(s, text_node);
                         text_node.parentNode.insertBefore(new_node, text_node);
                         text_node.parentNode.removeChild(text_node);
                         text_node = new_node;
-			node = new_node;
+            node = new_node;
                         ans.push({"id":new_id, "doc":d});
 
                         offset = text_node.textContent.indexOf(delim);
                     }
                     break;
-		default:
+        default:
                     break;
                 }
             } while ((node = node.nextSibling));
@@ -606,7 +606,7 @@ Doc.render_all = function(t, delim, root_node){
     return ans;
 }
 
-/** 
+/**
     Render a given document into a specified HTML element.
     @param {string} doc - A GuppyXML string to be rendered
     @param {string} target_id - The ID of the HTML element to render into
@@ -1996,7 +1996,7 @@ var Doc = require('./doc.js');
    @class
    @classdesc An instance of Guppy.  Calling `Guppy(id)` with the ID of
    an existing editor will simply return that instance.
-   @param {string} id - The string ID of the element that should be converted to an editor.  
+   @param {string} id - The string ID of the element that should be converted to an editor.
    @param {Object} [config] - The configuration options for this instance
    @param {Object} [config.events] - A dictionary of events.
    Available events are as specified in Guppy.init.  Values in this
@@ -2007,7 +2007,7 @@ var Doc = require('./doc.js');
    specified in `Guppy.init`.  This dictionary takes the same keys as
    the `config.settings` dictionary passed to `Guppy.init`.  See that
    function's documentation for the complete list.
-   @constructor 
+   @constructor
 */
 var Guppy = function(id, config){
     if(Guppy.instances[id]){
@@ -2019,10 +2019,10 @@ var Guppy = function(id, config){
     var self = this;
     config = config || {};
     var settings = config['settings'] || {};
-    
+
     this.id = id;
     var guppy_div = document.getElementById(id);
-    
+
     var tab_idx = Guppy.max_tabIndex || 0;
     guppy_div.tabIndex = tab_idx;
     Guppy.max_tabIndex = tab_idx+1;
@@ -2093,7 +2093,7 @@ Guppy.make_button = function(url, parent, cb){
     return b;
 }
 
-/** 
+/**
     Add a symbol to all instances of the editor
     @memberof Guppy
     @param {string} name - The name of the symbol to add.  This is
@@ -2125,7 +2125,7 @@ Guppy.make_button = function(url, parent, cb){
     case of exponent), this object will contain the (1-based) index of
     the argument in which that content should be placed.
     @param {Object} [symbol.ast] - Modifies the default construction
-    of an entry in the AST for this symbol.  
+    of an entry in the AST for this symbol.
     @param {Object} [symbol.ast.type="operator"] - The type of symbol
     for AST purposes.  Can be "name" (meaning this symbol represents
     a variable, as in the case of pi), "number" (meaning this symbol
@@ -2172,7 +2172,7 @@ Guppy.add_global_symbol = function(name, symbol, template){
     }
 }
 
-/** 
+/**
     Remove a symbol from all instances of the editor
     @memberof Guppy
     @param {string} name - The name of the symbol to remove
@@ -2192,17 +2192,17 @@ Guppy.remove_global_symbol = function(name){
    Initialise global settings for all instances of the editor.  Most
    of these can be overridden for specific instances later.  Should be
    called before instantiating the Guppy class.
-   @static 
+   @static
    @memberof Guppy
    @param {Object} config - The configuration options for this instance
    @param {string[]} [config.symbols] - A list of URLs for symbol JSON files to request
    @param {string} [config.path="/lib/guppy"] - The path to the guppy build folder.
    @param {GuppyOSK} [config.osk] - A GuppyOSK object to use for the on-screen keyboard if one is desired
    @param {Object} [config.events] - A dictionary of events
-   @param {function} [config.events.ready] - Called when the instance is ready to render things. 
-   @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively. 
+   @param {function} [config.events.ready] - Called when the instance is ready to render things.
+   @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
    @param {function} [config.events.left_end] - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
-   @param {function} [config.events.left_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
+   @param {function} [config.events.right_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
    @param {function} [config.events.done] - Called when the enter key is pressed in the editor.
    @param {function} [config.events.completion] - Called when the editor outputs tab completion
    options.  Argument is a dictionary with the key `candidates`, a
@@ -2220,7 +2220,11 @@ Guppy.remove_global_symbol = function(name){
    string with which to initialise the editor's state.
    @param {string} [config.settings.autoreplace="auto"] - Determines
    whether or not to autoreplace typed text with the corresponding
-   symbols when possible.
+   symbols when possible.  Can be `"whole"` to replace only entire
+   tokens, `"auto"` to replace symbols greedily, or `"delay"` to
+   behave the same as `"whole"` except with a 200ms delay to allow for
+   entering, e.g. a symbol called `cost` without triggering the symbol
+   `cos` (if typed quickly enough).
    @param {string} [config.settings.blank_caret=""] - A LaTeX string
    that specifies what the caret should look like when in a blank
    spot.  If `""`, the default caret is used.
@@ -2262,6 +2266,7 @@ Guppy.init = function(config){
             }
         }
         Engine.ready = true;
+        Guppy.ready = true;
         for(var j in Guppy.instances){
             Guppy.instances[j].engine.ready = true;
             Guppy.instances[j].engine.fire_event("ready");
@@ -2388,7 +2393,7 @@ Guppy.get_loc = function(x,y,current_node,current_caret){
         var current_path = Utils.path_to(current_node);
         var current_pos = parseInt(current_path.substring(current_path.lastIndexOf("e")+1));
     }
-    
+
     var boxes = g.boxes;
     if(!boxes) return;
     if(current_node){
@@ -2554,7 +2559,7 @@ Guppy.prototype.render_node = function(t){
     return output
 }
 
-/** 
+/**
     Render the document
     @memberof Guppy
     @param {boolean} [updated=false] - Whether there have been visible
@@ -2575,7 +2580,7 @@ Guppy.prototype.render = function(updated){
     }
 }
 
-/** 
+/**
     Get the content of the editor as LaTeX
     @memberof Guppy
 */
@@ -2583,7 +2588,7 @@ Guppy.prototype.latex = function(){
     return this.engine.get_content("latex");
 }
 
-/** 
+/**
     Get the content of the editor as XML
     @memberof Guppy
 */
@@ -2591,7 +2596,7 @@ Guppy.prototype.xml = function(){
     return this.engine.get_content("xml");
 }
 
-/** 
+/**
     Get the content of the editor as a syntax tree, serialised using JSON
     @memberof Guppy
 */
@@ -2599,7 +2604,7 @@ Guppy.prototype.syntax_tree = function(){
     return this.engine.get_content("ast");
 }
 
-/** 
+/**
     Get the content of the editor as a list of equations, serialised
     using JSON.  For example, `x < y = z` will be returned as `[["<", [["var", "x"], ["var", "y"]]],["=", [["var", "y"], ["var", "z"]]]]
     @memberof Guppy
@@ -2608,7 +2613,7 @@ Guppy.prototype.equations = function(){
     return this.engine.get_content("eqns");
 }
 
-/** 
+/**
     Get the content of the editor in a parseable text format.
     @memberof Guppy
 */
@@ -2617,7 +2622,7 @@ Guppy.prototype.text = function(){
 }
 
 
-/** 
+/**
     Get the content of the editor in AsciiMath.
     @memberof Guppy
 */
@@ -2625,7 +2630,7 @@ Guppy.prototype.asciimath = function(){
     return this.engine.get_content("asciimath");
 }
 
-/** 
+/**
     Get the Doc object representing the editor's contents.
     @memberof Guppy
 */
@@ -2633,7 +2638,7 @@ Guppy.prototype.doc = function(){
     return this.engine.doc;
 }
 
-/** 
+/**
     Get the content of the editor as a Javascript function, with
     user-supplied interpretations of the various symbols.  If not
     supplied, default interpretations will be given for the following
@@ -2646,7 +2651,7 @@ Guppy.prototype.doc = function(){
     `vars`.  In this inner function, to compute e.g. the sum of the
     first and second arguments, you would do
     `args[0](vars)+args[1](vars)`.  This function should return the
-    result of that symbol's operation.  
+    result of that symbol's operation.
     @returns {function(Object)} - Returns a function that takes in an
     object with a key for each variable in the expression and whose
     values are the values that will be passed in for those variables.
@@ -2661,14 +2666,14 @@ Guppy.prototype.func = function(evaluators){
     return f;
 }
 
-/** 
+/**
     Recursively evaluate the syntax tree of the editor's contents using specified functions.
     @param {Object} [evaluators] - An object with a key for each
     possible symbol type ("exponential", "integral", etc.)
     whose values are functions that will be applied whenever that
     symbol is encountered in the syntax tree.  These functions take a
     single argument, `args`, which is a list of the results of
-    evaluating that symbol's arguments.  
+    evaluating that symbol's arguments.
     @returns - Whatever the `evaluators` function for the root symbol
     in the syntax tree returns.
     @memberof Guppy
@@ -2677,7 +2682,7 @@ Guppy.prototype.evaluate = function(evaluators){
     return this.engine.doc.evaluate(evaluators);
 }
 
-/** 
+/**
     Get a list of the symbols used in the document, in order of
     appearance, with each kind of symbol appearing only once.  For
     example, a document representing `sin(x^3)+sqrt(x^2+x)` will
@@ -2691,15 +2696,15 @@ Guppy.prototype.symbols_used = function(groups){
     return this.engine.doc.get_symbols(groups);
 }
 
-/** 
-    Get a list of the variable names used in the document.  
+/**
+    Get a list of the variable names used in the document.
     @memberof Guppy
 */
 Guppy.prototype.vars = function(){
     return this.engine.get_content("function").vars;
 }
 
-/** 
+/**
     Set the content of the document from text in the format outputted by `guppy.text()`.
     @param {String} text - A string representing the document to import.
     @memberof Guppy
@@ -2708,7 +2713,7 @@ Guppy.prototype.import_text = function(text){
     return this.engine.import_text(text);
 }
 
-/** 
+/**
     Set the content of the document from input text in "semantic
     LaTeX" format.  That is, all functions are represented as
     `\funcname{arg1}{arg2}`.  For example,
@@ -2720,7 +2725,7 @@ Guppy.prototype.import_latex = function(text){
     return this.engine.import_latex(text);
 }
 
-/** 
+/**
     Set the content of the document from XML in the format outputted
     by `guppy.xml()`.
     @param {String} xml - An XML string representing the document to
@@ -2731,7 +2736,7 @@ Guppy.prototype.import_xml = function(xml){
     return this.engine.set_content(xml);
 }
 
-/** 
+/**
     Import a syntax tree from a JSON object formatted as outputted by `guppy.syntax_tree()`.
     @param {Object} tree - A JSON object representing the syntax tree to import.
     @memberof Guppy
@@ -2740,7 +2745,7 @@ Guppy.prototype.import_syntax_tree = function(tree){
     return this.engine.import_ast(tree);
 }
 
-/** 
+/**
     Focus this instance of the editor
     @memberof Guppy
 */
@@ -2755,7 +2760,7 @@ Guppy.prototype.activate = function(){
     }
 }
 
-/** 
+/**
     Unfocus this instance of the editor
     @memberof Guppy
 */
