@@ -11,7 +11,7 @@ var Version = require('./version.js');
    class, use `Guppy.Doc`.  To get the document for a particular guppy
    instance, say called `"guppy1"`, do `Guppy("guppy1").doc()`.
    @param {string} [doc=<m><e></e></m>] - An XML string representing the document
-   @constructor 
+   @constructor
  */
 var Doc = function(doc, type){
     type = type || "xml";
@@ -20,9 +20,9 @@ var Doc = function(doc, type){
     else if(type == "text") this.import_text(doc);
     else if(type == "ast") this.import_ast(doc);
     if(this.root().hasAttribute("v") && this.root().getAttribute("v") != Version.DOC_VERSION)
-	throw Version.DOC_ERROR;
+    throw Version.DOC_ERROR;
     else
-	this.root().setAttribute("v",Version.DOC_VERSION);
+    this.root().setAttribute("v",Version.DOC_VERSION);
 }
 
 Doc.prototype.is_small = function(nn){
@@ -50,7 +50,7 @@ Doc.prototype.is_blank = function(){
 }
 
 
-/** 
+/**
     Get the document as a DOM object
     @memberof Doc
     @returns {Element}
@@ -59,7 +59,7 @@ Doc.prototype.root = function(){
     return this.base.documentElement;
 }
 
-/** 
+/**
     Get the content of the document as a string
     @memberof Doc
     @param {string} t - The rendering method to use ("latex", "text", "ast" (for syntax tree), or "xml" (for internal XML representation))
@@ -74,7 +74,7 @@ Doc.prototype.get_content = function(t,r){
     else return this.manual_render(t,this.root(),r);
 }
 
-/** 
+/**
     Evaluate the document using user-supplied functions to interpret symbols
     @memberof Doc
     @param {Object} evaluators - A dictionary where each key is a node
@@ -116,7 +116,7 @@ Doc.prototype.syntax_tree = function(n){
         if(n.hasAttribute("ast_value")) ans['value'] = n.getAttribute("ast_value");
         if(n.hasAttribute("ast_type")) ans['type'] = n.getAttribute("ast_type");
         else if(Utils.is_char(n)) ans['type'] = "name";
-        
+
         var iterator = this.xpath_list("./*[name()='c' or name()='l']", n)
         for(var nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){
             //if(nn.hasAttribute("name")) ans.kwargs[nn.getAttribute("name")] = this.syntax_tree(nn)
@@ -161,7 +161,7 @@ Doc.prototype.xpath_list = function(xpath, node){
     return this.base.evaluate(xpath, node, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 }
 
-/** 
+/**
     Get the names of symbols used in this document
     @memberof Doc
     @param {string[]} [groups] - A list of groups you want strings for
@@ -180,7 +180,7 @@ Doc.prototype.get_symbols = function(groups){
     return ans;
 }
 
-/** 
+/**
     Set the content of the document
     @memberof Doc
     @param {string} xml_data - An XML string representing the content of the document
@@ -195,10 +195,10 @@ Doc.prototype.auto_bracket = function(n){
     var e1 = n.lastChild;
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
         var f = e0.nextSibling;
-	var cs = 0;
-	var c = null;
-	// Count immediate children of f that are c nodes in cs and store the last one in c
-	for(var nn = f.firstChild; nn; nn = nn.nextSibling) if(nn.tagName == "c"){ c = nn; cs++; }
+    var cs = 0;
+    var c = null;
+    // Count immediate children of f that are c nodes in cs and store the last one in c
+    for(var nn = f.firstChild; nn; nn = nn.nextSibling) if(nn.tagName == "c"){ c = nn; cs++; }
         if(cs == 1 && c.getAttribute("is_bracket") == "yes") return false; // if the f child is a bracket, don't bracket
         if(Utils.is_char(f) && e0.getAttribute("current") != "yes" && e0.getAttribute("temp") != "yes" && e1.getAttribute("current") != "yes" && e1.getAttribute("temp") != "yes") return false; // if the f child is a character and not current or temp cursor location, don't bracket
     }
@@ -267,8 +267,8 @@ Doc.prototype.manual_render = function(t,n,r){
     return ans;
 }
 
-/** 
-    Render all guppy documents on the page. 
+/**
+    Render all guppy documents on the page.
     @param {string} type - The type of content to render
     @param {string} [delim] - The string to delimit mathematical symbols
     @param {string} [root_node] - The DOM Element object within which to do the rendering
@@ -283,9 +283,9 @@ Doc.render_all = function(t, delim, root_node){
                 n = l[i];
                 d = new Doc(n.innerHTML);
                 s = document.createElement("span");
-		var len = ans.length;
-		var new_id = "guppy-"+t+"-render-"+len;
-		while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++len);
+        var len = ans.length;
+        var new_id = "guppy-"+t+"-render-"+len;
+        while(document.getElementById(new_id)) new_id = "guppy-xml-render-"+(++len);
                 s.setAttribute("id",new_id);
                 s.setAttribute("class","guppy-render");
                 katex.render(d.get_content("latex"), s);
@@ -320,35 +320,35 @@ Doc.render_all = function(t, delim, root_node){
 
                         // Make the span to render the doc in
                         var s = document.createElement("span");
-			var l = ans.length;
-			var new_id = "guppy-"+t+"-render-"+l;
-			while(document.getElementById(new_id)) new_id = "guppy-"+t+"-render-"+(++l);
+            var l = ans.length;
+            var new_id = "guppy-"+t+"-render-"+l;
+            while(document.getElementById(new_id)) new_id = "guppy-"+t+"-render-"+(++l);
                         s.setAttribute("id",new_id);
-			s.setAttribute("class","guppy-render");
+            s.setAttribute("class","guppy-render");
 
-			try {
+            try {
                             // Create the document
                             d = new Doc(content,t);
-                            
+
                             // Render the doc
                             katex.render(d.get_content("latex"), s);
-			}
-			catch (e) {
-			    s.innerHTML = "ERROR: "+e.message;
-			}
+            }
+            catch (e) {
+                s.innerHTML = "ERROR: "+e.message;
+            }
                         var new_node = document.createTextNode(after)
                         text_node.parentNode.insertBefore(document.createTextNode(before), text_node);
                         text_node.parentNode.insertBefore(s, text_node);
                         text_node.parentNode.insertBefore(new_node, text_node);
                         text_node.parentNode.removeChild(text_node);
                         text_node = new_node;
-			node = new_node;
+            node = new_node;
                         ans.push({"id":new_id, "doc":d});
 
                         offset = text_node.textContent.indexOf(delim);
                     }
                     break;
-		default:
+        default:
                     break;
                 }
             } while ((node = node.nextSibling));
@@ -360,7 +360,7 @@ Doc.render_all = function(t, delim, root_node){
     return ans;
 }
 
-/** 
+/**
     Render a given document into a specified HTML element.
     @param {string} doc - A GuppyXML string to be rendered
     @param {string} target_id - The ID of the HTML element to render into
