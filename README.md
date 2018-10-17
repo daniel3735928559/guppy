@@ -1,5 +1,7 @@
 # Guppy
 
+[![Join the chat at https://gitter.im/guppy-mathbox/Lobby](https://badges.gitter.im/guppy-mathbox/Lobby.svg)](https://gitter.im/guppy-mathbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Synopsis
 
 Guppy is a Javascript-based WYSIWYG editor for mathematics whose
