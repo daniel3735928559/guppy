@@ -219,7 +219,7 @@
         "small_latex":"\\prod_{{$1}}^{{$2}}{$3}",
 	"asciimath":"prod_{{$1}}^{{$2}} {$3}"},
      "attrs":{
-	 "type":"summation",
+	 "type":"product",
 	 "group":"functions"},
      "args":[
 	 {"down":"1","up":"2","small":"yes","name":"lower_limit"},
