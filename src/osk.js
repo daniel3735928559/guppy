@@ -1,6 +1,6 @@
 var katex = require('../lib/katex/katex-modified.min.js');
 
-/** 
+/**
     @class
     @classdesc To enable the on-screen keyboard, ensure all Guppy
     instances have been initialised and then create a new GuppyOSK
@@ -62,22 +62,22 @@ function make_tabs(element){
     }
 }
 
-/** 
+/**
     Detach the keyboard from the currently attached editor (if any)
     and hide it.
     @memberof GuppyOSK
 */
 GuppyOSK.prototype.detach = function(guppy){
     if(this.element){
-	if((!guppy && this.guppy) || this.guppy == guppy){
+        if((!guppy && this.guppy) || this.guppy == guppy){
             document.body.removeChild(this.element);
             this.guppy = null;
             this.element = null;
-	}
+        }
     }
 }
 
-/** 
+/**
     Attach the keyboard to a Guppy instance and display it.
     @param {Guppy} [guppy] - The instance of Guppy to which the
     keyboard will attach.
@@ -92,7 +92,7 @@ GuppyOSK.prototype.attach = function(guppy){
         this.element = null;
         this.guppy = null;
     }
-    
+
     var syms = guppy.engine.symbols;
     var osk = elt("div",{"class":"guppy_osk"});
     var sym_tabs = elt("div",{"class":"keys tabbed"});
@@ -152,7 +152,7 @@ GuppyOSK.prototype.attach = function(guppy){
             }
             else{
                 var key = elt("span",{"class":"guppy_osk_key"});
-		var f = null;
+                var f = null;
                 if(g == "qwerty" || g == "QWERTY"){
                     f = function(n){
                         click_listener(key, function(e){
@@ -183,7 +183,7 @@ GuppyOSK.prototype.attach = function(guppy){
                     f(sym.name);
                 }
                 group_elt.appendChild(key);
-		katex.render(sym.latex, key);
+                katex.render(sym.latex, key);
             }
         }
         group_container.appendChild(group_elt);
@@ -197,14 +197,14 @@ GuppyOSK.prototype.attach = function(guppy){
         click_listener(e, fn);
         controls.appendChild(e);
     }
-    
+
     var add_matrix_control = function(content,fn){
         var e = elt("span",{"class":"guppy_osk_key"}, content);
         click_listener(e, fn);
         matrix_controls.appendChild(e);
         //katex.render(content, e);
     }
-    
+
     add_control("&larr;S", function(e){ e.preventDefault();guppy.engine.sel_left();guppy.render();});
     add_control("S&rarr;", function(e){ e.preventDefault();guppy.engine.sel_right();guppy.render();});
     add_control("cut", function(e){ e.preventDefault();guppy.engine.sel_cut();guppy.render();});
@@ -234,7 +234,7 @@ GuppyOSK.prototype.attach = function(guppy){
     add_matrix_control("-row", function(e){ e.preventDefault();guppy.engine.list_remove_row();guppy.render();});
 
     osk.appendChild(controls);
-    document.body.appendChild(osk);    
+    document.body.appendChild(osk);
 
     this.guppy = guppy;
     this.element = osk;

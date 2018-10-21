@@ -10,7 +10,8 @@ var Doc = require('./doc.js');
    @class
    @classdesc An instance of Guppy.  Calling `Guppy(id)` with the ID of
    an existing editor will simply return that instance.
-   @param {string} id - The string ID of the element that should be converted to an editor.
+   @param {string|Node} element - The string id or the Dom Node of the
+   element that should be converted to an editor.
    @param {Object} [config] - The configuration options for this instance
    @param {Object} [config.events] - A dictionary of events.
    Available events are as specified in Guppy.init.  Values in this
@@ -23,10 +24,14 @@ var Doc = require('./doc.js');
    function's documentation for the complete list.
    @constructor
 */
-var Guppy = function(id, config){
-    if(Guppy.instances[id]){
-        if(Guppy.instances[id].ready){
-            return Guppy.instances[id];
+var Guppy = function(el, config){
+
+    // Get the element and try to get its corresponding instance and settings
+    var element = typeof el === 'string' ? document.getElementById(el) : el;
+    var instance = Guppy.instances.get(element);
+    if(instance){
+        if(instance.ready){
+            return instance
         }
         return null;
     }
@@ -34,11 +39,12 @@ var Guppy = function(id, config){
     config = config || {};
     var settings = config['settings'] || {};
 
-    this.id = id;
-    var guppy_div = document.getElementById(id);
+    // Store a record of this instance in case somebody wants it again
+    Guppy.instances.set(element, this)
+    config['parent'] = self;
 
     var tab_idx = Guppy.max_tabIndex || 0;
-    guppy_div.tabIndex = tab_idx;
+    element.tabIndex = tab_idx;
     Guppy.max_tabIndex = tab_idx+1;
 
     var buttons = settings['buttons'] || Settings.config.settings['buttons'];
@@ -59,14 +65,10 @@ var Guppy = function(id, config){
 
     this.editor_active = true;
     //this.empty_content = settings['empty_content'] || "\\red{[?]}"
-    this.editor = guppy_div;
+    this.editor = element;
     this.blacklist = [];
     this.autoreplace = true;
     this.ready = false;
-
-    Guppy.instances[guppy_div.id] = this;
-
-    config['parent'] = self;
 
     /**   @member {Engine} */
     this.engine = new Engine(config);
@@ -83,7 +85,7 @@ var Guppy = function(id, config){
     this.recompute_locations_paths();
 }
 
-Guppy.instances = {};
+Guppy.instances = new Map()
 Guppy.ready = false;
 Guppy.Doc = Doc;
 Guppy.active_guppy = null;
@@ -181,8 +183,8 @@ Guppy.add_global_symbol = function(name, symbol, template){
         symbol = Symbols.make_template_symbol(template, name, symbol);
     }
     Symbols.symbols[name] = JSON.parse(JSON.stringify(symbol));
-    for(var i in Guppy.instances){
-        Guppy.instances[i].engine.symbols[name] = JSON.parse(JSON.stringify(symbol));
+    for(var [, instance] of Guppy.instances){
+        instance.engine.symbols[name] = JSON.parse(JSON.stringify(symbol));
     }
 }
 
@@ -194,9 +196,9 @@ Guppy.add_global_symbol = function(name, symbol, template){
 Guppy.remove_global_symbol = function(name){
     if(Symbols.symbols[name]){
         delete Symbols.symbols[name]
-        for(var i in Guppy.instances){
-            if(Guppy.instances[i].engine.symbols[name]){
-                delete Guppy.instances[i].engine.symbols[name];
+        for(var [, instance] of Guppy.instances){
+            if(instance.engine.symbols[name]){
+                delete instance.engine.symbols[name];
             }
         }
     }
@@ -259,33 +261,37 @@ Guppy.remove_global_symbol = function(name){
    initialisation is complete.
 */
 Guppy.init = function(config){
+    // This function is called when all of the instances are ready to start
+    // accepting user input, and after all have rendered their outputs
     var all_ready = function(){
         Settings.init(Symbols.symbols);
         Guppy.register_keyboard_handlers();
-        for(var i in Guppy.instances){
-            Guppy.instances[i].ready = true;
-            Guppy.instances[i].render(true);
+        for(const [, instance] of Guppy.instances){
+            instance.ready = true;
+            instance.render(true);
 
             // Set backend symbols
-            Guppy.instances[i].engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
+            instance.engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
 
             // Set backend settings
             // for(var s in Settings.config.settings){
-            //     Guppy.instances[i].engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
+            //     instance.engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
             // }
 
             // Set backend events
             for(var e in Settings.config.events){
-                Guppy.instances[i].engine.events[e] = Settings.config.events[e];
+                instance.engine.events[e] = Settings.config.events[e];
             }
         }
+
+        // Mark the engine ready
         Engine.ready = true;
         Guppy.ready = true;
-        for(var j in Guppy.instances){
-            Guppy.instances[j].engine.ready = true;
-            Guppy.instances[j].engine.fire_event("ready");
+        for(const [, instance] of Guppy.instances){
+            instance.engine.ready = true;
+            instance.engine.fire_event("ready");
         }
-	if(config.callback) config.callback();
+        if(config.callback) config.callback();
     }
     if(config.settings){
         var settings = JSON.parse(JSON.stringify(config.settings));
@@ -297,7 +303,7 @@ Guppy.init = function(config){
         Settings.config.events = config.events;
     }
     if(config.osk){
-	Guppy.OSK = config.osk;
+        Guppy.OSK = config.osk;
         Settings.osk = config.osk;
         if(config.osk.config.attach == "focus"){
             var f = Settings.config.events["focus"];
@@ -472,11 +478,12 @@ Guppy.mouse_down = function(e){
     var n = e.target;
     Guppy.kb.is_mouse_down = true;
     while(n != null){
-        if(n.id in Guppy.instances){
+        var instance = Guppy.instances.get(e)
+        if(instance){
             e.preventDefault();
             var prev_active = Guppy.active_guppy;
-            for(var i in Guppy.instances){
-                if(i != n.id) Guppy.instances[i].deactivate();
+            for(var [element, otherInstance] of Guppy.instances){
+                if(element !== e) otherInstance.deactivate();
                 Guppy.active_guppy = Guppy.instances[n.id];
                 Guppy.active_guppy.activate();
             }
@@ -898,8 +905,8 @@ Guppy.register_keyboard_handlers = function(){
     var i, name;
     // Pull symbol shortcuts from Symbols:
     for(name in Symbols.symbols){
-	var s = Symbols.symbols[name];
-	if(s.keys)
+      var s = Symbols.symbols[name];
+      if(s.keys)
                 for(i = 0; i < s.keys.length; i++)
                 Guppy.kb.k_syms[s.keys[i]] = s.attrs.type;
     }

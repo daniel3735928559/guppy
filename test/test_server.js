@@ -8,3 +8,5 @@ app.use('/cover',express.static('cover'));
 app.get('/done', function (req, res) { console.log("DONE"); })
 
 app.listen(8778);
+
+console.log('Server running at localhost:8778');

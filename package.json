@@ -12,7 +12,8 @@
 						"build": "./dev.sh build-final",
 						"build-debug": "./dev.sh build-debug",
 						"lint": "./node_modules/.bin/eslint -c .eslintrc.json src",
-						"generate-docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose && (cd site; ./build.sh)"
+						"generate-docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose && (cd site; ./build.sh)",
+						"server": "./node_modules/.bin/http-server ."
 			},
 			"repository": "git+https://github.com/daniel3735928559/guppy.git",
 			"keywords": [
@@ -33,6 +34,7 @@
 						"docdash": "^0.4.0",
 						"eslint": "^4.13.1",
 						"express": "^4.16.2",
+						"http-server": "^0.11.1",
 						"istanbul-middleware": "^0.2.2",
 						"jsdoc": "^3.5.5",
 						"selenium-webdriver": "^3.6.0",
