@@ -1,3 +1,4 @@
+var g1
 window.onload = function() {
     output_type = "latex";
     document.getElementById("sample_output").readOnly = true;
@@ -12,13 +13,12 @@ window.onload = function() {
 		"settings":{
 		    "empty_content": "{\\text{Click to start typing math!}}"
 		}});
-    var g1 = new Guppy("guppy1");
+    g1 = new Guppy("guppy1");
 };
 
 function select_output(t){
     output_type = t;
-console.log(Guppy.instances);
-    update_output({"target":Guppy.instances.guppy1});
+    update_output({"target": g1});
     var l = document.getElementsByClassName("output-select");
     for(var i = 0; i < l.length; i++){
       var new_class = l[i].getAttribute("class").replace(new RegExp("output-selected","g"),"output-unselected");

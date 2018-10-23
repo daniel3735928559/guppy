@@ -317,36 +317,41 @@ Guppy.init = function(config){
     if(config.path){
         Settings.config.path = config.path;
     }
+
     if(config.symbols){
+
+        // Get the symbols out of the config object
         var symbols = config.symbols;
         if(!(Array.isArray(symbols))){
             symbols = [symbols];
         }
-        var calls = [];
-        for(var i = 0; i < symbols.length; i++){
-            var x = function outer(j){
-                return function(callback){
-                    var req = new XMLHttpRequest();
-                    req.onload = function(){
-                        var syms = JSON.parse(this.responseText);
-                        Symbols.add_symbols(syms);
-                        callback();
-                    };
-                    req.open("get", symbols[j], true);
-                    req.send();
-                }
-            }(i);
-            calls.push(x);
+
+        // Get all of the promises
+        let promises = []
+        for ( let symbol of symbols ) {
+
+          // Objects contain symbols directly, whilst strings require xhr
+          if ( symbol instanceof Object ) {
+            Symbols.add_symbols( symbol )
+
+          } else if ( typeof symbol === 'string' ) {
+            let promise = Utils.xhr_request( symbol )
+            promises.push(promise)
+          }
         }
-        calls.push(all_ready);
-        var j = 0;
-        var cb = function(){
-            j += 1;
-            if(j < calls.length) calls[j](cb);
+
+        // Resolve all of the promises and all of the symbols
+        if ( promises.length > 0 ) {
+          Promise.all(promises).then( function ( definitions ) {
+            for (let definition of definitions) {
+              Symbols.add_symbols(definition)
+            }
+            all_ready()
+          })
+        } else {
+          all_ready()
         }
-        if(calls.length > 0) calls[0](cb);
-    }
-    else{
+    } else {
         all_ready();
     }
 }
