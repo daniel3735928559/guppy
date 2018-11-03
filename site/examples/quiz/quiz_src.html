@@ -7,7 +7,6 @@
 
     &lt;link rel="stylesheet" href="../../../build/guppy-default.min.css"&gt;
     &lt;script type="text/javascript" src="../../../build/guppy.min.js"&gt;&lt;/script&gt;
-    &lt;script type="text/javascript" src="../../../build/guppy_render.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript" src="../../../lib/math-expressions/math-expressions.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
      answers = {"ans1":"1", "ans2":"x^2", "ans3":"( 4+ sqrt( 16 - 4 ) )/( 2 )"};
@@ -30,13 +29,12 @@
          Guppy.init({"path":"../../../build",
 		     "symbols":"../../../sym/symbols.json",
 		     "settings":{"empty_content": blank},
+		     "callback":function(){ Guppy.Doc.render_all("text","$$"); },
 	 "events":{"done":function(e){check_answer(e.target.id)}}});
 	 
 	 var g1 = new Guppy("ans1", {"settings":{"blacklist":["sin","cos","sec","tan","cot","csc"]}});
 	 var g2 = new Guppy("ans2", {"settings":{'blacklist':["ln","log"]}});
 	 var g3 = new Guppy("ans3");
-
-	 GuppyRender.render_all();
       }
     &lt;/script&gt;
     &lt;style&gt;
@@ -66,21 +64,21 @@
 &lt;body&gt;
     &lt;ul&gt;
 	&lt;li&gt;
-	    Express &lt;script id="qn1" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="sin" group="functions"&gt;&lt;b p="latex"&gt;\sin\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; sin(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;z&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;+&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="cos" group="functions"&gt;&lt;b p="latex"&gt;\cos\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; cos(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;z&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/m&gt;&lt;/script&gt; without using any trigonometric functions.&lt;br /&gt;
+	    Express $$((sin(x)^2) + (cos(x)^2))$$ without using any trigonometric functions.&lt;br /&gt;
 	    &lt;div id="ans1" class="answerbox"&gt;&lt;/div&gt;
-	    &lt;div class="button" onclick="check_answer(0)" id="sub1"&gt;Submit&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer('ans1')" id="sub1"&gt;Submit&lt;/div&gt;
 	    &lt;span id="ans1_feedback"&gt;Unanswered&lt;/span&gt;
 	&lt;/li&gt;
 	&lt;li&gt;
-	    Simplify &lt;script id="qn2" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;e&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;f type="ln" group="functions"&gt;&lt;b p="latex"&gt;\ln\left(&lt;r ref="1"/&gt;\right)&lt;/b&gt;&lt;b p="text"&gt; ln(&lt;r ref="1"/&gt;)&lt;/b&gt;&lt;c delete="1"&gt;&lt;e&gt;x&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;&lt;/e&gt;&lt;/m&gt;&lt;/script&gt;&lt;br /&gt;
+	    Simplify $$(e^(2 * ln(x)))$$&lt;br /&gt;
 	    &lt;div id="ans2" class="answerbox"&gt;&lt;/div&gt;
-	    &lt;div class="button" onclick="check_answer(1)" id="sub2"&gt;Submit&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer('ans2')" id="sub2"&gt;Submit&lt;/div&gt;
 	    &lt;span id="ans2_feedback"&gt;Unanswered&lt;/span&gt;
 	&lt;/li&gt;
 	&lt;li&gt;
-	    Find the largest value of x solving: &lt;script id="qn3" type="text/guppy_xml"&gt;&lt;m&gt;&lt;e&gt;&lt;/e&gt;&lt;f type="exponential" group="functions"&gt;&lt;b p="latex"&gt;{&lt;r ref="1"/&gt;}^{&lt;r ref="2"/&gt;}&lt;/b&gt;&lt;b p="text"&gt;(&lt;r ref="1"/&gt;)^(&lt;r ref="2"/&gt;)&lt;/b&gt;&lt;c up="2" bracket="yes" delete="1" name="base"&gt;&lt;e&gt;x&lt;/e&gt;&lt;/c&gt;&lt;c down="1" delete="1" name="exponent" small="yes"&gt;&lt;e&gt;2&lt;/e&gt;&lt;/c&gt;&lt;/f&gt;&lt;e&gt;-4x+1=0&lt;/e&gt;&lt;/m&gt;&lt;/script&gt;&lt;br /&gt;
+	    Find the largest value of x solving: $$(((x^2) - (4 * x)) + 1) = 0$$&lt;br /&gt;
 	    &lt;div id="ans3" class="answerbox"&gt;&lt;/div&gt;
-	    &lt;div class="button" onclick="check_answer(2)" id="sub3"&gt;Submit&lt;/div&gt;
+	    &lt;div class="button" onclick="check_answer('ans3')" id="sub3"&gt;Submit&lt;/div&gt;
 	    &lt;span id="ans3_feedback"&gt;Unanswered&lt;/span&gt;
 	&lt;/li&gt;
 &lt;/body&gt;

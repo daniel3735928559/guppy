@@ -3049,6 +3049,7 @@ var Parser = function(token_types){
     this.prefix = function (id, nud) {
         var s = self.symbol(id);
         s.nud = nud || function () {
+	    if(this.value == "-") this.value = "neg";
             return [this.value, [self.expression(70)]];
         };
         return s;
