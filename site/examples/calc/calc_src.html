@@ -10,7 +10,7 @@
 	
 	&lt;script type="text/javascript"&gt;
 	 window.onload = function(){
-	     Guppy.init({"symbols":"../../../sym/symbols.json"});
+	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
 	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
 		 var a = document.getElementById("ans");
 		 try{
