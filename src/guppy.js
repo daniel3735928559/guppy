@@ -958,8 +958,8 @@ Guppy.register_keyboard_handlers = function(){
                 Guppy.active_guppy.temp_cursor.node = null;
                 if(Utils.is_text(Guppy.active_guppy.engine.current)){
                     Guppy.active_guppy.engine.insert_string(Guppy.kb.k_text[i]);
-                    Guppy.active_guppy.render(true);
                 }
+                Guppy.active_guppy.render(true);
                 return false;
             }}(i));
         }

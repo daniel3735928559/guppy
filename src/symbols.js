@@ -75,7 +75,7 @@ Symbols.validate = function(){
 }
 
 // Returns an array with alternating text and argument elements of the form
-// {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...]}
+// {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...], "template":[...]}
 Symbols.split_output = function(output){
     var regex = /\{\$([0-9]+)/g, result, starts = [], indices = [], i;
     var ans = [];
@@ -86,6 +86,20 @@ Symbols.split_output = function(output){
     ans.push({"type":"text","val":output.substring(0,starts.length > 0 ? starts[0] : output.length)}); // Push the first text bit
     for(i = 0; i < starts.length; i++){
         var idx = starts[i]+1;
+	// Find template (if defined)
+	var tmpl_str = "";
+	var tmpl = [];
+	if(output[idx] == "["){
+	    idx++;
+	    var tmpl_opens = 1;
+	    while(opens > 0 && idx < output.length){
+		if(output[idx] == "]"){ tmpl_opens--; }
+		if(output[idx] == "["){ tmpl_opens++; }
+		if(tmpl_opens > 1){ tmpl_str += output[idx]; }
+		idx++;
+	    }
+	    tmpl = Symbols.split_output(tmpl_str);
+	}
         var separators = [];
         var sep = "";
         var opens = 1

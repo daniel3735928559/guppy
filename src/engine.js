@@ -1248,7 +1248,7 @@ Engine.prototype.checkpoint = function(){
     this.fire_event("change",{"old":old_data,"new":new_data});
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
-    if(this.parent && this.parent.ready) this.parent.render(true);
+    //if(this.parent && this.parent.ready) this.parent.render(true);
 }
 
 Engine.prototype.restore = function(t){
