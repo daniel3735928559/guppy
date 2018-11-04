@@ -4,6 +4,7 @@ case "$op" in
     "build-debug")
 	[[ ! -d build ]] && mkdir build
 	./node_modules/.bin/browserify src/guppy.js -o build/guppy.min.js --standalone Guppy -d
+	./node_modules/.bin/browserify src/guppy.js -o build/guppy.js --standalone Guppy -d
 	./node_modules/.bin/browserify src/osk.js -o build/guppy_osk.js --standalone GuppyOSK -d
 	cat lib/katex/katex-modified.min.css > build/guppy-none.min.css
 	cat lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css
