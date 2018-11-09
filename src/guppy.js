@@ -1,10 +1,10 @@
-var Mousetrap = require('../lib/mousetrap/mousetrap.min.js');
-var katex = require('../lib/katex/katex-modified.min.js');
-var Engine = require('./engine.js');
-var Utils = require('./utils.js');
-var Symbols = require('./symbols.js');
-var Settings = require('./settings.js');
-var Doc = require('./doc.js');
+import Mousetrap from 'mousetrap';
+import katex from 'katex-modified';
+import Engine from './engine.js';
+import Utils from './utils.js';
+import Symbols from './symbols.js';
+import Settings from './settings.js';
+import Doc from './doc.js';
 
 /**
    @class
@@ -965,4 +965,4 @@ Guppy.register_keyboard_handlers = function(){
         }
 }
 
-module.exports = Guppy;
+export default Guppy;

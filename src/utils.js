@@ -53,4 +53,4 @@ Utils.is_small = function(nn){
     return false;
 }
 
-module.exports = Utils;
+export default Utils;

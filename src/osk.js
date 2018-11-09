@@ -1,4 +1,4 @@
-var katex = require('../lib/katex/katex-modified.min.js');
+import katex from 'katex-modified';
 
 /** 
     @class
@@ -240,4 +240,4 @@ GuppyOSK.prototype.attach = function(guppy){
     this.element = osk;
 }
 
-module.exports = GuppyOSK;
+export default GuppyOSK;

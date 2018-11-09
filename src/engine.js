@@ -1,7 +1,7 @@
-var Utils = require('./utils.js');
-var Doc = require('./doc.js');
-var Symbols = require('./symbols.js');
-var Settings = require('./settings.js');
+import Utils from './utils.js';
+import Doc from './doc.js';
+import Symbols from './symbols.js';
+import Settings from './settings.js';
 
 String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this.slice(idx)); };
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
@@ -1356,4 +1356,4 @@ Engine.prototype.check_for_symbol = function(whole_node){
     }
 }
 
-module.exports = Engine;
+export default Engine;

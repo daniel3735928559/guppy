@@ -215,4 +215,4 @@ AST.eval = function(ast, functions, parent){
     return ans
 }
 
-module.exports = AST;
+export default AST;

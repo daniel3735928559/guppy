@@ -1,5 +1,6 @@
-var katex = require('../lib/katex/katex-modified.min.js');
-var Symbols = require('./symbols.js');
+import katex from 'katex-modified';
+import Symbols from './symbols.js';
+
 var Settings = {}
 Settings.config = {};
 Settings.config.path = "/lib/guppy";
@@ -136,4 +137,4 @@ Settings.init = function(symbols){
     }
 }
 
-module.exports = Settings;
+export default Settings;
