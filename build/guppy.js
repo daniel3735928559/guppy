@@ -136,6 +136,44 @@ var Guppy = (function () {
 	  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 	};
 
+	var slicedToArray = function () {
+	  function sliceIterator(arr, i) {
+	    var _arr = [];
+	    var _n = true;
+	    var _d = false;
+	    var _e = undefined;
+
+	    try {
+	      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+	        _arr.push(_s.value);
+
+	        if (i && _arr.length === i) break;
+	      }
+	    } catch (err) {
+	      _d = true;
+	      _e = err;
+	    } finally {
+	      try {
+	        if (!_n && _i["return"]) _i["return"]();
+	      } finally {
+	        if (_d) throw _e;
+	      }
+	    }
+
+	    return _arr;
+	  }
+
+	  return function (arr, i) {
+	    if (Array.isArray(arr)) {
+	      return arr;
+	    } else if (Symbol.iterator in Object(arr)) {
+	      return sliceIterator(arr, i);
+	    } else {
+	      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+	    }
+	  };
+	}();
+
 	var katexModified_min = createCommonjsModule(function (module, exports) {
 	  (function (e) {
 	    {
@@ -3653,6 +3691,24 @@ var Guppy = (function () {
 	    return false;
 	};
 
+	Utils.xhr_request = function (uri, callback) {
+	    return new Promise(function (resolve, reject) {
+	        var request = new XMLHttpRequest();
+	        request.onreadystatechange = function () {
+	            if (request.readyState === 4) {
+	                if (request.status === 200) {
+	                    var response = JSON.parse(this.responseText);
+	                    resolve(response);
+	                } else {
+	                    reject(request.statusText);
+	                }
+	            }
+	        };
+	        request.open("get", uri, true);
+	        request.send();
+	    });
+	};
+
 	var AST = {};
 
 	AST.to_eqlist = function (ast) {
@@ -5014,7 +5070,7 @@ var Guppy = (function () {
 	 * @class
 	 * @classdesc The engine for scripting the editor.  To access the
 	 * engine for scripting a particular Guppy instance, say called
-	 * `"guppy1"`, do `Guppy("guppy1").engine`.  
+	 * `"guppy1"`, do `Guppy("guppy1").engine`.
 	 *
 	 * At that point, you can, for example, move that editor's cursor
 	 * one spot to the left with `Guppy("guppy1").engine.left()`.
@@ -5024,7 +5080,6 @@ var Guppy = (function () {
 	    var events = config['events'] || {};
 	    var settings = config['settings'] || {};
 	    this.parent = config['parent'];
-	    this.id = this.parent.editor.id;
 
 	    this.ready = false;
 	    this.events = {};
@@ -5077,7 +5132,7 @@ var Guppy = (function () {
 	    return name in this.events ? this.events[name] : Settings.config.events[name];
 	};
 
-	/** 
+	/**
 	    Get the content of the editor
 	    @memberof Engine
 	    @param {string} t - The type of content to render ("latex", "text", or "xml").
@@ -5086,7 +5141,7 @@ var Guppy = (function () {
 	    return this.doc.get_content(t, r);
 	};
 
-	/** 
+	/**
 	    Set the XML content of the editor
 	    @memberof Engine
 	    @param {string} xml_data - An XML string of the content to place in the editor
@@ -5095,7 +5150,7 @@ var Guppy = (function () {
 	    this.set_doc(new Doc(xml_data));
 	};
 
-	/** 
+	/**
 	    Set the document of the editor
 	    @memberof Engine
 	    @param {Doc} doc - The Doc that will be the editor's source
@@ -5135,7 +5190,7 @@ var Guppy = (function () {
 	    if (ev && this.ready && Engine.ready) ev(args);
 	};
 
-	/** 
+	/**
 	    Remove a symbol from this instance of the editor.
 	    @memberof Engine
 	    @param {string} name - The name of the symbol to remove.
@@ -5144,7 +5199,7 @@ var Guppy = (function () {
 	    if (this.symbols[name]) delete this.symbols[name];
 	};
 
-	/** 
+	/**
 	    Add a symbol to this instance of the editor.
 	    @memberof Engine
 	    @param {string} name - param
@@ -5346,7 +5401,7 @@ var Guppy = (function () {
 	    return Symbols.symbol_to_node(this.symbols[sym_name], content, this.doc.base);
 	};
 
-	/** 
+	/**
 	    Insert a symbol into the document at the current cursor position.
 	    @memberof Engine
 	    @param {string} sym_name - The name of the symbol to insert.
@@ -5407,7 +5462,7 @@ var Guppy = (function () {
 	    }
 
 	    // By now:
-	    // 
+	    //
 	    // content contains whatever we want to pre-populate the 'current' field with (if any)
 	    //
 	    // right_piece contains whatever content was in an involved node
@@ -5490,7 +5545,7 @@ var Guppy = (function () {
 	    return new_node;
 	};
 
-	/** 
+	/**
 	    Insert a string into the document at the current cursor position.
 	    @memberof Engine
 	    @param {string} s - The string to insert.
@@ -5514,7 +5569,7 @@ var Guppy = (function () {
 	    }
 	};
 
-	/** 
+	/**
 	    Insert a copy of the given document into the editor at the current cursor position.
 	    @memberof Engine
 	    @param {Doc} doc - The document to insert.
@@ -5523,7 +5578,7 @@ var Guppy = (function () {
 	    this.insert_nodes(doc.root().childNodes, true);
 	};
 
-	/** 
+	/**
 	    Copy the current selection, leaving the document unchanged but
 	    placing the contents of the current selection on the clipboard.
 	    @memberof Engine
@@ -5567,7 +5622,7 @@ var Guppy = (function () {
 	    }
 	};
 
-	/** 
+	/**
 	    Cut the current selection, removing it from the document and placing it in the clipboard.
 	    @memberof Engine
 	*/
@@ -5609,7 +5664,7 @@ var Guppy = (function () {
 	    }
 	};
 
-	/** 
+	/**
 	    Paste the current contents of the clipboard.
 	    @memberof Engine
 	*/
@@ -5622,7 +5677,7 @@ var Guppy = (function () {
 	    return;
 	};
 
-	/** 
+	/**
 	    Clear the current selection, leaving the document unchanged and
 	    nothing selected.
 	    @memberof Engine
@@ -5633,7 +5688,7 @@ var Guppy = (function () {
 	    this.sel_status = Engine.SEL_NONE;
 	};
 
-	/** 
+	/**
 	    Delete the current selection.
 	    @memberof Engine
 	*/
@@ -5656,7 +5711,7 @@ var Guppy = (function () {
 	    return sel.node_list;
 	};
 
-	/** 
+	/**
 	    Select the entire contents of the editor.
 	    @memberof Engine
 	*/
@@ -5668,7 +5723,7 @@ var Guppy = (function () {
 	    if (this.sel_start.node != this.sel_end.node || this.sel_start.caret != this.sel_end.caret) this.sel_status = Engine.SEL_CURSOR_AT_END;
 	};
 
-	/** 
+	/**
 	    function
 	    @memberof Engine
 	    @param {string} name - param
@@ -5701,7 +5756,7 @@ var Guppy = (function () {
 	    if (this.sel_status == Engine.SEL_CURSOR_AT_START) this.set_sel_start();else if (this.sel_status == Engine.SEL_CURSOR_AT_END) this.set_sel_end();
 	};
 
-	/** 
+	/**
 	    Move the cursor to the left, adjusting the selection along with
 	    the cursor.
 	    @memberof Engine
@@ -5754,8 +5809,8 @@ var Guppy = (function () {
 	    this.list_extend("down", true);
 	};
 
-	/** 
-	    Move the cursor by one row up or down in a matrix. 
+	/**
+	    Move the cursor by one row up or down in a matrix.
 	    @memberof Engine
 	    @param {boolean} down - If `true`, move down in the matrix;
 	    otherwise, up.
@@ -5784,13 +5839,13 @@ var Guppy = (function () {
 	    this.caret = down ? 0 : this.current.firstChild.textContent.length;
 	};
 
-	/** 
+	/**
 	    Add an element to a list (or row/column to a matrix) in the
 	    specified direction.  Can optionally copy the current
 	    element/row/column to the new one.
 	    @memberof Engine
 	    @param {string} direction - One of `"up"`, `"down"`, `"left"`, or
-	    `"right"`.  
+	    `"right"`.
 	    @param {boolean} copy - Whether or not to copy the current
 	    element/row/column into the new one.
 	*/
@@ -5806,7 +5861,7 @@ var Guppy = (function () {
 	    if (!n.parentNode) return;
 	    var to_insert;
 
-	    // check if 2D and horizontal and extend all the other rows if so 
+	    // check if 2D and horizontal and extend all the other rows if so
 	    if (!vertical && n.parentNode.parentNode.nodeName == "l") {
 	        to_insert = base.createElement("c");
 	        to_insert.appendChild(this.make_e(""));
@@ -5862,7 +5917,7 @@ var Guppy = (function () {
 	    this.checkpoint();
 	};
 
-	/** 
+	/**
 	    Remove the current column from a matrix
 	    @memberof Engine
 	*/
@@ -5908,7 +5963,7 @@ var Guppy = (function () {
 	    this.checkpoint();
 	};
 
-	/** 
+	/**
 	    Remove the current row from a matrix
 	    @memberof Engine
 	*/
@@ -5932,7 +5987,7 @@ var Guppy = (function () {
 	    this.checkpoint();
 	};
 
-	/** 
+	/**
 	    Remove the current element from a list (or column from a matrix)
 	    @memberof Engine
 	*/
@@ -5958,7 +6013,7 @@ var Guppy = (function () {
 	    this.checkpoint();
 	};
 
-	/** 
+	/**
 	    Simulate the right arrow key press
 	    @memberof Engine
 	*/
@@ -5977,7 +6032,7 @@ var Guppy = (function () {
 	    }
 	};
 
-	/** 
+	/**
 	    Simulate the spacebar key press
 	    @memberof Engine
 	*/
@@ -5985,7 +6040,7 @@ var Guppy = (function () {
 	    if (Utils.is_text(this.current)) this.insert_string(" ");else this.space_caret = this.caret;
 	};
 
-	/** 
+	/**
 	    Simulate the left arrow key press
 	    @memberof Engine
 	*/
@@ -6058,7 +6113,7 @@ var Guppy = (function () {
 	                this.delete_from_f();
 	            }
 	        } else {
-	            // We're at the beginning (hopefully!) 
+	            // We're at the beginning (hopefully!)
 	            return false;
 	        }
 	    }
@@ -6083,7 +6138,7 @@ var Guppy = (function () {
 	    return true;
 	};
 
-	/** 
+	/**
 	    Simulate the "backspace" key press
 	    @memberof Engine
 	*/
@@ -6097,7 +6152,7 @@ var Guppy = (function () {
 	    }
 	};
 
-	/** 
+	/**
 	    Simulate the "delete" key press
 	    @memberof Engine
 	*/
@@ -6116,7 +6171,7 @@ var Guppy = (function () {
 	    this.insert_symbol("sym_name");
 	};
 
-	/** 
+	/**
 	    Simulate a tab key press
 	    @memberof Engine
 	*/
@@ -6142,7 +6197,7 @@ var Guppy = (function () {
 	    if (this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;else this.right();
 	};
 
-	/** 
+	/**
 	    Simulate an up arrow key press
 	    @memberof Engine
 	*/
@@ -6161,7 +6216,7 @@ var Guppy = (function () {
 	    } else this.list_vertical_move(false);
 	};
 
-	/** 
+	/**
 	    Simulate a down arrow key press
 	    @memberof Engine
 	*/
@@ -6180,7 +6235,7 @@ var Guppy = (function () {
 	    } else this.list_vertical_move(true);
 	};
 
-	/** 
+	/**
 	    Move the cursor to the beginning of the document
 	    @memberof Engine
 	*/
@@ -6189,7 +6244,7 @@ var Guppy = (function () {
 	    this.caret = 0;
 	};
 
-	/** 
+	/**
 	    Move the cursor to the end of the document
 	    @memberof Engine
 	*/
@@ -6225,7 +6280,7 @@ var Guppy = (function () {
 	    this.caret = parseInt(this.current.getAttribute("caret"));
 	};
 
-	/** 
+	/**
 	    Undo the last action
 	    @memberof Engine
 	*/
@@ -6239,7 +6294,7 @@ var Guppy = (function () {
 	    this.fire_event("change", { "old": old_data, "new": new_data });
 	};
 
-	/** 
+	/**
 	    Redo the last undone action
 	    @memberof Engine
 	*/
@@ -6253,7 +6308,7 @@ var Guppy = (function () {
 	    this.fire_event("change", { "old": old_data, "new": new_data });
 	};
 
-	/** 
+	/**
 	    Execute the "done" callback
 	    @memberof Engine
 	*/
@@ -6320,7 +6375,8 @@ var Guppy = (function () {
 	   @class
 	   @classdesc An instance of Guppy.  Calling `Guppy(id)` with the ID of
 	   an existing editor will simply return that instance.
-	   @param {string} id - The string ID of the element that should be converted to an editor.
+	   @param {string|Node} element - The string id or the Dom Node of the
+	   element that should be converted to an editor.
 	   @param {Object} [config] - The configuration options for this instance
 	   @param {Object} [config.events] - A dictionary of events.
 	   Available events are as specified in Guppy.init.  Values in this
@@ -6333,10 +6389,14 @@ var Guppy = (function () {
 	   function's documentation for the complete list.
 	   @constructor
 	*/
-	var Guppy = function Guppy(id, config) {
-	    if (Guppy.instances[id]) {
-	        if (Guppy.instances[id].ready) {
-	            return Guppy.instances[id];
+	var Guppy = function Guppy(el, config) {
+
+	    // Get the element and try to get its corresponding instance and settings
+	    var element = typeof el === 'string' ? document.getElementById(el) : el;
+	    var instance = Guppy.instances.get(element);
+	    if (instance) {
+	        if (instance.ready) {
+	            return instance;
 	        }
 	        return null;
 	    }
@@ -6344,11 +6404,12 @@ var Guppy = (function () {
 	    config = config || {};
 	    var settings = config['settings'] || {};
 
-	    this.id = id;
-	    var guppy_div = document.getElementById(id);
+	    // Store a record of this instance in case somebody wants it again
+	    Guppy.instances.set(element, this);
+	    config['parent'] = self;
 
 	    var tab_idx = Guppy.max_tabIndex || 0;
-	    guppy_div.tabIndex = tab_idx;
+	    element.tabIndex = tab_idx;
 	    Guppy.max_tabIndex = tab_idx + 1;
 
 	    var buttons = settings['buttons'] || Settings.config.settings['buttons'];
@@ -6376,14 +6437,10 @@ var Guppy = (function () {
 
 	    this.editor_active = true;
 	    //this.empty_content = settings['empty_content'] || "\\red{[?]}"
-	    this.editor = guppy_div;
+	    this.editor = element;
 	    this.blacklist = [];
 	    this.autoreplace = true;
 	    this.ready = false;
-
-	    Guppy.instances[guppy_div.id] = this;
-
-	    config['parent'] = self;
 
 	    /**   @member {Engine} */
 	    this.engine = new Engine(config);
@@ -6402,7 +6459,7 @@ var Guppy = (function () {
 	    this.recompute_locations_paths();
 	};
 
-	Guppy.instances = {};
+	Guppy.instances = new Map();
 	Guppy.ready = false;
 	Guppy.Doc = Doc;
 	Guppy.active_guppy = null;
@@ -6500,8 +6557,30 @@ var Guppy = (function () {
 	        symbol = Symbols.make_template_symbol(template, name, symbol);
 	    }
 	    Symbols.symbols[name] = JSON.parse(JSON.stringify(symbol));
-	    for (var i in Guppy.instances) {
-	        Guppy.instances[i].engine.symbols[name] = JSON.parse(JSON.stringify(symbol));
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	        for (var _iterator = Guppy.instances[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _step$value = slicedToArray(_step.value, 2),
+	                instance = _step$value[1];
+
+	            instance.engine.symbols[name] = JSON.parse(JSON.stringify(symbol));
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
 	    }
 	};
 
@@ -6513,9 +6592,31 @@ var Guppy = (function () {
 	Guppy.remove_global_symbol = function (name) {
 	    if (Symbols.symbols[name]) {
 	        delete Symbols.symbols[name];
-	        for (var i in Guppy.instances) {
-	            if (Guppy.instances[i].engine.symbols[name]) {
-	                delete Guppy.instances[i].engine.symbols[name];
+	        var _iteratorNormalCompletion2 = true;
+	        var _didIteratorError2 = false;
+	        var _iteratorError2 = undefined;
+
+	        try {
+	            for (var _iterator2 = Guppy.instances[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                var _step2$value = slicedToArray(_step2.value, 2),
+	                    instance = _step2$value[1];
+
+	                if (instance.engine.symbols[name]) {
+	                    delete instance.engine.symbols[name];
+	                }
+	            }
+	        } catch (err) {
+	            _didIteratorError2 = true;
+	            _iteratorError2 = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                    _iterator2.return();
+	                }
+	            } finally {
+	                if (_didIteratorError2) {
+	                    throw _iteratorError2;
+	                }
 	            }
 	        }
 	    }
@@ -6578,32 +6679,82 @@ var Guppy = (function () {
 	   initialisation is complete.
 	*/
 	Guppy.init = function (config) {
+	    // This function is called when all of the instances are ready to start
+	    // accepting user input, and after all have rendered their outputs
 	    var all_ready = function all_ready() {
 	        Settings.init(Symbols.symbols);
 	        Guppy.register_keyboard_handlers();
-	        for (var i in Guppy.instances) {
-	            Guppy.instances[i].ready = true;
-	            Guppy.instances[i].render(true);
+	        var _iteratorNormalCompletion3 = true;
+	        var _didIteratorError3 = false;
+	        var _iteratorError3 = undefined;
 
-	            // Set backend symbols
-	            Guppy.instances[i].engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
+	        try {
+	            for (var _iterator3 = Guppy.instances[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                var _step3$value = slicedToArray(_step3.value, 2),
+	                    instance = _step3$value[1];
 
-	            // Set backend settings
-	            // for(var s in Settings.config.settings){
-	            //     Guppy.instances[i].engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
-	            // }
+	                instance.ready = true;
+	                instance.render(true);
 
-	            // Set backend events
-	            for (var e in Settings.config.events) {
-	                Guppy.instances[i].engine.events[e] = Settings.config.events[e];
+	                // Set backend symbols
+	                instance.engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
+
+	                // Set backend settings
+	                // for(var s in Settings.config.settings){
+	                //     instance.engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
+	                // }
+
+	                // Set backend events
+	                for (var e in Settings.config.events) {
+	                    instance.engine.events[e] = Settings.config.events[e];
+	                }
+	            }
+
+	            // Mark the engine ready
+	        } catch (err) {
+	            _didIteratorError3 = true;
+	            _iteratorError3 = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                    _iterator3.return();
+	                }
+	            } finally {
+	                if (_didIteratorError3) {
+	                    throw _iteratorError3;
+	                }
 	            }
 	        }
+
 	        Engine.ready = true;
 	        Guppy.ready = true;
-	        for (var j in Guppy.instances) {
-	            Guppy.instances[j].engine.ready = true;
-	            Guppy.instances[j].engine.fire_event("ready");
+	        var _iteratorNormalCompletion4 = true;
+	        var _didIteratorError4 = false;
+	        var _iteratorError4 = undefined;
+
+	        try {
+	            for (var _iterator4 = Guppy.instances[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	                var _step4$value = slicedToArray(_step4.value, 2),
+	                    instance = _step4$value[1];
+
+	                instance.engine.ready = true;
+	                instance.engine.fire_event("ready");
+	            }
+	        } catch (err) {
+	            _didIteratorError4 = true;
+	            _iteratorError4 = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+	                    _iterator4.return();
+	                }
+	            } finally {
+	                if (_didIteratorError4) {
+	                    throw _iteratorError4;
+	                }
+	            }
 	        }
+
 	        if (config.callback) config.callback();
 	    };
 	    if (config.settings) {
@@ -6629,34 +6780,83 @@ var Guppy = (function () {
 	    if (config.path) {
 	        Settings.config.path = config.path;
 	    }
+
 	    if (config.symbols) {
+
+	        // Get the symbols out of the config object
 	        var symbols = config.symbols;
 	        if (!Array.isArray(symbols)) {
 	            symbols = [symbols];
 	        }
-	        var calls = [];
-	        for (var i = 0; i < symbols.length; i++) {
-	            var x = function outer(j) {
-	                return function (callback) {
-	                    var req = new XMLHttpRequest();
-	                    req.onload = function () {
-	                        var syms = JSON.parse(this.responseText);
-	                        Symbols.add_symbols(syms);
-	                        callback();
-	                    };
-	                    req.open("get", symbols[j], true);
-	                    req.send();
-	                };
-	            }(i);
-	            calls.push(x);
+
+	        // Get all of the promises
+	        var promises = [];
+	        var _iteratorNormalCompletion5 = true;
+	        var _didIteratorError5 = false;
+	        var _iteratorError5 = undefined;
+
+	        try {
+	            for (var _iterator5 = symbols[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	                var symbol = _step5.value;
+
+
+	                // Objects contain symbols directly, whilst strings require xhr
+	                if (symbol instanceof Object) {
+	                    Symbols.add_symbols(symbol);
+	                } else if (typeof symbol === 'string') {
+	                    var promise = Utils.xhr_request(symbol);
+	                    promises.push(promise);
+	                }
+	            }
+
+	            // Resolve all of the promises and all of the symbols
+	        } catch (err) {
+	            _didIteratorError5 = true;
+	            _iteratorError5 = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion5 && _iterator5.return) {
+	                    _iterator5.return();
+	                }
+	            } finally {
+	                if (_didIteratorError5) {
+	                    throw _iteratorError5;
+	                }
+	            }
 	        }
-	        calls.push(all_ready);
-	        var j = 0;
-	        var cb = function cb() {
-	            j += 1;
-	            if (j < calls.length) calls[j](cb);
-	        };
-	        if (calls.length > 0) calls[0](cb);
+
+	        if (promises.length > 0) {
+	            Promise.all(promises).then(function (definitions) {
+	                var _iteratorNormalCompletion6 = true;
+	                var _didIteratorError6 = false;
+	                var _iteratorError6 = undefined;
+
+	                try {
+	                    for (var _iterator6 = definitions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+	                        var definition = _step6.value;
+
+	                        Symbols.add_symbols(definition);
+	                    }
+	                } catch (err) {
+	                    _didIteratorError6 = true;
+	                    _iteratorError6 = err;
+	                } finally {
+	                    try {
+	                        if (!_iteratorNormalCompletion6 && _iterator6.return) {
+	                            _iterator6.return();
+	                        }
+	                    } finally {
+	                        if (_didIteratorError6) {
+	                            throw _iteratorError6;
+	                        }
+	                    }
+	                }
+
+	                all_ready();
+	            });
+	        } else {
+	            all_ready();
+	        }
 	    } else {
 	        all_ready();
 	    }
@@ -6782,14 +6982,39 @@ var Guppy = (function () {
 	    var n = e.target;
 	    Guppy.kb.is_mouse_down = true;
 	    while (n != null) {
-	        if (n.id in Guppy.instances) {
+	        var instance = Guppy.instances.get(e);
+	        if (instance) {
 	            e.preventDefault();
 	            var prev_active = Guppy.active_guppy;
-	            for (var i in Guppy.instances) {
-	                if (i != n.id) Guppy.instances[i].deactivate();
-	                Guppy.active_guppy = Guppy.instances[n.id];
-	                Guppy.active_guppy.activate();
+	            var _iteratorNormalCompletion7 = true;
+	            var _didIteratorError7 = false;
+	            var _iteratorError7 = undefined;
+
+	            try {
+	                for (var _iterator7 = Guppy.instances[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+	                    var _step7$value = slicedToArray(_step7.value, 2),
+	                        element = _step7$value[0],
+	                        otherInstance = _step7$value[1];
+
+	                    if (element !== e) otherInstance.deactivate();
+	                    Guppy.active_guppy = Guppy.instances[n.id];
+	                    Guppy.active_guppy.activate();
+	                }
+	            } catch (err) {
+	                _didIteratorError7 = true;
+	                _iteratorError7 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion7 && _iterator7.return) {
+	                        _iterator7.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError7) {
+	                        throw _iteratorError7;
+	                    }
+	                }
 	            }
+
 	            var g = Guppy.active_guppy;
 	            var b = Guppy.active_guppy.engine;
 	            g.space_caret = 0;

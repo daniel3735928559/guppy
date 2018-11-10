@@ -1,5 +1,4 @@
 import Version from './version.js';
-
 var Symbols = {"symbols":{}, "templates":{}};
 
 Symbols.make_template_symbol = function(template_name, name, args){

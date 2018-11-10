@@ -23,6 +23,6 @@
         "private": true,
         "recurse": true,
         "template": "./node_modules/docdash",
-	"package": "deploy.json"
+        "package": "deploy.json"
     }
 }
