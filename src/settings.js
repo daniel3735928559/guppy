@@ -1,4 +1,4 @@
-import katex from 'katex-modified';
+import katex from '../lib/katex/katex-modified.min.js';
 import Symbols from './symbols.js';
 
 var Settings = {}

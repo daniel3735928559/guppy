@@ -1,4 +1,4 @@
-import katex from 'katex-modified';
+import katex from '../lib/katex/katex-modified.min.js';
 import AST from './ast.js';
 import Symbols from './symbols.js';
 import Utils from './utils.js';

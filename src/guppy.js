@@ -1,5 +1,5 @@
-import Mousetrap from 'mousetrap';
-import katex from 'katex-modified';
+import Mousetrap from '../lib/mousetrap/mousetrap.min.js';
+import katex from '../lib/katex/katex-modified.min.js';
 import Engine from './engine.js';
 import Utils from './utils.js';
 import Symbols from './symbols.js';

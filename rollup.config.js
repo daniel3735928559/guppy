@@ -1,5 +1,4 @@
 import commonjs from 'rollup-plugin-commonjs';
-import resolve from 'rollup-plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 import uglify from 'rollup-plugin-uglify';
@@ -10,15 +9,10 @@ export default {
 	     file:process.env.NODE_ENV === 'production' ? 'build/guppy.min.js' : 'build/guppy.js',
 	     format: 'iife'},
     plugins: [
-	resolve({
-	    jsnext: true,
-	    main: true,
-	    browser: true,
-	}),
 	commonjs({
             include: [
-                'node_modules/mousetrap/**',
-                'node_modules/katex-modified/**'
+                'lib/mousetrap/**',
+                'lib/katex/**'
             ],
 	    namedExports: { 'mousetrap': ['Mousetrap'] }
 	}),
