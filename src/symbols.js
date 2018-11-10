@@ -1,4 +1,4 @@
-var Version = require('./version.js');
+import Version from './version.js';
 var Symbols = {"symbols":{}, "templates":{}};
 
 Symbols.make_template_symbol = function(template_name, name, args){
@@ -212,4 +212,4 @@ Symbols.symbol_to_node = function(s, content, base){
 }
 
 
-module.exports = Symbols;
+export default Symbols;

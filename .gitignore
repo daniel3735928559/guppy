@@ -1,0 +1,17 @@
+
+node_modules/*
+build/*
+test/static/*
+*~
+\#*
+*.pyc
+*.tmp
+.gitignore
+.git
+node_modules
+nodes/*
+*.o
+*.so
+*.a
+a.out
+OLD

@@ -1,9 +1,9 @@
-var katex = require('../lib/katex/katex-modified.min.js');
-var AST = require('./ast.js');
-var Symbols = require('./symbols.js');
-var Utils = require('./utils.js');
-var Parsers = require('./parser.js');
-var Version = require('./version.js');
+import katex from '../lib/katex/katex-modified.min.js';
+import AST from './ast.js';
+import Symbols from './symbols.js';
+import Utils from './utils.js';
+import Parsers from './parser.js';
+import Version from './version.js';
 
 /**
    @class
@@ -374,4 +374,4 @@ Doc.render = function(doc, target_id){
 }
 
 
-module.exports = Doc;
+export default Doc;

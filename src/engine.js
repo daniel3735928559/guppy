@@ -1,7 +1,7 @@
-var Utils = require('./utils.js');
-var Doc = require('./doc.js');
-var Symbols = require('./symbols.js');
-var Settings = require('./settings.js');
+import Utils from './utils.js';
+import Doc from './doc.js';
+import Symbols from './symbols.js';
+import Settings from './settings.js';
 
 String.prototype.splice = function(idx, s){ return (this.slice(0,idx) + s + this.slice(idx)); };
 String.prototype.splicen = function(idx, s, n){ return (this.slice(0,idx) + s + this.slice(idx+n));};
@@ -11,7 +11,7 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
  * @class
  * @classdesc The engine for scripting the editor.  To access the
  * engine for scripting a particular Guppy instance, say called
- * `"guppy1"`, do `Guppy("guppy1").engine`.  
+ * `"guppy1"`, do `Guppy("guppy1").engine`.
  *
  * At that point, you can, for example, move that editor's cursor
  * one spot to the left with `Guppy("guppy1").engine.left()`.
@@ -21,21 +21,20 @@ var Engine = function(config){
     var events = config['events'] || {};
     var settings = config['settings'] || {};
     this.parent = config['parent'];
-    this.id = this.parent.editor.id;
     
     this.ready = false;
     this.events = {};
     this.settings = {};
-    
+
     var evts = ["ready", "change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
-    
+
     for(var i = 0; i < evts.length; i++){
         var e = evts[i];
         if(e in events) this.events[e] = e in events ? events[e] : null;
     }
 
     var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace", "cliptype"];
-    
+
     for(var j = 0; j < opts.length; j++){
         var p = opts[j];
         if(p in settings) this.settings[p] = settings[p];
@@ -43,7 +42,7 @@ var Engine = function(config){
 
     this.symbols = {};
     this.doc = new Doc(settings["xml_content"]);
-    
+
     this.current = this.doc.root().firstChild;
     this.caret = 0;
     this.space_caret = 0;
@@ -74,7 +73,7 @@ Engine.prototype.event = function(name){
     return name in this.events ? this.events[name] : Settings.config.events[name];
 }
 
-/** 
+/**
     Get the content of the editor
     @memberof Engine
     @param {string} t - The type of content to render ("latex", "text", or "xml").
@@ -83,7 +82,7 @@ Engine.prototype.get_content = function(t,r){
     return this.doc.get_content(t,r);
 }
 
-/** 
+/**
     Set the XML content of the editor
     @memberof Engine
     @param {string} xml_data - An XML string of the content to place in the editor
@@ -92,7 +91,7 @@ Engine.prototype.set_content = function(xml_data){
     this.set_doc(new Doc(xml_data));
 }
 
-/** 
+/**
     Set the document of the editor
     @memberof Engine
     @param {Doc} doc - The Doc that will be the editor's source
@@ -132,7 +131,7 @@ Engine.prototype.fire_event = function(event, args){
     if(ev && this.ready && Engine.ready) ev(args);
 }
 
-/** 
+/**
     Remove a symbol from this instance of the editor.
     @memberof Engine
     @param {string} name - The name of the symbol to remove.
@@ -141,7 +140,7 @@ Engine.prototype.remove_symbol = function(name){
     if(this.symbols[name]) delete this.symbols[name];
 }
 
-/** 
+/**
     Add a symbol to this instance of the editor.
     @memberof Engine
     @param {string} name - param
@@ -272,7 +271,7 @@ Engine.prototype.add_classes_cursors = function(n){
                 ans += sel_caret_text;
             }
             else if(this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
-                if(text_node) 
+                if(text_node)
                     temp_caret_text = ".";
                 else{
                     temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
@@ -329,7 +328,7 @@ Engine.prototype.down_from_f_to_blank = function(){
     }
     if(nn != null){
         //Sanity check:
-        
+
         while(nn.nodeName == 'l') nn = nn.firstChild;
         if(nn.nodeName != 'c' || nn.firstChild.nodeName != 'e'){
             this.problem('dfftb');
@@ -359,7 +358,7 @@ Engine.prototype.symbol_to_node = function(sym_name, content){
     return Symbols.symbol_to_node(this.symbols[sym_name], content, this.doc.base);
 }
 
-/** 
+/**
     Insert a symbol into the document at the current cursor position.
     @memberof Engine
     @param {string} sym_name - The name of the symbol to insert.
@@ -377,7 +376,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     var to_replace = null;
     var replace_f = false;
     var sel;
-    
+
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
@@ -423,7 +422,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     }
 
     // By now:
-    // 
+    //
     // content contains whatever we want to pre-populate the 'current' field with (if any)
     //
     // right_piece contains whatever content was in an involved node
@@ -435,7 +434,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     // right_piece in that order.
     var sym = this.symbol_to_node(sym_name,content);
     var current_parent = this.current.parentNode;
-    
+
     var f = sym.f;
 
     var next = this.current.nextSibling;
@@ -445,7 +444,7 @@ Engine.prototype.insert_symbol = function(sym_name){
     }
     else{
         if(to_remove.length == 0) this.current.parentNode.removeChild(this.current);
-        
+
         for(var i = 0; i < to_remove.length; i++){
             if(next == to_remove[i]) next = next.nextSibling;
             current_parent.removeChild(to_remove[i]);
@@ -454,7 +453,7 @@ Engine.prototype.insert_symbol = function(sym_name){
         current_parent.insertBefore(f, next);
         current_parent.insertBefore(right_piece, next);
     }
-    
+
     this.caret = 0;
     this.current = f;
     if(sym.args.length == 0 || ("input" in s && s.input >= sym.args.length)){
@@ -483,7 +482,7 @@ Engine.prototype.sel_get = function(){
                 "remnant":this.make_e(this.sel_start.node.firstChild.nodeValue.substring(0, this.sel_start.caret) + this.sel_end.node.firstChild.nodeValue.substring(this.sel_end.caret)),
                 "involved":[this.sel_start.node]};
     }
-    
+
     node_list.push(this.make_e(this.sel_start.node.firstChild.nodeValue.substring(this.sel_start.caret)));
     involved.push(this.sel_start.node);
     involved.push(this.sel_end.node);
@@ -508,7 +507,7 @@ Engine.prototype.make_e = function(text){
     return new_node;
 }
 
-/** 
+/**
     Insert a string into the document at the current cursor position.
     @memberof Engine
     @param {string} s - The string to insert.
@@ -530,7 +529,7 @@ Engine.prototype.insert_string = function(s){
     }
 }
 
-/** 
+/**
     Insert a copy of the given document into the editor at the current cursor position.
     @memberof Engine
     @param {Doc} doc - The document to insert.
@@ -539,7 +538,7 @@ Engine.prototype.insert_doc = function(doc){
     this.insert_nodes(doc.root().childNodes, true);
 }
 
-/** 
+/**
     Copy the current selection, leaving the document unchanged but
     placing the contents of the current selection on the clipboard.
     @memberof Engine
@@ -582,7 +581,7 @@ Engine.prototype.system_copy = function(text) {
     }
 }
 
-/** 
+/**
     Cut the current selection, removing it from the document and placing it in the clipboard.
     @memberof Engine
 */
@@ -628,7 +627,7 @@ Engine.prototype.insert_nodes = function(node_list, move_cursor){
     }
 }
 
-/** 
+/**
     Paste the current contents of the clipboard.
     @memberof Engine
 */
@@ -641,18 +640,18 @@ Engine.prototype.sel_paste = function(){
     return;
 }
 
-/** 
+/**
     Clear the current selection, leaving the document unchanged and
     nothing selected.
     @memberof Engine
 */
 Engine.prototype.sel_clear = function(){
-    this.sel_start = null;    
+    this.sel_start = null;
     this.sel_end = null;
     this.sel_status = Engine.SEL_NONE;
 }
 
-/** 
+/**
     Delete the current selection.
     @memberof Engine
 */
@@ -682,7 +681,7 @@ Engine.prototype.sel_delete = function(){
     return sel.node_list;
 }
 
-/** 
+/**
     Select the entire contents of the editor.
     @memberof Engine
 */
@@ -695,7 +694,7 @@ Engine.prototype.sel_all = function(){
         this.sel_status = Engine.SEL_CURSOR_AT_END;
 }
 
-/** 
+/**
     function
     @memberof Engine
     @param {string} name - param
@@ -733,7 +732,7 @@ Engine.prototype.set_sel_boundary = function(sstatus, mouse){
         this.set_sel_end();
 }
 
-/** 
+/**
     Move the cursor to the left, adjusting the selection along with
     the cursor.
     @memberof Engine
@@ -772,8 +771,8 @@ Engine.prototype.list_extend_down = function(){this.list_extend("down", false);}
 Engine.prototype.list_extend_copy_up = function(){this.list_extend("up", true);}
 Engine.prototype.list_extend_copy_down = function(){this.list_extend("down", true);}
 
-/** 
-    Move the cursor by one row up or down in a matrix. 
+/**
+    Move the cursor by one row up or down in a matrix.
     @memberof Engine
     @param {boolean} down - If `true`, move down in the matrix;
     otherwise, up.
@@ -802,13 +801,13 @@ Engine.prototype.list_vertical_move = function(down){
     this.caret = down ? 0 : this.current.firstChild.textContent.length;
 }
 
-/** 
+/**
     Add an element to a list (or row/column to a matrix) in the
     specified direction.  Can optionally copy the current
     element/row/column to the new one.
     @memberof Engine
     @param {string} direction - One of `"up"`, `"down"`, `"left"`, or
-    `"right"`.  
+    `"right"`.
     @param {boolean} copy - Whether or not to copy the current
     element/row/column into the new one.
 */
@@ -823,8 +822,8 @@ Engine.prototype.list_extend = function(direction, copy){
     }
     if(!n.parentNode) return;
     var to_insert;
-    
-    // check if 2D and horizontal and extend all the other rows if so 
+
+    // check if 2D and horizontal and extend all the other rows if so
     if(!vertical && n.parentNode.parentNode.nodeName == "l"){
         to_insert = base.createElement("c");
         to_insert.appendChild(this.make_e(""));
@@ -851,7 +850,7 @@ Engine.prototype.list_extend = function(direction, copy){
         this.checkpoint();
         return;
     }
-    
+
     if(copy){
         to_insert = n.cloneNode(true);
     }
@@ -879,7 +878,7 @@ Engine.prototype.list_extend = function(direction, copy){
     this.checkpoint();
 }
 
-/** 
+/**
     Remove the current column from a matrix
     @memberof Engine
 */
@@ -889,7 +888,7 @@ Engine.prototype.list_remove_col = function(){
         n = n.parentNode;
     }
     if(!n.parentNode) return;
-    
+
     // Don't remove if there is only a single column:
     if(n.previousSibling != null){
         this.current = n.previousSibling.lastChild;
@@ -900,10 +899,10 @@ Engine.prototype.list_remove_col = function(){
         this.caret = 0;
     }
     else return;
-    
+
     var pos = 1;
     var cc = n;
-    
+
     // Find position of column
     while(cc.previousSibling != null){
         pos++;
@@ -922,7 +921,7 @@ Engine.prototype.list_remove_col = function(){
     this.checkpoint();
 }
 
-/** 
+/**
     Remove the current row from a matrix
     @memberof Engine
 */
@@ -948,7 +947,7 @@ Engine.prototype.list_remove_row = function(){
     this.checkpoint();
 }
 
-/** 
+/**
     Remove the current element from a list (or column from a matrix)
     @memberof Engine
 */
@@ -976,7 +975,7 @@ Engine.prototype.list_remove = function(){
     this.checkpoint();
 }
 
-/** 
+/**
     Simulate the right arrow key press
     @memberof Engine
 */
@@ -997,7 +996,7 @@ Engine.prototype.right = function(){
     }
 }
 
-/** 
+/**
     Simulate the spacebar key press
     @memberof Engine
 */
@@ -1006,7 +1005,7 @@ Engine.prototype.spacebar = function(){
     else this.space_caret = this.caret;
 }
 
-/** 
+/**
     Simulate the left arrow key press
     @memberof Engine
 */
@@ -1088,7 +1087,7 @@ Engine.prototype.delete_from_e = function(){
             }
         }
         else{
-            // We're at the beginning (hopefully!) 
+            // We're at the beginning (hopefully!)
             return false;
         }
     }
@@ -1115,7 +1114,7 @@ Engine.prototype.delete_forward_from_e = function(){
     return true;
 }
 
-/** 
+/**
     Simulate the "backspace" key press
     @memberof Engine
 */
@@ -1130,7 +1129,7 @@ Engine.prototype.backspace = function(){
     }
 }
 
-/** 
+/**
     Simulate the "delete" key press
     @memberof Engine
 */
@@ -1150,7 +1149,7 @@ Engine.prototype.backslash = function(){
     this.insert_symbol("sym_name");
 }
 
-/** 
+/**
     Simulate a tab key press
     @memberof Engine
 */
@@ -1178,7 +1177,7 @@ Engine.prototype.right_paren = function(){
     else this.right();
 }
 
-/** 
+/**
     Simulate an up arrow key press
     @memberof Engine
 */
@@ -1198,7 +1197,7 @@ Engine.prototype.up = function(){
     else this.list_vertical_move(false);
 }
 
-/** 
+/**
     Simulate a down arrow key press
     @memberof Engine
 */
@@ -1218,7 +1217,7 @@ Engine.prototype.down = function(){
     else this.list_vertical_move(true);
 }
 
-/** 
+/**
     Move the cursor to the beginning of the document
     @memberof Engine
 */
@@ -1227,7 +1226,7 @@ Engine.prototype.home = function(){
     this.caret = 0;
 }
 
-/** 
+/**
     Move the cursor to the end of the document
     @memberof Engine
 */
@@ -1263,7 +1262,7 @@ Engine.prototype.find_current = function(){
     this.caret = parseInt(this.current.getAttribute("caret"));
 }
 
-/** 
+/**
     Undo the last action
     @memberof Engine
 */
@@ -1277,7 +1276,7 @@ Engine.prototype.undo = function(){
     this.fire_event("change",{"old":old_data,"new":new_data});
 }
 
-/** 
+/**
     Redo the last undone action
     @memberof Engine
 */
@@ -1291,7 +1290,7 @@ Engine.prototype.redo = function(){
     this.fire_event("change",{"old":old_data,"new":new_data});
 }
 
-/** 
+/**
     Execute the "done" callback
     @memberof Engine
 */
@@ -1332,7 +1331,7 @@ Engine.prototype.check_for_symbol = function(whole_node){
             if(this.symbols[s]) sym = s;
         }
     }
-    else{    
+    else{
         n = instance.current.firstChild.nodeValue.substring(instance.space_caret, instance.caret);
         while(n.length > 0){
             if(n in this.symbols){
@@ -1344,7 +1343,7 @@ Engine.prototype.check_for_symbol = function(whole_node){
     }
 
     if(sym == "") return;
-    
+
     var temp = instance.current.firstChild.nodeValue;
     var temp_caret = instance.caret;
     instance.current.firstChild.nodeValue = instance.current.firstChild.nodeValue.slice(0,instance.caret-sym.length)+instance.current.firstChild.nodeValue.slice(instance.caret);
@@ -1356,4 +1355,4 @@ Engine.prototype.check_for_symbol = function(whole_node){
     }
 }
 
-module.exports = Engine;
+export default Engine;

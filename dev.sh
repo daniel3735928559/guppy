@@ -33,7 +33,8 @@ case "$op" in
     "build-test")
 	mkdir test/static/build 2>/dev/null
 	rm test/static/build/* 2>/dev/null
-	./node_modules/.bin/browserify -t browserify-istanbul src/guppy.js -o test/static/build/guppy_test.js --standalone Guppy
+	#./node_modules/.bin/browserify -t browserify-istanbul src/guppy.js -o test/static/build/guppy_test.js --standalone Guppy
+	NODE_ENV=test node_modules/.bin/rollup -c
 	cat lib/katex/katex-modified.min.css style/guppy.css > test/static/build/guppy-test.min.css
 	cp -r sym/symbols.json test/static/build/
 	cp -r lib/katex/fonts test/static/build/
@@ -42,7 +43,7 @@ case "$op" in
     "test")
 	cd test
 	echo Starting server...
-	node test_server.js | tee /tmp/guppy-test-output | node web.js &
+	node test_server.js | tee /tmp/guppy-test-output | grep DONE | node web.js &
 	npid=`jobs -p`
 	echo Waiting for done signal...
 	while [[ "$(grep -c DONE /tmp/guppy-test-output)" -lt 1 ]]; do printf '.'; sleep 1; done
