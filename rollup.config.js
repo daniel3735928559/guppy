@@ -7,7 +7,7 @@ import istanbul from 'rollup-plugin-istanbul';
 export default {
     input: 'src/guppy.js',
     output: {name:'Guppy',
-	     file:process.env.NODE_ENV === 'production' ? 'build/guppy.min.js' :( process.env.NODE_ENV === 'test' ? 'test/static/build/guppy_test.js' : 'build/guppy.js'),
+	     file:process.env.NODE_ENV === 'production' ? 'build/guppy.min.js' :( process.env.NODE_ENV === 'test' ? 'build/guppy-test.js' : 'build/guppy.js'),
 	     format: 'iife'},
     plugins: [
 	commonjs({
