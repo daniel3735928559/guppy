@@ -483,13 +483,13 @@ Guppy.mouse_down = function(e){
     var n = e.target;
     Guppy.kb.is_mouse_down = true;
     while(n != null){
-        var instance = Guppy.instances.get(e)
+        var instance = Guppy.instances.get(n);
         if(instance){
             e.preventDefault();
             var prev_active = Guppy.active_guppy;
             for(var [element, otherInstance] of Guppy.instances){
-                if(element !== e) otherInstance.deactivate();
-                Guppy.active_guppy = Guppy.instances[n.id];
+                if(element !== n) otherInstance.deactivate();
+                Guppy.active_guppy = instance;
                 Guppy.active_guppy.activate();
             }
             var g = Guppy.active_guppy;

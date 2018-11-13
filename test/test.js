@@ -5,13 +5,6 @@ focuses = 0;
 unfocuses = 0;
 var tests = [
     {
-	"description":"Ready",
-	"content":"none",
-	"type":"asciimath",
-	"expected":"READY",
-	"run":function(g){}
-    },
-    {
 	"description":"Done",
 	"type":"asciimath",
 	"expected":"DONE",
@@ -694,7 +687,7 @@ var tests = [
     {
 	"description":"import_ast",
 	"type":"text",
-	"expected":"-sin(((pi * omega) / 2))",
+	"expected":"neg(sin(((pi * omega) / 2)))",
 	"run":function(g){
 	    Guppy("guppy1").import_syntax_tree(["-",[["sin",[["fraction",[["*",[["var",["pi"]],["var",["omega"]]]],["val",[2]]]]]]]]);
 	}
@@ -984,9 +977,8 @@ Guppy.init({"symbols":"base/sym/symbols.json",
 		"right_end":function(e){e.target.import_xml("<m><e>RIGHT</e></m>");},
 		"done":function(e){e.target.import_xml("<m><e>DONE</e></m>");},
 		"change":function(e){},
-		"ready":function(e){
-		    //e.target.import_xml("<m><e>READY</e></m>");
-		}}});
+		"ready":function(e){}
+	    }});
 test_guppy = {};
 
 describe('Guppy',function(){
@@ -1003,7 +995,6 @@ describe('Guppy',function(){
     afterEach(function() {
     	document.body.removeChild(document.getElementById('guppy1'));
     });
-    
 
     for(var j = 0; j < tests.length; j++){
 	var f = function(i){
@@ -1033,14 +1024,6 @@ describe('Guppy',function(){
 	};
 	f(j);
     }
-    
-    // it('basic',function(){
-    // 	test_guppy.import_xml("<m><e>x+1</e></m>");
-    // 	do_keys(['right','backspace']);
-    // 	test_guppy.deactivate();
-    // 	test_guppy.render();
-    // 	expect(test_guppy.engine.get_content("asciimath")).toBe("+1");
-    // });
 });
 
 function do_keys(chs){

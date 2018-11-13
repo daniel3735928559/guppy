@@ -3875,6 +3875,11 @@ var Guppy = (function () {
 	            return binop_low(args, "-", parent);
 	        }
 	    };
+	    functions["neg"] = function (args, parent) {
+	        var d = args[0].cloneNode(true);
+	        prepend_str(d, "-");
+	        return d;
+	    };
 	    functions["val"] = function (args) {
 	        return new window.DOMParser().parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");
 	    };
@@ -3955,6 +3960,11 @@ var Guppy = (function () {
 	            return -args[0](vars);
 	        } : function (vars) {
 	            return args[0](vars) - args[1](vars);
+	        };
+	    };
+	    defaults["neg"] = function (args) {
+	        return function (vars) {
+	            return -args[0](vars);
 	        };
 	    };
 	    defaults["val"] = function (args) {
@@ -6978,11 +6988,12 @@ var Guppy = (function () {
 	};
 
 	Guppy.mouse_down = function (e) {
+	    console.log(e.target);
 	    if (e.target.getAttribute("class") == "guppy-button") return;
 	    var n = e.target;
 	    Guppy.kb.is_mouse_down = true;
 	    while (n != null) {
-	        var instance = Guppy.instances.get(e);
+	        var instance = Guppy.instances.get(n);
 	        if (instance) {
 	            e.preventDefault();
 	            var prev_active = Guppy.active_guppy;
@@ -6996,8 +7007,8 @@ var Guppy = (function () {
 	                        element = _step7$value[0],
 	                        otherInstance = _step7$value[1];
 
-	                    if (element !== e) otherInstance.deactivate();
-	                    Guppy.active_guppy = Guppy.instances[n.id];
+	                    if (element !== n) otherInstance.deactivate();
+	                    Guppy.active_guppy = instance;
 	                    Guppy.active_guppy.activate();
 	                }
 	            } catch (err) {
