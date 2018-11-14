@@ -442,9 +442,9 @@ var tests = [
     {
 	"description":"problem",
 	"type":"asciimath",
-	"expected":"!z",
+	"expected":"zz",
 	"run":function(g){
-	    test_guppy.engine.problem("!z");
+	    test_guppy.engine.problem("zz");
 	}
     },
     {
