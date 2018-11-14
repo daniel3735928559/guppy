@@ -953,6 +953,7 @@ var tests = [
 	"description":"focus",
 	"type":"text",
 	"observe":function(g){
+	    g.deactivate();
 	    g.activate();
 	    var f = focuses;
 	    var u = unfocuses;
@@ -968,17 +969,12 @@ var tests = [
     }
 ];
 
-Guppy.init({"symbols":"base/sym/symbols.json",
-	    "path":"base/build",
-	    "events":{
-		"error":function(e){e.target.import_xml("<m><e>"+e.message+"</e></m>");},
-		"left_end":function(e){e.target.import_xml("<m><e>LEFT</e></m>");},
-		"focus":function(e){if(e.focused) focuses++; else unfocuses++;},
-		"right_end":function(e){e.target.import_xml("<m><e>RIGHT</e></m>");},
-		"done":function(e){e.target.import_xml("<m><e>DONE</e></m>");},
-		"change":function(e){},
-		"ready":function(e){}
-	    }});
+Guppy.event("error",function(e){e.target.import_xml("<m><e>"+e.message+"</e></m>");});
+Guppy.event("left_end",function(e){e.target.import_xml("<m><e>LEFT</e></m>");});
+Guppy.event("focus",function(e){if(e.focused) focuses++; else unfocuses++;});
+Guppy.event("right_end",function(e){e.target.import_xml("<m><e>RIGHT</e></m>");});
+Guppy.event("done",function(e){e.target.import_xml("<m><e>DONE</e></m>");});
+Guppy.event("change",function(e){});
 test_guppy = {};
 
 describe('Guppy',function(){

@@ -716,7 +716,7 @@ Guppy.prototype.import_syntax_tree = function(tree){
     @memberof Guppy
 */
 Guppy.prototype.activate = function(){
-    var newly_active = (this !== Guppy.active_guppy);
+    var newly_active = !(this.editor_active);
     Guppy.active_guppy = this;
     this.editor_active = true;
     this.editor.className = this.editor.className.replace(new RegExp('(\\s|^)guppy_inactive(\\s|$)'),' guppy_active ');
