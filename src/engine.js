@@ -19,6 +19,7 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
 var Engine = function(config){
     config = config || {};
     var events = config['events'] || {};
+    
     var settings = config['settings'] || {};
     this.parent = config['parent'];
     

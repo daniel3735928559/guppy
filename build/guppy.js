@@ -5609,6 +5609,7 @@ var Guppy = (function () {
 	var Engine = function Engine(config) {
 	    config = config || {};
 	    var events = config['events'] || {};
+
 	    var settings = config['settings'] || {};
 	    this.parent = config['parent'];
 
@@ -7170,6 +7171,28 @@ var Guppy = (function () {
 	    Settings.config.settings[name] = val;
 	};
 
+	Guppy.prototype.configure = function (name, val) {
+	    if (name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1) {
+	        throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
+	    }
+	    this.engine.settings[name] = val;
+	};
+
+	Guppy.prototype.event = function (name, handler) {
+	    if (Settings.config.valid_events.indexOf(name) == -1) {
+	        throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
+	    }
+	    if (name == "focus" && Settings.osk) {
+	        var f = Settings.config.events["focus"];
+	        this.engine.events["focus"] = function (e) {
+	            handler(e);
+	            if (e.focused) Settings.osk.attach(e.target);else Settings.osk.detach(e.target);
+	        };
+	    } else {
+	        this.engine.events[name] = handler;
+	    }
+	};
+
 	/**
 	   @param {string} name - The name of an event.  Can be: 
 	     * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
@@ -7187,10 +7210,9 @@ var Guppy = (function () {
 	        throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
 	    }
 	    if (name == "focus" && Settings.osk) {
-	        var f = Settings.config.events["focus"];
 	        Settings.config.events["focus"] = function (e) {
-	            if (f) f(e);
-	            if (e.focused) osk.attach(e.target);else osk.detach(e.target);
+	            handler(e);
+	            if (e.focused) Settings.osk.attach(e.target);else Settings.osk.detach(e.target);
 	        };
 	    } else {
 	        Settings.config.events[name] = handler;
@@ -7333,7 +7355,6 @@ var Guppy = (function () {
 	    while (n != null) {
 	        var instance = Guppy.instances.get(n);
 	        if (instance) {
-	            console.log('found');
 	            e.preventDefault();
 	            var prev_active = Guppy.active_guppy;
 	            var _iteratorNormalCompletion3 = true;
@@ -7385,7 +7406,6 @@ var Guppy = (function () {
 	        }
 	        n = n.parentNode;
 	    }
-	    console.log('not found');
 	    Guppy.active_guppy = null;
 	    var _iteratorNormalCompletion4 = true;
 	    var _didIteratorError4 = false;
