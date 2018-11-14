@@ -3,6 +3,7 @@ import babel from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 import uglify from 'rollup-plugin-uglify';
 import istanbul from 'rollup-plugin-istanbul';
+import json from 'rollup-plugin-json';
 
 export default {
     input: 'src/guppy.js',
@@ -16,6 +17,9 @@ export default {
                 'lib/katex/**'
             ],
 	    namedExports: { 'mousetrap': ['Mousetrap'] }
+	}),
+	json({
+            include: ['sym/**']
 	}),
 	babel({
             exclude: 'node_modules/**',

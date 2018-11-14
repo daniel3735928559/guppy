@@ -53,22 +53,4 @@ Utils.is_small = function(nn){
     return false;
 }
 
-Utils.xhr_request = function ( uri, callback ) {
-  return new Promise ((resolve, reject) => {
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (request.readyState === 4) {
-            if (request.status === 200) {
-                var response = JSON.parse(this.responseText);
-                resolve(response)
-            } else {
-                reject(request.statusText);
-            }
-        }
-    };
-    request.open("get", uri, true);
-    request.send();
-  })
-}
-
 export default Utils;

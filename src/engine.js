@@ -22,11 +22,10 @@ var Engine = function(config){
     var settings = config['settings'] || {};
     this.parent = config['parent'];
     
-    this.ready = false;
     this.events = {};
     this.settings = {};
 
-    var evts = ["ready", "change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
+    var evts = ["change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
 
     for(var i = 0; i < evts.length; i++){
         var e = evts[i];
@@ -52,14 +51,9 @@ var Engine = function(config){
     this.undo_now = -1;
     this.sel_status = Engine.SEL_NONE;
     this.checkpoint();
-    if(Engine.ready && !this.ready){
-        this.ready = true;
-        this.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
-        this.fire_event("ready");
-    }
+    this.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
 }
 
-Engine.ready = false;
 Engine.SEL_NONE = 0;
 Engine.SEL_CURSOR_AT_START = 1;
 Engine.SEL_CURSOR_AT_END = 2;
@@ -128,7 +122,7 @@ Engine.prototype.fire_event = function(event, args){
     args.target = this.parent || this;
     args.type = event;
     var ev = this.event(event);
-    if(ev && this.ready && Engine.ready) ev(args);
+    if(ev) ev(args);
 }
 
 /**
@@ -1247,7 +1241,6 @@ Engine.prototype.checkpoint = function(){
     this.fire_event("change",{"old":old_data,"new":new_data});
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
-    //if(this.parent && this.parent.ready) this.parent.render(true);
 }
 
 Engine.prototype.restore = function(t){

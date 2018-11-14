@@ -3,8 +3,8 @@ import Symbols from './symbols.js';
 
 var Settings = {}
 Settings.config = {};
-Settings.config.path = "/lib/guppy";
 Settings.config.events = {};
+Settings.config.valid_events = ["change","left_end","right_end","done","completion","debug","error","focus"];
 Settings.config.settings = {
     "autoreplace":"auto",
     "empty_content":"\\blue{[?]}",

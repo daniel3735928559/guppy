@@ -26,14 +26,12 @@ import Doc from './doc.js';
 */
 var Guppy = function(el, config){
 
+    if(!Guppy.initialised) Guppy.init();
     // Get the element and try to get its corresponding instance and settings
     var element = typeof el === 'string' ? document.getElementById(el) : el;
     var instance = Guppy.instances.get(element);
     if(instance){
-        if(instance.ready){
-            return instance
-        }
-        return null;
+        return instance;
     }
     var self = this;
     config = config || {};
@@ -53,13 +51,13 @@ var Guppy = function(el, config){
     if(buttons){
         for(var i = 0; i < buttons.length; i++){
             if(buttons[i] == "osk" && Settings.osk){
-                Guppy.make_button("icons/keyboard.png", this.buttons_div, function() {
+                Guppy.make_button("keyboard", this.buttons_div, function() {
                     if(Settings.osk.guppy == self){ Settings.osk.detach(self); }
                     else{ Settings.osk.attach(self); }});
             }
-            else if(buttons[i] == "settings") Guppy.make_button("icons/settings.png", this.buttons_div, function(){ Settings.toggle("settings", self); });
-            else if(buttons[i] == "symbols") Guppy.make_button("icons/symbols.png", this.buttons_div, function(){ Settings.toggle("symbols", self); });
-            else if(buttons[i] == "controls") Guppy.make_button("icons/help.png", this.buttons_div, function(){ Settings.toggle("controls", self); });
+            else if(buttons[i] == "settings") Guppy.make_button("settings", this.buttons_div, function(){ Settings.toggle("settings", self); });
+            else if(buttons[i] == "symbols") Guppy.make_button("symbols", this.buttons_div, function(){ Settings.toggle("symbols", self); });
+            else if(buttons[i] == "controls") Guppy.make_button("help", this.buttons_div, function(){ Settings.toggle("controls", self); });
         }
     }
 
@@ -68,34 +66,27 @@ var Guppy = function(el, config){
     this.editor = element;
     this.blacklist = [];
     this.autoreplace = true;
-    this.ready = false;
 
     /**   @member {Engine} */
     this.engine = new Engine(config);
     this.temp_cursor = {"node":null,"caret":0}
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
-    this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; if(self.activate) self.activate();}, false);
-    if(Guppy.ready && !this.ready){
-        this.ready = true;
-        this.engine.fire_event("ready");
-        this.render(true);
-    }
+    this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; }, false);
+    this.render(true);
     this.deactivate();
     this.recompute_locations_paths();
 }
 
 Guppy.instances = new Map()
-Guppy.ready = false;
 Guppy.Doc = Doc;
 Guppy.active_guppy = null;
 Guppy.Symbols = Symbols;
 Guppy.Mousetrap = Mousetrap;
 
-Guppy.make_button = function(url, parent, cb){
-    var b = document.createElement("img");
-    b.setAttribute("class","guppy-button");
-    b.setAttribute("src", Settings.config.path + "/" + url);
+Guppy.make_button = function(cls, parent, cb){
+    var b = document.createElement("div");
+    b.setAttribute("class","guppy-button "+cls);
     parent.appendChild(b);
     if(cb){
         b.addEventListener("mouseup", function(e){
@@ -205,154 +196,80 @@ Guppy.remove_global_symbol = function(name){
 }
 
 /**
-   Initialise global settings for all instances of the editor.  Most
-   of these can be overridden for specific instances later.  Should be
-   called before instantiating the Guppy class.
-   @static
-   @memberof Guppy
-   @param {Object} config - The configuration options for this instance
-   @param {string[]} [config.symbols] - A list of URLs for symbol JSON files to request
-   @param {string} [config.path="/lib/guppy"] - The path to the guppy build folder.
-   @param {GuppyOSK} [config.osk] - A GuppyOSK object to use for the on-screen keyboard if one is desired
-   @param {Object} [config.events] - A dictionary of events
-   @param {function} [config.events.ready] - Called when the instance is ready to render things.
-   @param {function} [config.events.change] - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
-   @param {function} [config.events.left_end] - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
-   @param {function} [config.events.right_end] - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
-   @param {function} [config.events.done] - Called when the enter key is pressed in the editor.
-   @param {function} [config.events.completion] - Called when the editor outputs tab completion
-   options.  Argument is a dictionary with the key `candidates`, a
-   list of the options for tab-completion.
-   @param {function} [config.events.debug] - Called when the editor outputs some debug information.
-   Argument is a dictionary with the key `message`.
-   @param {function} [config.events.error] - Called when the editor receives an error.  Argument is
-   a dictionary with the key `message`.
-   @param {function} [config.events.focus] - Called when the editor is focused or unfocused.
-   Argument will have a single key `focused` which will be `true`
-   or `false` according to whether the editor is newly focused or
-   newly unfocused (respectively).
-   @param {Object} [config.settings] - A dictionary of settings
-   @param {string} [config.settings.xml_content=<m><e/></m>] - An XML
+   @param {string} [xml_content=<m><e/></m>] - An XML
    string with which to initialise the editor's state.
-   @param {string} [config.settings.autoreplace="auto"] - Determines
+   @param {string} [autoreplace="auto"] - Determines
    whether or not to autoreplace typed text with the corresponding
    symbols when possible.  Can be `"whole"` to replace only entire
    tokens, `"auto"` to replace symbols greedily, or `"delay"` to
    behave the same as `"whole"` except with a 200ms delay to allow for
    entering, e.g. a symbol called `cost` without triggering the symbol
    `cos` (if typed quickly enough).
-   @param {string} [config.settings.blank_caret=""] - A LaTeX string
+   @param {string} [blank_caret=""] - A LaTeX string
    that specifies what the caret should look like when in a blank
    spot.  If `""`, the default caret is used.
-   @param {string} [config.settings.empty_content=\color{red}{[?]}] - A
+   @param {string} [empty_content=\color{red}{[?]}] - A
    LaTeX string that will be displayed when the editor is both
    inactive and contains no content.
-   @param {string[]} [config.settings.blacklist=[]] - A list of string
+   @param {string[]} [blacklist=[]] - A list of string
    symbol names, corresponding to symbols that should not be
    allowed in this instance of the editor.
-   @param {string[]} [config.settings.buttons=["osk","settings","symbols","controls"]] - A list of strings corresponding to the helper buttons that should be displayed in the editor when focused.
-   @param {string} [config.settings.cliptype] - A string, either
-   "text" or "latex".  If this option is present, when text is
-   placed onto the editor clipboard, the contents of the editor
-   will be rendered into either plain text or LaTeX (depending on
-   the value of this option) and an attempt will be made to copy
-   the result to the system clipboard.
-   @param {function} [config.callback] - A function to be called when
-   initialisation is complete.
+   @param {string[]} [buttons=["osk","settings","symbols","controls"]] - A list of strings corresponding to the helper buttons that should be displayed in the editor when focused.
+   @param {string} [cliptype] - A string, either "text" or "latex".
+   If this option is present, when text is placed onto the editor
+   clipboard, the contents of the editor will be rendered into either
+   plain text or LaTeX (depending on the value of this option) and an
+   attempt will be made to copy the result to the system clipboard.
 */
-Guppy.init = function(config){
-    // This function is called when all of the instances are ready to start
-    // accepting user input, and after all have rendered their outputs
-    var all_ready = function(){
-        Settings.init(Symbols.symbols);
-        Guppy.register_keyboard_handlers();
-        for(const [, instance] of Guppy.instances){
-            instance.ready = true;
-            instance.render(true);
-
-            // Set backend symbols
-            instance.engine.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
-
-            // Set backend settings
-            // for(var s in Settings.config.settings){
-            //     instance.engine.settings[s] = JSON.parse(JSON.stringify(Settings.config.settings[s]));
-            // }
-
-            // Set backend events
-            for(var e in Settings.config.events){
-                instance.engine.events[e] = Settings.config.events[e];
-            }
-        }
-
-        // Mark the engine ready
-        Engine.ready = true;
-        Guppy.ready = true;
-        for(const [, instance] of Guppy.instances){
-            instance.engine.ready = true;
-            instance.engine.fire_event("ready");
-        }
-        if(config.callback) config.callback();
+Guppy.configure = function(name, val){
+    if(name in Settings.config.options && Settings.config.options[name].indexOf(val) == -1){
+	throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
     }
-    if(config.settings){
-        var settings = JSON.parse(JSON.stringify(config.settings));
-        for(var s in settings){
-            Settings.config.settings[s] = settings[s];
-        }
+    Settings.config.settings[name] = val;
+}
+
+
+/**
+   @param {string} name - The name of an event.  Can be: 
+     * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
+     * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
+     * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
+     * done - Called when the enter key is pressed in the editor.
+     * completion - Called when the editor outputs tab completion options.  Argument is a dictionary with the key `candidates`, a list of the options for tab-completion.
+     * debug - Called when the editor outputs some debug information. Argument is a dictionary with the key `message`.
+     * error - Called when the editor receives an error.  Argument is a dictionary with the key `message`.
+     * focus - Called when the editor is focused or unfocused. Argument will have a single key `focused` which will be `true` or `false` according to whether the editor is newly focused or newly unfocused (respectively).
+   @param {function} handler - The function that will be called to handle the given event
+*/
+Guppy.event = function(name, handler){
+    if(Settings.config.valid_events.indexOf(name) == -1) {
+	throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
     }
-    if(config.events){
-        Settings.config.events = config.events;
+    if(name == "focus" && Settings.osk) {
+        var f = Settings.config.events["focus"];
+        Settings.config.events["focus"] = function(e){
+            if(f) f(e);
+            if(e.focused) osk.attach(e.target);
+            else osk.detach(e.target);
+        };
     }
-    if(config.osk){
-        Guppy.OSK = config.osk;
-        Settings.osk = config.osk;
-        if(config.osk.config.attach == "focus"){
-            var f = Settings.config.events["focus"];
-            Settings.config.events["focus"] = function(e){
-                if(f) f(e);
-                if(e.focused) config.osk.attach(e.target);
-                else config.osk.detach(e.target);
-            };
-        }
+    else {
+	Settings.config.events[name] = handler;
     }
-    if(config.path){
-        Settings.config.path = config.path;
-    }
-
-    if(config.symbols){
-
-        // Get the symbols out of the config object
-        var symbols = config.symbols;
-        if(!(Array.isArray(symbols))){
-            symbols = [symbols];
-        }
-
-        // Get all of the promises
-        let promises = []
-        for ( let symbol of symbols ) {
-
-          // Objects contain symbols directly, whilst strings require xhr
-          if ( symbol instanceof Object ) {
-            Symbols.add_symbols( symbol )
-
-          } else if ( typeof symbol === 'string' ) {
-            let promise = Utils.xhr_request( symbol )
-            promises.push(promise)
-          }
-        }
-
-        // Resolve all of the promises and all of the symbols
-        if ( promises.length > 0 ) {
-          Promise.all(promises).then( function ( definitions ) {
-            for (let definition of definitions) {
-              Symbols.add_symbols(definition)
-            }
-            all_ready()
-          })
-        } else {
-          all_ready()
-        }
-    } else {
-        all_ready();
+}
+/**
+   @param {GuppyOSK} [osk] - A GuppyOSK object to use for the on-screen keyboard if one is desired
+*/
+Guppy.use_osk = function(osk){
+    Guppy.OSK = osk;
+    Settings.osk = osk;
+    if(osk.config.attach == "focus"){
+        var f = Settings.config.events["focus"];
+        Settings.config.events["focus"] = function(e){
+            if(f) f(e);
+            if(e.focused) osk.attach(e.target);
+            else osk.detach(e.target);
+        };
     }
 }
 
@@ -485,12 +402,12 @@ Guppy.mouse_down = function(e){
     while(n != null){
         var instance = Guppy.instances.get(n);
         if(instance){
+	    console.log('found');
             e.preventDefault();
             var prev_active = Guppy.active_guppy;
-            for(var [element, otherInstance] of Guppy.instances){
-                if(element !== n) otherInstance.deactivate();
-                Guppy.active_guppy = instance;
-                Guppy.active_guppy.activate();
+            for(var [element, g] of Guppy.instances){
+                if(element !== n) g.deactivate();
+                else g.activate();
             }
             var g = Guppy.active_guppy;
             var b = Guppy.active_guppy.engine;
@@ -515,9 +432,10 @@ Guppy.mouse_down = function(e){
         }
         n = n.parentNode;
     }
+    console.log('not found');
     Guppy.active_guppy = null;
-    for(var j in Guppy.instances){
-        Guppy.instances[j].deactivate();
+    for(var [element, g] of Guppy.instances){
+        g.deactivate();
     }
 }
 
@@ -776,13 +694,14 @@ Guppy.prototype.import_syntax_tree = function(tree){
     @memberof Guppy
 */
 Guppy.prototype.activate = function(){
+    var newly_active = (this !== Guppy.active_guppy);
     Guppy.active_guppy = this;
     this.editor_active = true;
     this.editor.className = this.editor.className.replace(new RegExp('(\\s|^)guppy_inactive(\\s|$)'),' guppy_active ');
     this.editor.focus();
-    if(this.ready){
-        this.render(true);
-        this.engine.fire_event("focus",{"focused":true});
+    this.render(true);
+    if(newly_active){
+	this.engine.fire_event("focus",{"focused":true});
     }
 }
 
@@ -791,6 +710,7 @@ Guppy.prototype.activate = function(){
     @memberof Guppy
 */
 Guppy.prototype.deactivate = function(){
+    var newly_inactive = this.editor_active;
     this.editor_active = false;
     var r1 = new RegExp('(?:\\s|^)guppy_active(?:\\s|$)');
     var r2 = new RegExp('(?:\\s|^)guppy_inactive(?:\\s|$)');
@@ -803,10 +723,8 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
-    if(this.ready){
-        this.render();
-        this.engine.fire_event("focus",{"focused":false});
-    }
+    this.render();
+    if(newly_inactive) this.engine.fire_event("focus",{"focused":false});
 }
 
 
@@ -975,6 +893,15 @@ Guppy.register_keyboard_handlers = function(){
                 return false;
             }}(i));
         }
+}
+
+Guppy.initialised = false;
+
+Guppy.init = function(){
+    if(Guppy.initialised) return;
+    Settings.init(Symbols.symbols);
+    Guppy.register_keyboard_handlers();
+    Guppy.initialised = true;
 }
 
 export default Guppy;

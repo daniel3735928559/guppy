@@ -36,6 +36,19 @@
 }
 
 
+.guppy_buttons div.settings{
+    backgrond:url('./icons/settings.png') center no-repeat;
+}
+.guppy_buttons div.keyboard{
+    backgrond:url('./icons/keyboard.png') center no-repeat;
+}
+.guppy_buttons div.help{
+    backgrond:url('./icons/help.png') center no-repeat;
+}
+.guppy_buttons div.symbols{
+    backgrond:url('./icons/symbols.png') center no-repeat;
+}
+
 .guppy_buttons {
     position:absolute;
     bottom:0;
@@ -43,7 +56,7 @@
     padding:0 3px 3px 0;
 }
 
-.guppy_buttons img{
+.guppy_buttons div.guppy-button{
     cursor:pointer;
     height:16px;
     width:16px;
