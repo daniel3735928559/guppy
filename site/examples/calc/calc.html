@@ -10,6 +10,7 @@
 	<script type="text/javascript">
 	 window.onload = function(){
 	     var g1 = new Guppy("guppy1");
+	     g1.configure('empty_content', "\\color{gray}{\\text{Evaluate an expression (with no variables)}}");
 	     g1.event("change",function(e){
 		 var a = document.getElementById("ans");
 		 try{
@@ -20,7 +21,7 @@
 	     });
 	 }
 	</script> 
-	<div id="guppy1" style="width: 400px;"></div>
+	<div id="guppy1" style="width: 500px;"></div>
 	=
 	<span id="ans">NaN</span>
   </body>

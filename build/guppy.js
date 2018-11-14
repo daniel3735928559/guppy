@@ -7176,6 +7176,7 @@ var Guppy = (function () {
 	        throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
 	    }
 	    this.engine.settings[name] = val;
+	    this.render(true);
 	};
 
 	Guppy.prototype.event = function (name, handler) {
