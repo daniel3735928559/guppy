@@ -12,6 +12,7 @@
     width: 0px !important;
     margin-right: 0 !important;
     margin-left: -1px;
+    min-height: 1ex;
 }
 
 .guppy_inactive {

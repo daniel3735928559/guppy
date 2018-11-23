@@ -1,11 +1,11 @@
 var Utils = {};
 
-Utils.CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-Utils.TEMP_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-Utils.SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-Utils.SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.CARET = "\\xmlClass{cursor}{\\nop}";
+Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
+Utils.TEMP_CARET = "\\xmlClass{cursor}{\\nop}";
+Utils.SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
+Utils.SEL_CARET = "\\xmlClass{cursor}{\\nop}";
+Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\nop}";
 Utils.SEL_COLOR = "red";
 
 Utils.is_blank = function(n){

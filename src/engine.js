@@ -232,7 +232,7 @@ Engine.prototype.add_classes_cursors = function(n){
                 //
                 // Here, we add in a small element so that we can
                 // use the mouse to select these areas
-                ans = "\\phantom{\\xmlClass{guppy_elt cursor guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\rule{0pt}{1ex}}}";
+                ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{\\nop}}";
             }
         }
         for(var i = 0; i < text.length+1; i++){

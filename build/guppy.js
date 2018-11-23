@@ -1534,6 +1534,12 @@ var Guppy = (function () {
 	              n = vt(r, t, !1);return Ze.makeFragment(n);
 	        }, mathmlBuilder: function mathmlBuilder(e, t) {
 	          var r = Ur(e, t);return Ot(r, t);
+	        } }), ht({ type: "nop", names: ["\\nop"], props: { numArgs: 0, numOptionalArgs: 0, allowedInText: !0 }, handler: function handler(e, t, r) {
+	          var n = e.parser;e.funcName;return { type: "nop", mode: n.mode };
+	        }, htmlBuilder: function htmlBuilder(e, t) {
+	          return Ze.makeSpan(["mspace"], [], t);
+	        }, mathmlBuilder: function mathmlBuilder(e, t) {
+	          return new Bt.MathNode("nop");
 	        } });var Gr = function Gr(e, t) {
 	        var r,
 	            n,
@@ -1852,7 +1858,7 @@ var Guppy = (function () {
 	              i = t[1];return { type: "xmlClass", mode: r.mode, xmlClass: n, body: ct(i) };
 	        }, htmlBuilder: function htmlBuilder(e, t) {
 	          for (var r = vt(e.body, t, !1), n = 0; n < r.length; n++) {
-	            console.log(e.xmlClass), r[n].classes.push(e.xmlClass.string);
+	            r[n].classes.push(e.xmlClass.string);
 	          }return Ze.makeFragment(r);
 	        }, mathmlBuilder: function mathmlBuilder(e, t) {
 	          var r = Et(e.body, t),
@@ -2225,12 +2231,12 @@ var Guppy = (function () {
 
 	var Utils = {};
 
-	Utils.CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-	Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-	Utils.TEMP_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-	Utils.SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-	Utils.SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
-	Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+	Utils.CARET = "\\xmlClass{cursor}{\\nop}";
+	Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
+	Utils.TEMP_CARET = "\\xmlClass{cursor}{\\nop}";
+	Utils.SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
+	Utils.SEL_CARET = "\\xmlClass{cursor}{\\nop}";
+	Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\nop}";
 	Utils.SEL_COLOR = "red";
 
 	Utils.is_blank = function (n) {
@@ -4409,7 +4415,7 @@ var Guppy = (function () {
 	                //
 	                // Here, we add in a small element so that we can
 	                // use the mouse to select these areas
-	                ans = "\\phantom{\\xmlClass{guppy_elt cursor guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{\\rule{0pt}{1ex}}}";
+	                ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{\\nop}}";
 	            }
 	        }
 	        for (var i = 0; i < text.length + 1; i++) {
