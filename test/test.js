@@ -1030,7 +1030,7 @@ function do_keys(chs){
 
 function do_mouse_move(path,x_frac,y_frac){
     elts = test_guppy.editor.getElementsByClassName("guppy_loc_"+path);
-    var rect = elts[1].getBoundingClientRect();
+    var rect = elts[0].getBoundingClientRect();
     var x = rect.left + (rect.right - rect.left)*x_frac;
     var y = rect.top + (rect.bottom - rect.top)*y_frac;
     Guppy.mouse_move({"target":test_guppy.editor,"clientX":x,"clientY":y,"preventDefault":function(){}});
@@ -1038,7 +1038,7 @@ function do_mouse_move(path,x_frac,y_frac){
 
 function do_mouse_down(path,x_frac,y_frac, shift){
     elts = test_guppy.editor.getElementsByClassName("guppy_loc_"+path);
-    var rect = elts[1].getBoundingClientRect();
+    var rect = elts[0].getBoundingClientRect();
     var x = rect.left + (rect.right - rect.left)*x_frac;
     var y = rect.top + (rect.bottom - rect.top)*y_frac;
     Guppy.mouse_down({"target":test_guppy.editor,"clientX":x,"clientY":y,"preventDefault":function(){},"shiftKey":shift});
