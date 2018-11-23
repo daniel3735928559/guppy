@@ -1150,8 +1150,7 @@ Engine.prototype.backslash = function(){
 */
 Engine.prototype.tab = function(){
     if(!Utils.is_symbol(this.current)){
-        this.check_for_symbol();
-        return;
+        if(this.check_for_symbol()) return;
     }
     var sym_name = this.current.firstChild.textContent;
     var candidates = [];
@@ -1161,6 +1160,7 @@ Engine.prototype.tab = function(){
     if(candidates.length == 1){
         this.current.firstChild.textContent = candidates[0];
         this.caret = candidates[0].length;
+	this.check_for_symbol();
     }
     else {
         this.fire_event("completion",{"candidates":candidates});
@@ -1314,7 +1314,7 @@ Engine.prototype.is_blacklisted = function(symb_type){
 
 Engine.prototype.check_for_symbol = function(whole_node){
     var instance = this;
-    if(Utils.is_text(this.current)) return;
+    if(Utils.is_text(this.current)) return false;
     var sym = "";
     var n = null;
     if(whole_node){
@@ -1336,7 +1336,7 @@ Engine.prototype.check_for_symbol = function(whole_node){
         }
     }
 
-    if(sym == "") return;
+    if(sym == "") return false;
 
     var temp = instance.current.firstChild.nodeValue;
     var temp_caret = instance.caret;
@@ -1347,6 +1347,7 @@ Engine.prototype.check_for_symbol = function(whole_node){
         instance.current.firstChild.nodeValue = temp;
         instance.caret = temp_caret;
     }
+    return success;
 }
 
 export default Engine;

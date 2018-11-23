@@ -5299,8 +5299,7 @@ var Guppy = (function () {
 	*/
 	Engine.prototype.tab = function () {
 	    if (!Utils.is_symbol(this.current)) {
-	        this.check_for_symbol();
-	        return;
+	        if (this.check_for_symbol()) return;
 	    }
 	    var sym_name = this.current.firstChild.textContent;
 	    var candidates = [];
@@ -5310,6 +5309,7 @@ var Guppy = (function () {
 	    if (candidates.length == 1) {
 	        this.current.firstChild.textContent = candidates[0];
 	        this.caret = candidates[0].length;
+	        this.check_for_symbol();
 	    } else {
 	        this.fire_event("completion", { "candidates": candidates });
 	    }
@@ -5458,7 +5458,7 @@ var Guppy = (function () {
 
 	Engine.prototype.check_for_symbol = function (whole_node) {
 	    var instance = this;
-	    if (Utils.is_text(this.current)) return;
+	    if (Utils.is_text(this.current)) return false;
 	    var sym = "";
 	    var n = null;
 	    if (whole_node) {
@@ -5479,7 +5479,7 @@ var Guppy = (function () {
 	        }
 	    }
 
-	    if (sym == "") return;
+	    if (sym == "") return false;
 
 	    var temp = instance.current.firstChild.nodeValue;
 	    var temp_caret = instance.caret;
@@ -5490,6 +5490,7 @@ var Guppy = (function () {
 	        instance.current.firstChild.nodeValue = temp;
 	        instance.caret = temp_caret;
 	    }
+	    return success;
 	};
 
 	/**
