@@ -1,9 +1,9 @@
-import katex from '../lib/katex/katex-modified.min.js';
 import AST from './ast.js';
+import Parsers from './parser.js';
 import Symbols from './symbols.js';
 import Utils from './utils.js';
-import Parsers from './parser.js';
 import Version from './version.js';
+import katex from '../lib/katex/katex-modified.min.js';
 
 /**
    @class
@@ -267,15 +267,7 @@ Doc.prototype.manual_render = function(t,n,r){
     return ans;
 }
 
-/**
-    Render all guppy documents on the page.
-    @param {string} type - The type of content to render
-    @param {string} [delim] - The string to delimit mathematical symbols
-    @param {string} [root_node] - The DOM Element object within which to do the rendering
-    @memberof Doc
-*/
 Doc.render_all = function(t, delim, root_node){
-    if(!Guppy.initialised) Guppy.init();
     var l,i,n,d,s,ans = [];
     if(!t || t == "xml"){
         l = document.getElementsByTagName("script");

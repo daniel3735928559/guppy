@@ -1,5 +1,5 @@
-import Version from './version.js';
 import DEFAULT_SYMBOLS from '../sym/symbols.json'
+import Version from './version.js';
 var Symbols = {"symbols":{}, "templates":{}};
 
 Symbols.make_template_symbol = function(template_name, name, args){
@@ -67,9 +67,9 @@ Symbols.add_symbols = function(syms){
 
 Symbols.validate = function(){
     for(var sym in Symbols.symbols){
-	if(!Symbols.symbols[sym].output.latex) throw "Symbol " + sym + " missing output.latex (needed for display)";
-	if(!Symbols.symbols[sym].attrs.name) throw "Symbol " + sym + " missing attrs.name (needed for text output)";
-	if(!Symbols.symbols[sym].attrs.group) throw "Symbol " + sym + " missing attrs.group (needed for mobile)";
+        if(!Symbols.symbols[sym].output.latex) throw "Symbol " + sym + " missing output.latex (needed for display)";
+        if(!Symbols.symbols[sym].attrs.name) throw "Symbol " + sym + " missing attrs.name (needed for text output)";
+        if(!Symbols.symbols[sym].attrs.group) throw "Symbol " + sym + " missing attrs.group (needed for mobile)";
         //for(var i = 0; i < sym.length; i++)
         //    if(sym.substring(0,i) in Symbols.symbols) throw "WARNING: Symbols are not prefix free: '" + sym.substring(0,i) + "' and '" + sym + "' are both symbols";
     }
@@ -87,20 +87,20 @@ Symbols.split_output = function(output){
     ans.push({"type":"text","val":output.substring(0,starts.length > 0 ? starts[0] : output.length)}); // Push the first text bit
     for(i = 0; i < starts.length; i++){
         var idx = starts[i]+1;
-	// Find template (if defined)
-	var tmpl_str = "";
-	var tmpl = [];
-	if(output[idx] == "["){
-	    idx++;
-	    var tmpl_opens = 1;
-	    while(opens > 0 && idx < output.length){
-		if(output[idx] == "]"){ tmpl_opens--; }
-		if(output[idx] == "["){ tmpl_opens++; }
-		if(tmpl_opens > 1){ tmpl_str += output[idx]; }
-		idx++;
-	    }
-	    tmpl = Symbols.split_output(tmpl_str);
-	}
+        // Find template (if defined)
+        // var tmpl_str = "";
+        // var tmpl = [];
+        // if(output[idx] == "["){
+        //     idx++;
+        //     var tmpl_opens = 1;
+        //     while(opens > 0 && idx < output.length){
+        //         if(output[idx] == "]"){ tmpl_opens--; }
+        //         if(output[idx] == "["){ tmpl_opens++; }
+        //         if(tmpl_opens > 1){ tmpl_str += output[idx]; }
+        //         idx++;
+        //     }
+        //     tmpl = Symbols.split_output(tmpl_str);
+        // }
         var separators = [];
         var sep = "";
         var opens = 1

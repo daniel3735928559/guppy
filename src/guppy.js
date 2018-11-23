@@ -1,10 +1,10 @@
-import Mousetrap from '../lib/mousetrap/mousetrap.min.js';
-import katex from '../lib/katex/katex-modified.min.js';
-import Engine from './engine.js';
-import Utils from './utils.js';
-import Symbols from './symbols.js';
-import Settings from './settings.js';
 import Doc from './doc.js';
+import Engine from './engine.js';
+import Mousetrap from '../lib/mousetrap/mousetrap.min.js';
+import Settings from './settings.js';
+import Symbols from './symbols.js';
+import Utils from './utils.js';
+import katex from '../lib/katex/katex-modified.min.js';
 
 /**
    @class
@@ -233,6 +233,18 @@ Guppy.prototype.configure = function(name, val){
 }
 
 /**
+    Render all guppy documents on the page.
+    @param {string} type - The type of content to render
+    @param {string} [delim] - The string to delimit mathematical symbols
+    @param {string} [root_node] - The DOM Element object within which to do the rendering
+    @memberof Guppy
+*/
+Guppy.render_all = function(t, delim, root_node){
+    if(!Guppy.initialised) Guppy.init();
+    Doc.render_all(t, delim, root_node)
+}
+
+/**
    @param {string} name - The name of an event.  Can be: 
      * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
      * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
@@ -242,7 +254,6 @@ Guppy.prototype.configure = function(name, val){
      * debug - Called when the editor outputs some debug information. Argument is a dictionary with the key `message`.
      * error - Called when the editor receives an error.  Argument is a dictionary with the key `message`.
      * focus - Called when the editor is focused or unfocused. Argument will have a single key `focused` which will be `true` or `false` according to whether the editor is newly focused or newly unfocused (respectively).
-
    @param {function} handler - The function that will be called to handle the given event
 */
 Guppy.prototype.event = function(name, handler){
@@ -252,6 +263,7 @@ Guppy.prototype.event = function(name, handler){
     if(name == "focus" && Settings.osk) {
         var f = Settings.config.events["focus"];
         this.engine.events["focus"] = function(e){
+            f(e);
             handler(e);
             if(e.focused) Settings.osk.attach(e.target);
             else Settings.osk.detach(e.target);
@@ -290,6 +302,7 @@ Guppy.event = function(name, handler){
 	Settings.config.events[name] = handler;
     }
 }
+
 /**
    @param {GuppyOSK} [osk] - A GuppyOSK object to use for the on-screen keyboard if one is desired
 */
@@ -437,9 +450,9 @@ Guppy.mouse_down = function(e){
         if(instance){
             e.preventDefault();
             var prev_active = Guppy.active_guppy;
-            for(var [element, g] of Guppy.instances){
-                if(element !== n) g.deactivate();
-                else g.activate();
+            for(var [element, gup] of Guppy.instances){
+                if(element !== n) gup.deactivate();
+                else gup.activate();
             }
             var g = Guppy.active_guppy;
             var b = Guppy.active_guppy.engine;
@@ -465,8 +478,8 @@ Guppy.mouse_down = function(e){
         n = n.parentNode;
     }
     Guppy.active_guppy = null;
-    for(var [element, g] of Guppy.instances){
-        g.deactivate();
+    for(var [, gup2] of Guppy.instances){
+        gup2.deactivate();
     }
 }
 

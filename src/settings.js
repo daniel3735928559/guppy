@@ -1,5 +1,5 @@
-import katex from '../lib/katex/katex-modified.min.js';
 import Symbols from './symbols.js';
+import katex from '../lib/katex/katex-modified.min.js';
 
 var Settings = {}
 Settings.config = {};

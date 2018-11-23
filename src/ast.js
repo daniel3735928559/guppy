@@ -125,7 +125,7 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
             return binop_low(args, "-", parent);
         }
     }
-    functions["neg"] = function(args, parent) {
+    functions["neg"] = function(args) {
         var d = args[0].cloneNode(true);
         prepend_str(d, "-");
         return d;
