@@ -275,6 +275,7 @@ Doc.prototype.manual_render = function(t,n,r){
     @memberof Doc
 */
 Doc.render_all = function(t, delim, root_node){
+    if(!Guppy.initialised) Guppy.init();
     var l,i,n,d,s,ans = [];
     if(!t || t == "xml"){
         l = document.getElementsByTagName("script");

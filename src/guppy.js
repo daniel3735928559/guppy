@@ -202,8 +202,8 @@ Guppy.remove_global_symbol = function(name){
         * "latex": Use LaTeX rendering of editor content
 */
 Guppy.configure = function(name, val){
-    if(name in Settings.config.options && Settings.config.options[name].indexOf(val) == -1){
-	throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
+    if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){
+	throw "Valid values for " + name + " are " + JSON.stringify(Settings.settings_options[name]);
     }
     Settings.config.settings[name] = val;
 }
