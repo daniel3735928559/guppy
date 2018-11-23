@@ -2,25 +2,26 @@
 <html>
     <head>
 	<link rel="stylesheet" href="../../../build/guppy-default.min.css">
-	<script type="text/javascript" src="../../../build/guppy.min.js"></script>
+	<script type="text/javascript" src="../../../build/guppy.js"></script>
     </head>
     <body>
 	Enter an expression (with no variables) to compute its value: <br /><br />
 	
 	<script type="text/javascript">
 	 window.onload = function(){
-	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
-	     var g1 = new Guppy("guppy1", {"events":{"change":function(e){
+	     var g1 = new Guppy("guppy1");
+	     g1.configure('empty_content', "\\color{gray}{\\text{Evaluate an expression (with no variables)}}");
+	     g1.event("change",function(e){
 		 var a = document.getElementById("ans");
 		 try{
 		     var fn = e.target.func();
 		     a.innerHTML = fn({"pi":Math.PI,"e":Math.E}).toFixed(3);
 		 }
 		 catch(e){ a.innerHTML = "Error"; }
-	     }}});
+	     });
 	 }
 	</script> 
-	<div id="guppy1" style="width: 400px;"></div>
+	<div id="guppy1" style="width: 500px;"></div>
 	=
 	<span id="ans">NaN</span>
   </body>

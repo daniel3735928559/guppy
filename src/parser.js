@@ -256,8 +256,8 @@ s.nud = function(){
     else return ["var", [this.value]]
 };
 
-module.exports = {"Parser":Parser,
-                  "TextParser":TextParser,
-                  "LaTeXParser":LaTeXParser,
-                  "EParser": EParser};
+export default {"Parser":Parser,
+                "TextParser":TextParser,
+                "LaTeXParser":LaTeXParser,
+                "EParser": EParser};
 

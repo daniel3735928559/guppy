@@ -3,7 +3,7 @@
     <head>
 	<title>Import/Export</title>
 	<link rel="stylesheet" href="../../../build/guppy-default.min.css">
-	<script type="text/javascript" src="../../../build/guppy.min.js"></script>
+	<script type="text/javascript" src="../../../build/guppy.js"></script>
 
 	<script type="text/javascript">
 	 input = function(type){
@@ -31,10 +31,8 @@
 	 }
 
 	 window.onload = function(){
-	     Guppy.init({"path":"../../../build","symbols":"../../../sym/symbols.json"});
-	     var g1 = new Guppy("guppy1", {
-		 "options":{'empty_content': "\\color{red}{\\text{[?]}}" }
-	     });
+	     var g1 = new Guppy("guppy1");
+	     g1.configure('empty_content', "\\color{red}{\\text{[?]}}");
 	 }
 	</script>
     </head>

@@ -5,7 +5,7 @@
     <title>Homework</title>
 
     <link rel="stylesheet" href="../../../build/guppy-default.min.css">
-    <script type="text/javascript" src="../../../build/guppy.min.js"></script>
+    <script type="text/javascript" src="../../../build/guppy.js"></script>
     <script type="text/javascript" src="../../../lib/math-expressions/math-expressions.js"></script>
     <script type="text/javascript">
      answers = {"ans1":"1", "ans2":"x^2", "ans3":"( 4+ sqrt( 16 - 4 ) )/( 2 )"};
@@ -25,14 +25,13 @@
 	 }
      }
      window.onload = function(){
-         Guppy.init({"path":"../../../build",
-		     "symbols":"../../../sym/symbols.json",
-		     "settings":{"empty_content": blank},
-		     "callback":function(){ Guppy.Doc.render_all("text","$$"); },
-	 "events":{"done":function(e){check_answer(e.target.id)}}});
-	 
-	 var g1 = new Guppy("ans1", {"settings":{"blacklist":["sin","cos","sec","tan","cot","csc"]}});
-	 var g2 = new Guppy("ans2", {"settings":{'blacklist':["ln","log"]}});
+         Guppy.configure("empty_content",blank);
+	 Guppy.event("done",function(e){check_answer(e.target.editor.id)});
+	 Guppy.Doc.render_all("text","$$");
+	 var g1 = new Guppy("ans1");
+	 g1.configure("blacklist",["sin","cos","sec","tan","cot","csc"]);
+	 var g2 = new Guppy("ans2");
+	 g2.configure("blacklist",["ln","log"]);
 	 var g3 = new Guppy("ans3");
       }
     </script>

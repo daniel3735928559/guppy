@@ -125,6 +125,11 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
             return binop_low(args, "-", parent);
         }
     }
+    functions["neg"] = function(args, parent) {
+        var d = args[0].cloneNode(true);
+        prepend_str(d, "-");
+        return d;
+    }
     functions["val"] = function(args){ return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");};
     functions["var"] = function(args){
         if(args[0].length == 1) return (new window.DOMParser()).parseFromString("<c><e>" + args[0] + "</e></c>", "text/xml");
@@ -182,6 +187,7 @@ AST.to_function = function(ast, functions){
     defaults["fraction"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["/"] = function(args){return function(vars){return args[0](vars)/args[1](vars)};};
     defaults["-"] = function(args){return args.length == 1 ? function(vars){return -args[0](vars)} : function(vars){return args[0](vars)-args[1](vars)};};
+    defaults["neg"] = function(args){return function(vars){return -args[0](vars)};};
     defaults["val"] = function(args){return function(){ return args[0]; };};
     defaults["var"] = function(args){return function(vars){ if(args[0] == "pi") return Math.PI; if(args[0] == "e") return Math.E; return vars[args[0]]; };};
     defaults["exponential"] = function(args){return function(vars){return Math.pow(args[0](vars),args[1](vars))};};
@@ -215,4 +221,4 @@ AST.eval = function(ast, functions, parent){
     return ans
 }
 
-module.exports = AST;
+export default AST;

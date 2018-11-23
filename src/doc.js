@@ -1,9 +1,9 @@
-var katex = require('../lib/katex/katex-modified.min.js');
-var AST = require('./ast.js');
-var Symbols = require('./symbols.js');
-var Utils = require('./utils.js');
-var Parsers = require('./parser.js');
-var Version = require('./version.js');
+import katex from '../lib/katex/katex-modified.min.js';
+import AST from './ast.js';
+import Symbols from './symbols.js';
+import Utils from './utils.js';
+import Parsers from './parser.js';
+import Version from './version.js';
 
 /**
    @class
@@ -275,6 +275,7 @@ Doc.prototype.manual_render = function(t,n,r){
     @memberof Doc
 */
 Doc.render_all = function(t, delim, root_node){
+    if(!Guppy.initialised) Guppy.init();
     var l,i,n,d,s,ans = [];
     if(!t || t == "xml"){
         l = document.getElementsByTagName("script");
@@ -374,4 +375,4 @@ Doc.render = function(doc, target_id){
 }
 
 
-module.exports = Doc;
+export default Doc;
