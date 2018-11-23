@@ -7,9 +7,7 @@
     &lt;script type="text/javascript" src="../../../build/guppy.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
      window.onload = function(){
-	 Guppy.init({"path":"../../../build",
-		     "symbols":"../../../sym/symbols.json",
-		     "callback":function(){ Guppy.Doc.render_all("text","$$"); }});
+	 Guppy.Doc.render_all("text","$$");
      }
     &lt;/script&gt;
 &lt;/head&gt;
