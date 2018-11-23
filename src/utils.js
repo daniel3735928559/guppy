@@ -1,12 +1,12 @@
 var Utils = {};
 
-Utils.CARET = "\\cursor[-0.2ex]{0.7em}"
-Utils.TEMP_SMALL_CARET = "\\cursor{0.7ex}"
-Utils.TEMP_CARET = "\\cursor[-0.2ex]{0.7em}"
-Utils.SMALL_CARET = "\\cursor{0.7ex}"
-Utils.SEL_CARET = "\\cursor[-0.2ex]{0.7em}"
-Utils.SMALL_SEL_CARET = "\\cursor{0.7ex}"
-Utils.SEL_COLOR = "red"
+Utils.CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.TEMP_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.SMALL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\rule{0pt}{1ex}}";
+Utils.SEL_COLOR = "red";
 
 Utils.is_blank = function(n){
     return n.firstChild == null || n.firstChild.nodeValue == '';

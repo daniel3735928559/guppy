@@ -7,6 +7,12 @@
     color:#000;
     position:relative;
 }
+.katex .cursor {
+    border-left: 1px solid black !important;
+    width: 0px !important;
+    margin-right: 0 !important;
+    margin-left: -1px;
+}
 
 .guppy_inactive {
     border: 2px solid black;

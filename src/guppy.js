@@ -12,16 +12,6 @@ import Doc from './doc.js';
    an existing editor will simply return that instance.
    @param {string|Node} element - The string id or the Dom Node of the
    element that should be converted to an editor.
-   @param {Object} [config] - The configuration options for this instance
-   @param {Object} [config.events] - A dictionary of events.
-   Available events are as specified in Guppy.init.  Values in this
-   dictionary will, for this instance of the editor, override events
-   specified through Guppy.init.
-   @param {Object} [config.settings] - A dictionary of settings.
-   Values in this dictionary will override any global settings
-   specified in `Guppy.init`.  This dictionary takes the same keys as
-   the `config.settings` dictionary passed to `Guppy.init`.  See that
-   function's documentation for the complete list.
    @constructor
 */
 var Guppy = function(el, config){
@@ -196,30 +186,20 @@ Guppy.remove_global_symbol = function(name){
 }
 
 /**
-   @param {string} [xml_content=<m><e/></m>] - An XML
-   string with which to initialise the editor's state.
-   @param {string} [autoreplace="auto"] - Determines
-   whether or not to autoreplace typed text with the corresponding
-   symbols when possible.  Can be `"whole"` to replace only entire
-   tokens, `"auto"` to replace symbols greedily, or `"delay"` to
-   behave the same as `"whole"` except with a 200ms delay to allow for
-   entering, e.g. a symbol called `cost` without triggering the symbol
-   `cos` (if typed quickly enough).
-   @param {string} [blank_caret=""] - A LaTeX string
-   that specifies what the caret should look like when in a blank
-   spot.  If `""`, the default caret is used.
-   @param {string} [empty_content=\color{red}{[?]}] - A
-   LaTeX string that will be displayed when the editor is both
-   inactive and contains no content.
-   @param {string[]} [blacklist=[]] - A list of string
-   symbol names, corresponding to symbols that should not be
-   allowed in this instance of the editor.
-   @param {string[]} [buttons=["osk","settings","symbols","controls"]] - A list of strings corresponding to the helper buttons that should be displayed in the editor when focused.
-   @param {string} [cliptype] - A string, either "text" or "latex".
-   If this option is present, when text is placed onto the editor
-   clipboard, the contents of the editor will be rendered into either
-   plain text or LaTeX (depending on the value of this option) and an
-   attempt will be made to copy the result to the system clipboard.
+   @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
+   @param {Object} val - The value associated with the named setting: 
+      * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
+      * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+        * "auto" (default): Replace symbls greedily
+        * "whole": Replace only entire tokens
+        * "delay": Same as "whole", but with 200ms delay before replacement
+      * "blank_caret": A LaTeX string that specifies what the caret should look like when in a blank spot.  If `""`, the default caret is used.
+      * "empty_content": A LaTeX string that will be displayed when the editor is both inactive and contains no content. (Defaults to "\color{red}{[?]}")
+      * "blacklist": A list of string symbol names, corresponding to symbols that should not be allowed in this instance of the editor.
+      * "buttons": A list of strings corresponding to the helper buttons that should be displayed in the editor; should be a subset of ["osk","settings","symbols","controls"]]
+      * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
+        * "text": Use plain-text editor content
+        * "latex": Use LaTeX rendering of editor content
 */
 Guppy.configure = function(name, val){
     if(name in Settings.config.options && Settings.config.options[name].indexOf(val) == -1){
@@ -228,6 +208,22 @@ Guppy.configure = function(name, val){
     Settings.config.settings[name] = val;
 }
 
+/**
+   @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
+   @param {Object} val - The value associated with the named setting: 
+      "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
+      "autoreplace": A string describing how to autoreplace typed text with symbols: 
+         "auto" (default): Replace symbls greedily
+         "whole": Replace only entire tokens
+         "delay": Same as "whole", but with 200ms delay before replacement
+      "blank_caret": A LaTeX string that specifies what the caret should look like when in a blank spot.  If `""`, the default caret is used.
+      "empty_content": A LaTeX string that will be displayed when the editor is both inactive and contains no content. (Defaults to "\color{red}{[?]}")
+      "blacklist": A list of string symbol names, corresponding to symbols that should not be allowed in this instance of the editor.
+      "buttons": A list of strings corresponding to the helper buttons that should be displayed in the editor; should be a subset of ["osk","settings","symbols","controls"]]
+      "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
+         "text": Use plain-text editor content
+         "latex": Use LaTeX rendering of editor content
+*/
 Guppy.prototype.configure = function(name, val){
     if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){
 	throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
@@ -236,6 +232,19 @@ Guppy.prototype.configure = function(name, val){
     this.render(true);
 }
 
+/**
+   @param {string} name - The name of an event.  Can be: 
+     * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
+     * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
+     * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
+     * done - Called when the enter key is pressed in the editor.
+     * completion - Called when the editor outputs tab completion options.  Argument is a dictionary with the key `candidates`, a list of the options for tab-completion.
+     * debug - Called when the editor outputs some debug information. Argument is a dictionary with the key `message`.
+     * error - Called when the editor receives an error.  Argument is a dictionary with the key `message`.
+     * focus - Called when the editor is focused or unfocused. Argument will have a single key `focused` which will be `true` or `false` according to whether the editor is newly focused or newly unfocused (respectively).
+
+   @param {function} handler - The function that will be called to handle the given event
+*/
 Guppy.prototype.event = function(name, handler){
     if(Settings.config.valid_events.indexOf(name) == -1) {
 	throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
