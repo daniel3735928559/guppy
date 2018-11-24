@@ -14,7 +14,8 @@
 						"build-css": "./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css > build/guppy-none.min.css;./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/osk.css > build/guppy-none-osk.min.css;./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css > build/guppy-default.min.css;./node_modules/.bin/uglifycss lib/katex/katex-modified.min.css style/guppy.css style/osk.css > build/guppy-default-osk.min.css",
 						"lint": "./node_modules/.bin/eslint -c .eslintrc.json src/**",
 						"generate-docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose && (cd site; ./build.sh)",
-						"server": "./node_modules/.bin/http-server ."
+						"server": "./node_modules/.bin/http-server .",
+						"deploy": "npm run-script build; cp deploy.json build/package.json; cd build; npm publish"
 			},
 			"repository": "git+https://github.com/daniel3735928559/guppy.git",
 			"keywords": [
