@@ -6,10 +6,10 @@
 	<script type="text/javascript" src="../../../build/guppy.js"></script>
 	<script type="text/javascript">
 	 window.onload = function(){
-	     var event_area = document.getElementById("event_info");
+	     event_area = document.getElementById("event_info");
 	     var f = function(e){
 		 e.target = e.target.id;
-		 event_area.value = JSON.stringify(e) + "\n" + event_area.value
+		 event_area.value = e.type + ": " + JSON.stringify(e) + "\n" + event_area.value
 	     }
 	     Guppy.event("change",f);
 	     Guppy.event("done",f);
