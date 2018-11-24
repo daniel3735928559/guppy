@@ -44,16 +44,16 @@
 
 
 .guppy_buttons div.settings{
-    backgrond:url('./icons/settings.png') center no-repeat;
+    background:url('./icons/settings.png') center no-repeat;
 }
 .guppy_buttons div.keyboard{
-    backgrond:url('./icons/keyboard.png') center no-repeat;
+    background:url('./icons/keyboard.png') center no-repeat;
 }
 .guppy_buttons div.help{
-    backgrond:url('./icons/help.png') center no-repeat;
+    background:url('./icons/help.png') center no-repeat;
 }
 .guppy_buttons div.symbols{
-    backgrond:url('./icons/symbols.png') center no-repeat;
+    background:url('./icons/symbols.png') center no-repeat;
 }
 
 .guppy_buttons {
@@ -61,14 +61,18 @@
     bottom:0;
     right:0;
     padding:0 3px 3px 0;
+    width:100%;
+    text-align:right;
 }
 
 .guppy_buttons div.guppy-button{
+    background-size: 12px 12px;
     cursor:pointer;
     height:16px;
     width:16px;
     padding:3px;
     opacity: 0.5;
+    display: inline-block;
 }
 
 .guppy_buttons img:hover{
