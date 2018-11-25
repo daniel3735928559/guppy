@@ -11,3 +11,4 @@ Version.SYMBOL_ERROR = function(id, found_ver){
     throw Error("Symbol version mismatch for " + id + ": Found " + found_ver + ", required " + Version.SYMBOL_VERSION + ".  To update your document, please see daniel3735928559.github.io/guppy/doc/version.html");
 }
 export default Version
+

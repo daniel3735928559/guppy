@@ -2871,12 +2871,6 @@ var Guppy = (function () {
                   n = vt(r, t, !1);return Ze.makeFragment(n);
             }, mathmlBuilder: function mathmlBuilder(e, t) {
               var r = Ur(e, t);return Ot(r, t);
-            } }), ht({ type: "nop", names: ["\\nop"], props: { numArgs: 0, numOptionalArgs: 0, allowedInText: !0 }, handler: function handler(e, t, r) {
-              var n = e.parser;e.funcName;return { type: "nop", mode: n.mode };
-            }, htmlBuilder: function htmlBuilder(e, t) {
-              return Ze.makeSpan(["mspace"], [], t);
-            }, mathmlBuilder: function mathmlBuilder(e, t) {
-              return new Bt.MathNode("nop");
             } });var Gr = function Gr(e, t) {
             var r,
                 n,

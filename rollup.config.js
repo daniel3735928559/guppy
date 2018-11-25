@@ -1,7 +1,6 @@
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
-import eslint from 'rollup-plugin-eslint';
-import uglify from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 import istanbul from 'rollup-plugin-istanbul';
 import json from 'rollup-plugin-json';
 
@@ -28,7 +27,6 @@ export default {
 	(process.env.NODE_ENV === 'test' && istanbul({
 	    include: ['src/**']
 	})),
-	eslint,
-	(process.env.NODE_ENV === 'production' && uglify),
+	(process.env.NODE_ENV === 'production' && uglify()),
     ],
 };
