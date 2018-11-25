@@ -1400,12 +1400,12 @@ var Guppy = (function () {
 
     var Utils = {};
 
-    Utils.CARET = "\\xmlClass{cursor}{\\nop}";
-    Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
-    Utils.TEMP_CARET = "\\xmlClass{cursor}{\\nop}";
-    Utils.SMALL_CARET = "\\xmlClass{cursor}{\\nop}";
-    Utils.SEL_CARET = "\\xmlClass{cursor}{\\nop}";
-    Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\nop}";
+    Utils.CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
+    Utils.TEMP_SMALL_CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
+    Utils.TEMP_CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
+    Utils.SMALL_CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
+    Utils.SEL_CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
+    Utils.SMALL_SEL_CARET = "\\xmlClass{cursor}{\\hspace{0pt}}";
     Utils.SEL_COLOR = "red";
 
     Utils.is_blank = function (n) {
@@ -4285,7 +4285,7 @@ var Guppy = (function () {
                     //
                     // Here, we add in a small element so that we can
                     // use the mouse to select these areas
-                    ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{\\nop}}";
+                    ans = "\\phantom{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{\\hspace{0pt}}}";
                 }
             }
             for (var i = 0; i < text.length + 1; i++) {
