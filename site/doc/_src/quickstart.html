@@ -5,16 +5,16 @@
 	  <li>Include guppy.min.js and guppy-default.min.css in your page:
 	  <pre>&lt;link rel="stylesheet" href="/node_modules/guppy-js/style/guppy-default.min.css"&gt;
 &lt;script type="text/javascript" src="/node_modules/guppy-js/guppy.min.js"&gt;&lt;/script&gt;</pre></li>
-	  <li>Initialise the editor with the path to the "build"
-	  folder, as well as a list of symbol files you want it to use
-	  (this function takes many more arguments as well, allowing
-	  global configuration of all editors on the page.  See the
-	  <a href="../docs/guppy-js/2.0.0-alpha.1/Guppy.html#.init">documentation</a>
-	  for details.) <pre>Guppy.init({"path":"/node_modules/guppy-js","symbols":"/node_modules/guppy-js/sym/symbols.json"});</pre>
-	  </li>
 	  <li>Initialise an instance of the editor with the ID of a
 	    div that you want to be turned into the editor.
 	    <pre>var g1 = new Guppy("guppy1");</pre></li>
+	  <li>Optionally, configure editors to taste:
+	      <ul><li>Use Guppy.configure to adjust settings for all Guppy instances</li>
+		  <li>Use g1.configure to adjust settings just for this one instance.</li>
+		  <li>Use Guppy.event set an event handler for events on all editors.</li>
+		  <li>Use g1.event to set an event handler for this specific instance.</li>
+	      </ul>
+	  </li>
 	  <li>Putting it all together for a complete <a href="../examples/basic">basic example</a>: 
 	    <pre>&lt;!doctype html&gt;
 &lt;html&gt;
@@ -22,10 +22,9 @@
     &lt;link rel="stylesheet" href="/node_modules/guppy-js/style/guppy-default.min.css"&gt;
     &lt;script type="text/javascript" src="/node_modules/guppy-js/guppy.min.js"&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
-     window.onload = function(){
-	 Guppy.init({"path":"/node_modules/guppy-js","symbols":"/node_modules/guppy-js/sym/symbols.json"});
-	 var g1 = new Guppy("guppy1");
-     }
+        window.onload = function(){
+            var g1 = new Guppy("guppy1");
+        }
     &lt;/script&gt;
 &lt;/head&gt;
 

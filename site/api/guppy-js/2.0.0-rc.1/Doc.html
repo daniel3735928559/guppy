@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>GuppyOSK - Documentation</title>
+    <title>Doc - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">GuppyOSK</h1>
+    <h1 class="page-title">Doc</h1>
     
 
     
@@ -40,14 +40,12 @@
 <header>
     
         <h2>
-        GuppyOSK
+        Doc
         </h2>
         
-            <div class="class-description"><p>To enable the on-screen keyboard, ensure all Guppy
-    instances have been initialised and then create a new GuppyOSK
-    object with <code>new GuppyOSK()</code>.  This will cause any instances of
-    the editor to, when focused, create an on-screen keyboard at the
-    bottom of the screen with tabs for the various groups of symbols.</p></div>
+            <div class="class-description"><p>A class representing a Guppy document.  To access this
+   class, use <code>Guppy.Doc</code>.  To get the document for a particular guppy
+   instance, say called <code>&quot;guppy1&quot;</code>, do <code>Guppy(&quot;guppy1&quot;).doc()</code>.</p></div>
         
     
 </header>
@@ -61,7 +59,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="GuppyOSK"><span class="type-signature"></span>new GuppyOSK<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Doc"><span class="type-signature"></span>new Doc<span class="signature">(doc<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -73,7 +71,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="osk.js.html">osk.js</a>, <a href="osk.js.html#line23">line 23</a>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -139,59 +137,7 @@
         
 
         
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>config</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Configuration options for the on-screen keyboard</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -203,7 +149,7 @@
 
         <tr>
             
-                <td class="name"><code>goto_tab</code></td>
+                <td class="name"><code>doc</code></td>
             
 
             <td class="type">
@@ -228,56 +174,14 @@
             
 
             
-
-            <td class="description last"><p>The name of the group whose
-    tab the keyboard should jump to every time a key is pressed.
-    For example, the value <code>&quot;abc&quot;</code> will cause the keyboard to revert
-    to the lower-case alphanumeric tab every time a key is pressed.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attach</code></td>
-            
-
-            <td class="type">
-            
+                <td class="default">
                 
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
+                    <code>&lt;m>&lt;e>&lt;/e>&lt;/m></code>
                 
                 </td>
             
 
-            
-
-            <td class="description last"><p>A string describing how the
-    keyboard should be attached to the editor.  Currently, the only
-    supported value is <code>&quot;focus&quot;</code>, meaning the keyboard will be
-    attached when the editor is focused and detached when unfocused.
-    If this value is absent, the OSK button in the editor will be the
-    only way to trigger it.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last"><p>An XML string representing the document</p></td>
         </tr>
 
     
@@ -322,7 +226,7 @@
 
     
 
-    <h4 class="name" id="attach"><span class="type-signature"></span>attach<span class="signature">(guppy<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".render"><span class="type-signature">(static) </span>render<span class="signature">(doc, target_id)</span><span class="type-signature"></span></h4>
 
     
 
@@ -334,7 +238,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="osk.js.html">osk.js</a>, <a href="osk.js.html#line86">line 86</a>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line362">line 362</a>
     </li></ul></dd>
     
 
@@ -374,7 +278,470 @@
 
 
 <div class="description">
-    <p>Attach the keyboard to a Guppy instance and display it.</p>
+    <p>Render a given document into a specified HTML element.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>doc</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A GuppyXML string to be rendered</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>target_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the HTML element to render into</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="evaluate"><span class="type-signature"></span>evaluate<span class="signature">(evaluators)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line88">line 88</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Evaluate the document using user-supplied functions to interpret symbols</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>evaluators</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A dictionary where each key is a node
+    type in the AST (&quot;var&quot;, &quot;val&quot;, &quot;sin&quot;, &quot;cos&quot;, etc.) and the
+    corresponding value is a function that takes a list of argument
+    (the results of evaluating that AST node's arguments) as well as,
+    optionally, a second argument for the parent AST node to the one
+    currently being evaluated.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get_content"><span class="type-signature"></span>get_content<span class="signature">(t)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Get the content of the document as a string</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The rendering method to use (&quot;latex&quot;, &quot;text&quot;, &quot;ast&quot; (for syntax tree), or &quot;xml&quot; (for internal XML representation))</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="get_symbols"><span class="type-signature"></span>get_symbols<span class="signature">(groups<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line170">line 170</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Get the names of symbols used in this document</p>
 </div>
 
 
@@ -414,13 +781,13 @@
 
         <tr>
             
-                <td class="name"><code>guppy</code></td>
+                <td class="name"><code>groups</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Guppy.html">Guppy</a></span>
+<span class="param-type">Array.&lt;string></span>
 
 
             
@@ -440,8 +807,7 @@
 
             
 
-            <td class="description last"><p>The instance of Guppy to which the
-    keyboard will attach.</p></td>
+            <td class="description last"><p>A list of groups you want strings for</p></td>
         </tr>
 
     
@@ -461,6 +827,24 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;string></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
         
@@ -468,7 +852,7 @@
 
     
 
-    <h4 class="name" id="detach"><span class="type-signature"></span>detach<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="root"><span class="type-signature"></span>root<span class="signature">()</span><span class="type-signature"> &rarr; {Element}</span></h4>
 
     
 
@@ -480,7 +864,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="osk.js.html">osk.js</a>, <a href="osk.js.html#line70">line 70</a>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -520,8 +904,7 @@
 
 
 <div class="description">
-    <p>Detach the keyboard from the currently attached editor (if any)
-    and hide it.</p>
+    <p>Get the document as a DOM object</p>
 </div>
 
 
@@ -532,6 +915,157 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="set_content"><span class="type-signature"></span>set_content<span class="signature">(xml_data)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="doc.js.html">doc.js</a>, <a href="doc.js.html#line188">line 188</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Set the content of the document</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xml_data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An XML string representing the content of the document</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -566,7 +1100,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 27 2018 01:23:31 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 27 2018 01:24:45 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
