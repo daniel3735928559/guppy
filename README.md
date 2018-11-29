@@ -25,6 +25,8 @@ A standalone basic demo can be found at
 
 Go to the [quickstart page](https://daniel3735928559.github.io/guppy/site/doc/quickstart).
 
+Also check the [FAQ](https://daniel3735928559.github.io/guppy/site/doc/faq.html).
+
 ## Can I see some examples?
 
 Yes!  There are many at the [examples page](https://daniel3735928559.github.io/guppy/site/examples).  
@@ -34,7 +36,7 @@ Of particular note are:
 * [Calc](https://daniel3735928559.github.io/guppy/site/examples/calc) Numerically evaluate a guppy document.
 * [Input/Output](https://daniel3735928559.github.io/guppy/site/examples/io) Import and extract editor content.
 * [Mobile](https://daniel3735928559.github.io/guppy/site/examples/osk) Activate mobile keyboard functionality.
-* [Style](https://daniel3735928559.github.io/guppy/site/examples/style) Style the editor with CSS.
+* [Style](https://daniel3735928559.github.io/guppy/site/doc/style.html) Style the editor with CSS.
 * [Article](https://daniel3735928559.github.io/guppy/site/examples/article) Use guppy to render pre-existing mathematical content on a page.
 
 ## How does it work?
