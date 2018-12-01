@@ -76,6 +76,8 @@ var Keyboard = function(){
     // Will populate keyboard shortcuts for symbols from symbol files
     this.k_syms = {};
 
+    this.k_raw = "mod+space";
+    
     var i = 0;
 
     // letters

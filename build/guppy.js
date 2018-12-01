@@ -4048,6 +4048,8 @@ var Guppy = (function () {
     			// Will populate keyboard shortcuts for symbols from symbol files
     			this.k_syms = {};
 
+    			this.k_raw = "mod+space";
+
     			var i = 0;
 
     			// letters
@@ -5476,14 +5478,18 @@ var Guppy = (function () {
     };
 
     Engine.prototype.complete_utf8 = function (codepoint) {
-        var val = parseInt('0x' + codepoint);
-        var c = String.fromCharCode(val);
+        codepoint = parseInt('0x' + codepoint);
         this.current = this.current.parentNode.parentNode;
         this.delete_from_f();
-        if (val < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) {
+        this.insert_utf8(codepoint);
+    };
+
+    Engine.prototype.insert_utf8 = function (codepoint) {
+        var c = String.fromCharCode(codepoint);
+        if (codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) {
             this.insert_string(c);
         } else {
-            this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint });
+            this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint.toString(16) });
         }
     };
 
@@ -5728,6 +5734,44 @@ var Guppy = (function () {
     Guppy.active_guppy = null;
     Guppy.Symbols = Symbols;
     Guppy.Mousetrap = mousetrap_min;
+
+    Guppy.raw_input_target = null;
+    Guppy.raw_input = document.createElement("input");
+    Guppy.raw_input.setAttribute("type", "text");
+    Guppy.raw_input.setAttribute("class", "guppy-raw");
+    Guppy.raw_input.style = "position:absolute;top:0;left:0;display:none;";
+    Guppy.raw_input.addEventListener("keyup", function (e) {
+        var g = Guppy.raw_input_target;
+        if (!g) return;
+        if (e.keyCode == 13) {
+            // enter
+            g.activate();
+            var s = Guppy.raw_input.value;
+            for (var i = 0; i < s.length; i++) {
+                g.engine.insert_utf8(s.charCodeAt(i));
+            }
+            Guppy.raw_input.value = "";
+            Guppy.raw_input.style.display = "none";
+            g.render(true);
+            Guppy.hide_raw_input();
+        }
+    });
+
+    Guppy.get_raw_input = function () {
+        var g = Guppy.active_guppy;
+        if (!g) return;
+        Guppy.raw_input_target = g;
+        var r = g.editor.getBoundingClientRect();
+        Guppy.raw_input.style.top = r.bottom + document.documentElement.scrollTop + "px";
+        Guppy.raw_input.style.left = r.left + document.documentElement.scrollLeft + "px";
+        Guppy.raw_input.style.display = "block";
+        Guppy.raw_input.focus();
+    };
+
+    Guppy.hide_raw_input = function () {
+        Guppy.raw_input_target = null;
+        Guppy.raw_input.style.display = "none";
+    };
 
     Guppy.make_button = function (cls, parent, cb) {
         var b = document.createElement("div");
@@ -6471,6 +6515,9 @@ var Guppy = (function () {
         if (newly_active) {
             this.engine.fire_event("focus", { "focused": true });
         }
+        if (Guppy.raw_input_target == this) {
+            Guppy.hide_raw_input();
+        }
     };
 
     /**
@@ -6574,6 +6621,11 @@ var Guppy = (function () {
                 }(i));
             }
         }
+        mousetrap_min.bind(Guppy.kb.k_raw, function () {
+            if (!Guppy.active_guppy) return true;
+            Guppy.get_raw_input();
+            return false;
+        });
     };
 
     Guppy.initialised = false;
@@ -6582,6 +6634,7 @@ var Guppy = (function () {
         if (Guppy.initialised) return;
         Settings.init(Symbols.symbols);
         Guppy.register_keyboard_handlers();
+        document.body.appendChild(Guppy.raw_input);
         Guppy.initialised = true;
     };
 

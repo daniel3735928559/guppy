@@ -1317,15 +1317,19 @@ Engine.prototype.complete_symbol = function(){
 }
 
 Engine.prototype.complete_utf8 = function(codepoint){
-    var val = parseInt('0x'+codepoint);
-    var c = String.fromCharCode(val);
+    codepoint = parseInt('0x'+codepoint);
     this.current = this.current.parentNode.parentNode;
     this.delete_from_f();
-    if(val < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0){
+    this.insert_utf8(codepoint);
+}
+
+Engine.prototype.insert_utf8 = function(codepoint){
+    var c = String.fromCharCode(codepoint);
+    if(codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0){
         this.insert_string(c);
     }
     else{
-	this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint});
+	this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
     }
 }
 

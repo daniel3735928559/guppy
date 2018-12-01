@@ -75,6 +75,43 @@ Guppy.active_guppy = null;
 Guppy.Symbols = Symbols;
 Guppy.Mousetrap = Mousetrap;
 
+Guppy.raw_input_target = null;
+Guppy.raw_input = document.createElement("input");
+Guppy.raw_input.setAttribute("type","text");
+Guppy.raw_input.setAttribute("class","guppy-raw");
+Guppy.raw_input.style = "position:absolute;top:0;left:0;display:none;";
+Guppy.raw_input.addEventListener("keyup", function(e){
+    var g = Guppy.raw_input_target;
+    if(!g) return;
+    if(e.keyCode == 13){ // enter
+        g.activate();
+        var s = Guppy.raw_input.value;
+        for(var i = 0; i < s.length; i++){
+            g.engine.insert_utf8(s.charCodeAt(i));
+        }
+        Guppy.raw_input.value = "";
+        Guppy.raw_input.style.display="none";
+        g.render(true);
+        Guppy.hide_raw_input();
+    }
+});
+
+Guppy.get_raw_input = function(){
+    var g = Guppy.active_guppy;
+    if(!g) return;
+    Guppy.raw_input_target = g;
+    var r = g.editor.getBoundingClientRect();
+    Guppy.raw_input.style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+    Guppy.raw_input.style.left = (r.left+document.documentElement.scrollLeft) + "px";
+    Guppy.raw_input.style.display = "block";
+    Guppy.raw_input.focus();
+}
+
+Guppy.hide_raw_input = function(){
+    Guppy.raw_input_target = null;
+    Guppy.raw_input.style.display = "none";
+}
+
 Guppy.make_button = function(cls, parent, cb){
     var b = document.createElement("div");
     b.setAttribute("class","guppy-button "+cls);
@@ -204,7 +241,7 @@ Guppy.remove_global_symbol = function(name){
 */
 Guppy.configure = function(name, val){
     if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){
-	throw "Valid values for " + name + " are " + JSON.stringify(Settings.settings_options[name]);
+        throw "Valid values for " + name + " are " + JSON.stringify(Settings.settings_options[name]);
     }
     Settings.config.settings[name] = val;
 }
@@ -227,7 +264,7 @@ Guppy.configure = function(name, val){
 */
 Guppy.prototype.configure = function(name, val){
     if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){
-	throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
+        throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
     }
     this.engine.settings[name] = val;
     this.render(true);
@@ -259,7 +296,7 @@ Guppy.render_all = function(t, delim, root_node){
 */
 Guppy.prototype.event = function(name, handler){
     if(Settings.config.valid_events.indexOf(name) == -1) {
-	throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
+        throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
     }
     if(name == "focus" && Settings.osk) {
         var f = Settings.config.events["focus"];
@@ -271,7 +308,7 @@ Guppy.prototype.event = function(name, handler){
         };
     }
     else {
-	this.engine.events[name] = handler;
+        this.engine.events[name] = handler;
     }
 }
 
@@ -290,7 +327,7 @@ Guppy.prototype.event = function(name, handler){
 */
 Guppy.event = function(name, handler){
     if(Settings.config.valid_events.indexOf(name) == -1) {
-	throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
+        throw "Valid events are " + JSON.stringify(Settings.config.valid_events);
     }
     if(name == "focus" && Settings.osk) {
         Settings.config.events["focus"] = function(e){
@@ -300,7 +337,7 @@ Guppy.event = function(name, handler){
         };
     }
     else {
-	Settings.config.events[name] = handler;
+        Settings.config.events[name] = handler;
     }
 }
 
@@ -746,7 +783,10 @@ Guppy.prototype.activate = function(){
     this.editor.focus();
     this.render(true);
     if(newly_active){
-	this.engine.fire_event("focus",{"focused":true});
+        this.engine.fire_event("focus",{"focused":true});
+    }
+    if(Guppy.raw_input_target == this){
+        Guppy.hide_raw_input();
     }
 }
 
@@ -835,7 +875,7 @@ Guppy.register_keyboard_handlers = function(){
             //Guppy.active_guppy.render(false);
             return false;
         }}(i));
-    for(i in Guppy.kb.k_text)
+    for(i in Guppy.kb.k_text){
         if(!(Guppy.kb.k_chars[i] || Guppy.kb.k_syms[i] || Guppy.kb.k_controls[i])){
             Mousetrap.bind(i,function(i){ return function(){
                 if(!Guppy.active_guppy) return true;
@@ -847,6 +887,12 @@ Guppy.register_keyboard_handlers = function(){
                 return false;
             }}(i));
         }
+    }
+    Mousetrap.bind(Guppy.kb.k_raw,function(){
+        if(!Guppy.active_guppy) return true;
+        Guppy.get_raw_input();
+        return false;
+    });
 }
 
 Guppy.initialised = false;
@@ -855,6 +901,7 @@ Guppy.init = function(){
     if(Guppy.initialised) return;
     Settings.init(Symbols.symbols);
     Guppy.register_keyboard_handlers();
+    document.body.appendChild(Guppy.raw_input);
     Guppy.initialised = true;
 }
 
