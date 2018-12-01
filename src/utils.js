@@ -40,6 +40,10 @@ Utils.is_symbol = function(nn){
     return nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "symbol";
 }
 
+Utils.is_utf8entry = function(nn){
+    return nn.parentNode.getAttribute("utf8") && nn.parentNode.getAttribute("utf8") == "entry";
+}
+
 Utils.is_small = function(nn){
     var n = nn.parentNode;
     while(n != null && n.nodeName != 'm'){

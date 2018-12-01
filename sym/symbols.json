@@ -12,6 +12,18 @@
 	 {"delete":"1"}]
     },
     
+    "utf8":
+    {"output":{
+        "latex":"\\texttt{U+{$1}}",
+        "asciimath":"\\u{$1}"},
+     "attrs":{
+	 "type":"text",
+	 "group":"editor"},
+     "args":[
+	 {"utf8":"entry","mode":"text"}
+     ]
+    },
+    
     "text":
     {"output":{
         "latex":"\\text{{$1}}",
@@ -315,12 +327,20 @@
 		     "group":"greek",
 		     "type":"{$name}"}},
 
+	"utf8codepoint":{"output":{"latex":"{\\char\"{$codepoint}}",
+			   "asciimath":" \\u{$codepoint} "},
+			 "attrs":{
+			     "group":"unicode",
+			     "type":"{$name}"},
+			 "ast":{"value":"\\u{$codepoint}"}
+			},
+	
 	"utf8char":{"output":{"latex":"\\text{{$char}}",
-			   "asciimath":" {$name} "},
-		 "attrs":{
-		     "group":"unicode",
-		     "type":"{$name}"}},
-
+			      "asciimath":" {$name} "},
+		    "attrs":{
+			"group":"unicode",
+			"type":"{$name}"}},
+	
 	"binop":{"output":{"latex":"{$latex}",
 			   "asciimath":"{$asciimath}"},
 		 "keys":["{$type}"],
@@ -335,7 +355,7 @@
 	"template":"latex_func",
 	"values":["sin","cos","tan","sec","csc","cot","log","ln","arcsin","arccos","arctan","sinh","cosh","tanh"]},
     
-    "utf8":{
+    "utf8chars":{
 	"template":"utf8char",
 	"values":{"banana":{"char":"🍌"},
 		  "pineapple":{"char":"🍍"},

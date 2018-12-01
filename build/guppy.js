@@ -638,6 +638,20 @@ var Guppy = (function () {
     		"delete": "1"
     	}]
     };
+    var utf8 = {
+    	output: {
+    		latex: "\\texttt{U+{$1}}",
+    		asciimath: "\\u{$1}"
+    	},
+    	attrs: {
+    		type: "text",
+    		group: "editor"
+    	},
+    	args: [{
+    		utf8: "entry",
+    		mode: "text"
+    	}]
+    };
     var text = {
     	output: {
     		latex: "\\text{{$1}}",
@@ -1041,6 +1055,19 @@ var Guppy = (function () {
     			type: "{$name}"
     		}
     	},
+    	utf8codepoint: {
+    		output: {
+    			latex: "{\\char\"{$codepoint}}",
+    			asciimath: " \\u{$codepoint} "
+    		},
+    		attrs: {
+    			group: "unicode",
+    			type: "{$name}"
+    		},
+    		ast: {
+    			value: "\\u{$codepoint}"
+    		}
+    	},
     	utf8char: {
     		output: {
     			latex: "\\text{{$char}}",
@@ -1070,7 +1097,7 @@ var Guppy = (function () {
     	template: "latex_func",
     	values: ["sin", "cos", "tan", "sec", "csc", "cot", "log", "ln", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
     };
-    var utf8 = {
+    var utf8chars = {
     	template: "utf8char",
     	values: {
     		banana: {
@@ -1130,6 +1157,7 @@ var Guppy = (function () {
     	_version: _version,
     	_name: _name,
     	norm: norm,
+    	utf8: utf8,
     	text: text,
     	sym_name: sym_name,
     	abs: abs,
@@ -1183,7 +1211,7 @@ var Guppy = (function () {
     	infinity: infinity,
     	_templates: _templates,
     	functions: functions,
-    	utf8: utf8,
+    	utf8chars: utf8chars,
     	greek: greek,
     	comparisons: comparisons
     };
@@ -1467,6 +1495,10 @@ var Guppy = (function () {
 
     Utils.is_symbol = function (nn) {
         return nn.parentNode.getAttribute("mode") && nn.parentNode.getAttribute("mode") == "symbol";
+    };
+
+    Utils.is_utf8entry = function (nn) {
+        return nn.parentNode.getAttribute("utf8") && nn.parentNode.getAttribute("utf8") == "entry";
     };
 
     Utils.is_small = function (nn) {
@@ -4410,8 +4442,12 @@ var Guppy = (function () {
         p.removeChild(next);
     };
 
-    Engine.prototype.symbol_to_node = function (sym_name, content) {
-        return Symbols.symbol_to_node(this.symbols[sym_name], content, this.doc.base);
+    Engine.prototype.symbol_to_node = function (sym, content) {
+        return Symbols.symbol_to_node(sym, content, this.doc.base);
+    };
+
+    Engine.prototype.template_to_node = function (tmpl_name, content, name, tmpl_args) {
+        return Symbols.symbol_to_node(Symbols.make_template_symbol(tmpl_name, name, tmpl_args), content, this.doc.base);
     };
 
     /**
@@ -4420,8 +4456,8 @@ var Guppy = (function () {
         @param {string} sym_name - The name of the symbol to insert.
         Should match one of the keys in the symbols JSON object
     */
-    Engine.prototype.insert_symbol = function (sym_name) {
-        var s = this.symbols[sym_name];
+    Engine.prototype.insert_symbol = function (sym_name, sym_args) {
+        var s = sym_args ? Symbols.make_template_symbol(sym_name, sym_args.name, sym_args) : this.symbols[sym_name];
         if (s.attrs && this.is_blacklisted(s.attrs.type)) {
             return false;
         }
@@ -4485,7 +4521,7 @@ var Guppy = (function () {
         // Thus all we should have to do now is symbol_to_node(sym_type,
         // content) and then add the left_piece, resulting node, and
         // right_piece in that order.
-        var sym = this.symbol_to_node(sym_name, content);
+        var sym = this.symbol_to_node(s, content);
         var current_parent = this.current.parentNode;
 
         var f = sym.f;
@@ -5325,7 +5361,7 @@ var Guppy = (function () {
         @memberof Engine
     */
     Engine.prototype.done = function () {
-        if (Utils.is_symbol(this.current)) this.complete_symbol();else this.fire_event("done");
+        if (Utils.is_symbol(this.current)) this.complete_symbol();else if (Utils.is_utf8entry(this.current)) this.complete_utf8();else this.fire_event("done");
     };
 
     Engine.prototype.complete_symbol = function () {
@@ -5334,6 +5370,13 @@ var Guppy = (function () {
         this.current = this.current.parentNode.parentNode;
         this.delete_from_f();
         this.insert_symbol(sym_name);
+    };
+
+    Engine.prototype.complete_utf8 = function () {
+        var codepoint = this.current.firstChild.textContent;
+        this.current = this.current.parentNode.parentNode;
+        this.delete_from_f();
+        this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint });
     };
 
     Engine.prototype.problem = function (message) {
