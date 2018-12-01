@@ -3970,6 +3970,100 @@ var Guppy = (function () {
         return { "container": target, "doc": d };
     };
 
+    var Keyboard = function Keyboard() {
+    			this.is_mouse_down = false;
+
+    			/* keyboard behaviour definitions */
+
+    			// keys aside from 0-9,a-z,A-Z
+    			this.k_chars = {
+    						"+": "+",
+    						"-": "-",
+    						"*": "*",
+    						".": "."
+    			};
+    			this.k_text = {
+    						"/": "/",
+    						"*": "*",
+    						"(": "(",
+    						")": ")",
+    						"<": "<",
+    						">": ">",
+    						"|": "|",
+    						"!": "!",
+    						",": ",",
+    						".": ".",
+    						";": ";",
+    						"=": "=",
+    						"[": "[",
+    						"]": "]",
+    						"@": "@",
+    						"'": "'",
+    						"`": "`",
+    						":": ":",
+    						"\"": "\"",
+    						"?": "?",
+    						"space": " "
+    			};
+    			this.k_controls = {
+    						"up": "up",
+    						"down": "down",
+    						"right": "right",
+    						"left": "left",
+    						"alt+k": "up",
+    						"alt+j": "down",
+    						"alt+l": "right",
+    						"alt+h": "left",
+    						"space": "spacebar",
+    						"home": "home",
+    						"end": "end",
+    						"backspace": "backspace",
+    						"del": "delete_key",
+    						"mod+a": "sel_all",
+    						"mod+c": "sel_copy",
+    						"mod+x": "sel_cut",
+    						"mod+v": "sel_paste",
+    						"mod+z": "undo",
+    						"mod+y": "redo",
+    						"enter": "done",
+    						"mod+shift+right": "list_extend_copy_right",
+    						"mod+shift+left": "list_extend_copy_left",
+    						",": "list_extend_right",
+    						";": "list_extend_down",
+    						"mod+right": "list_extend_right",
+    						"mod+left": "list_extend_left",
+    						"mod+up": "list_extend_up",
+    						"mod+down": "list_extend_down",
+    						"mod+shift+up": "list_extend_copy_up",
+    						"mod+shift+down": "list_extend_copy_down",
+    						"mod+backspace": "list_remove",
+    						"mod+shift+backspace": "list_remove_row",
+    						"shift+left": "sel_left",
+    						"shift+right": "sel_right",
+    						")": "right_paren",
+    						"\\": "backslash",
+    						"tab": "tab"
+    			};
+
+    			// Will populate keyboard shortcuts for symbols from symbol files
+    			this.k_syms = {};
+
+    			var i = 0;
+
+    			// letters
+
+    			for (i = 65; i <= 90; i++) {
+    						this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    						this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
+    			}
+
+    			// numbers
+
+    			for (i = 48; i <= 57; i++) {
+    						this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+    			}
+    };
+
     var Settings = {};
     Settings.config = {};
     Settings.config.events = {};
@@ -4164,6 +4258,7 @@ var Guppy = (function () {
         this.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
     };
 
+    Engine.kb_info = new Keyboard();
     Engine.SEL_NONE = 0;
     Engine.SEL_CURSOR_AT_START = 1;
     Engine.SEL_CURSOR_AT_END = 2;
@@ -5228,6 +5323,11 @@ var Guppy = (function () {
         if (!Utils.is_symbol(this.current)) {
             if (this.check_for_symbol()) return;
         }
+        if (Utils.is_utf8entry(this.current)) {
+            var codepoint = this.current.firstChild.textContent;
+            this.complete_utf8(codepoint);
+            return;
+        }
         var sym_name = this.current.firstChild.textContent;
         var candidates = [];
         for (var n in this.symbols) {
@@ -5361,7 +5461,10 @@ var Guppy = (function () {
         @memberof Engine
     */
     Engine.prototype.done = function () {
-        if (Utils.is_symbol(this.current)) this.complete_symbol();else if (Utils.is_utf8entry(this.current)) this.complete_utf8();else this.fire_event("done");
+        if (Utils.is_symbol(this.current)) this.complete_symbol();else if (Utils.is_utf8entry(this.current)) {
+            var codepoint = this.current.firstChild.textContent;
+            this.complete_utf8(codepoint);
+        } else this.fire_event("done");
     };
 
     Engine.prototype.complete_symbol = function () {
@@ -5372,11 +5475,16 @@ var Guppy = (function () {
         this.insert_symbol(sym_name);
     };
 
-    Engine.prototype.complete_utf8 = function () {
-        var codepoint = this.current.firstChild.textContent;
+    Engine.prototype.complete_utf8 = function (codepoint) {
+        var val = parseInt('0x' + codepoint);
+        var c = String.fromCharCode(val);
         this.current = this.current.parentNode.parentNode;
         this.delete_from_f();
-        this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint });
+        if (val < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) {
+            this.insert_string(c);
+        } else {
+            this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint });
+        }
     };
 
     Engine.prototype.problem = function (message) {
@@ -6388,99 +6496,9 @@ var Guppy = (function () {
 
     // Keyboard stuff
 
-    Guppy.kb = {};
+    Guppy.kb = new Keyboard();
 
-    Guppy.kb.is_mouse_down = false;
-
-    /* keyboard behaviour definitions */
-
-    // keys aside from 0-9,a-z,A-Z
-    Guppy.kb.k_chars = {
-        "+": "+",
-        "-": "-",
-        "*": "*",
-        ".": "."
-    };
-    Guppy.kb.k_text = {
-        "/": "/",
-        "*": "*",
-        "(": "(",
-        ")": ")",
-        "<": "<",
-        ">": ">",
-        "|": "|",
-        "!": "!",
-        ",": ",",
-        ".": ".",
-        ";": ";",
-        "=": "=",
-        "[": "[",
-        "]": "]",
-        "@": "@",
-        "'": "'",
-        "`": "`",
-        ":": ":",
-        "\"": "\"",
-        "?": "?",
-        "space": " "
-    };
-    Guppy.kb.k_controls = {
-        "up": "up",
-        "down": "down",
-        "right": "right",
-        "left": "left",
-        "alt+k": "up",
-        "alt+j": "down",
-        "alt+l": "right",
-        "alt+h": "left",
-        "space": "spacebar",
-        "home": "home",
-        "end": "end",
-        "backspace": "backspace",
-        "del": "delete_key",
-        "mod+a": "sel_all",
-        "mod+c": "sel_copy",
-        "mod+x": "sel_cut",
-        "mod+v": "sel_paste",
-        "mod+z": "undo",
-        "mod+y": "redo",
-        "enter": "done",
-        "mod+shift+right": "list_extend_copy_right",
-        "mod+shift+left": "list_extend_copy_left",
-        ",": "list_extend_right",
-        ";": "list_extend_down",
-        "mod+right": "list_extend_right",
-        "mod+left": "list_extend_left",
-        "mod+up": "list_extend_up",
-        "mod+down": "list_extend_down",
-        "mod+shift+up": "list_extend_copy_up",
-        "mod+shift+down": "list_extend_copy_down",
-        "mod+backspace": "list_remove",
-        "mod+shift+backspace": "list_remove_row",
-        "shift+left": "sel_left",
-        "shift+right": "sel_right",
-        ")": "right_paren",
-        "\\": "backslash",
-        "tab": "tab"
-    };
-
-    // Will populate keyboard shortcuts for symbols from symbol files
-    Guppy.kb.k_syms = {};
-
-    var i = 0;
-
-    // letters
-
-    for (i = 65; i <= 90; i++) {
-        Guppy.kb.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
-        Guppy.kb.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
-    }
-
-    // numbers
-
-    for (i = 48; i <= 57; i++) {
-        Guppy.kb.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
-    }Guppy.register_keyboard_handlers = function () {
+    Guppy.register_keyboard_handlers = function () {
         mousetrap_min.addKeycodes({ 173: '-' }); // Firefox's special minus (needed for _ = sub binding)
         var i, name;
         // Pull symbol shortcuts from Symbols:

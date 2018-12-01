@@ -1,4 +1,5 @@
 import Doc from './doc.js';
+import Keyboard from './keyboard.js';
 import Settings from './settings.js';
 import Symbols from './symbols.js';
 import Utils from './utils.js';
@@ -55,6 +56,7 @@ var Engine = function(config){
     this.symbols = JSON.parse(JSON.stringify(Symbols.symbols));
 }
 
+Engine.kb_info = new Keyboard();
 Engine.SEL_NONE = 0;
 Engine.SEL_CURSOR_AT_START = 1;
 Engine.SEL_CURSOR_AT_END = 2;
@@ -1156,6 +1158,11 @@ Engine.prototype.tab = function(){
     if(!Utils.is_symbol(this.current)){
         if(this.check_for_symbol()) return;
     }
+    if(Utils.is_utf8entry(this.current)){
+	var codepoint = this.current.firstChild.textContent;
+	this.complete_utf8(codepoint);
+	return;
+    }
     var sym_name = this.current.firstChild.textContent;
     var candidates = [];
     for(var n in this.symbols){
@@ -1294,7 +1301,10 @@ Engine.prototype.redo = function(){
 */
 Engine.prototype.done = function(){
     if(Utils.is_symbol(this.current)) this.complete_symbol();
-    else if(Utils.is_utf8entry(this.current)) this.complete_utf8();
+    else if(Utils.is_utf8entry(this.current)){
+	var codepoint = this.current.firstChild.textContent;
+	this.complete_utf8(codepoint);
+    }
     else this.fire_event("done");
 }
 
@@ -1306,11 +1316,17 @@ Engine.prototype.complete_symbol = function(){
     this.insert_symbol(sym_name);
 }
 
-Engine.prototype.complete_utf8 = function(){
-    var codepoint = this.current.firstChild.textContent;
+Engine.prototype.complete_utf8 = function(codepoint){
+    var val = parseInt('0x'+codepoint);
+    var c = String.fromCharCode(val);
     this.current = this.current.parentNode.parentNode;
     this.delete_from_f();
-    this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint});
+    if(val < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0){
+        this.insert_string(c);
+    }
+    else{
+	this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint});
+    }
 }
 
 Engine.prototype.problem = function(message){
