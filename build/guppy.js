@@ -1041,6 +1041,16 @@ var Guppy = (function () {
     			type: "{$name}"
     		}
     	},
+    	utf8char: {
+    		output: {
+    			latex: "\\text{{$char}}",
+    			asciimath: " {$name} "
+    		},
+    		attrs: {
+    			group: "unicode",
+    			type: "{$name}"
+    		}
+    	},
     	binop: {
     		output: {
     			latex: "{$latex}",
@@ -1059,6 +1069,23 @@ var Guppy = (function () {
     var functions = {
     	template: "latex_func",
     	values: ["sin", "cos", "tan", "sec", "csc", "cot", "log", "ln", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
+    };
+    var utf8 = {
+    	template: "utf8char",
+    	values: {
+    		banana: {
+    			char: "🍌"
+    		},
+    		pineapple: {
+    			char: "🍍"
+    		},
+    		mango: {
+    			char: "🥭"
+    		},
+    		kiwi: {
+    			char: "🥝"
+    		}
+    	}
     };
     var greek = {
     	template: "char",
@@ -1156,6 +1183,7 @@ var Guppy = (function () {
     	infinity: infinity,
     	_templates: _templates,
     	functions: functions,
+    	utf8: utf8,
     	greek: greek,
     	comparisons: comparisons
     };

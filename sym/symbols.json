@@ -315,6 +315,12 @@
 		     "group":"greek",
 		     "type":"{$name}"}},
 
+	"utf8char":{"output":{"latex":"\\text{{$char}}",
+			   "asciimath":" {$name} "},
+		 "attrs":{
+		     "group":"unicode",
+		     "type":"{$name}"}},
+
 	"binop":{"output":{"latex":"{$latex}",
 			   "asciimath":"{$asciimath}"},
 		 "keys":["{$type}"],
@@ -328,6 +334,15 @@
     "functions":{
 	"template":"latex_func",
 	"values":["sin","cos","tan","sec","csc","cot","log","ln","arcsin","arccos","arctan","sinh","cosh","tanh"]},
+    
+    "utf8":{
+	"template":"utf8char",
+	"values":{"banana":{"char":"🍌"},
+		  "pineapple":{"char":"🍍"},
+		  "mango":{"char":"🥭"},
+		  "kiwi":{"char":"🥝"}
+		 }
+    },
     
     "greek":{
 	"template":"char",
