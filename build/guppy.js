@@ -4074,6 +4074,7 @@ var Guppy = (function () {
         "autoreplace": "auto",
         "empty_content": "\\blue{[?]}",
         "blank_caret": "",
+        "blank_placeholder": "[?]",
         "blacklist": [],
         "buttons": ["osk", "settings", "symbols", "controls"],
         "cliptype": "latex"
@@ -4428,7 +4429,10 @@ var Guppy = (function () {
                     if (this.current == n) {
                         var blank_caret = this.setting("blank_caret") || (Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET);
                         ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{" + blank_caret + "}}";
-                    } else if (this.temp_cursor.node == n) ans = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{[?]}}";else ans = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{[?]}}";
+                    } else {
+                        var blank_placeholder = this.setting("blank_placeholder") || "[?]";
+                        if (this.temp_cursor.node == n) ans = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{" + blank_placeholder + "}}";else ans = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{" + blank_placeholder + "}}";
+                    }
                 } else if (this.temp_cursor.node != n && this.current != n && (!sel_cursor || sel_cursor.node != n)) {
                     // These are the empty e elements at either end of
                     // a c or m node, such as the space before and

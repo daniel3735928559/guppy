@@ -9,6 +9,7 @@ Settings.config.settings = {
     "autoreplace":"auto",
     "empty_content":"\\blue{[?]}",
     "blank_caret":"",
+    "blank_placeholder":"[?]",
     "blacklist":[],
     "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
