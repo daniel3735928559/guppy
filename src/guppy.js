@@ -74,6 +74,7 @@ Guppy.Doc = Doc;
 Guppy.active_guppy = null;
 Guppy.Symbols = Symbols;
 Guppy.Mousetrap = Mousetrap;
+Guppy.katex = katex;
 
 Guppy.raw_input_target = null;
 Guppy.raw_input = document.createElement("input");
