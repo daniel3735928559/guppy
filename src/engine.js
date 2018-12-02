@@ -224,11 +224,11 @@ Engine.prototype.add_classes_cursors = function(n){
                 }
                 else{
                     var blank_placeholder = this.setting("blank_placeholder") || "[?]";
-		    if(this.temp_cursor.node == n)
-			ans = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_placeholder+"}}";
+                    if(this.temp_cursor.node == n)
+                        ans = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_placeholder+"}}";
                     else
-			ans = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_placeholder+"}}";
-		}
+                        ans = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_placeholder+"}}";
+                }
             }
             else if(this.temp_cursor.node != n && this.current != n && (!(sel_cursor) || sel_cursor.node != n)){
                 // These are the empty e elements at either end of
@@ -417,12 +417,12 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
             left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
             right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
             content = [sel.node_list];
-	}
-	else{
+        }
+        else{
             left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));
             right_piece = this.make_e(this.current.firstChild.nodeValue.slice(this.caret));
             to_remove = [this.current];
-	}
+        }
     }
 
     // By now:
@@ -839,7 +839,7 @@ Engine.prototype.list_extend = function(direction, copy){
         }
         var to_modify = [];
         var iterator = this.doc.xpath_list("./l/c[position()="+pos+"]", n.parentNode.parentNode);
-	var nn = null;
+        var nn = null;
         try{ for(nn = iterator.iterateNext(); nn != null; nn = iterator.iterateNext()){ to_modify.push(nn); }}
         catch(e) { this.fire_event("error",{"message":'XML modified during iteration? ' + e}); }
         for(var j = 0; j < to_modify.length; j++){
@@ -1162,9 +1162,9 @@ Engine.prototype.tab = function(){
         if(this.check_for_symbol()) return;
     }
     if(Utils.is_utf8entry(this.current)){
-	var codepoint = this.current.firstChild.textContent;
-	this.complete_utf8(codepoint);
-	return;
+        var codepoint = this.current.firstChild.textContent;
+        this.complete_utf8(codepoint);
+        return;
     }
     var sym_name = this.current.firstChild.textContent;
     var candidates = [];
@@ -1174,7 +1174,7 @@ Engine.prototype.tab = function(){
     if(candidates.length == 1){
         this.current.firstChild.textContent = candidates[0];
         this.caret = candidates[0].length;
-	this.check_for_symbol();
+        this.check_for_symbol();
     }
     else {
         this.fire_event("completion",{"candidates":candidates});
@@ -1305,8 +1305,8 @@ Engine.prototype.redo = function(){
 Engine.prototype.done = function(){
     if(Utils.is_symbol(this.current)) this.complete_symbol();
     else if(Utils.is_utf8entry(this.current)){
-	var codepoint = this.current.firstChild.textContent;
-	this.complete_utf8(codepoint);
+        var codepoint = this.current.firstChild.textContent;
+        this.complete_utf8(codepoint);
     }
     else this.fire_event("done");
 }
@@ -1332,7 +1332,7 @@ Engine.prototype.insert_utf8 = function(codepoint){
         this.insert_string(c);
     }
     else{
-	this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
+        this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
     }
 }
 

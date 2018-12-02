@@ -5738,6 +5738,7 @@ var Guppy = (function () {
     Guppy.active_guppy = null;
     Guppy.Symbols = Symbols;
     Guppy.Mousetrap = mousetrap_min;
+    Guppy.katex = katex;
 
     Guppy.raw_input_target = null;
     Guppy.raw_input = document.createElement("input");
@@ -5892,6 +5893,20 @@ var Guppy = (function () {
                 }
             }
         }
+    };
+
+    /**
+        Add a template symbol to all instances of the editor
+        @memberof Guppy
+        @param {string} name - The name of the template to add. 
+        @param {Object} template - A template dictionary. This is the same
+        as a symbol dictionary, but it can have parameters of the form
+        {$myparam} as a substring of any dictionary value, which will be
+        replaced with the parameter's value when generating symbols from
+        this template.
+    */
+    Guppy.add_template = function (name, template) {
+        Symbols.templates[name] = JSON.parse(JSON.stringify(template));
     };
 
     /**
