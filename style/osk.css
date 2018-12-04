@@ -42,8 +42,8 @@ body {
     display: inline-block;
     justify-content: center;
     align-items: center;
-    min-width: 60px;
-    line-height:60px;
+    min-width: 8vw;
+    line-height:5vh;
     vertical-align:middle;
     text-align: center;
     background: #ddd;
@@ -56,8 +56,8 @@ body {
 .guppy_osk .controls .guppy_osk_key,
 .guppy_osk #QWERTY .guppy_osk_key,
 .guppy_osk #greek .guppy_osk_key {
-    line-height:40px !important;
-    height: 40px !important; 
+    line-height:5vh !important;
+    height: 5vh !important; 
 }
 
 .guppy_osk .guppy_osk_key:hover {
@@ -73,17 +73,30 @@ body {
   clear:both;
 }
 
-.tabbed ul{
-  list-style-type:none;
-  /* position:relative; */
+.tabbar{
+    float:left;
+    width:100%;
+    text-align:center;
 }
 
-.tabbed li{
+.tabbar ul{
+    display:inline-block;
+    overflow-x:scroll;
+    white-space:nowrap;
+    list-style-type:none;
+    list-style:none;
     float:left;
+    margin:0 7%;
+    padding:0;
+    width:70%;
+}
+
+.tabbar li{
+    display:inline-block;
     cusror: pointer;
 }
  
-.tabbed a{
+.tabbar a{
   display:block;
   padding:5px 10px;
   background-color: #fff;
@@ -96,13 +109,27 @@ body {
   border-bottom: 0;
 }
 
-.tabbed a.active_tab{
+.tabbar a.active_tab{
   background-color: #7cf;
 }
 
-.tabbed div{
-  clear: both;
-  border:1px solid #ccc;
-  padding:5px;
-  display:none;
+.tabbar .scroller-left{
+    display:inline-block;
+    float:left;
+    width:5%;
+    border:1px solid black;
 }
+
+.tabbar .scroller-right{
+    display:inline-block;
+    float:left;
+    width:5%;
+    border:1px solid black;
+}
+
+/* .tabbar div{ */
+/*   clear: both; */
+/*   border:1px solid #ccc; */
+/*   padding:5px; */
+/*   display:none; */
+/* } */

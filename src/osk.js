@@ -41,8 +41,8 @@ function click_listener(elt, fn){
     elt.addEventListener("touchstart", fn, false);
 }
 
-function make_tabs(element){
-    var headers = element.querySelectorAll("li a");
+function make_tabs(tabbar, element){
+    var headers = tabbar.querySelectorAll("li a");
     var tabs = element.getElementsByClassName("guppy_osk_group");
     tabs[0].style.display = "block";
     headers[0].classList.add("active_tab");
@@ -97,10 +97,30 @@ GuppyOSK.prototype.attach = function(guppy){
     var osk = elt("div",{"class":"guppy_osk"});
     var sym_tabs = elt("div",{"class":"keys tabbed"});
     var controls = elt("div",{"class":"controls"});
+    var tab_bar_div = elt("div",{"class":"tabbar"});
     var tab_bar = elt("ul");
-    sym_tabs.appendChild(tab_bar);
-    var grouped = {"qwerty":[],"QWERTY":[]};
-    var abc = "1234567890+-=\n\tqwertyuiop*/\n\t\tasdfghjkl.\n\t\t\tzxcvbnm"
+    var sl = elt("div",{"class":"scroller-left"},"<");
+    var sr = elt("div",{"class":"scroller-right"},">");
+    click_listener(sl,function(){tab_bar.scrollLeft -= 100;});
+    click_listener(sr,function(){tab_bar.scrollLeft += 100;});
+    tab_bar_div.appendChild(sl);
+    tab_bar_div.appendChild(tab_bar);
+    tab_bar_div.appendChild(sr);
+    osk.appendChild(tab_bar_div);
+    var grouped = {"arithmetic":[],"qwerty":[],"QWERTY":[]};
+    var arith = "12345+-*/\n67890.xyz";
+    var abc = "1234567890\nqwertyuiop\n\tasdfghjkl\n\t\tzxcvbnm"
+    for(let i = 0; i < arith.length; i++){
+        if(arith[i] == "\n") grouped["arithmetic"].push({"break":true});
+        else if(arith[i] == "*") grouped["arithmetic"].push({"name":"*","latex":"\\cdot"});
+        else if(arith[i] == "/") grouped["arithmetic"].push({"name":"/","latex":"/"});
+        else{
+            var latex = arith[i];
+            var name = arith[i];
+            if(latex == ".") latex = "."+GuppyOSK.blank;
+            grouped["arithmetic"].push({"name":name, "latex":latex});
+        }
+    }
     for(var i = 0; i < abc.length; i++){
         if(abc[i] == "\n"){
             grouped["qwerty"].push({"break":true});
@@ -119,9 +139,9 @@ GuppyOSK.prototype.attach = function(guppy){
             grouped["QWERTY"].push({"name":"/","latex":"/"});
         }
         else{
-            var latex = abc[i];
-            var upper_latex = latex.toUpperCase();
-            var name = abc[i];
+            let latex = abc[i];
+            let upper_latex = latex.toUpperCase();
+            const name = abc[i];
             if(latex == "."){
                 latex = "."+GuppyOSK.blank;
                 upper_latex = latex;
@@ -153,7 +173,7 @@ GuppyOSK.prototype.attach = function(guppy){
             else{
                 var key = elt("span",{"class":"guppy_osk_key"});
                 var f = null;
-                if(g == "qwerty" || g == "QWERTY"){
+                if(g == "arithmetic" || g == "qwerty" || g == "QWERTY"){
                     f = function(n){
                         click_listener(key, function(e){
                             e.preventDefault();
@@ -189,7 +209,7 @@ GuppyOSK.prototype.attach = function(guppy){
         group_container.appendChild(group_elt);
         sym_tabs.appendChild(group_container);
     }
-    make_tabs(sym_tabs);
+    make_tabs(tab_bar, sym_tabs);
     osk.appendChild(sym_tabs);
 
     var add_control = function(content,fn){
