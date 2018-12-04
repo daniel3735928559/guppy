@@ -6,6 +6,7 @@ window.onload = function() {
     Guppy.event("change", update_output);
     Guppy.event("completion", completion);
     Guppy.configure("empty_content", "{\\text{Click to start typing math!}}");
+    Guppy.configure("buttons", ["osk","settings","symbols","controls"]);
     g1 = new Guppy("guppy1");
 };
 

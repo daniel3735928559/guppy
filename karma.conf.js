@@ -36,13 +36,11 @@ module.exports = function(config) {
 	// test results reporter to use
 	// possible values: 'dots', 'progress'
 	// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-	reporters: ['progress','coverage'],
-	coverageReporter: {
+	reporters: ['progress','coverage-istanbul'],
+	coverageIstanbulReporter: {
 	    dir : 'build/coverage/',
-	    reporters: [
-		{ type: 'html', subdir: 'report-html' },
-		{ type: 'text', subdir: '.', file: 'text.txt' },
-	    ]
+	    reports: ['html','lcovonly','text-summary'],
+	    skipFilesWithNoCoverage: true
 	},
 
 	// web server port

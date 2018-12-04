@@ -670,6 +670,7 @@ var Guppy = (function () {
     		latex: "\\backslash\\texttt{{$1}}",
     		asciimath: "SYMBOL({$1})"
     	},
+    	input: -1,
     	attrs: {
     		type: "symbol",
     		group: "editor"
@@ -1451,6 +1452,40 @@ var Guppy = (function () {
         }
         return { "f": f, "first": first, "args": arglist };
     };
+
+    // class Template{
+    //     constructor(name, definition){
+    // 	this.name = name;
+    // 	this.protosym = new Symbol(`__${name}`, definition);
+    //     }
+    //     evaluate(args){
+    // 	let sym = {...this.protosym};
+    // 	let r = function(src){
+    // 	    for(var n in args) {
+    // 		return src.replace(new RegExp("\\{\\$"+n+"\\}"),args[n]);
+    // 	    }
+    // 	};
+
+    // 	Object.keys(sym.outputs).forEach({(x) => sym.outputs[x] = r(sym.outputs[x])});
+    // 	Object.keys(sym.attrs).forEach({(x) => sym.attrs[x] = r(sym.attrs[x])});
+    // 	sym.args.forEach({(x) => Object.keys(sym.args[x]).forEach({(y) => sym.args[x][y] = r(sym.args[x][y])});	
+    //     }
+    // }
+
+    // class Symbol{
+    //     constructor(name, definition){
+    // 	this.name = name;
+    // 	this.outputs = config.outputs;
+    // 	this.args = config.args;
+    // 	this.attrs = config.attrs;
+    // 	this.input = config.input;
+    // 	this.keys = config.keys;
+    // 	this.ast_value = config.ast.value;
+    // 	this.ast_type = config.ast.type;
+    //     }
+
+    // }
+
 
     Symbols.add_symbols(DEFAULT_SYMBOLS);
 
@@ -4222,33 +4257,12 @@ var Guppy = (function () {
      * At that point, you can, for example, move that editor's cursor
      * one spot to the left with `Guppy("guppy1").engine.left()`.
     */
-    var Engine = function Engine(config) {
-        config = config || {};
-        var events = config['events'] || {};
-
-        var settings = config['settings'] || {};
-        this.parent = config['parent'];
-
+    var Engine = function Engine(parent) {
+        this.parent = parent;
+        this.symbols = {};
         this.events = {};
         this.settings = {};
-
-        var evts = ["change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
-
-        for (var i = 0; i < evts.length; i++) {
-            var e = evts[i];
-            if (e in events) this.events[e] = e in events ? events[e] : null;
-        }
-
-        var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace", "cliptype"];
-
-        for (var j = 0; j < opts.length; j++) {
-            var p = opts[j];
-            if (p in settings) this.settings[p] = settings[p];
-        }
-
-        this.symbols = {};
-        this.doc = new Doc(settings["xml_content"]);
-
+        this.doc = new Doc();
         this.current = this.doc.root().firstChild;
         this.caret = 0;
         this.space_caret = 0;
@@ -4603,7 +4617,7 @@ var Guppy = (function () {
                 to_remove = sel.involved;
                 left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0, this.sel_start.caret));
                 right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
-                content = [sel.node_list];
+                content = "input" in s && s.input < 0 ? [] : [sel.node_list];
             } else {
                 left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0, this.caret));
                 right_piece = this.make_e(this.current.firstChild.nodeValue.slice(this.caret));
@@ -5670,7 +5684,7 @@ var Guppy = (function () {
        element that should be converted to an editor.
        @constructor
     */
-    var Guppy = function Guppy(el, config) {
+    var Guppy = function Guppy(el) {
 
         if (!Guppy.initialised) Guppy.init();
         // Get the element and try to get its corresponding instance and settings
@@ -5680,18 +5694,45 @@ var Guppy = (function () {
             return instance;
         }
         var self = this;
-        config = config || {};
-        var settings = config['settings'] || {};
 
         // Store a record of this instance in case somebody wants it again
         Guppy.instances.set(element, this);
-        config['parent'] = self;
 
         var tab_idx = Guppy.max_tabIndex || 0;
         element.tabIndex = tab_idx;
         Guppy.max_tabIndex = tab_idx + 1;
 
-        var buttons = settings['buttons'] || Settings.config.settings['buttons'];
+        this.editor_active = true;
+        //this.empty_content = settings['empty_content'] || "\\red{[?]}"
+        this.editor = element;
+        this.blacklist = [];
+        this.autoreplace = true;
+
+        /**   @member {Engine} */
+        this.engine = new Engine(self);
+        this.temp_cursor = { "node": null, "caret": 0 };
+        this.editor.addEventListener("keydown", Guppy.key_down, false);
+        this.editor.addEventListener("keyup", Guppy.key_up, false);
+        this.editor.addEventListener("focus", function () {
+            Guppy.kb.alt_down = false;
+        }, false);
+        this.configure("buttons", ["settings", "controls", "symbols"]);
+        this.render(true);
+        this.deactivate();
+        this.recompute_locations_paths();
+    };
+
+    Guppy.prototype.set_buttons = function () {
+        var buttons = this.engine.setting('buttons');
+        var self = this;
+        if (!buttons || buttons.length == 0) return;
+
+        // Remove old button div if applicable
+        if (this.buttons_div) {
+            this.buttons_div.parentElement.removeChild(this.buttons_div);
+            delete this.buttons_div;
+        }
+
         this.buttons_div = document.createElement("div");
         this.buttons_div.setAttribute("class", "guppy_buttons");
         if (buttons) {
@@ -5713,24 +5754,6 @@ var Guppy = (function () {
                 });
             }
         }
-
-        this.editor_active = true;
-        //this.empty_content = settings['empty_content'] || "\\red{[?]}"
-        this.editor = element;
-        this.blacklist = [];
-        this.autoreplace = true;
-
-        /**   @member {Engine} */
-        this.engine = new Engine(config);
-        this.temp_cursor = { "node": null, "caret": 0 };
-        this.editor.addEventListener("keydown", Guppy.key_down, false);
-        this.editor.addEventListener("keyup", Guppy.key_up, false);
-        this.editor.addEventListener("focus", function () {
-            Guppy.kb.alt_down = false;
-        }, false);
-        this.render(true);
-        this.deactivate();
-        this.recompute_locations_paths();
     };
 
     Guppy.instances = new Map();
@@ -5991,6 +6014,7 @@ var Guppy = (function () {
             throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
         }
         this.engine.settings[name] = val;
+        if (name == 'buttons') this.set_buttons();
         this.render(true);
     };
 
@@ -6345,12 +6369,12 @@ var Guppy = (function () {
     Guppy.prototype.render = function (updated) {
         if (!this.editor_active && this.engine.doc.is_blank()) {
             katex.render(this.engine.setting("empty_content"), this.editor);
-            this.editor.appendChild(this.buttons_div);
+            if (this.buttons_div) this.editor.appendChild(this.buttons_div);
             return;
         }
         var tex = this.render_node("render");
         katex.render(tex, this.editor);
-        this.editor.appendChild(this.buttons_div);
+        if (this.buttons_div) this.editor.appendChild(this.buttons_div);
         if (updated) {
             this.recompute_locations_paths();
         }

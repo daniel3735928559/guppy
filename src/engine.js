@@ -17,33 +17,12 @@ String.prototype.search_at = function(idx, s){ return (this.substring(idx-s.leng
  * At that point, you can, for example, move that editor's cursor
  * one spot to the left with `Guppy("guppy1").engine.left()`.
 */
-var Engine = function(config){
-    config = config || {};
-    var events = config['events'] || {};
-    
-    var settings = config['settings'] || {};
-    this.parent = config['parent'];
-    
+var Engine = function(parent){
+    this.parent = parent;
+    this.symbols = {};
     this.events = {};
     this.settings = {};
-
-    var evts = ["change", "left_end", "right_end", "done", "completion", "debug", "error", "focus"];
-
-    for(var i = 0; i < evts.length; i++){
-        var e = evts[i];
-        if(e in events) this.events[e] = e in events ? events[e] : null;
-    }
-
-    var opts = ["blank_caret", "empty_content", "blacklist", "autoreplace", "cliptype"];
-
-    for(var j = 0; j < opts.length; j++){
-        var p = opts[j];
-        if(p in settings) this.settings[p] = settings[p];
-    }
-
-    this.symbols = {};
-    this.doc = new Doc(settings["xml_content"]);
-
+    this.doc = new Doc();
     this.current = this.doc.root().firstChild;
     this.caret = 0;
     this.space_caret = 0;
@@ -416,7 +395,7 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
             to_remove = sel.involved;
             left_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(0,this.sel_start.caret));
             right_piece = this.make_e(sel.remnant.firstChild.nodeValue.slice(this.sel_start.caret));
-            content = [sel.node_list];
+            content = "input" in s && s.input < 0 ? [] : [sel.node_list];
         }
         else{
             left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret));

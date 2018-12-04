@@ -950,6 +950,14 @@ var tests = [
 	}
     },
     {
+	"description":"utf8 basic",
+	"type":"ast",
+	"expected":'["var",["\\\\u2708"]]',
+	"run":function(g){
+	    do_keys(['u','t','f','8','2','7','0','8','enter']);
+	}
+    },
+    {
 	"description":"focus",
 	"type":"text",
 	"observe":function(g){
@@ -1015,7 +1023,7 @@ describe('Guppy',function(){
 		    observed = observed.replace("/ /g","");
 		}
 		//console.log('o=',observed,'ty=',t.type,'e=',t.expected);
-		expect(observed).toBe(t.expected);
+		expect(observed).toEqual(t.expected);
 	    });
 	};
 	f(j);

@@ -39,6 +39,7 @@
     {"output":{
         "latex":"\\backslash\\texttt{{$1}}",
         "asciimath":"SYMBOL({$1})"},
+     "input":-1,
      "attrs":{
 	 "type":"symbol",
 	 "group":"editor"},

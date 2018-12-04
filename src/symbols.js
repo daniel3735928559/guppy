@@ -212,6 +212,39 @@ Symbols.symbol_to_node = function(s, content, base){
     return {"f":f, "first":first, "args":arglist};
 }
 
+// class Template{
+//     constructor(name, definition){
+// 	this.name = name;
+// 	this.protosym = new Symbol(`__${name}`, definition);
+//     }
+//     evaluate(args){
+// 	let sym = {...this.protosym};
+// 	let r = function(src){
+// 	    for(var n in args) {
+// 		return src.replace(new RegExp("\\{\\$"+n+"\\}"),args[n]);
+// 	    }
+// 	};
+	
+// 	Object.keys(sym.outputs).forEach({(x) => sym.outputs[x] = r(sym.outputs[x])});
+// 	Object.keys(sym.attrs).forEach({(x) => sym.attrs[x] = r(sym.attrs[x])});
+// 	sym.args.forEach({(x) => Object.keys(sym.args[x]).forEach({(y) => sym.args[x][y] = r(sym.args[x][y])});	
+//     }
+// }
+
+// class Symbol{
+//     constructor(name, definition){
+// 	this.name = name;
+// 	this.outputs = config.outputs;
+// 	this.args = config.args;
+// 	this.attrs = config.attrs;
+// 	this.input = config.input;
+// 	this.keys = config.keys;
+// 	this.ast_value = config.ast.value;
+// 	this.ast_type = config.ast.type;
+//     }
+    
+// }
+
 
 Symbols.add_symbols(DEFAULT_SYMBOLS);
 export default Symbols;

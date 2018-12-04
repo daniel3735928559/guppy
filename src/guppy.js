@@ -15,7 +15,7 @@ import katex from '../lib/katex/katex-modified.min.js';
    element that should be converted to an editor.
    @constructor
 */
-var Guppy = function(el, config){
+var Guppy = function(el){
 
     if(!Guppy.initialised) Guppy.init();
     // Get the element and try to get its corresponding instance and settings
@@ -25,18 +25,43 @@ var Guppy = function(el, config){
         return instance;
     }
     var self = this;
-    config = config || {};
-    var settings = config['settings'] || {};
 
     // Store a record of this instance in case somebody wants it again
     Guppy.instances.set(element, this)
-    config['parent'] = self;
 
     var tab_idx = Guppy.max_tabIndex || 0;
     element.tabIndex = tab_idx;
     Guppy.max_tabIndex = tab_idx+1;
 
-    var buttons = settings['buttons'] || Settings.config.settings['buttons'];
+    this.editor_active = true;
+    //this.empty_content = settings['empty_content'] || "\\red{[?]}"
+    this.editor = element;
+    this.blacklist = [];
+    this.autoreplace = true;
+
+    /**   @member {Engine} */
+    this.engine = new Engine(self);
+    this.temp_cursor = {"node":null,"caret":0}
+    this.editor.addEventListener("keydown",Guppy.key_down, false);
+    this.editor.addEventListener("keyup",Guppy.key_up, false);
+    this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; }, false);
+    this.configure("buttons",["settings","controls","symbols"]);
+    this.render(true);
+    this.deactivate();
+    this.recompute_locations_paths();
+}
+
+Guppy.prototype.set_buttons = function(){
+    var buttons = this.engine.setting('buttons');
+    var self = this;
+    if(!buttons || buttons.length == 0) return;
+
+    // Remove old button div if applicable
+    if(this.buttons_div){
+	this.buttons_div.parentElement.removeChild(this.buttons_div);
+	delete this.buttons_div;
+    }
+
     this.buttons_div = document.createElement("div");
     this.buttons_div.setAttribute("class","guppy_buttons");
     if(buttons){
@@ -51,22 +76,6 @@ var Guppy = function(el, config){
             else if(buttons[i] == "controls") Guppy.make_button("help", this.buttons_div, function(){ Settings.toggle("controls", self); });
         }
     }
-
-    this.editor_active = true;
-    //this.empty_content = settings['empty_content'] || "\\red{[?]}"
-    this.editor = element;
-    this.blacklist = [];
-    this.autoreplace = true;
-
-    /**   @member {Engine} */
-    this.engine = new Engine(config);
-    this.temp_cursor = {"node":null,"caret":0}
-    this.editor.addEventListener("keydown",Guppy.key_down, false);
-    this.editor.addEventListener("keyup",Guppy.key_up, false);
-    this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; }, false);
-    this.render(true);
-    this.deactivate();
-    this.recompute_locations_paths();
 }
 
 Guppy.instances = new Map()
@@ -282,6 +291,7 @@ Guppy.prototype.configure = function(name, val){
         throw "Valid values for " + name + " are " + JSON.stringify(Settings.config.options[name]);
     }
     this.engine.settings[name] = val;
+    if(name == 'buttons') this.set_buttons();
     this.render(true);
 }
 
@@ -610,12 +620,12 @@ Guppy.prototype.render_node = function(t){
 Guppy.prototype.render = function(updated){
     if(!this.editor_active && this.engine.doc.is_blank()){
         katex.render(this.engine.setting("empty_content"),this.editor);
-        this.editor.appendChild(this.buttons_div);
+        if(this.buttons_div) this.editor.appendChild(this.buttons_div);
         return;
     }
     var tex = this.render_node("render");
     katex.render(tex,this.editor);
-    this.editor.appendChild(this.buttons_div);
+    if(this.buttons_div) this.editor.appendChild(this.buttons_div);
     if(updated){
         this.recompute_locations_paths();
     }

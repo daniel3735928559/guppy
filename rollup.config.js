@@ -1,7 +1,6 @@
 import commonjs from 'rollup-plugin-commonjs';
 import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
-import istanbul from 'rollup-plugin-istanbul';
 import json from 'rollup-plugin-json';
 
 export default {
@@ -22,11 +21,12 @@ export default {
 	}),
 	babel({
             exclude: 'node_modules/**',
-            presets: [['es2015', { "modules": false }]]
+            presets: [['es2015', { "modules": false }]],
+	    plugins: (process.env.NODE_ENV === 'test' ? [['istanbul', {"include": ['src/**']}]] : [])
 	}),
-	(process.env.NODE_ENV === 'test' && istanbul({
-	    include: ['src/**']
-	})),
+	//(process.env.NODE_ENV === 'test' && istanbul({
+	//    include: ['src/**']
+	//})),
 	(process.env.NODE_ENV === 'production' && uglify()),
     ],
 };
