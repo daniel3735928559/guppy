@@ -143,6 +143,7 @@ body {
     color: #000;
     text-decoration: none;
     margin: 0 5px;
+    border-radius: 1vh 1vh 0 0;
     border-top:1px solid #000;
     border-left:1px solid #000;
     border-right:1px solid #000;
@@ -153,10 +154,10 @@ body {
 }
 
 .tabbar i {
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 5px;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 5px;
 }
 
 .tabbar .disabled i {
@@ -175,7 +176,7 @@ body {
 }
 
 .tabbar a.active_tab{
-  background: rgba(119,204,255,.2);
+  background: #7af;
 }
 
 /* .tabbar div{ */

@@ -135,7 +135,6 @@ GuppyOSK.prototype.attach = function(guppy){
     click_listener(sl,function(){tab_bar.scrollLeft -= 100;});
     click_listener(sr,function(){tab_bar.scrollLeft += 100;});
     tab_bar.addEventListener("scroll",function(){
-	console.log(tab_bar.scrollLeft,tab_bar.scrollLeft+tab_bar.offsetWidth,tab_bar.scrollWidth)
 	if(tab_bar.scrollLeft <= 0) sl.className = "scroller-left disabled";
 	else sl.className = "scroller-left";
 	if(tab_bar.scrollLeft+tab_bar.offsetWidth >= tab_bar.scrollWidth) sr.className = "scroller-right disabled";
