@@ -1038,6 +1038,19 @@ var Guppy = (function () {
     			"delete": "1"
     		}]
     	},
+    	latex_trig_func: {
+    		output: {
+    			latex: "\\{$name}\\left({$1}\\right)",
+    			asciimath: " {$name}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "trigonometry"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
     	func: {
     		output: {
     			latex: "{$latex}\\left({$1}\\right)",
@@ -1045,7 +1058,7 @@ var Guppy = (function () {
     		},
     		attrs: {
     			type: "{$name}",
-    			group: "functions"
+    			group: "{$group}"
     		},
     		args: [{
     			"delete": "1"
@@ -1099,9 +1112,13 @@ var Guppy = (function () {
     		}
     	}
     };
+    var trig_functions = {
+    	template: "latex_trig_func",
+    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
+    };
     var functions = {
-    	template: "latex_func",
-    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "log", "ln", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
+    	template: "latex_trig_func",
+    	values: ["log", "ln"]
     };
     var utf8chars = {
     	template: "utf8char",
@@ -1216,6 +1233,7 @@ var Guppy = (function () {
     	},
     	infinity: infinity,
     	_templates: _templates,
+    	trig_functions: trig_functions,
     	functions: functions,
     	utf8chars: utf8chars,
     	greek: greek,
@@ -6217,10 +6235,9 @@ var Guppy = (function () {
         if (g) g.render(true);
     };
 
-    Guppy.mouse_down = function (e) {
-        if (e.target.getAttribute("class") == "guppy-button") return;
-        var n = e.target;
-        Guppy.kb.is_mouse_down = true;
+    Guppy.touch_start = function (e) {
+        var touchobj = e.changedTouches[0];
+        var n = touchobj.target;
         while (n != null) {
             var instance = Guppy.instances.get(n);
             if (instance) {
@@ -6257,6 +6274,77 @@ var Guppy = (function () {
                 var b = Guppy.active_guppy.engine;
                 g.space_caret = 0;
                 if (prev_active == g) {
+                    var loc = Guppy.get_loc(touchobj.clientX, touchobj.clientY);
+                    if (!loc) return;
+                    b.current = loc.current;
+                    b.caret = loc.caret;
+                    b.sel_status = Engine.SEL_NONE;
+                    g.render(true);
+                }
+                return;
+            }
+            if (n.classList && n.classList.contains("guppy_osk")) {
+                return;
+            }
+            n = n.parentNode;
+        }
+    };
+
+    Guppy.touch_move = function (e) {
+        var touchobj = e.changedTouches[0];
+        var g = Guppy.active_guppy;
+        if (!g) return;
+        var n = touchobj.target;
+        while (n != null) {
+            var instance = Guppy.instances.get(n);
+            if (instance == g) {
+                g.select_to(touchobj.clientX, touchobj.clientY, true);
+                g.render(g.is_changed());
+            }
+            n = n.parentNode;
+        }
+    };
+
+    Guppy.mouse_down = function (e) {
+        if (e.target.getAttribute("class") == "guppy-button") return;
+        var n = e.target;
+        Guppy.kb.is_mouse_down = true;
+        while (n != null) {
+            var instance = Guppy.instances.get(n);
+            if (instance) {
+                e.preventDefault();
+                var prev_active = Guppy.active_guppy;
+                var _iteratorNormalCompletion4 = true;
+                var _didIteratorError4 = false;
+                var _iteratorError4 = undefined;
+
+                try {
+                    for (var _iterator4 = Guppy.instances[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                        var _step4$value = slicedToArray(_step4.value, 2),
+                            element = _step4$value[0],
+                            gup = _step4$value[1];
+
+                        if (element !== n) gup.deactivate();else gup.activate();
+                    }
+                } catch (err) {
+                    _didIteratorError4 = true;
+                    _iteratorError4 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                            _iterator4.return();
+                        }
+                    } finally {
+                        if (_didIteratorError4) {
+                            throw _iteratorError4;
+                        }
+                    }
+                }
+
+                var g = Guppy.active_guppy;
+                var b = Guppy.active_guppy.engine;
+                g.space_caret = 0;
+                if (prev_active == g) {
                     if (e.shiftKey) {
                         g.select_to(e.clientX, e.clientY, true);
                     } else {
@@ -6276,28 +6364,28 @@ var Guppy = (function () {
             n = n.parentNode;
         }
         Guppy.active_guppy = null;
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-            for (var _iterator4 = Guppy.instances[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var _step4$value = slicedToArray(_step4.value, 2),
-                    gup2 = _step4$value[1];
+            for (var _iterator5 = Guppy.instances[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                var _step5$value = slicedToArray(_step5.value, 2),
+                    gup2 = _step5$value[1];
 
                 gup2.deactivate();
             }
         } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
+            _didIteratorError5 = true;
+            _iteratorError5 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                    _iterator4.return();
+                if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                    _iterator5.return();
                 }
             } finally {
-                if (_didIteratorError4) {
-                    throw _iteratorError4;
+                if (_didIteratorError5) {
+                    throw _iteratorError5;
                 }
             }
         }
@@ -6338,6 +6426,8 @@ var Guppy = (function () {
         this.engine.select_to(loc, sel_cursor, sel_caret, mouse);
     };
 
+    window.addEventListener("touchstart", Guppy.touch_start, true);
+    window.addEventListener("touchmove", Guppy.touch_move, true);
     window.addEventListener("mousedown", Guppy.mouse_down, true);
     window.addEventListener("mouseup", Guppy.mouse_up, true);
     window.addEventListener("mousemove", Guppy.mouse_move, false);

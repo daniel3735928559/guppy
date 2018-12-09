@@ -2152,6 +2152,7 @@ var GuppyOSK = (function () {
 	GuppyOSK.group_headers = { "arithmetic": "123",
 	    "qwerty": "abc",
 	    "QWERTY": "ABC",
+	    "trigonometry": "\\cos",
 	    "functions": "\\sqrt{x}",
 	    "editor": "\\text{abc}",
 	    "calculus": "\\int",

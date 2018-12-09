@@ -511,6 +511,53 @@ Guppy.mouse_up = function(){
     if(g) g.render(true);
 }
 
+Guppy.touch_start = function(e){
+    var touchobj = e.changedTouches[0];
+    var n = touchobj.target;
+    while(n != null){
+        var instance = Guppy.instances.get(n);
+        if(instance){
+            e.preventDefault();
+            var prev_active = Guppy.active_guppy;
+            for(var [element, gup] of Guppy.instances){
+                if(element !== n) gup.deactivate();
+                else gup.activate();
+            }
+            var g = Guppy.active_guppy;
+            var b = Guppy.active_guppy.engine;
+            g.space_caret = 0;
+            if(prev_active == g){
+                var loc = Guppy.get_loc(touchobj.clientX,touchobj.clientY);
+                if(!loc) return;
+                b.current = loc.current;
+                b.caret = loc.caret;
+                b.sel_status = Engine.SEL_NONE;
+                g.render(true);
+            }
+            return;
+        }
+        if(n.classList && n.classList.contains("guppy_osk")){
+            return;
+        }
+        n = n.parentNode;
+    }
+}
+
+Guppy.touch_move = function(e){
+    var touchobj = e.changedTouches[0];
+    var g = Guppy.active_guppy;
+    if(!g) return;
+    var n = touchobj.target;
+    while(n != null){
+        var instance = Guppy.instances.get(n);
+        if(instance == g){
+	    g.select_to(touchobj.clientX,touchobj.clientY, true);
+	    g.render(g.is_changed());
+	}
+        n = n.parentNode;
+    }
+}
+
 Guppy.mouse_down = function(e){
     if(e.target.getAttribute("class") == "guppy-button") return;
     var n = e.target;
@@ -592,6 +639,8 @@ Guppy.prototype.select_to = function(x, y, mouse){
 }
 
 
+window.addEventListener("touchstart",Guppy.touch_start, true);
+window.addEventListener("touchmove",Guppy.touch_move, true);
 window.addEventListener("mousedown",Guppy.mouse_down, true);
 window.addEventListener("mouseup",Guppy.mouse_up, true);
 window.addEventListener("mousemove",Guppy.mouse_move, false);

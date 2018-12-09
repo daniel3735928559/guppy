@@ -313,11 +313,20 @@
 		    {"delete":"1"}
 		]},
 	
+	"latex_trig_func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
+				"asciimath":" {$name}({$1})"},
+		"attrs":{
+		    "type":"{$name}",
+		    "group":"trigonometry"},
+		"args":[
+		    {"delete":"1"}
+		]},
+	
 	"func":{"output":{"latex":"{$latex}\\left({$1}\\right)",
 			  "asciimath":" {$asciimath}({$1})"},
 		"attrs":{
 		    "type":"{$name}",
-		    "group":"functions"},
+		    "group":"{$group}"},
 		"args":[
 		    {"delete":"1"}
 		]},
@@ -352,9 +361,13 @@
 		     "type":"operator"}}
     },
 
+    "trig_functions":{
+	"template":"latex_trig_func",
+	"values":["sin","cos","tan","sec","csc","cot","arcsin","arccos","arctan","sinh","cosh","tanh"]},
+    
     "functions":{
-	"template":"latex_func",
-	"values":["sin","cos","tan","sec","csc","cot","log","ln","arcsin","arccos","arctan","sinh","cosh","tanh"]},
+	"template":"latex_trig_func",
+	"values":["log","ln"]},
     
     "utf8chars":{
 	"template":"utf8char",
