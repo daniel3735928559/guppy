@@ -86,9 +86,10 @@ body {
 }
 
 .tabbar .scroller-left{
+    cursor: pointer;
     display:inline-block;
     width:5vw;
-    border:1px solid black;
+    /* border:1px solid black; */
     float:left;
     width:8vw;
     margin:0 1vw;
@@ -97,10 +98,11 @@ body {
 }
 
 .tabbar .scroller-right{
+    cursor: pointer;
     display:inline-block;
     float:left;
     width:5vw;
-    border:1px solid black;
+    /* border:1px solid black; */
     width:8vw;
     margin:0 1vw;
     min-height:7vh;
@@ -120,8 +122,8 @@ body {
     background:
 	linear-gradient(to right, white 30%, rgba(255,255,255,0)),
 	linear-gradient(to right, rgba(255,255,255,0), white 70%) 100% 0,
-	radial-gradient(farthest-side at 0 50%, rgba(0,0,0,10), rgba(0,0,0,0)),
-	radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,10), rgba(0,0,0,0)) 100% 100%;
+	radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
+	radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 100%;
     background-repeat: no-repeat;
     background-color: white;
     background-size: 40px 100%, 40px 100%, 10px 100%, 10px 100%;
@@ -148,6 +150,28 @@ body {
     min-height:7vh;
     line-height:7vh;
     min-width:8vw
+}
+
+.tabbar i {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 5px;
+}
+
+.tabbar .disabled i {
+  border: solid #eee !important;
+  border-width: 0 3px 3px 0 !important;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
 }
 
 .tabbar a.active_tab{

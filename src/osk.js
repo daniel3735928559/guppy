@@ -130,10 +130,17 @@ GuppyOSK.prototype.attach = function(guppy){
     var controls = elt("div",{"class":"controls"});
     var tab_bar_div = elt("div",{"class":"tabbar"});
     var tab_bar = elt("ul");
-    var sl = elt("div",{"class":"scroller-left"},"<");
-    var sr = elt("div",{"class":"scroller-right"},">");
+    var sl = elt("div",{"class":"scroller-left disabled"},"<i class=\"left\"></i>");
+    var sr = elt("div",{"class":"scroller-right"},"<i class=\"right\"></i>");
     click_listener(sl,function(){tab_bar.scrollLeft -= 100;});
     click_listener(sr,function(){tab_bar.scrollLeft += 100;});
+    tab_bar.addEventListener("scroll",function(){
+	console.log(tab_bar.scrollLeft,tab_bar.scrollLeft+tab_bar.offsetWidth,tab_bar.scrollWidth)
+	if(tab_bar.scrollLeft <= 0) sl.className = "scroller-left disabled";
+	else sl.className = "scroller-left";
+	if(tab_bar.scrollLeft+tab_bar.offsetWidth >= tab_bar.scrollWidth) sr.className = "scroller-right disabled";
+	else sr.className = "scroller-right";
+    });
     tab_bar_div.appendChild(sl);
     tab_bar_div.appendChild(tab_bar);
     tab_bar_div.appendChild(sr);
