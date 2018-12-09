@@ -532,7 +532,12 @@ var Guppy = (function () {
                 }
             }
             if (!ok) {
-                return [];
+                if (text.charCodeAt(0) > 128) {
+                    ans.push({ "type": "name", "value": text[0] });
+                    text = text.substring(1);
+                } else {
+                    return [];
+                }
             }
         }
         return ans;
@@ -1015,7 +1020,7 @@ var Guppy = (function () {
     		asciimath: "oo"
     	},
     	attrs: {
-    		group: "qwerty",
+    		group: "functions",
     		type: "infinity"
     	}
     };
@@ -1075,7 +1080,7 @@ var Guppy = (function () {
     			asciimath: " {$name} "
     		},
     		attrs: {
-    			group: "unicode",
+    			group: "emoji",
     			type: "{$name}"
     		}
     	},
@@ -1117,7 +1122,7 @@ var Guppy = (function () {
     };
     var greek = {
     	template: "char",
-    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
+    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
     };
     var comparisons = {
     	template: "binop",
@@ -4428,18 +4433,18 @@ var Guppy = (function () {
             if (this.sel_status == Engine.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
             if (this.sel_status != Engine.SEL_NONE) {
                 var sel_caret_text = Utils.is_small(sel_cursor.node) ? Utils.SMALL_SEL_CARET : Utils.SEL_CARET;
-                if (!text_node && text.length == 0 && n.parentNode.childElementCount > 1) {
+                if (text.length == 0 && n.parentNode.childElementCount > 1) {
                     sel_caret_text = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0}{" + sel_caret_text + "}}";
                 } else {
                     sel_caret_text = "\\blue{" + sel_caret_text + "}";
                 }
-                if (this.sel_status == Engine.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\" + Utils.SEL_COLOR + "{";
-                if (this.sel_status == Engine.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
+                if (this.sel_status == Engine.SEL_CURSOR_AT_END) sel_caret_text = sel_caret_text + "\\" + Utils.SEL_COLOR + "{";
+                if (this.sel_status == Engine.SEL_CURSOR_AT_START) sel_caret_text = "}" + sel_caret_text;
             }
             var caret_text = "";
             var temp_caret_text = "";
             if (text.length == 0) {
-                if (text_node) caret_text = "\\_";else if (n.parentNode.childElementCount == 1) {
+                if (n.parentNode.childElementCount == 1) {
                     if (this.current == n) {
                         var blank_caret = this.setting("blank_caret") || (Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET);
                         ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0" + "}{" + blank_caret + "}}";
@@ -4459,27 +4464,19 @@ var Guppy = (function () {
             }
             for (var i = 0; i < text.length + 1; i++) {
                 if (n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)) {
-                    if (text_node) {
-                        if (this.sel_status == Engine.SEL_CURSOR_AT_START) caret_text = "[";else if (this.sel_status == Engine.SEL_CURSOR_AT_END) caret_text = "]";else caret_text = "\\_";
-                    } else {
-                        caret_text = Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET;
-                        if (text.length == 0) caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0}{" + caret_text + "}}";else {
-                            caret_text = "\\red{\\xmlClass{main_cursor}{" + caret_text + "}}";
-                        }
-                        if (this.sel_status == Engine.SEL_CURSOR_AT_START) caret_text = caret_text + "\\" + Utils.SEL_COLOR + "{";else if (this.sel_status == Engine.SEL_CURSOR_AT_END) caret_text = "}" + caret_text;
+                    caret_text = Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET;
+                    if (text.length == 0) caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0}{" + caret_text + "}}";else {
+                        caret_text = "\\red{\\xmlClass{main_cursor}{" + caret_text + "}}";
                     }
-                    ans += caret_text;
-                } else if (n == this.current && i == this.caret && text_node) {
+                    if (this.sel_status == Engine.SEL_CURSOR_AT_START) caret_text = caret_text + "\\" + Utils.SEL_COLOR + "{";else if (this.sel_status == Engine.SEL_CURSOR_AT_END) caret_text = "}" + caret_text;
                     ans += caret_text;
                 } else if (this.sel_status != Engine.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret) {
                     ans += sel_caret_text;
                 } else if (this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)) {
-                    if (text_node) temp_caret_text = ".";else {
-                        temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
-                        if (text.length == 0) {
-                            temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0}{" + temp_caret_text + "}}";
-                        } else temp_caret_text = "\\gray{" + temp_caret_text + "}";
-                    }
+                    temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
+                    if (text.length == 0) {
+                        temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_" + n.getAttribute("path") + "_0}{" + temp_caret_text + "}}";
+                    } else temp_caret_text = "\\gray{" + temp_caret_text + "}";
                     ans += temp_caret_text;
                 }
                 if (i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_" + n.getAttribute("path") + "_" + i + "}{" + text[i] + "}";
@@ -4601,7 +4598,7 @@ var Guppy = (function () {
                 } else {
                     // look for [0-9.]+|[a-zA-Z] immediately preceeding the caret and use that as token
                     var prev = this.current.firstChild.nodeValue.substring(0, this.caret);
-                    var token = prev.match(/[0-9.]+$|[a-zA-Z]$/);
+                    var token = prev.charCodeAt(prev.length - 1) > 128 ? prev[prev.length - 1] : prev.match(/[0-9.]+$|[a-zA-Z]$/);
                     if (token != null && token.length > 0) {
                         token = token[0];
                         left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0, this.caret - token.length));
@@ -5504,11 +5501,13 @@ var Guppy = (function () {
 
     Engine.prototype.insert_utf8 = function (codepoint) {
         var c = String.fromCharCode(codepoint);
-        if (codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) {
-            this.insert_string(c);
-        } else {
-            this.insert_symbol("utf8codepoint", { "name": "UTF8", "codepoint": codepoint.toString(16) });
-        }
+        this.insert_string(c);
+        // if((codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) || Utils.is_text(this.current)){
+        //     this.insert_string(c);
+        // }
+        // else{
+        //     this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
+        // }
     };
 
     Engine.prototype.problem = function (message) {
@@ -5716,7 +5715,7 @@ var Guppy = (function () {
         this.editor.addEventListener("focus", function () {
             Guppy.kb.alt_down = false;
         }, false);
-        this.configure("buttons", ["settings", "controls", "symbols"]);
+        if (!Settings.config.settings["buttons"]) this.configure("buttons", ["settings", "controls", "symbols"]);else this.set_buttons();
         this.render(true);
         this.deactivate();
         this.recompute_locations_paths();
@@ -5782,6 +5781,9 @@ var Guppy = (function () {
             Guppy.raw_input.style.display = "none";
             g.render(true);
             Guppy.hide_raw_input();
+        } else if (e.keyCode == 27) {
+            // esc
+            Guppy.hide_raw_input();
         }
     });
 
@@ -5789,8 +5791,9 @@ var Guppy = (function () {
         var g = Guppy.active_guppy;
         if (!g) return;
         Guppy.raw_input_target = g;
-        var r = g.editor.getBoundingClientRect();
-        Guppy.raw_input.style.top = r.bottom + document.documentElement.scrollTop + "px";
+        var r = g.editor.getElementsByClassName("cursor")[0].getBoundingClientRect();
+        var height = r.bottom - r.top;
+        Guppy.raw_input.style.top = r.bottom + document.documentElement.scrollTop - height / 2 + "px";
         Guppy.raw_input.style.left = r.left + document.documentElement.scrollLeft + "px";
         Guppy.raw_input.style.display = "block";
         Guppy.raw_input.focus();
@@ -6581,6 +6584,7 @@ var Guppy = (function () {
         Guppy.kb.ctrl_down = false;
         Guppy.kb.alt_down = false;
         this.render();
+        Guppy.hide_raw_input();
         if (newly_inactive) this.engine.fire_event("focus", { "focused": false });
     };
 

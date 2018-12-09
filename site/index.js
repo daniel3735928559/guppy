@@ -2,10 +2,10 @@ var g1
 window.onload = function() {
     output_type = "latex";
     document.getElementById("sample_output").readOnly = true;
-    Guppy.use_osk(new GuppyOSK({"goto_tab":"qwerty"}));
     Guppy.event("change", update_output);
     Guppy.event("completion", completion);
     Guppy.configure("empty_content", "{\\text{Click to start typing math!}}");
+    Guppy.use_osk(new GuppyOSK({"goto_tab":"qwerty"}));
     Guppy.configure("buttons", ["osk","settings","symbols","controls"]);
     g1 = new Guppy("guppy1");
 };

@@ -45,7 +45,10 @@ var Guppy = function(el){
     this.editor.addEventListener("keydown",Guppy.key_down, false);
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; }, false);
-    this.configure("buttons",["settings","controls","symbols"]);
+    if(!Settings.config.settings["buttons"])
+	this.configure("buttons",["settings","controls","symbols"]);
+    else
+	this.set_buttons();
     this.render(true);
     this.deactivate();
     this.recompute_locations_paths();
@@ -104,14 +107,18 @@ Guppy.raw_input.addEventListener("keyup", function(e){
         g.render(true);
         Guppy.hide_raw_input();
     }
+    else if(e.keyCode == 27){ // esc
+        Guppy.hide_raw_input();
+    }	
 });
 
 Guppy.get_raw_input = function(){
     var g = Guppy.active_guppy;
     if(!g) return;
     Guppy.raw_input_target = g;
-    var r = g.editor.getBoundingClientRect();
-    Guppy.raw_input.style.top = (r.bottom+document.documentElement.scrollTop) + "px";
+    var r = g.editor.getElementsByClassName("cursor")[0].getBoundingClientRect();
+    var height = r.bottom-r.top;
+    Guppy.raw_input.style.top = (r.bottom+document.documentElement.scrollTop-height/2) + "px";
     Guppy.raw_input.style.left = (r.left+document.documentElement.scrollLeft) + "px";
     Guppy.raw_input.style.display = "block";
     Guppy.raw_input.focus();
@@ -834,6 +841,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
     this.render();
+    Guppy.hide_raw_input();
     if(newly_inactive) this.engine.fire_event("focus",{"focused":false});
 }
 

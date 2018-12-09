@@ -178,25 +178,24 @@ Engine.prototype.add_classes_cursors = function(n){
         var text = n.firstChild.nodeValue;
         var ans = "";
         var sel_cursor;
-        var text_node = Utils.is_text(n);
+	var text_node = Utils.is_text(n);
         if(this.sel_status == Engine.SEL_CURSOR_AT_START) sel_cursor = this.sel_end;
         if(this.sel_status == Engine.SEL_CURSOR_AT_END) sel_cursor = this.sel_start;
         if(this.sel_status != Engine.SEL_NONE){
             var sel_caret_text = Utils.is_small(sel_cursor.node) ? Utils.SMALL_SEL_CARET : Utils.SEL_CARET;
-            if(!text_node && text.length == 0 && n.parentNode.childElementCount > 1){
+            if(text.length == 0 && n.parentNode.childElementCount > 1){
                 sel_caret_text = "\\blue{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+sel_caret_text+"}}";
             }
             else{
                 sel_caret_text = "\\blue{"+sel_caret_text+"}";
             }
-            if(this.sel_status == Engine.SEL_CURSOR_AT_END) sel_caret_text = text_node ? "[" : sel_caret_text + "\\"+Utils.SEL_COLOR+"{";
-            if(this.sel_status == Engine.SEL_CURSOR_AT_START) sel_caret_text = text_node ? "]" : "}" + sel_caret_text;
+            if(this.sel_status == Engine.SEL_CURSOR_AT_END) sel_caret_text = sel_caret_text + "\\"+Utils.SEL_COLOR+"{";
+            if(this.sel_status == Engine.SEL_CURSOR_AT_START) sel_caret_text = "}" + sel_caret_text;
         }
         var caret_text = "";
         var temp_caret_text = "";
         if(text.length == 0){
-            if(text_node) caret_text = "\\_";
-            else if(n.parentNode.childElementCount == 1){
+            if(n.parentNode.childElementCount == 1){
                 if(this.current == n){
                     var blank_caret = this.setting("blank_caret") || (Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET);
                     ans = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0"+"}{"+blank_caret+"}}";
@@ -221,45 +220,28 @@ Engine.prototype.add_classes_cursors = function(n){
         }
         for(var i = 0; i < text.length+1; i++){
             if(n == this.current && i == this.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
-                if(text_node){
-                    if(this.sel_status == Engine.SEL_CURSOR_AT_START)
-                        caret_text = "[";
-                    else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
-                        caret_text = "]";
-                    else
-                        caret_text = "\\_";
-                }
+                caret_text = Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET;
+                if(text.length == 0)
+                    caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
                 else{
-                    caret_text = Utils.is_small(this.current) ? Utils.SMALL_CARET : Utils.CARET;
-                    if(text.length == 0)
-                        caret_text = "\\red{\\xmlClass{main_cursor guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+caret_text+"}}";
-                    else{
-                        caret_text = "\\red{\\xmlClass{main_cursor}{"+caret_text+"}}"
-                    }
-                    if(this.sel_status == Engine.SEL_CURSOR_AT_START)
-                        caret_text = caret_text + "\\"+Utils.SEL_COLOR+"{";
-                    else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
-                        caret_text = "}" + caret_text;
+                    caret_text = "\\red{\\xmlClass{main_cursor}{"+caret_text+"}}"
                 }
-                ans += caret_text;
-            }
-            else if(n == this.current && i == this.caret && text_node){
+                if(this.sel_status == Engine.SEL_CURSOR_AT_START)
+                    caret_text = caret_text + "\\"+Utils.SEL_COLOR+"{";
+                else if(this.sel_status == Engine.SEL_CURSOR_AT_END)
+                    caret_text = "}" + caret_text;
                 ans += caret_text;
             }
             else if(this.sel_status != Engine.SEL_NONE && sel_cursor.node == n && i == sel_cursor.caret){
                 ans += sel_caret_text;
             }
             else if(this.temp_cursor.node == n && i == this.temp_cursor.caret && (text.length > 0 || n.parentNode.childElementCount > 1)){
-                if(text_node)
-                    temp_caret_text = ".";
-                else{
-                    temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
-                    if(text.length == 0){
-                        temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
+                temp_caret_text = Utils.is_small(this.current) ? Utils.TEMP_SMALL_CARET : Utils.TEMP_CARET;
+                if(text.length == 0){
+                    temp_caret_text = "\\gray{\\xmlClass{guppy_elt guppy_blank guppy_loc_"+n.getAttribute("path")+"_0}{"+temp_caret_text+"}}";
                     }
-                    else
-                        temp_caret_text = "\\gray{"+temp_caret_text+"}";
-                }
+                else
+                    temp_caret_text = "\\gray{"+temp_caret_text+"}";
                 ans += temp_caret_text;
             }
             if(i < text.length) ans += "\\xmlClass{guppy_elt guppy_loc_"+n.getAttribute("path")+"_"+i+"}{"+text[i]+"}";
@@ -379,7 +361,7 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
             else{
                 // look for [0-9.]+|[a-zA-Z] immediately preceeding the caret and use that as token
                 var prev = this.current.firstChild.nodeValue.substring(0,this.caret);
-                var token = prev.match(/[0-9.]+$|[a-zA-Z]$/);
+                var token = prev.charCodeAt(prev.length-1) > 128 ? prev[prev.length-1] : prev.match(/[0-9.]+$|[a-zA-Z]$/);
                 if(token != null && token.length > 0){
                     token = token[0];
                     left_piece = this.make_e(this.current.firstChild.nodeValue.slice(0,this.caret-token.length));
@@ -1307,12 +1289,13 @@ Engine.prototype.complete_utf8 = function(codepoint){
 
 Engine.prototype.insert_utf8 = function(codepoint){
     var c = String.fromCharCode(codepoint);
-    if(codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0){
-        this.insert_string(c);
-    }
-    else{
-        this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
-    }
+    this.insert_string(c);
+    // if((codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) || Utils.is_text(this.current)){
+    //     this.insert_string(c);
+    // }
+    // else{
+    //     this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
+    // }
 }
 
 Engine.prototype.problem = function(message){

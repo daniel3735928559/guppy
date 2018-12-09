@@ -952,7 +952,7 @@ var tests = [
     {
 	"description":"utf8 basic",
 	"type":"ast",
-	"expected":'["var",["\\\\u2708"]]',
+	"expected":'["var",["✈"]]',
 	"run":function(g){
 	    do_keys(['u','t','f','8','2','7','0','8','enter']);
 	}

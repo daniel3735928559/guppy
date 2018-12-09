@@ -22,6 +22,7 @@ body {
 
 .guppy_osk_group {
     width: 100%;
+    min-height:20vh;
     background-color:white;
     text-align: center;
 }
@@ -35,15 +36,18 @@ body {
 
 .guppy_osk .spacer {
     display: inline-block;
+    height:0;
+    width:8vw;
 }
 
 .guppy_osk .guppy_osk_key {
-    margin: 3px;
+    margin: .1vh .1vw;
     display: inline-block;
     justify-content: center;
     align-items: center;
     min-width: 8vw;
-    line-height:5vh;
+    line-height:8vh;
+    height:8vh;
     vertical-align:middle;
     text-align: center;
     background: #ddd;
@@ -74,57 +78,80 @@ body {
 }
 
 .tabbar{
-    float:left;
     width:100%;
     text-align:center;
-}
-
-.tabbar ul{
-    display:inline-block;
-    overflow-x:scroll;
-    white-space:nowrap;
-    list-style-type:none;
-    list-style:none;
     float:left;
-    margin:0 7%;
-    padding:0;
-    width:70%;
-}
-
-.tabbar li{
-    display:inline-block;
-    cusror: pointer;
-}
- 
-.tabbar a{
-  display:block;
-  padding:5px 10px;
-  background-color: #fff;
-  color: #000;
-  text-decoration: none;
-  margin: 0 5px;
-  border-top:1px solid #000;
-  border-left:1px solid #000;
-  border-right:1px solid #000;
-  border-bottom: 0;
-}
-
-.tabbar a.active_tab{
-  background-color: #7cf;
+    background-color:white;
+    padding:1vh 0 0 0;
 }
 
 .tabbar .scroller-left{
     display:inline-block;
-    float:left;
-    width:5%;
+    width:5vw;
     border:1px solid black;
+    float:left;
+    width:8vw;
+    margin:0 1vw;
+    min-height:7vh;
+    line-height:7vh;
 }
 
 .tabbar .scroller-right{
     display:inline-block;
     float:left;
-    width:5%;
+    width:5vw;
     border:1px solid black;
+    width:8vw;
+    margin:0 1vw;
+    min-height:7vh;
+    line-height:7vh;
+}
+
+.tabbar ul{
+    float:left;
+    white-space:nowrap;
+    list-style-type:none;
+    list-style:none;
+    margin:0 2.5vw;
+    padding:0;
+    width:70vw;
+    overflow-x:hidden;
+    float:left;
+    background:
+	linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+	linear-gradient(to right, rgba(255,255,255,0), white 70%) 100% 0,
+	radial-gradient(farthest-side at 0 50%, rgba(0,0,0,10), rgba(0,0,0,0)),
+	radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,10), rgba(0,0,0,0)) 100% 100%;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 40px 100%, 40px 100%, 10px 100%, 10px 100%;
+    background-attachment: local, local, scroll, scroll;
+}
+
+.tabbar li{
+    display:inline-block;
+    background:rgba(0,0,0,0);
+    cusror: pointer;
+}
+ 
+.tabbar a{
+    background:rgba(0,0,0,0);
+    display:block;
+    padding:5px 10px;
+    color: #000;
+    text-decoration: none;
+    margin: 0 5px;
+    border-top:1px solid #000;
+    border-left:1px solid #000;
+    border-right:1px solid #000;
+    border-bottom: 0;
+    min-height:7vh;
+    line-height:7vh;
+    min-width:8vw
+}
+
+.tabbar a.active_tab{
+  background: rgba(119,204,255,.2);
 }
 
 /* .tabbar div{ */

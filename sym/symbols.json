@@ -298,7 +298,7 @@
 
     "infinity":{"output":{"latex":"\\infty",
 			  "asciimath":"oo"},
-		"attrs":{"group":"qwerty",
+		"attrs":{"group":"functions",
 			 "type":"infinity"}
 	       },
     
@@ -339,7 +339,7 @@
 	"utf8char":{"output":{"latex":"\\text{{$char}}",
 			      "asciimath":" {$name} "},
 		    "attrs":{
-			"group":"unicode",
+			"group":"emoji",
 			"type":"{$name}"}},
 	
 	"binop":{"output":{"latex":"{$latex}",
@@ -367,7 +367,7 @@
     
     "greek":{
 	"template":"char",
-	"values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
+	"values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
 
     "comparisons":{
 	"template":"binop",

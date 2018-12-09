@@ -50,12 +50,14 @@ function make_tabs(tabbar, element){
         if(j != 0) tabs[j].style.display = "none";
         var header = headers[j];
         click_listener(header, function(e){
+            var target = e.target;
+            while(target.tagName.toLowerCase() != "a") target = target.parentNode;
             for(var i = 0; i < headers.length; i++){
                 tabs[i].style.display = "none";
                 headers[i].classList.remove("active_tab");
             }
-            e.target.classList.add("active_tab")
-            element.querySelector(e.target.getAttribute("href")).style.display = "block";
+            target.classList.add("active_tab")
+            element.querySelector(target.getAttribute("href")).style.display = "block";
             e.preventDefault();
             return false;
         });
@@ -75,6 +77,35 @@ GuppyOSK.prototype.detach = function(guppy){
             this.element = null;
         }
     }
+}
+
+GuppyOSK.group_headers = {"arithmetic":"123",
+                          "qwerty":"abc",
+                          "QWERTY":"ABC",
+                          "functions":"\\sqrt{x}",
+                          "editor":"\\text{abc}",
+                          "calculus":"\\int",
+                          "array":"\\langle\\hspace{2pt}\\rangle",
+                          "operations":"\\leq",
+                          "emoji":"\\char\"263A",
+                          "greek":"\\pi"
+                         }
+
+GuppyOSK.str_to_syms = function(s){
+    var ans = [];
+    for(var i = 0; i < s.length; i++){
+        if(s[i] == "\n") ans.push({"break":true});
+        else if(s[i] == "\t") ans.push({"tab":true});
+        else if(s[i] == "*") ans.push({"name":"*","latex":"\\cdot"});
+        else if(s[i] == "/") ans.push({"name":"/","latex":"/"});
+        else{
+            let latex = s[i];
+            const name = s[i];
+            if(latex == ".") latex = "."+GuppyOSK.blank;
+            ans.push({"name":name, "latex":latex});
+        }
+    }
+    return ans;
 }
 
 /**
@@ -107,53 +138,23 @@ GuppyOSK.prototype.attach = function(guppy){
     tab_bar_div.appendChild(tab_bar);
     tab_bar_div.appendChild(sr);
     osk.appendChild(tab_bar_div);
-    var grouped = {"arithmetic":[],"qwerty":[],"QWERTY":[]};
-    var arith = "12345+-*/\n67890.xyz";
-    var abc = "1234567890\nqwertyuiop\n\tasdfghjkl\n\t\tzxcvbnm"
-    for(let i = 0; i < arith.length; i++){
-        if(arith[i] == "\n") grouped["arithmetic"].push({"break":true});
-        else if(arith[i] == "*") grouped["arithmetic"].push({"name":"*","latex":"\\cdot"});
-        else if(arith[i] == "/") grouped["arithmetic"].push({"name":"/","latex":"/"});
-        else{
-            var latex = arith[i];
-            var name = arith[i];
-            if(latex == ".") latex = "."+GuppyOSK.blank;
-            grouped["arithmetic"].push({"name":name, "latex":latex});
-        }
-    }
-    for(var i = 0; i < abc.length; i++){
-        if(abc[i] == "\n"){
-            grouped["qwerty"].push({"break":true});
-            grouped["QWERTY"].push({"break":true});
-        }
-        else if(abc[i] == "\t"){
-            grouped["qwerty"].push({"tab":true});
-            grouped["QWERTY"].push({"tab":true});
-        }
-        else if(abc[i] == "*"){
-            grouped["qwerty"].push({"name":"*","latex":"\\cdot"});
-            grouped["QWERTY"].push({"name":"*","latex":"\\cdot"});
-        }
-        else if(abc[i] == "/"){
-            grouped["qwerty"].push({"name":"/","latex":"/"});
-            grouped["QWERTY"].push({"name":"/","latex":"/"});
-        }
-        else{
-            let latex = abc[i];
-            let upper_latex = latex.toUpperCase();
-            const name = abc[i];
-            if(latex == "."){
-                latex = "."+GuppyOSK.blank;
-                upper_latex = latex;
-            }
-            grouped["qwerty"].push({"name":name, "latex":latex});
-            grouped["QWERTY"].push({"name":name.toUpperCase(), "latex":upper_latex});
-        }
-    }
+    var arith = "1234\t+-\n5678\t*/\n90.x\tyz";
+    var abc = "qwertyuiop\nasdfghjkl\nzxcvbnm"
+    var grouped = {
+        "arithmetic":GuppyOSK.str_to_syms(arith),
+        "qwerty":GuppyOSK.str_to_syms(abc),
+        "QWERTY":GuppyOSK.str_to_syms(abc.toUpperCase())
+    };
     for(s in syms){
         var group = syms[s].attrs.group;
         if(!grouped[group]) grouped[group] = [];
-        var display = s == "text" ? GuppyOSK.text_blank : syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
+        var display = "";
+        if(s == "text")
+            display = GuppyOSK.text_blank
+        else
+            display = syms[s].output.latex.replace(/\{\$[0-9]+(\{[^}]+\})*\}/g, GuppyOSK.blank);
+        if(group == "calculus" || group == "functions")
+            display = "\\small " + display;
         grouped[group].push({"name":s,"latex":display});
     }
     var matrix_controls = null;
@@ -161,7 +162,11 @@ GuppyOSK.prototype.attach = function(guppy){
         var group_container = elt("div",{"class":"guppy_osk_group","id":g});
         var group_elt = elt("div",{"class":"guppy_osk_group_box","id":g});
         if(g == "array") matrix_controls = group_elt;
-        tab_bar.appendChild(elt("li",{},"<a href='#"+g+"' id='guppy_osk_"+g+"_tab'>"+g+"</a>"));
+        var link = elt("a",{"href":`#${g}`,"id":`guppy_osk_${g}_tab`})
+        katex.render(GuppyOSK.group_headers[g], link);
+        var li = elt("li");
+        li.appendChild(link);
+        tab_bar.appendChild(li);
         for(s in grouped[g]){
             var sym = grouped[g][s];
             if(sym['break']){
@@ -173,37 +178,22 @@ GuppyOSK.prototype.attach = function(guppy){
             else{
                 var key = elt("span",{"class":"guppy_osk_key"});
                 var f = null;
-                if(g == "arithmetic" || g == "qwerty" || g == "QWERTY"){
-                    f = function(n){
-                        click_listener(key, function(e){
-                            e.preventDefault();
-                            guppy.engine.insert_string(n);
-                            guppy.render();
-                            if(self.config.goto_tab){
-                                document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-                            }
-                            e.preventDefault();
-                            return false;
-                        });
-                    };
-                    f(sym.name);
-                } else {
-                    f = function(n){
-                        click_listener(key, function(e){
-                            e.preventDefault();
-                            guppy.engine.insert_symbol(n);
-                            guppy.render();
-                            if(self.config.goto_tab){
-                                document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-                            }
-                            e.preventDefault();
-                            return false;
-                        });
-                    };
-                    f(sym.name);
-                }
+                f = function(n,gn){
+                    click_listener(key, function(e){
+                        e.preventDefault();
+                        if(gn == "arithmetic" || gn == "qwerty" || gn == "QWERTY") guppy.engine.insert_string(n);
+                        else guppy.engine.insert_symbol(n);
+                        guppy.render();
+                        if(self.config.goto_tab){
+                            document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
+                        }
+                        e.preventDefault();
+                        return false;
+                    });
+                };
+                f(sym.name,g);
                 group_elt.appendChild(key);
-                katex.render(sym.latex, key);
+                katex.render(sym.latex, key, {displayMode: false});
             }
         }
         group_container.appendChild(group_elt);
@@ -225,8 +215,6 @@ GuppyOSK.prototype.attach = function(guppy){
         //katex.render(content, e);
     }
 
-    add_control("&larr;S", function(e){ e.preventDefault();guppy.engine.sel_left();guppy.render();});
-    add_control("S&rarr;", function(e){ e.preventDefault();guppy.engine.sel_right();guppy.render();});
     add_control("cut", function(e){ e.preventDefault();guppy.engine.sel_cut();guppy.render();});
     add_control("copy", function(e){ e.preventDefault();guppy.engine.sel_copy();guppy.render();});
     add_control("paste", function(e){ e.preventDefault();guppy.engine.sel_paste();guppy.render();});
@@ -236,9 +224,12 @@ GuppyOSK.prototype.attach = function(guppy){
     add_control("spc", function(e){ e.preventDefault();guppy.engine.spacebar();guppy.render();});
     add_control("tab", function(e){ e.preventDefault();guppy.engine.tab();guppy.render();});
     add_control("ret", function(e){ e.preventDefault();guppy.engine.done();guppy.render();});
+    add_control("raw", function(e){ e.preventDefault();guppy.constructor.get_raw_input();});
+    add_control("&larr;S", function(e){ e.preventDefault();guppy.engine.sel_left();guppy.render();});
+    add_control("S&rarr;", function(e){ e.preventDefault();guppy.engine.sel_right();guppy.render();});
     add_control("&larr;", function(e){ e.preventDefault();guppy.engine.left();guppy.render();});
-    add_control("&uarr;", function(e){ e.preventDefault();guppy.engine.up();guppy.render();});
-    add_control("&darr;", function(e){ e.preventDefault();guppy.engine.down();guppy.render();});
+    // add_control("&uarr;", function(e){ e.preventDefault();guppy.engine.up();guppy.render();});
+    // add_control("&darr;", function(e){ e.preventDefault();guppy.engine.down();guppy.render();});
     add_control("&rarr;", function(e){ e.preventDefault();guppy.engine.right();guppy.render();});
 
     matrix_controls.appendChild(elt("br"));

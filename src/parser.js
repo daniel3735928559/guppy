@@ -175,7 +175,13 @@ Parser.prototype.tokenise = function(text){
             }
         }
         if(!ok){
-            return [];
+            if(text.charCodeAt(0) > 128){
+                ans.push({"type":"name", "value":text[0]});
+                text = text.substring(1);
+            }
+            else{
+                return [];
+            }
         }
     }
     return ans;
