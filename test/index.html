@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+    <head>
+	<title>Guppy</title>
+	<link rel="stylesheet" href="../build/guppy-default.min.css">
+	<script type="text/javascript" src="../build/guppy.js"></script>
+	<style>
+	 #status{
+	     width: 100%;
+	     float: left;
+	 }
+	 #results{
+	     width: 40%;
+	     float: left;
+	 }
+	 #coverage{
+	     width:40%;
+	     float:left;
+	 }
+	 div.pass{
+	     background-color:#3f3;
+	 }
+	 div.fail{
+	     background-color:#f33;
+	 }
+	</style>
+	<script type="text/javascript">
+	 var total = 0;
+	 var passes = 0;
+	 function describe(){}
+	 function result(test, passed, expected, observed){
+	     document.getElementById("results").innerHTML += `<div class="${passed}"> `;
+	 }
+	 function expect(observation){
+	     return {check: function(test){
+		 if(observation == test.expected){
+		     passes++;
+		     document.getElementById("results").innerHTML += `<div class="pass">PASS: ${test.description}</div>`;
+		     console.log("PASS",test.description)
+		 }
+		 else{
+		     document.getElementById("results").innerHTML += `<div class="fail">FAIL: ${test.description}<ul><li>OBSERVED: ${observation}</li><li>EXPECTED: ${test.expected}</li></ul></div>`;
+		     console.log("FAIL",test.description,"OBSERVED",observation,"EXPECTED",test.expected);
+		 }
+	     }};
+	 }
+	 function it(desc, test){
+	     total++;
+	     pre_test();
+	     test();
+	     post_test();
+	     document.getElementById("summary").innerHTML = `Passed: ${passes}/${total} (${Math.round(10000*passes/total)/100}%)`;
+	 }
+	</script>
+	<script type="text/javascript" src="test.js"></script>
+	<script type="text/javascript">
+	 window.onload= function(){
+	     run_tests();
+	     pre_test();
+	     document.getElementById("status").innerHTML = "Status: DONE";
+	 }
+	</script>
+    </head>
+    <body>
+	<br /><br />
+	<h3 id="status">Status: Running tests, please wait...</h3>
+	<div id="results">
+	    <div id="summary"></div>
+	</div>
+	<div id="coverage">
+	    <div id="coverage_header">Code Coverage</div>
+	    <iframe height="600px" style="width:100%;border:1px solid black;padding:10px;" src="../build/coverage/index.html"></iframe>
+	</div>
+    </body>
+</html>

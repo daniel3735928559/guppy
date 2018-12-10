@@ -5799,9 +5799,11 @@ var Guppy = (function () {
             Guppy.raw_input.style.display = "none";
             g.render(true);
             Guppy.hide_raw_input();
+            g.engine.fire_event("focus", { "focused": true });
         } else if (e.keyCode == 27) {
             // esc
             Guppy.hide_raw_input();
+            g.engine.fire_event("focus", { "focused": true });
         }
     });
 
@@ -5815,6 +5817,7 @@ var Guppy = (function () {
         Guppy.raw_input.style.left = r.left + document.documentElement.scrollLeft + "px";
         Guppy.raw_input.style.display = "block";
         Guppy.raw_input.focus();
+        if (Guppy.OSK) Guppy.OSK.detach();
     };
 
     Guppy.hide_raw_input = function () {
@@ -6673,6 +6676,7 @@ var Guppy = (function () {
         Guppy.kb.shift_down = false;
         Guppy.kb.ctrl_down = false;
         Guppy.kb.alt_down = false;
+        Settings.hide_all();
         this.render();
         Guppy.hide_raw_input();
         if (newly_inactive) this.engine.fire_event("focus", { "focused": false });

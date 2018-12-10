@@ -46,9 +46,9 @@ var Guppy = function(el){
     this.editor.addEventListener("keyup",Guppy.key_up, false);
     this.editor.addEventListener("focus", function() { Guppy.kb.alt_down = false; }, false);
     if(!Settings.config.settings["buttons"])
-	this.configure("buttons",["settings","controls","symbols"]);
+        this.configure("buttons",["settings","controls","symbols"]);
     else
-	this.set_buttons();
+        this.set_buttons();
     this.render(true);
     this.deactivate();
     this.recompute_locations_paths();
@@ -61,8 +61,8 @@ Guppy.prototype.set_buttons = function(){
 
     // Remove old button div if applicable
     if(this.buttons_div){
-	this.buttons_div.parentElement.removeChild(this.buttons_div);
-	delete this.buttons_div;
+        this.buttons_div.parentElement.removeChild(this.buttons_div);
+        delete this.buttons_div;
     }
 
     this.buttons_div = document.createElement("div");
@@ -106,10 +106,12 @@ Guppy.raw_input.addEventListener("keyup", function(e){
         Guppy.raw_input.style.display="none";
         g.render(true);
         Guppy.hide_raw_input();
+        g.engine.fire_event("focus",{"focused":true});
     }
     else if(e.keyCode == 27){ // esc
         Guppy.hide_raw_input();
-    }	
+        g.engine.fire_event("focus",{"focused":true});
+    }
 });
 
 Guppy.get_raw_input = function(){
@@ -122,6 +124,7 @@ Guppy.get_raw_input = function(){
     Guppy.raw_input.style.left = (r.left+document.documentElement.scrollLeft) + "px";
     Guppy.raw_input.style.display = "block";
     Guppy.raw_input.focus();
+    if(Guppy.OSK) Guppy.OSK.detach();
 }
 
 Guppy.hide_raw_input = function(){
@@ -551,9 +554,9 @@ Guppy.touch_move = function(e){
     while(n != null){
         var instance = Guppy.instances.get(n);
         if(instance == g){
-	    g.select_to(touchobj.clientX,touchobj.clientY, true);
-	    g.render(g.is_changed());
-	}
+            g.select_to(touchobj.clientX,touchobj.clientY, true);
+            g.render(g.is_changed());
+        }
         n = n.parentNode;
     }
 }
@@ -889,6 +892,7 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.shift_down = false;
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
+    Settings.hide_all();
     this.render();
     Guppy.hide_raw_input();
     if(newly_inactive) this.engine.fire_event("focus",{"focused":false});

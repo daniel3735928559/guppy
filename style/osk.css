@@ -59,10 +59,9 @@ body {
 /* .guppy_osk #qwerty .guppy_osk_key, */
 /* .guppy_osk .controls .guppy_osk_key, */
 /* .guppy_osk #QWERTY .guppy_osk_key, */
-/* .guppy_osk #greek .guppy_osk_key { */
-/*     line-height:5vh !important; */
-/*     height: 5vh !important;  */
-/* } */
+.guppy_osk .long_key {
+    min-width:20vw !important;
+}
 
 .guppy_osk .guppy_osk_key:hover {
     position: relative;

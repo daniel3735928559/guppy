@@ -977,59 +977,6 @@ var tests = [
     }
 ];
 
-Guppy.event("error",function(e){e.target.import_xml("<m><e>"+e.message+"</e></m>");});
-Guppy.event("left_end",function(e){e.target.import_xml("<m><e>LEFT</e></m>");});
-Guppy.event("focus",function(e){if(e.focused) focuses++; else unfocuses++;});
-Guppy.event("right_end",function(e){e.target.import_xml("<m><e>RIGHT</e></m>");});
-Guppy.event("done",function(e){e.target.import_xml("<m><e>DONE</e></m>");});
-Guppy.event("change",function(e){});
-test_guppy = {};
-
-describe('Guppy',function(){
-    beforeEach(function() {
-	var fixture = '<div id="guppy1" style="width:80%;float:left;border:2px solid blue;height:75px;padding:20px;"></div>';
-	document.body.insertAdjacentHTML('afterbegin', fixture);
-	test_guppy = new Guppy("guppy1");
-    });
-
-    beforeEach(function(){
-	test_guppy.activate();
-    });
-    
-    afterEach(function() {
-    	document.body.removeChild(document.getElementById('guppy1'));
-    });
-
-    for(var j = 0; j < tests.length; j++){
-	var f = function(i){
-	    var t = tests[i];
-	    it(t.description, function(){
-		test_guppy.activate();
-		if(!t.content) test_guppy.import_xml("<m><e></e></m>");
-		else if(t.content != "none") test_guppy.import_xml(t.content);
-		test_guppy.render();
-		var observed = ""
-		try{
-		    t.run(test_guppy);
-		    test_guppy.render();
-		    if(t.observe) observed = t.observe(test_guppy);
-		    else observed = test_guppy.engine.get_content(t.type);
-		} catch(e) {
-		    observed = e + "\n" + e.stack;
-		}
-		test_guppy.deactivate();
-		if(t.type == "latex"){
-		    t.expected = t.expected.replace("/ /g","");
-		    observed = observed.replace("/ /g","");
-		}
-		//console.log('o=',observed,'ty=',t.type,'e=',t.expected);
-		expect(observed).toEqual(t.expected);
-	    });
-	};
-	f(j);
-    }
-});
-
 function do_keys(chs){
     test_guppy.activate();
     for(var i = 0; i < chs.length; i++)
@@ -1055,3 +1002,68 @@ function do_mouse_down(path,x_frac,y_frac, shift){
 function do_mouse_up(){
     Guppy.mouse_up();
 }
+
+function pre_test(){
+	var fixture = '<div id="guppy1" style="width:80%;float:left;border:2px solid blue;height:75px;padding:20px;"></div>';
+	document.body.insertAdjacentHTML('afterbegin', fixture);
+	test_guppy = new Guppy("guppy1");
+	test_guppy.activate();
+}
+
+function post_test(){
+    	document.body.removeChild(document.getElementById('guppy1'));
+}
+
+function run_tests(){
+
+Guppy.event("error",function(e){e.target.import_xml("<m><e>"+e.message+"</e></m>");});
+Guppy.event("left_end",function(e){e.target.import_xml("<m><e>LEFT</e></m>");});
+Guppy.event("focus",function(e){if(e.focused) focuses++; else unfocuses++;});
+Guppy.event("right_end",function(e){e.target.import_xml("<m><e>RIGHT</e></m>");});
+Guppy.event("done",function(e){e.target.import_xml("<m><e>DONE</e></m>");});
+Guppy.event("change",function(e){});
+test_guppy = {};
+
+    for(var j = 0; j < tests.length; j++){
+	var f = function(i){
+	    var t = tests[i];
+	    it(t.description, function(){
+		test_guppy.activate();
+		if(!t.content) test_guppy.import_xml("<m><e></e></m>");
+		else if(t.content != "none") test_guppy.import_xml(t.content);
+		test_guppy.render();
+		var observed = ""
+		try{
+		    t.run(test_guppy);
+		    test_guppy.render();
+		    if(t.observe) observed = t.observe(test_guppy);
+		    else observed = test_guppy.engine.get_content(t.type);
+		} catch(e) {
+		    observed = e + "\n" + e.stack;
+		}
+		test_guppy.deactivate();
+		if(t.type == "latex"){
+		    t.expected = t.expected.replace("/ /g","");
+		    observed = observed.replace("/ /g","");
+		}
+		//console.log('o=',observed,'ty=',t.type,'e=',t.expected);
+		var ex = expect(observed);
+		if(ex.check) ex.check(t);
+		else ex.toEqual(t.expected);
+	    });
+	};
+	f(j);
+    }
+}
+
+describe('Guppy',function(){
+    beforeEach(function() {
+	pre_test();
+    });
+    
+    afterEach(function() {
+	post_test();
+    });
+
+    run_tests();
+});
