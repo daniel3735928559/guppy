@@ -1288,14 +1288,20 @@ Engine.prototype.complete_utf8 = function(codepoint){
 }
 
 Engine.prototype.insert_utf8 = function(codepoint){
-    var c = String.fromCharCode(codepoint);
-    this.insert_string(c);
+    //this.insert_string(c);
     // if((codepoint < 0xffff && Object.values(Engine.kb_info.k_chars).indexOf(c) >= 0) || Utils.is_text(this.current)){
     //     this.insert_string(c);
     // }
     // else{
     //     this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
     // }
+    if(codepoint <= 0xffff){
+	var c = String.fromCharCode(codepoint);
+        this.insert_string(c);
+    }
+    else{
+        this.insert_symbol("utf8codepoint",{"name":"UTF8","codepoint":codepoint.toString(16)});
+    }
 }
 
 Engine.prototype.problem = function(message){

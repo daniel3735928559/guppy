@@ -212,7 +212,7 @@ Symbols.symbol_to_node = function(s, content, base){
     return {"f":f, "first":first, "args":arglist};
 }
 
-// class Template{
+// class SymbolTemplate{
 //     constructor(name, definition){
 // 	this.name = name;
 // 	this.protosym = new Symbol(`__${name}`, definition);
@@ -227,7 +227,7 @@ Symbols.symbol_to_node = function(s, content, base){
 	
 // 	Object.keys(sym.outputs).forEach({(x) => sym.outputs[x] = r(sym.outputs[x])});
 // 	Object.keys(sym.attrs).forEach({(x) => sym.attrs[x] = r(sym.attrs[x])});
-// 	sym.args.forEach({(x) => Object.keys(sym.args[x]).forEach({(y) => sym.args[x][y] = r(sym.args[x][y])});	
+// 	sym.args.forEach({(x) => Object.keys(sym.args[x]).forEach({(y) => sym.args[x][y] = r(sym.args[x][y])})});
 //     }
 // }
 
@@ -242,9 +242,132 @@ Symbols.symbol_to_node = function(s, content, base){
 // 	this.ast_value = config.ast.value;
 // 	this.ast_type = config.ast.type;
 //     }
+//     // Returns an array with alternating text and argument elements of the form
+//     // {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...], "template":[...]}
+//     static split_output(output){
+// 	var regex = /\{\$([0-9]+)/g, result, starts = [], indices = [], i;
+// 	var ans = [];
+// 	while ((result = regex.exec(output))){
+//             starts.push(result.index);
+//             indices.push(parseInt(result[1]));
+// 	}
+// 	ans.push({"type":"text","val":output.substring(0,starts.length > 0 ? starts[0] : output.length)}); // Push the first text bit
+// 	for(i = 0; i < starts.length; i++){
+//             var idx = starts[i]+1;
+//             // Find template (if defined)
+//             // var tmpl_str = "";
+//             // var tmpl = [];
+//             // if(output[idx] == "["){
+//             //     idx++;
+//             //     var tmpl_opens = 1;
+//             //     while(opens > 0 && idx < output.length){
+//             //         if(output[idx] == "]"){ tmpl_opens--; }
+//             //         if(output[idx] == "["){ tmpl_opens++; }
+//             //         if(tmpl_opens > 1){ tmpl_str += output[idx]; }
+//             //         idx++;
+//             //     }
+//             //     tmpl = Symbols.split_output(tmpl_str);
+//             // }
+//             var separators = [];
+//             var sep = "";
+//             var opens = 1
+//             while(opens > 0 && idx < output.length){
+// 		if(output[idx] == "}"){
+//                     if(opens == 2){ separators.push(sep); sep = ""; }
+//                     opens--; }
+// 		if(opens >= 2){ sep += output[idx]; }
+// 		if(output[idx] == "{"){ opens++; }
+// 		idx++;
+//             }
+//             ans.push({"type":"arg","index":indices[i],"separators":separators});
+//             var next = (i == starts.length - 1) ? output.length : starts[i+1];
+//             ans.push({"type":"text","val":output.substring(idx,next)}); // Push the next text bit
+// 	}
+// 	return ans;
+//     }
+    
+//     to_node(s, content, base){
+	
+// 	// s is a symbol
+// 	//
+// 	// content is a list of nodes to insert
+// 	var f = base.createElement("f");
+// 	for(var attr in s.attrs){
+//             f.setAttribute(attr, s.attrs[attr]);
+// 	}
+// 	if("ast" in s){
+//             if("type" in s.ast) f.setAttribute("ast_type",s.ast["type"])
+//             if("value" in s.ast) f.setAttribute("ast_value",s.ast["value"])
+// 	}
+// 	//if(s['char']) f.setAttribute("c","yes");
+	
+// 	var first_ref=-1, arglist = [];
+// 	var first, i;
+	
+// 	// Make the b nodes for rendering each output    
+// 	for(var t in s["output"]){
+//             var b = base.createElement("b");
+//             b.setAttribute("p",t);
+
+//             var out = Symbols.split_output(s["output"][t]);
+//             for(i = 0; i < out.length; i++){
+// 		if(out[i]["type"] == "text"){
+//                     if(out[i]["val"].length > 0) b.appendChild(base.createTextNode(out[i]['val']));
+// 		}
+// 		else{
+//                     if(t == 'latex') arglist.push(out[i]);
+//                     var nt = base.createElement("r");
+//                     nt.setAttribute("ref",out[i]["index"]);
+//                     if(out[i]["separators"].length > 0) nt.setAttribute("d",out[i]["separators"].length);
+//                     for(var j = 0; j < out[i]["separators"].length; j++) nt.setAttribute("sep"+j,out[i]["separators"][j]);
+//                     if(t == 'latex' && first_ref == -1) first_ref = out[i]["index"];
+//                     b.appendChild(nt);
+// 		}
+//             }
+//             f.appendChild(b);
+// 	}
+// 	// Now make the c/l nodes for storing the content
+// 	for(i = 0; i < arglist.length; i++){
+//             var a = arglist[i];
+//             var nc;
+//             if(i in content && a['separators'].length > 0) {  // If the content for this node is provided and is an array, then dig down to find the first c child
+// 		f.appendChild(content[i][0]);
+// 		nc = content[i][0];
+// 		while(nc.nodeName != "c")
+//                     nc = nc.firstChild;
+//             }
+//             else if(i in content) {                                  // If the content for this node is provided and not an array, create the c node and populate its content
+// 		var node_list = content[i];
+// 		nc = base.createElement("c");
+// 		for(var se = 0; se < node_list.length; se++)
+//                     nc.appendChild(node_list[se].cloneNode(true));
+// 		f.appendChild(nc)
+//             }
+//             else{                                             // Otherwise create the c node and possibly l nodes
+// 		nc = base.createElement("c");
+// 		var new_e = base.createElement("e");
+// 		new_e.appendChild(base.createTextNode(""));
+// 		nc.appendChild(new_e);
+// 		var par = f;                                  // Now we add nested l elements if this is an array of dimension > 0
+// 		for(j = 0; j < a['separators'].length; j++){
+//                     var nl = base.createElement("l");
+//                     nl.setAttribute("s","1");
+//                     par.appendChild(nl);
+//                     par = nl;
+// 		}
+// 		par.appendChild(nc);
+//             }
+//             if(i+1 == first_ref) first = nc.lastChild;        // Note the first node we should visit based on the LaTeX output
+//             if(s['args'] && s['args'][i]){                    // Set the arguments for the c node based on the symbol
+// 		for(var arg in s['args'][i]){
+//                     nc.setAttribute(arg,s['args'][i][arg]);
+// 		}
+//             }
+// 	}
+// 	return {"f":f, "first":first, "args":arglist};
+//     }
     
 // }
-
-
+	
 Symbols.add_symbols(DEFAULT_SYMBOLS);
 export default Symbols;

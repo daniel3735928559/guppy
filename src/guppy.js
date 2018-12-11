@@ -99,8 +99,8 @@ Guppy.raw_input.addEventListener("keyup", function(e){
     if(e.keyCode == 13){ // enter
         g.activate();
         var s = Guppy.raw_input.value;
-        for(var i = 0; i < s.length; i++){
-            g.engine.insert_utf8(s.charCodeAt(i));
+        for(var c of s){
+            g.engine.insert_utf8(c.codePointAt(0));
         }
         Guppy.raw_input.value = "";
         Guppy.raw_input.style.display="none";
