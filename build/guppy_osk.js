@@ -2107,8 +2107,10 @@ var GuppyOSK = (function () {
 
 	function click_listener(elt, fn) {
 	    elt.addEventListener("click", fn, false);
-	    elt.addEventListener("touchstart", fn, false);
+	    elt.addEventListener("touchend", fn, false);
 	}
+
+	GuppyOSK.lasttap = 0;
 
 	function make_tabs(tabbar, element) {
 	    var headers = tabbar.querySelectorAll("li a");
@@ -2119,6 +2121,12 @@ var GuppyOSK = (function () {
 	        if (j != 0) tabs[j].style.display = "none";
 	        var header = headers[j];
 	        click_listener(header, function (e) {
+	            // var now = new Date().getTime();
+	            // var timesince = now - GuppyOSK.lasttap;
+	            // var doubletap = false;
+	            // if((timesince < 600) && (timesince > 100)) doubletap = true;
+	            //GuppyOSK.lasttap = now;
+
 	            var target = e.target;
 	            while (target.tagName.toLowerCase() != "a") {
 	                target = target.parentNode;
@@ -2128,6 +2136,14 @@ var GuppyOSK = (function () {
 	            }
 	            target.classList.add("active_tab");
 	            element.querySelector(target.getAttribute("href")).style.display = "block";
+	            // if(doubletap){
+	            //         let tabname = target.getAttribute("href").substring(1);
+	            //         for(var i = 0; i < headers.length; i++){
+	            //         headers[i].classList.remove("fav_tab");
+	            //         }
+	            //         target.classList.add("fav_tab");
+	            //         GuppyOSK.config.goto_tab = tabname;
+	            // }
 	            e.preventDefault();
 	            return false;
 	        });
@@ -2197,6 +2213,11 @@ var GuppyOSK = (function () {
 	    var controls = elt("div", { "class": "controls" });
 	    var tab_bar_div = elt("div", { "class": "tabbar" });
 	    var tab_bar = elt("ul");
+	    // tab_bar.addEventListener("touchmove",function(e){
+	    // 	var touchobj = e.changedTouches[0];
+	    // 	var n = touchobj.target;
+
+	    // });
 	    var sl = elt("div", { "class": "scroller-left disabled" }, "<i class=\"left\"></i>");
 	    var sr = elt("div", { "class": "scroller-right" }, "<i class=\"right\"></i>");
 	    click_listener(sl, function () {
@@ -2235,7 +2256,7 @@ var GuppyOSK = (function () {
 	        if (g == "array") matrix_controls = group_elt;
 	        var link = elt("a", { "href": "#" + g, "id": "guppy_osk_" + g + "_tab" });
 	        katex.render(GuppyOSK.group_headers[g], link);
-	        var li = elt("li");
+	        var li = elt("li", { "class": "guppy_osk_tab", "id": "guppy_osk_tab_" + g });
 	        li.appendChild(link);
 	        tab_bar.appendChild(li);
 	        for (s in grouped[g]) {
@@ -2283,36 +2304,32 @@ var GuppyOSK = (function () {
 	        //katex.render(content, e);
 	    };
 
-	    add_control("cut", function (e) {
+	    add_control("✄", function (e) {
 	        e.preventDefault();guppy.engine.sel_cut();guppy.render();
-	    });
-	    add_control("copy", function (e) {
+	    }, "med_key"); // U2704
+	    add_control("📋", function (e) {
 	        e.preventDefault();guppy.engine.sel_copy();guppy.render();
-	    });
-	    add_control("paste", function (e) {
+	    }, "med_key"); // u1f4cb 
+	    add_control("⎘", function (e) {
 	        e.preventDefault();guppy.engine.sel_paste();guppy.render();
-	    });
-	    add_control("undo", function (e) {
+	    }, "med_key"); // U2398
+	    add_control("↶", function (e) {
 	        e.preventDefault();guppy.engine.undo();guppy.render();
-	    });
-	    add_control("redo", function (e) {
+	    }, "med_key"); // u21b6
+	    add_control("↷", function (e) {
 	        e.preventDefault();guppy.engine.redo();guppy.render();
-	    });
-	    add_control("del", function (e) {
+	    }, "med_key"); // u21b7
+	    add_control("⌫", function (e) {
 	        e.preventDefault();guppy.engine.backspace();guppy.render();
-	    });
-	    add_control("spc", function (e) {
-	        e.preventDefault();guppy.engine.spacebar();guppy.render();
-	    });
-	    add_control("tab", function (e) {
-	        e.preventDefault();guppy.engine.tab();guppy.render();
-	    });
-	    add_control("ret", function (e) {
-	        e.preventDefault();guppy.engine.done();guppy.render();
-	    });
-	    add_control("raw", function (e) {
+	    }, "med_key"); // u232b
+	    // add_control("spc", function(e){ e.preventDefault();guppy.engine.spacebar();guppy.render();});
+	    // add_control("tab", function(e){ e.preventDefault();guppy.engine.tab();guppy.render();});
+	    add_control("¤", function (e) {
 	        e.preventDefault();guppy.constructor.get_raw_input();
-	    });
+	    }, "med_key"); // u00a4
+	    add_control("✔", function (e) {
+	        e.preventDefault();guppy.engine.done();guppy.render();
+	    }, "med_key"); // u2714
 	    controls.appendChild(elt("br"));
 	    add_control("&larr;", function (e) {
 	        e.preventDefault();guppy.engine.left();guppy.render();

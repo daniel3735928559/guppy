@@ -1506,36 +1506,39 @@ var Guppy = (function () {
     // class SymbolTemplate{
     //     constructor(name, definition){
     // 	this.name = name;
-    // 	this.protosym = new Symbol(`__${name}`, definition);
+    // 	this.definition = definition;
     //     }
     //     evaluate(args){
-    // 	let sym = {...this.protosym};
+    // 	if(!(args.name)) throw "Template requires 'name' argument";
+    // 	let symdef = JSON.parse(JSON.stringify(this.definition));
     // 	let r = function(src){
-    // 	    for(var n in args) {
-    // 		return src.replace(new RegExp("\\{\\$"+n+"\\}"),args[n]);
-    // 	    }
+    // 	    if(Object.prototype.toString.call(src) == "[object String]")
+    // 		for(var n in src) src[n].replace(new RegExp("\\{\\$"+n+"\\}"),args[n]);
+    // 	    else
+    // 		for(var x in src) src[x] = r(src[x]);
+    // 	    return src
     // 	};
-
-    // 	Object.keys(sym.outputs).forEach({(x) => sym.outputs[x] = r(sym.outputs[x])});
-    // 	Object.keys(sym.attrs).forEach({(x) => sym.attrs[x] = r(sym.attrs[x])});
-    // 	sym.args.forEach({(x) => Object.keys(sym.args[x]).forEach({(y) => sym.args[x][y] = r(sym.args[x][y])})});
+    // 	return new Symbol(args.name, r(this.definition));
     //     }
     // }
 
     // class Symbol{
     //     constructor(name, definition){
     // 	this.name = name;
-    // 	this.outputs = config.outputs;
-    // 	this.args = config.args;
-    // 	this.attrs = config.attrs;
-    // 	this.input = config.input;
-    // 	this.keys = config.keys;
-    // 	this.ast_value = config.ast.value;
-    // 	this.ast_type = config.ast.type;
+    // 	this.outputs = {};
+    // 	for(var o of definition.outputs){
+    // 	    this.outputs[o] = Symbol.parse_output(definition.outputs[o]);
+    // 	}
+    // 	this.args = definition.args;
+    // 	this.attrs = definition.attrs;
+    // 	this.input = definition.input;
+    // 	this.keys = definition.keys;
+    // 	this.ast_value = definition.ast.value;
+    // 	this.ast_type = definition.ast.type;
     //     }
     //     // Returns an array with alternating text and argument elements of the form
     //     // {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...], "template":[...]}
-    //     static split_output(output){
+    //     static parse_output(output){
     // 	var regex = /\{\$([0-9]+)/g, result, starts = [], indices = [], i;
     // 	var ans = [];
     // 	while ((result = regex.exec(output))){
@@ -1577,30 +1580,24 @@ var Guppy = (function () {
     // 	return ans;
     //     }
 
-    //     to_node(s, content, base){
-
-    // 	// s is a symbol
-    // 	//
+    //     to_node(content, base){
     // 	// content is a list of nodes to insert
     // 	var f = base.createElement("f");
-    // 	for(var attr in s.attrs){
+    // 	for(var attr in this.attrs){
     //             f.setAttribute(attr, s.attrs[attr]);
     // 	}
-    // 	if("ast" in s){
-    //             if("type" in s.ast) f.setAttribute("ast_type",s.ast["type"])
-    //             if("value" in s.ast) f.setAttribute("ast_value",s.ast["value"])
-    // 	}
-    // 	//if(s['char']) f.setAttribute("c","yes");
+    //         if(this.ast_type) f.setAttribute("ast_type",this.ast_type);
+    //         if(this.ast_value) f.setAttribute("ast_value",this.ast_value);
 
     // 	var first_ref=-1, arglist = [];
     // 	var first, i;
 
     // 	// Make the b nodes for rendering each output    
-    // 	for(var t in s["output"]){
+    // 	for(var t in this.outputs){
     //             var b = base.createElement("b");
     //             b.setAttribute("p",t);
 
-    //             var out = Symbols.split_output(s["output"][t]);
+    //             var out = this.outputs[t];
     //             for(i = 0; i < out.length; i++){
     // 		if(out[i]["type"] == "text"){
     //                     if(out[i]["val"].length > 0) b.appendChild(base.createTextNode(out[i]['val']));
@@ -1649,9 +1646,9 @@ var Guppy = (function () {
     // 		par.appendChild(nc);
     //             }
     //             if(i+1 == first_ref) first = nc.lastChild;        // Note the first node we should visit based on the LaTeX output
-    //             if(s['args'] && s['args'][i]){                    // Set the arguments for the c node based on the symbol
-    // 		for(var arg in s['args'][i]){
-    //                     nc.setAttribute(arg,s['args'][i][arg]);
+    //             if(this.args && this.args[i]){                    // Set the arguments for the c node based on the symbol
+    // 		for(var arg in this.args[i]){
+    //                     nc.setAttribute(arg,this.args[i][arg]);
     // 		}
     //             }
     // 	}
@@ -5947,6 +5944,7 @@ var Guppy = (function () {
             // enter
             g.activate();
             var s = Guppy.raw_input.value;
+            s = s.normalize();
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
