@@ -91,7 +91,6 @@ body {
 .tabbar .scroller-left{
     cursor: pointer;
     display:inline-block;
-    width:5vw;
     /* border:1px solid black; */
     float:left;
     width:8vw;
@@ -104,7 +103,6 @@ body {
     cursor: pointer;
     display:inline-block;
     float:left;
-    width:5vw;
     /* border:1px solid black; */
     width:8vw;
     margin:0 1vw;
@@ -121,12 +119,11 @@ body {
     padding:0;
     width:70vw;
     overflow-x:hidden;
-    float:left;
     background:
-	linear-gradient(to right, white 30%, rgba(255,255,255,0)),
-	linear-gradient(to right, rgba(255,255,255,0), white 70%) 100% 0,
-	radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
-	radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 100%;
+    linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+    linear-gradient(to right, rgba(255,255,255,0), white 70%) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
+    radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 100%;
     background-repeat: no-repeat;
     background-color: white;
     background-size: 40px 100%, 40px 100%, 10px 100%, 10px 100%;
@@ -136,7 +133,7 @@ body {
 .tabbar li{
     display:inline-block;
     background:rgba(0,0,0,0);
-    cusror: pointer;
+    cursor: pointer;
 }
  
 .tabbar a{
@@ -168,12 +165,12 @@ body {
   border-width: 0 3px 3px 0 !important;
 }
 
-.right {
+.tabbar .right {
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
 }
 
-.left {
+.tabbar .left {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
