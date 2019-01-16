@@ -357,10 +357,11 @@ Doc.render_all = function(t, delim, root_node){
     Render a given document into a specified HTML element.
     @param {string} doc - A GuppyXML string to be rendered
     @param {string} target_id - The ID of the HTML element to render into
+    @param {string} type - Optional type of the doc provided. Default is `xml`
     @memberof Doc
 */
-Doc.render = function(doc, target_id){
-    var d = new Doc(doc);
+Doc.render = function(doc, target_id, type){
+    var d = new Doc(doc, type);
     var target = document.getElementById(target_id);
     katex.render(d.get_content("latex"), target);
     return {"container":target, "doc":d};
