@@ -894,9 +894,11 @@ Guppy.prototype.deactivate = function(){
     Guppy.kb.ctrl_down = false;
     Guppy.kb.alt_down = false;
     Settings.hide_all();
-    this.render();
     Guppy.hide_raw_input();
-    if(newly_inactive) this.engine.fire_event("focus",{"focused":false});
+    if(newly_inactive) {
+	this.render();
+	this.engine.fire_event("focus",{"focused":false});
+    }
 }
 
 

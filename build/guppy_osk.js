@@ -2158,7 +2158,7 @@ var GuppyOSK = (function () {
 	GuppyOSK.prototype.detach = function (guppy) {
 	    if (this.element) {
 	        if (!guppy && this.guppy || this.guppy == guppy) {
-	            document.body.removeChild(this.element);
+	            this.element.parentElement.removeChild(this.element);
 	            this.guppy = null;
 	            this.element = null;
 	        }
@@ -2195,14 +2195,16 @@ var GuppyOSK = (function () {
 	    Attach the keyboard to a Guppy instance and display it.
 	    @param {Guppy} [guppy] - The instance of Guppy to which the
 	    keyboard will attach.
+	    @param {Element} [target] - Optional parent target element to
+	    attach the OSK to.
 	    @memberof GuppyOSK
 	*/
-	GuppyOSK.prototype.attach = function (guppy) {
+	GuppyOSK.prototype.attach = function (guppy, target) {
 	    var self = this;
 	    var s = null;
 	    if (this.guppy == guppy) return;
 	    if (this.guppy) {
-	        document.body.removeChild(this.element);
+	        this.element.parentElement.removeChild(this.element);
 	        this.element = null;
 	        this.guppy = null;
 	    }
@@ -2380,7 +2382,11 @@ var GuppyOSK = (function () {
 	    });
 
 	    osk.appendChild(controls);
-	    document.body.appendChild(osk);
+	    if (target) {
+	        target.appendChild(osk);
+	    } else {
+	        document.body.appendChild(osk);
+	    }
 
 	    this.guppy = guppy;
 	    this.element = osk;

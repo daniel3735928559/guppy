@@ -4166,10 +4166,11 @@ var Guppy = (function () {
         Render a given document into a specified HTML element.
         @param {string} doc - A GuppyXML string to be rendered
         @param {string} target_id - The ID of the HTML element to render into
+        @param {string} type - Optional type of the doc provided. Default is `xml`
         @memberof Doc
     */
-    Doc.render = function (doc, target_id) {
-        var d = new Doc(doc);
+    Doc.render = function (doc, target_id, type) {
+        var d = new Doc(doc, type);
         var target = document.getElementById(target_id);
         katex.render(d.get_content("latex"), target);
         return { "container": target, "doc": d };
@@ -6852,9 +6853,11 @@ var Guppy = (function () {
         Guppy.kb.ctrl_down = false;
         Guppy.kb.alt_down = false;
         Settings.hide_all();
-        this.render();
         Guppy.hide_raw_input();
-        if (newly_inactive) this.engine.fire_event("focus", { "focused": false });
+        if (newly_inactive) {
+            this.render();
+            this.engine.fire_event("focus", { "focused": false });
+        }
     };
 
     // Keyboard stuff
