@@ -79,7 +79,7 @@ body {
 
 .tabbed li{
     float:left;
-    cusror: pointer;
+    cursor: pointer;
 }
  
 .tabbed a{
