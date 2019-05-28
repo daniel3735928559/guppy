@@ -947,12 +947,7 @@ Engine.prototype.list_remove = function(){
 Engine.prototype.right = function(){
     this.sel_clear();
     if(this.caret >= Utils.get_length(this.current)){
-        var nn = this.doc.xpath_node("following::e[1]", this.current);
-        if(nn != null){
-            this.current = nn;
-            this.caret = 0;
-        }
-        else{
+        if(!this.jump_to_next_node()){
             this.fire_event("right_end");
         }
     }
@@ -977,12 +972,7 @@ Engine.prototype.spacebar = function(){
 Engine.prototype.left = function(){
     this.sel_clear();
     if(this.caret <= 0){
-        var pn = this.doc.xpath_node("preceding::e[1]", this.current);
-        if(pn != null){
-            this.current = pn;
-            this.caret = this.current.firstChild.nodeValue.length;
-        }
-        else{
+        if(!this.jump_to_previous_node()){
             this.fire_event("left_end");
         }
     }
@@ -1351,6 +1341,102 @@ Engine.prototype.check_for_symbol = function(whole_node){
         instance.caret = temp_caret;
     }
     return success;
+}
+
+Engine.prototype.select_to_end_of_section = function(right){
+    // Guess at the end of the same level in the xml format
+    // E.g. where | represents the opening bracket
+    // |1+2+sin(3) -> (1+2+sin(3))
+    // sin(1+|2+3)+3 -> sin(1+(2+3))+3
+    this.sel_clear();
+    var caret_change = 1;
+    while(caret_change != 0){
+        var caret_initial = this.caret;
+        if (right){
+            this.sel_right();
+        }else{
+            this.sel_left();
+        }
+        caret_change = this.caret - caret_initial;
+    }
+}
+
+Engine.prototype.jump_to_next_node = function(){
+    var nn = this.doc.xpath_node("following::e[1]", this.current);
+    if(nn != null){
+        this.current = nn;
+        this.caret = 0;
+        return true;
+    }
+    return false;
+}
+
+Engine.prototype.jump_to_previous_node = function(){
+    var pn = this.doc.xpath_node("preceding::e[1]", this.current);
+    if(pn != null){
+        this.current = pn;
+        this.caret = this.current.firstChild.nodeValue.length;
+        return true;
+    }
+    return false;
+}
+
+Engine.prototype.is_in_guess_bracket = function(){
+    var value;
+    try{
+        value = this.current.parentNode.parentNode.getAttribute("type") == "bracket"; // TODO: Need to limit to guess bracket only and each side should check for its specific type of bracket
+    }catch(error){
+        value = false;
+    }
+        
+     return value;
+}
+
+// Note KaTeX issue 1844
+// Can not color bracket
+
+Engine.prototype.insert_opening_bracket = function(){
+    // Select entire level of tree and put a guess bracket around it
+    this.select_to_end_of_section(true);
+    
+    if(this.is_in_guess_bracket()){
+        // Bracket it
+        this.insert_symbol("paren");
+        
+        // Remove the guess bracket
+        this.jump_to_previous_node();
+        this.caret = 0;
+        this.backspace();
+        
+        // Move caret to after the opening bracket
+        this.jump_to_next_node();
+    }else{
+        // Insert guess bracket, with the opening half known
+        this.insert_symbol("paren_guess_close");
+        this.caret = 0;
+    }
+}
+
+Engine.prototype.insert_closing_bracket = function(){
+    // Select back to the guess bracket start
+    this.select_to_end_of_section(false);
+    
+    if(this.is_in_guess_bracket()){
+        // Bracket it
+        this.insert_symbol("paren");
+        
+        // Remove the guess bracket
+        this.jump_to_previous_node();
+        this.backspace();
+        
+        // Move caret to after closing bracket
+        this.jump_to_next_node();
+        this.jump_to_next_node();
+    }else{
+        // Insert guess bracket, with the closing half known
+        this.insert_symbol("paren_guess_open");
+        this.jump_to_next_node();
+    }
 }
 
 export default Engine;

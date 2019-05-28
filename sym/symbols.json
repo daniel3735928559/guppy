@@ -86,7 +86,34 @@
     {"output":{
         "latex":"\\left({$1}\\right)",
 	"asciimath":"({$1})"},
-     "keys":["("],
+     "attrs":{
+	 "type":"bracket",
+	 "group":"functions"},
+     "ast":{
+	 "type":"pass"
+     },
+     "args":[
+	 {"delete":"1","is_bracket":"yes"}]
+    },
+    
+    "paren_guess_close":
+    {"output":{
+        "latex":"\\color{gray}\\left(\\color{black}{$1}\\right|\\color{black}",
+	"asciimath":"({$1})"},
+     "attrs":{
+	 "type":"bracket",
+	 "group":"functions"},
+     "ast":{
+	 "type":"pass"
+     },
+     "args":[
+	 {"delete":"1","is_bracket":"yes"}]
+    },
+    
+    "paren_guess_open":
+    {"output":{
+        "latex":"\\color{gray}\\left|\\color{black}{$1}\\right)\\color{black}",
+	"asciimath":"({$1})"},
      "attrs":{
 	 "type":"bracket",
 	 "group":"functions"},

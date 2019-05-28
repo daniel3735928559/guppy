@@ -745,7 +745,40 @@ var Guppy = (function () {
     		latex: "\\left({$1}\\right)",
     		asciimath: "({$1})"
     	},
-    	keys: ["("],
+    	attrs: {
+    		type: "bracket",
+    		group: "functions"
+    	},
+    	ast: {
+    		type: "pass"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var paren_guess_close = {
+    	output: {
+    		latex: "\\color{gray}\\left(\\color{black}{$1}\\right|\\color{black}",
+    		asciimath: "({$1})"
+    	},
+    	attrs: {
+    		type: "bracket",
+    		group: "functions"
+    	},
+    	ast: {
+    		type: "pass"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var paren_guess_open = {
+    	output: {
+    		latex: "\\color{gray}\\left|\\color{black}{$1}\\right)\\color{black}",
+    		asciimath: "({$1})"
+    	},
     	attrs: {
     		type: "bracket",
     		group: "functions"
@@ -1230,6 +1263,8 @@ var Guppy = (function () {
     	},
     	sqrt: sqrt,
     	paren: paren,
+    	paren_guess_close: paren_guess_close,
+    	paren_guess_open: paren_guess_open,
     	floor: floor,
     	factorial: factorial,
     	exp: exp,
@@ -4177,99 +4212,100 @@ var Guppy = (function () {
     };
 
     var Keyboard = function Keyboard() {
-    			this.is_mouse_down = false;
+    				this.is_mouse_down = false;
 
-    			/* keyboard behaviour definitions */
+    				/* keyboard behaviour definitions */
 
-    			// keys aside from 0-9,a-z,A-Z
-    			this.k_chars = {
-    						"+": "+",
-    						"-": "-",
-    						"*": "*",
-    						".": "."
-    			};
-    			this.k_text = {
-    						"/": "/",
-    						"*": "*",
-    						"(": "(",
-    						")": ")",
-    						"<": "<",
-    						">": ">",
-    						"|": "|",
-    						"!": "!",
-    						",": ",",
-    						".": ".",
-    						";": ";",
-    						"=": "=",
-    						"[": "[",
-    						"]": "]",
-    						"@": "@",
-    						"'": "'",
-    						"`": "`",
-    						":": ":",
-    						"\"": "\"",
-    						"?": "?",
-    						"space": " "
-    			};
-    			this.k_controls = {
-    						"up": "up",
-    						"down": "down",
-    						"right": "right",
-    						"left": "left",
-    						"alt+k": "up",
-    						"alt+j": "down",
-    						"alt+l": "right",
-    						"alt+h": "left",
-    						"space": "spacebar",
-    						"home": "home",
-    						"end": "end",
-    						"backspace": "backspace",
-    						"del": "delete_key",
-    						"mod+a": "sel_all",
-    						"mod+c": "sel_copy",
-    						"mod+x": "sel_cut",
-    						"mod+v": "sel_paste",
-    						"mod+z": "undo",
-    						"mod+y": "redo",
-    						"enter": "done",
-    						"mod+shift+right": "list_extend_copy_right",
-    						"mod+shift+left": "list_extend_copy_left",
-    						",": "list_extend_right",
-    						";": "list_extend_down",
-    						"mod+right": "list_extend_right",
-    						"mod+left": "list_extend_left",
-    						"mod+up": "list_extend_up",
-    						"mod+down": "list_extend_down",
-    						"mod+shift+up": "list_extend_copy_up",
-    						"mod+shift+down": "list_extend_copy_down",
-    						"mod+backspace": "list_remove",
-    						"mod+shift+backspace": "list_remove_row",
-    						"shift+left": "sel_left",
-    						"shift+right": "sel_right",
-    						")": "right_paren",
-    						"\\": "backslash",
-    						"tab": "tab"
-    			};
+    				// keys aside from 0-9,a-z,A-Z
+    				this.k_chars = {
+    								"+": "+",
+    								"-": "-",
+    								"*": "*",
+    								".": "."
+    				};
+    				this.k_text = {
+    								"/": "/",
+    								"*": "*",
+    								"(": "(",
+    								")": ")",
+    								"<": "<",
+    								">": ">",
+    								"|": "|",
+    								"!": "!",
+    								",": ",",
+    								".": ".",
+    								";": ";",
+    								"=": "=",
+    								"[": "[",
+    								"]": "]",
+    								"@": "@",
+    								"'": "'",
+    								"`": "`",
+    								":": ":",
+    								"\"": "\"",
+    								"?": "?",
+    								"space": " "
+    				};
+    				this.k_controls = {
+    								"up": "up",
+    								"down": "down",
+    								"right": "right",
+    								"left": "left",
+    								"alt+k": "up",
+    								"alt+j": "down",
+    								"alt+l": "right",
+    								"alt+h": "left",
+    								"space": "spacebar",
+    								"home": "home",
+    								"end": "end",
+    								"backspace": "backspace",
+    								"del": "delete_key",
+    								"mod+a": "sel_all",
+    								"mod+c": "sel_copy",
+    								"mod+x": "sel_cut",
+    								"mod+v": "sel_paste",
+    								"mod+z": "undo",
+    								"mod+y": "redo",
+    								"enter": "done",
+    								"mod+shift+right": "list_extend_copy_right",
+    								"mod+shift+left": "list_extend_copy_left",
+    								",": "list_extend_right",
+    								";": "list_extend_down",
+    								"mod+right": "list_extend_right",
+    								"mod+left": "list_extend_left",
+    								"mod+up": "list_extend_up",
+    								"mod+down": "list_extend_down",
+    								"mod+shift+up": "list_extend_copy_up",
+    								"mod+shift+down": "list_extend_copy_down",
+    								"mod+backspace": "list_remove",
+    								"mod+shift+backspace": "list_remove_row",
+    								"shift+left": "sel_left",
+    								"shift+right": "sel_right",
+    								"(": "insert_opening_bracket",
+    								")": "insert_closing_bracket",
+    								"\\": "backslash",
+    								"tab": "tab"
+    				};
 
-    			// Will populate keyboard shortcuts for symbols from symbol files
-    			this.k_syms = {};
+    				// Will populate keyboard shortcuts for symbols from symbol files
+    				this.k_syms = {};
 
-    			this.k_raw = "mod+space";
+    				this.k_raw = "mod+space";
 
-    			var i = 0;
+    				var i = 0;
 
-    			// letters
+    				// letters
 
-    			for (i = 65; i <= 90; i++) {
-    						this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
-    						this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
-    			}
+    				for (i = 65; i <= 90; i++) {
+    								this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    								this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
+    				}
 
-    			// numbers
+    				// numbers
 
-    			for (i = 48; i <= 57; i++) {
-    						this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
-    			}
+    				for (i = 48; i <= 57; i++) {
+    								this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+    				}
     };
 
     var Settings = {};
@@ -5347,11 +5383,7 @@ var Guppy = (function () {
     Engine.prototype.right = function () {
         this.sel_clear();
         if (this.caret >= Utils.get_length(this.current)) {
-            var nn = this.doc.xpath_node("following::e[1]", this.current);
-            if (nn != null) {
-                this.current = nn;
-                this.caret = 0;
-            } else {
+            if (!this.jump_to_next_node()) {
                 this.fire_event("right_end");
             }
         } else {
@@ -5374,11 +5406,7 @@ var Guppy = (function () {
     Engine.prototype.left = function () {
         this.sel_clear();
         if (this.caret <= 0) {
-            var pn = this.doc.xpath_node("preceding::e[1]", this.current);
-            if (pn != null) {
-                this.current = pn;
-                this.caret = this.current.firstChild.nodeValue.length;
-            } else {
+            if (!this.jump_to_previous_node()) {
                 this.fire_event("left_end");
             }
         } else {
@@ -5727,6 +5755,102 @@ var Guppy = (function () {
             instance.caret = temp_caret;
         }
         return success;
+    };
+
+    Engine.prototype.select_to_end_of_section = function (right) {
+        // Guess at the end of the same level in the xml format
+        // E.g. where | represents the opening bracket
+        // |1+2+sin(3) -> (1+2+sin(3))
+        // sin(1+|2+3)+3 -> sin(1+(2+3))+3
+        this.sel_clear();
+        var caret_change = 1;
+        while (caret_change != 0) {
+            var caret_initial = this.caret;
+            if (right) {
+                this.sel_right();
+            } else {
+                this.sel_left();
+            }
+            caret_change = this.caret - caret_initial;
+        }
+    };
+
+    Engine.prototype.jump_to_next_node = function () {
+        var nn = this.doc.xpath_node("following::e[1]", this.current);
+        if (nn != null) {
+            this.current = nn;
+            this.caret = 0;
+            return true;
+        }
+        return false;
+    };
+
+    Engine.prototype.jump_to_previous_node = function () {
+        var pn = this.doc.xpath_node("preceding::e[1]", this.current);
+        if (pn != null) {
+            this.current = pn;
+            this.caret = this.current.firstChild.nodeValue.length;
+            return true;
+        }
+        return false;
+    };
+
+    Engine.prototype.is_in_guess_bracket = function () {
+        var value;
+        try {
+            value = this.current.parentNode.parentNode.getAttribute("type") == "bracket"; // TODO: Need to limit to guess bracket only and each side should check for its specific type of bracket
+        } catch (error) {
+            value = false;
+        }
+
+        return value;
+    };
+
+    // Note KaTeX issue 1844
+    // Can not color bracket
+
+    Engine.prototype.insert_opening_bracket = function () {
+        // Select entire level of tree and put a guess bracket around it
+        this.select_to_end_of_section(true);
+
+        if (this.is_in_guess_bracket()) {
+            // Bracket it
+            this.insert_symbol("paren");
+
+            // Remove the guess bracket
+            this.jump_to_previous_node();
+            this.caret = 0;
+            this.backspace();
+
+            // Move caret to after the opening bracket
+            this.jump_to_next_node();
+        } else {
+            // Insert guess bracket, with the opening half known
+            this.insert_symbol("paren_guess_close");
+            this.caret = 0;
+        }
+    };
+
+    Engine.prototype.insert_closing_bracket = function () {
+        // Select back to the guess bracket start
+        this.select_to_end_of_section(false);
+
+        if (this.is_in_guess_bracket()) {
+            // Bracket it
+            this.insert_symbol("paren");
+
+            // Remove the guess bracket
+            this.jump_to_previous_node();
+            this.backspace();
+
+            // Move caret to after closing bracket
+            this.jump_to_next_node();
+            this.jump_to_next_node();
+        } else {
+            // Insert guess bracket, with the closing half known
+            this.insert_symbol("paren_guess_open");
+            this.jump_to_next_node();
+        }
     };
 
     var mousetrap_min = createCommonjsModule(function (module) {
