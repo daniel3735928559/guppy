@@ -746,7 +746,7 @@ var Guppy = (function () {
     		asciimath: "({$1})"
     	},
     	attrs: {
-    		type: "bracket",
+    		type: "paren",
     		group: "functions"
     	},
     	ast: {
@@ -763,7 +763,7 @@ var Guppy = (function () {
     		asciimath: "({$1})"
     	},
     	attrs: {
-    		type: "bracket",
+    		type: "paren_guess_close",
     		group: "functions"
     	},
     	ast: {
@@ -780,7 +780,7 @@ var Guppy = (function () {
     		asciimath: "({$1})"
     	},
     	attrs: {
-    		type: "bracket",
+    		type: "paren_guess_open",
     		group: "functions"
     	},
     	ast: {
@@ -5614,17 +5614,12 @@ var Guppy = (function () {
     };
 
     Engine.prototype.checkpoint = function () {
-        var base = this.doc.base;
-        this.current.setAttribute("current", "yes");
-        this.current.setAttribute("caret", this.caret.toString());
         this.undo_now++;
-        this.undo_data[this.undo_now] = base.cloneNode(true);
+        this.undo_data[this.undo_now] = this.get_xml_with_caret();
         this.undo_data.splice(this.undo_now + 1, this.undo_data.length);
-        var old_data = this.undo_data[this.undo_now - 1] ? new XMLSerializer().serializeToString(this.undo_data[this.undo_now - 1]) : "[none]";
-        var new_data = new XMLSerializer().serializeToString(this.undo_data[this.undo_now]);
+        var old_data = this.undo_data[this.undo_now - 1] ? this.convert_xml_to_string(this.undo_data[this.undo_now - 1]) : "[none]";
+        var new_data = this.convert_xml_to_string(this.undo_data[this.undo_now]);
         this.fire_event("change", { "old": old_data, "new": new_data });
-        this.current.removeAttribute("current");
-        this.current.removeAttribute("caret");
     };
 
     Engine.prototype.restore = function (t) {
@@ -5637,6 +5632,21 @@ var Guppy = (function () {
     Engine.prototype.find_current = function () {
         this.current = this.doc.xpath_node("//*[@current='yes']");
         this.caret = parseInt(this.current.getAttribute("caret"));
+    };
+
+    Engine.prototype.get_xml_with_caret = function () {
+        var base = this.doc.base;
+        this.current.setAttribute("current", "yes");
+        this.current.setAttribute("caret", this.caret.toString());
+        var node = base.cloneNode(true);
+        this.current.removeAttribute("current");
+        this.current.removeAttribute("caret");
+
+        return node;
+    };
+
+    Engine.prototype.convert_xml_to_string = function (xml) {
+        return new XMLSerializer().serializeToString(xml);
     };
 
     /**
@@ -5757,24 +5767,6 @@ var Guppy = (function () {
         return success;
     };
 
-    Engine.prototype.select_to_end_of_section = function (right) {
-        // Guess at the end of the same level in the xml format
-        // E.g. where | represents the opening bracket
-        // |1+2+sin(3) -> (1+2+sin(3))
-        // sin(1+|2+3)+3 -> sin(1+(2+3))+3
-        this.sel_clear();
-        var caret_change = 1;
-        while (caret_change != 0) {
-            var caret_initial = this.caret;
-            if (right) {
-                this.sel_right();
-            } else {
-                this.sel_left();
-            }
-            caret_change = this.caret - caret_initial;
-        }
-    };
-
     Engine.prototype.jump_to_next_node = function () {
         var nn = this.doc.xpath_node("following::e[1]", this.current);
         if (nn != null) {
@@ -5795,10 +5787,10 @@ var Guppy = (function () {
         return false;
     };
 
-    Engine.prototype.is_in_guess_bracket = function () {
+    Engine.prototype.is_in_guess_bracket = function (type) {
         var value;
         try {
-            value = this.current.parentNode.parentNode.getAttribute("type") == "bracket"; // TODO: Need to limit to guess bracket only and each side should check for its specific type of bracket
+            value = this.current.parentNode.parentNode.getAttribute("type") == "paren_guess_" + type; // TODO: paren_guess shouldn't be hard-coded
         } catch (error) {
             value = false;
         }
@@ -5810,46 +5802,54 @@ var Guppy = (function () {
     // Can not color bracket
 
     Engine.prototype.insert_opening_bracket = function () {
-        // Select entire level of tree and put a guess bracket around it
-        this.select_to_end_of_section(true);
+        var last_sibling = this.current.parentNode.lastChild;
+        this.set_sel_start();
+        this.current = last_sibling;
+        this.caret = Utils.get_length(last_sibling);
+        this.set_sel_end();
+        this.sel_status = Engine.SEL_CURSOR_AT_END;
 
-        if (this.is_in_guess_bracket()) {
-            // Bracket it
+        if (this.is_in_guess_bracket("open")) {
             this.insert_symbol("paren");
-
-            // Remove the guess bracket
-            this.jump_to_previous_node();
+            var node = this.current.parentNode.parentNode;
+            var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+            this.current = this.current.parentNode.parentNode.parentNode.firstChild;
             this.caret = 0;
             this.backspace();
-
-            // Move caret to after the opening bracket
-            this.jump_to_next_node();
+            var children = this.current.parentNode.childNodes[index].childNodes;
+            for (var i = 0; i < children.length; i++) {
+                if (children[i].tagName == "c") {
+                    this.current = children[i].firstChild;
+                    break;
+                }
+            }
+            this.caret = 0;
         } else {
-            // Insert guess bracket, with the opening half known
             this.insert_symbol("paren_guess_close");
+            this.current = this.current.parentNode.firstChild;
             this.caret = 0;
         }
     };
 
     Engine.prototype.insert_closing_bracket = function () {
-        // Select back to the guess bracket start
-        this.select_to_end_of_section(false);
+        var first_sibling = this.current.parentNode.firstChild;
+        this.set_sel_end();
+        this.current = first_sibling;
+        this.caret = 0;
+        this.set_sel_start();
+        this.sel_status = Engine.SEL_CURSOR_AT_START;
 
-        if (this.is_in_guess_bracket()) {
-            // Bracket it
+        if (this.is_in_guess_bracket("close")) {
             this.insert_symbol("paren");
-
-            // Remove the guess bracket
-            this.jump_to_previous_node();
+            this.current = this.current.parentNode.parentNode.parentNode.firstChild;
+            this.caret = 0;
             this.backspace();
-
-            // Move caret to after closing bracket
-            this.jump_to_next_node();
-            this.jump_to_next_node();
+            this.current = this.current.nextSibling.nextSibling;
+            this.caret = 0;
         } else {
-            // Insert guess bracket, with the closing half known
             this.insert_symbol("paren_guess_open");
-            this.jump_to_next_node();
+            this.current = this.current.parentNode.parentNode.nextSibling;
+            this.caret = 0;
         }
     };
 

@@ -87,7 +87,7 @@
         "latex":"\\left({$1}\\right)",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"bracket",
+	 "type":"paren",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"
@@ -101,7 +101,7 @@
         "latex":"\\color{gray}\\left(\\color{black}{$1}\\right|\\color{black}",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"bracket",
+	 "type":"paren_guess_close",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"
@@ -115,7 +115,7 @@
         "latex":"\\color{gray}\\left|\\color{black}{$1}\\right)\\color{black}",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"bracket",
+	 "type":"paren_guess_open",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"
