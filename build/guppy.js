@@ -5792,14 +5792,6 @@ var Guppy = (function () {
     };
 
     Engine.prototype.is_in_guess_bracket = function (type) {
-        /*var value;
-        try{
-            value = this.current.parentNode.parentNode.getAttribute("type") == "paren_guess_" + type; // TODO: paren_guess shouldn't be hard-coded
-        }catch(error){
-            value = false;typeof fnode.getAttribute == "function" && 
-        }
-            
-        return value;*/
         var fnode = this.current.parentNode.parentNode;
         return fnode.tagName == "f" && fnode.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + type;
     };
@@ -5808,11 +5800,13 @@ var Guppy = (function () {
     // Can not color bracket
 
     Engine.prototype.insert_opening_bracket = function () {
+        // Next to guess opening bracket, move into it
         var next_sibling = this.current.nextSibling;
         if (next_sibling && next_sibling.tagName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)) {
             this.right();
         }
 
+        // Select the nodes to the end of the section
         var last_sibling = this.current.parentNode.lastChild;
         this.set_sel_start();
         this.current = last_sibling;
@@ -5820,6 +5814,7 @@ var Guppy = (function () {
         this.set_sel_end();
         this.sel_status = Engine.SEL_CURSOR_AT_END;
 
+        // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
         if (this.is_in_guess_bracket(Engine.PAREN_GUESS_OPEN)) {
             this.insert_symbol(Engine.PAREN);
             var node = this.current.parentNode.parentNode;
@@ -5835,19 +5830,23 @@ var Guppy = (function () {
                 }
             }
             this.caret = 0;
-        } else {
-            this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE);
-            this.current = this.current.parentNode.firstChild;
-            this.caret = 0;
         }
+        // This bracket is not pairing with another bracket, therefore it is safe to insert a closing guess bracket
+        else {
+                this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE);
+                this.current = this.current.parentNode.firstChild;
+                this.caret = 0;
+            }
     };
 
     Engine.prototype.insert_closing_bracket = function () {
+        // Next to guess closing bracket, move into it
         var previous_sibling = this.current.previousSibling;
         if (previous_sibling && previous_sibling.tagName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0) {
             this.left();
         }
 
+        // Select the nodes to the start of the section
         var first_sibling = this.current.parentNode.firstChild;
         this.set_sel_end();
         this.current = first_sibling;
@@ -5855,6 +5854,7 @@ var Guppy = (function () {
         this.set_sel_start();
         this.sel_status = Engine.SEL_CURSOR_AT_START;
 
+        // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
         if (this.is_in_guess_bracket(Engine.PAREN_GUESS_CLOSE)) {
             this.insert_symbol(Engine.PAREN);
             this.current = this.current.parentNode.parentNode.parentNode.firstChild;
@@ -5862,11 +5862,13 @@ var Guppy = (function () {
             this.backspace();
             this.current = this.current.nextSibling.nextSibling;
             this.caret = 0;
-        } else {
-            this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN);
-            this.current = this.current.parentNode.parentNode.nextSibling;
-            this.caret = 0;
         }
+        // This bracket is not pairing with another bracket, therefore it is safe to insert an opening guess bracket
+        else {
+                this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN);
+                this.current = this.current.parentNode.parentNode.nextSibling;
+                this.caret = 0;
+            }
     };
 
     var mousetrap_min = createCommonjsModule(function (module) {

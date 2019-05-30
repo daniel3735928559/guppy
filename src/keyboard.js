@@ -69,7 +69,7 @@ var Keyboard = function(){
 	"shift+left":"sel_left",
 	"shift+right":"sel_right",
 	"(":"insert_opening_bracket",
-    ")":"insert_closing_bracket",
+	")":"insert_closing_bracket",
 	"\\":"backslash",
 	"tab":"tab"
     };
