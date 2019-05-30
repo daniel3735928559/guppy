@@ -345,6 +345,8 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args,checkpoint=true){
     var replace_f = false;
     var sel;
 
+    this.convert_guess_close_bracket_to_proper();
+    
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
@@ -488,6 +490,7 @@ Engine.prototype.insert_string = function(s){
         this.sel_delete();
         this.sel_clear();
     }
+    this.convert_guess_close_bracket_to_proper();
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -1487,6 +1490,13 @@ Engine.prototype.is_right_of_guess_close_bracket = function(){
 Engine.prototype.is_right_of_bracket = function(){
     var previous_sibling = this.current.previousSibling;
     return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0;
+}
+
+Engine.prototype.convert_guess_close_bracket_to_proper = function(){
+    // Nodes are being inserting after a guess closing bracket, therefore replace it with a proper bracket
+    if(this.is_right_of_guess_close_bracket()){
+        this.insert_closing_bracket();
+    }
 }
 
 export default Engine;

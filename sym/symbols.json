@@ -98,7 +98,7 @@
     
     "paren_guess_close":
     {"output":{
-        "latex":"\\color{gray}\\left(\\color{black}{$1}\\right|\\color{black}",
+        "latex":"\\left({$1}\\right|",
 	"asciimath":"({$1})"},
      "attrs":{
 	 "type":"paren_guess_close",
@@ -112,7 +112,7 @@
     
     "paren_guess_open":
     {"output":{
-        "latex":"\\color{gray}\\left|\\color{black}{$1}\\right)\\color{black}",
+        "latex":"\\left|{$1}\\right)",
 	"asciimath":"({$1})"},
      "attrs":{
 	 "type":"paren_guess_open",

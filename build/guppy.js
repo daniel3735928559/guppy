@@ -759,7 +759,7 @@ var Guppy = (function () {
     };
     var paren_guess_close = {
     	output: {
-    		latex: "\\color{gray}\\left(\\color{black}{$1}\\right|\\color{black}",
+    		latex: "\\left({$1}\\right|",
     		asciimath: "({$1})"
     	},
     	attrs: {
@@ -776,7 +776,7 @@ var Guppy = (function () {
     };
     var paren_guess_open = {
     	output: {
-    		latex: "\\color{gray}\\left|\\color{black}{$1}\\right)\\color{black}",
+    		latex: "\\left|{$1}\\right)",
     		asciimath: "({$1})"
     	},
     	attrs: {
@@ -4788,6 +4788,8 @@ var Guppy = (function () {
         var replace_f = false;
         var sel;
 
+        this.convert_guess_close_bracket_to_proper();
+
         if (cur > 0) {
             cur--;
             if (this.sel_status != Engine.SEL_NONE) {
@@ -4926,6 +4928,7 @@ var Guppy = (function () {
             this.sel_delete();
             this.sel_clear();
         }
+        this.convert_guess_close_bracket_to_proper();
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret, s);
         this.caret += s.length;
         this.checkpoint();
@@ -5512,7 +5515,6 @@ var Guppy = (function () {
         }
         // Replace paren with guess right bracket
         else if (this.is_right_of_bracket()) {
-                console.log('test');
                 var index = this.current.previousSibling.lastChild.childNodes.length - 1;
                 var caret_index = Utils.get_length(this.current.previousSibling.lastChild.lastChild);
                 this.current = this.current.previousSibling.lastChild.firstChild;
@@ -5905,6 +5907,12 @@ var Guppy = (function () {
     Engine.prototype.is_right_of_bracket = function () {
         var previous_sibling = this.current.previousSibling;
         return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0;
+    };
+
+    Engine.prototype.convert_guess_close_bracket_to_proper = function () {
+        if (this.is_right_of_guess_close_bracket()) {
+            this.insert_closing_bracket();
+        }
     };
 
     var mousetrap_min = createCommonjsModule(function (module) {
