@@ -40,6 +40,10 @@ Engine.SEL_NONE = 0;
 Engine.SEL_CURSOR_AT_START = 1;
 Engine.SEL_CURSOR_AT_END = 2;
 Engine.clipboard = null;
+Engine.PAREN_GUESS_PREFIX = "paren_guess_";
+Engine.PAREN_GUESS_OPEN = "open";
+Engine.PAREN_GUESS_CLOSE = "close";
+Engine.PAREN = "paren";
 
 Engine.prototype.setting = function(name){
     return name in this.settings ? this.settings[name] : Settings.config.settings[name];
@@ -1374,20 +1378,21 @@ Engine.prototype.jump_to_previous_node = function(){
 }
 
 Engine.prototype.is_in_guess_bracket = function(type){
-    var value;
-    try{
-        value = this.current.parentNode.parentNode.getAttribute("type") == "paren_guess_" + type; // TODO: paren_guess shouldn't be hard-coded
-    }catch(error){
-        value = false;
-    }
-        
-     return value;
+    var fnode = this.current.parentNode.parentNode;
+    return fnode.tagName == "f" && fnode.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + type;
 }
 
 // Note KaTeX issue 1844
 // Can not color bracket
 
 Engine.prototype.insert_opening_bracket = function(){
+    // Next to guess opening bracket, move into it
+    var next_sibling = this.current.nextSibling;
+    if(next_sibling && next_sibling.tagName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)){
+        this.right();
+    }
+    
+    // Select the nodes to the end of the section
     var last_sibling = this.current.parentNode.lastChild;
     this.set_sel_start();
     this.current = last_sibling;
@@ -1395,8 +1400,9 @@ Engine.prototype.insert_opening_bracket = function(){
     this.set_sel_end();
     this.sel_status = Engine.SEL_CURSOR_AT_END;
     
-    if(this.is_in_guess_bracket("open")){
-        this.insert_symbol("paren");
+    // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
+    if(this.is_in_guess_bracket(Engine.PAREN_GUESS_OPEN)){
+        this.insert_symbol(Engine.PAREN);
         var node = this.current.parentNode.parentNode;
         var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
         this.current = this.current.parentNode.parentNode.parentNode.firstChild;
@@ -1410,14 +1416,23 @@ Engine.prototype.insert_opening_bracket = function(){
             }
         }
         this.caret = 0;
-    }else{
-        this.insert_symbol("paren_guess_close");
+    }
+    // This bracket is not pairing with another bracket, therefore it is safe to insert a closing guess bracket
+    else{
+        this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE);
         this.current = this.current.parentNode.firstChild;
         this.caret = 0;
     }
 }
 
 Engine.prototype.insert_closing_bracket = function(){
+    // Next to guess closing bracket, move into it
+    var previous_sibling = this.current.previousSibling;
+    if(previous_sibling && previous_sibling.tagName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0){
+        this.left();
+    }
+    
+    // Select the nodes to the start of the section
     var first_sibling = this.current.parentNode.firstChild;
     this.set_sel_end();
     this.current = first_sibling;
@@ -1425,15 +1440,18 @@ Engine.prototype.insert_closing_bracket = function(){
     this.set_sel_start();
     this.sel_status = Engine.SEL_CURSOR_AT_START;
     
-    if(this.is_in_guess_bracket("close")){
-        this.insert_symbol("paren");
+    // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
+    if(this.is_in_guess_bracket(Engine.PAREN_GUESS_CLOSE)){
+        this.insert_symbol(Engine.PAREN);
         this.current = this.current.parentNode.parentNode.parentNode.firstChild;
         this.caret = 0;
         this.backspace();
         this.current = this.current.nextSibling.nextSibling;
         this.caret = 0;
-    }else{
-        this.insert_symbol("paren_guess_open");
+    }
+    // This bracket is not pairing with another bracket, therefore it is safe to insert an opening guess bracket
+    else{
+        this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN);
         this.current = this.current.parentNode.parentNode.nextSibling;
         this.caret = 0;
     }

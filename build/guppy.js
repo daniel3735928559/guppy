@@ -4487,6 +4487,10 @@ var Guppy = (function () {
     Engine.SEL_CURSOR_AT_START = 1;
     Engine.SEL_CURSOR_AT_END = 2;
     Engine.clipboard = null;
+    Engine.PAREN_GUESS_PREFIX = "paren_guess_";
+    Engine.PAREN_GUESS_OPEN = "open";
+    Engine.PAREN_GUESS_CLOSE = "close";
+    Engine.PAREN = "paren";
 
     Engine.prototype.setting = function (name) {
         return name in this.settings ? this.settings[name] : Settings.config.settings[name];
@@ -5788,20 +5792,27 @@ var Guppy = (function () {
     };
 
     Engine.prototype.is_in_guess_bracket = function (type) {
-        var value;
-        try {
+        /*var value;
+        try{
             value = this.current.parentNode.parentNode.getAttribute("type") == "paren_guess_" + type; // TODO: paren_guess shouldn't be hard-coded
-        } catch (error) {
-            value = false;
+        }catch(error){
+            value = false;typeof fnode.getAttribute == "function" && 
         }
-
-        return value;
+            
+        return value;*/
+        var fnode = this.current.parentNode.parentNode;
+        return fnode.tagName == "f" && fnode.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + type;
     };
 
     // Note KaTeX issue 1844
     // Can not color bracket
 
     Engine.prototype.insert_opening_bracket = function () {
+        var next_sibling = this.current.nextSibling;
+        if (next_sibling && next_sibling.tagName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)) {
+            this.right();
+        }
+
         var last_sibling = this.current.parentNode.lastChild;
         this.set_sel_start();
         this.current = last_sibling;
@@ -5809,8 +5820,8 @@ var Guppy = (function () {
         this.set_sel_end();
         this.sel_status = Engine.SEL_CURSOR_AT_END;
 
-        if (this.is_in_guess_bracket("open")) {
-            this.insert_symbol("paren");
+        if (this.is_in_guess_bracket(Engine.PAREN_GUESS_OPEN)) {
+            this.insert_symbol(Engine.PAREN);
             var node = this.current.parentNode.parentNode;
             var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
             this.current = this.current.parentNode.parentNode.parentNode.firstChild;
@@ -5825,13 +5836,18 @@ var Guppy = (function () {
             }
             this.caret = 0;
         } else {
-            this.insert_symbol("paren_guess_close");
+            this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE);
             this.current = this.current.parentNode.firstChild;
             this.caret = 0;
         }
     };
 
     Engine.prototype.insert_closing_bracket = function () {
+        var previous_sibling = this.current.previousSibling;
+        if (previous_sibling && previous_sibling.tagName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0) {
+            this.left();
+        }
+
         var first_sibling = this.current.parentNode.firstChild;
         this.set_sel_end();
         this.current = first_sibling;
@@ -5839,15 +5855,15 @@ var Guppy = (function () {
         this.set_sel_start();
         this.sel_status = Engine.SEL_CURSOR_AT_START;
 
-        if (this.is_in_guess_bracket("close")) {
-            this.insert_symbol("paren");
+        if (this.is_in_guess_bracket(Engine.PAREN_GUESS_CLOSE)) {
+            this.insert_symbol(Engine.PAREN);
             this.current = this.current.parentNode.parentNode.parentNode.firstChild;
             this.caret = 0;
             this.backspace();
             this.current = this.current.nextSibling.nextSibling;
             this.caret = 0;
         } else {
-            this.insert_symbol("paren_guess_open");
+            this.insert_symbol(Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN);
             this.current = this.current.parentNode.parentNode.nextSibling;
             this.caret = 0;
         }
