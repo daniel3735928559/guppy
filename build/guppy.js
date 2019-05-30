@@ -5800,6 +5800,11 @@ var Guppy = (function () {
     // Can not color bracket
 
     Engine.prototype.insert_opening_bracket = function () {
+        if (this.sel_status != Engine.SEL_NONE) {
+            this.insert_symbol(Engine.PAREN);
+            return;
+        }
+
         // Next to guess opening bracket, move into it
         var next_sibling = this.current.nextSibling;
         if (next_sibling && next_sibling.tagName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)) {
@@ -5840,6 +5845,11 @@ var Guppy = (function () {
     };
 
     Engine.prototype.insert_closing_bracket = function () {
+        if (this.sel_status != Engine.SEL_NONE) {
+            this.insert_symbol(Engine.PAREN);
+            return;
+        }
+
         // Next to guess closing bracket, move into it
         var previous_sibling = this.current.previousSibling;
         if (previous_sibling && previous_sibling.tagName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0) {
