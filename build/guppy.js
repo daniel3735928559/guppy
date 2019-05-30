@@ -4775,6 +4775,8 @@ var Guppy = (function () {
         Should match one of the keys in the symbols JSON object
     */
     Engine.prototype.insert_symbol = function (sym_name, sym_args) {
+        var checkpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
         var s = sym_args ? Symbols.make_template_symbol(sym_name, sym_args.name, sym_args) : this.symbols[sym_name];
         if (s.attrs && this.is_blacklisted(s.attrs.type)) {
             return false;
@@ -4870,7 +4872,9 @@ var Guppy = (function () {
         }
 
         this.sel_clear();
-        this.checkpoint();
+        if (checkpoint) {
+            this.checkpoint();
+        }
         return true;
     };
 
@@ -5557,9 +5561,10 @@ var Guppy = (function () {
         }
     };
 
-    Engine.prototype.right_paren = function () {
-        if (this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;else this.right();
-    };
+    /*Engine.prototype.right_paren = function(){
+        if(this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;
+        else this.right();
+    }*/
 
     /**
         Simulate an up arrow key press
@@ -5793,7 +5798,7 @@ var Guppy = (function () {
 
     Engine.prototype.is_in_guess_bracket = function (type) {
         var fnode = this.current.parentNode.parentNode;
-        return fnode.tagName == "f" && fnode.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + type;
+        return fnode.nodeName == "f" && fnode.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + type;
     };
 
     // Note KaTeX issue 1844
@@ -5807,7 +5812,7 @@ var Guppy = (function () {
 
         // Next to guess opening bracket, move into it
         var next_sibling = this.current.nextSibling;
-        if (next_sibling && next_sibling.tagName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)) {
+        if (next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current)) {
             this.right();
         }
 
@@ -5821,20 +5826,21 @@ var Guppy = (function () {
 
         // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
         if (this.is_in_guess_bracket(Engine.PAREN_GUESS_OPEN)) {
-            this.insert_symbol(Engine.PAREN);
+            this.insert_symbol(Engine.PAREN, null, false);
             var node = this.current.parentNode.parentNode;
             var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
             this.current = this.current.parentNode.parentNode.parentNode.firstChild;
             this.caret = 0;
-            this.backspace();
+            this.delete_from_e();
             var children = this.current.parentNode.childNodes[index].childNodes;
             for (var i = 0; i < children.length; i++) {
-                if (children[i].tagName == "c") {
+                if (children[i].nodeName == "c") {
                     this.current = children[i].firstChild;
                     break;
                 }
             }
             this.caret = 0;
+            this.checkpoint();
         }
         // This bracket is not pairing with another bracket, therefore it is safe to insert a closing guess bracket
         else {
@@ -5852,7 +5858,7 @@ var Guppy = (function () {
 
         // Next to guess closing bracket, move into it
         var previous_sibling = this.current.previousSibling;
-        if (previous_sibling && previous_sibling.tagName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0) {
+        if (previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_PREFIX + Engine.PAREN_GUESS_CLOSE && this.caret == 0) {
             this.left();
         }
 
@@ -5866,12 +5872,13 @@ var Guppy = (function () {
 
         // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
         if (this.is_in_guess_bracket(Engine.PAREN_GUESS_CLOSE)) {
-            this.insert_symbol(Engine.PAREN);
+            this.insert_symbol(Engine.PAREN, null, false);
             this.current = this.current.parentNode.parentNode.parentNode.firstChild;
             this.caret = 0;
-            this.backspace();
+            this.delete_from_e();
             this.current = this.current.nextSibling.nextSibling;
             this.caret = 0;
+            this.checkpoint();
         }
         // This bracket is not pairing with another bracket, therefore it is safe to insert an opening guess bracket
         else {
