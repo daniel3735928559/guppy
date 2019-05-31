@@ -310,6 +310,12 @@ var Guppy = (function () {
     };
 
     AST.eval = function (ast, functions, parent) {
+        if (ast.length == 1 && ast[0] == "blank") {
+            var elem = document.implementation.createDocument(null, "c");
+            elem.documentElement.innerHTML = "<e></e>";
+            return elem;
+        }
+
         ans = null;
         if (!functions["_default"]) functions["_default"] = function (name, args) {
             throw Error("Function not implemented: " + name + "(" + args + ")");
@@ -3910,6 +3916,9 @@ var Guppy = (function () {
     };
 
     Doc.prototype.import_ast = function (ast, syms, s2n) {
+        if (typeof ast == "string") {
+            ast = JSON.parse(ast);
+        }
         syms = syms || Symbols.symbols;
         s2n = s2n || Symbols.symbol_to_node;
         var doc = AST.to_xml(ast, syms, s2n);
@@ -4177,99 +4186,99 @@ var Guppy = (function () {
     };
 
     var Keyboard = function Keyboard() {
-    			this.is_mouse_down = false;
+    				this.is_mouse_down = false;
 
-    			/* keyboard behaviour definitions */
+    				/* keyboard behaviour definitions */
 
-    			// keys aside from 0-9,a-z,A-Z
-    			this.k_chars = {
-    						"+": "+",
-    						"-": "-",
-    						"*": "*",
-    						".": "."
-    			};
-    			this.k_text = {
-    						"/": "/",
-    						"*": "*",
-    						"(": "(",
-    						")": ")",
-    						"<": "<",
-    						">": ">",
-    						"|": "|",
-    						"!": "!",
-    						",": ",",
-    						".": ".",
-    						";": ";",
-    						"=": "=",
-    						"[": "[",
-    						"]": "]",
-    						"@": "@",
-    						"'": "'",
-    						"`": "`",
-    						":": ":",
-    						"\"": "\"",
-    						"?": "?",
-    						"space": " "
-    			};
-    			this.k_controls = {
-    						"up": "up",
-    						"down": "down",
-    						"right": "right",
-    						"left": "left",
-    						"alt+k": "up",
-    						"alt+j": "down",
-    						"alt+l": "right",
-    						"alt+h": "left",
-    						"space": "spacebar",
-    						"home": "home",
-    						"end": "end",
-    						"backspace": "backspace",
-    						"del": "delete_key",
-    						"mod+a": "sel_all",
-    						"mod+c": "sel_copy",
-    						"mod+x": "sel_cut",
-    						"mod+v": "sel_paste",
-    						"mod+z": "undo",
-    						"mod+y": "redo",
-    						"enter": "done",
-    						"mod+shift+right": "list_extend_copy_right",
-    						"mod+shift+left": "list_extend_copy_left",
-    						",": "list_extend_right",
-    						";": "list_extend_down",
-    						"mod+right": "list_extend_right",
-    						"mod+left": "list_extend_left",
-    						"mod+up": "list_extend_up",
-    						"mod+down": "list_extend_down",
-    						"mod+shift+up": "list_extend_copy_up",
-    						"mod+shift+down": "list_extend_copy_down",
-    						"mod+backspace": "list_remove",
-    						"mod+shift+backspace": "list_remove_row",
-    						"shift+left": "sel_left",
-    						"shift+right": "sel_right",
-    						")": "right_paren",
-    						"\\": "backslash",
-    						"tab": "tab"
-    			};
+    				// keys aside from 0-9,a-z,A-Z
+    				this.k_chars = {
+    								"+": "+",
+    								"-": "-",
+    								"*": "*",
+    								".": "."
+    				};
+    				this.k_text = {
+    								"/": "/",
+    								"*": "*",
+    								"(": "(",
+    								")": ")",
+    								"<": "<",
+    								">": ">",
+    								"|": "|",
+    								"!": "!",
+    								",": ",",
+    								".": ".",
+    								";": ";",
+    								"=": "=",
+    								"[": "[",
+    								"]": "]",
+    								"@": "@",
+    								"'": "'",
+    								"`": "`",
+    								":": ":",
+    								"\"": "\"",
+    								"?": "?",
+    								"space": " "
+    				};
+    				this.k_controls = {
+    								"up": "up",
+    								"down": "down",
+    								"right": "right",
+    								"left": "left",
+    								"alt+k": "up",
+    								"alt+j": "down",
+    								"alt+l": "right",
+    								"alt+h": "left",
+    								"space": "spacebar",
+    								"home": "home",
+    								"end": "end",
+    								"backspace": "backspace",
+    								"del": "delete_key",
+    								"mod+a": "sel_all",
+    								"mod+c": "sel_copy",
+    								"mod+x": "sel_cut",
+    								"mod+v": "sel_paste",
+    								"mod+z": "undo",
+    								"mod+y": "redo",
+    								"enter": "done",
+    								"mod+shift+right": "list_extend_copy_right",
+    								"mod+shift+left": "list_extend_copy_left",
+    								",": "list_extend_right",
+    								";": "list_extend_down",
+    								"mod+right": "list_extend_right",
+    								"mod+left": "list_extend_left",
+    								"mod+up": "list_extend_up",
+    								"mod+down": "list_extend_down",
+    								"mod+shift+up": "list_extend_copy_up",
+    								"mod+shift+down": "list_extend_copy_down",
+    								"mod+backspace": "list_remove",
+    								"mod+shift+backspace": "list_remove_row",
+    								"shift+left": "sel_left",
+    								"shift+right": "sel_right",
+    								")": "right_paren",
+    								"\\": "backslash",
+    								"tab": "tab"
+    				};
 
-    			// Will populate keyboard shortcuts for symbols from symbol files
-    			this.k_syms = {};
+    				// Will populate keyboard shortcuts for symbols from symbol files
+    				this.k_syms = {};
 
-    			this.k_raw = "mod+space";
+    				this.k_raw = "mod+space";
 
-    			var i = 0;
+    				var i = 0;
 
-    			// letters
+    				// letters
 
-    			for (i = 65; i <= 90; i++) {
-    						this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
-    						this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
-    			}
+    				for (i = 65; i <= 90; i++) {
+    								this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    								this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
+    				}
 
-    			// numbers
+    				// numbers
 
-    			for (i = 48; i <= 57; i++) {
-    						this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
-    			}
+    				for (i = 48; i <= 57; i++) {
+    								this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+    				}
     };
 
     var Settings = {};
