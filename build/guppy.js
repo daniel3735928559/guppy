@@ -4177,99 +4177,99 @@ var Guppy = (function () {
     };
 
     var Keyboard = function Keyboard() {
-    			this.is_mouse_down = false;
+    				this.is_mouse_down = false;
 
-    			/* keyboard behaviour definitions */
+    				/* keyboard behaviour definitions */
 
-    			// keys aside from 0-9,a-z,A-Z
-    			this.k_chars = {
-    						"+": "+",
-    						"-": "-",
-    						"*": "*",
-    						".": "."
-    			};
-    			this.k_text = {
-    						"/": "/",
-    						"*": "*",
-    						"(": "(",
-    						")": ")",
-    						"<": "<",
-    						">": ">",
-    						"|": "|",
-    						"!": "!",
-    						",": ",",
-    						".": ".",
-    						";": ";",
-    						"=": "=",
-    						"[": "[",
-    						"]": "]",
-    						"@": "@",
-    						"'": "'",
-    						"`": "`",
-    						":": ":",
-    						"\"": "\"",
-    						"?": "?",
-    						"space": " "
-    			};
-    			this.k_controls = {
-    						"up": "up",
-    						"down": "down",
-    						"right": "right",
-    						"left": "left",
-    						"alt+k": "up",
-    						"alt+j": "down",
-    						"alt+l": "right",
-    						"alt+h": "left",
-    						"space": "spacebar",
-    						"home": "home",
-    						"end": "end",
-    						"backspace": "backspace",
-    						"del": "delete_key",
-    						"mod+a": "sel_all",
-    						"mod+c": "sel_copy",
-    						"mod+x": "sel_cut",
-    						"mod+v": "sel_paste",
-    						"mod+z": "undo",
-    						"mod+y": "redo",
-    						"enter": "done",
-    						"mod+shift+right": "list_extend_copy_right",
-    						"mod+shift+left": "list_extend_copy_left",
-    						",": "list_extend_right",
-    						";": "list_extend_down",
-    						"mod+right": "list_extend_right",
-    						"mod+left": "list_extend_left",
-    						"mod+up": "list_extend_up",
-    						"mod+down": "list_extend_down",
-    						"mod+shift+up": "list_extend_copy_up",
-    						"mod+shift+down": "list_extend_copy_down",
-    						"mod+backspace": "list_remove",
-    						"mod+shift+backspace": "list_remove_row",
-    						"shift+left": "sel_left",
-    						"shift+right": "sel_right",
-    						")": "right_paren",
-    						"\\": "backslash",
-    						"tab": "tab"
-    			};
+    				// keys aside from 0-9,a-z,A-Z
+    				this.k_chars = {
+    								"+": "+",
+    								"-": "-",
+    								"*": "*",
+    								".": "."
+    				};
+    				this.k_text = {
+    								"/": "/",
+    								"*": "*",
+    								"(": "(",
+    								")": ")",
+    								"<": "<",
+    								">": ">",
+    								"|": "|",
+    								"!": "!",
+    								",": ",",
+    								".": ".",
+    								";": ";",
+    								"=": "=",
+    								"[": "[",
+    								"]": "]",
+    								"@": "@",
+    								"'": "'",
+    								"`": "`",
+    								":": ":",
+    								"\"": "\"",
+    								"?": "?",
+    								"space": " "
+    				};
+    				this.k_controls = {
+    								"up": "up",
+    								"down": "down",
+    								"right": "right",
+    								"left": "left",
+    								"alt+k": "up",
+    								"alt+j": "down",
+    								"alt+l": "right",
+    								"alt+h": "left",
+    								"space": "spacebar",
+    								"home": "home",
+    								"end": "end",
+    								"backspace": "backspace",
+    								"del": "delete_key",
+    								"mod+a": "sel_all",
+    								"mod+c": "sel_copy",
+    								"mod+x": "sel_cut",
+    								"mod+v": "sel_paste",
+    								"mod+z": "undo",
+    								"mod+y": "redo",
+    								"enter": "done",
+    								"mod+shift+right": "list_extend_copy_right",
+    								"mod+shift+left": "list_extend_copy_left",
+    								",": "list_extend_right",
+    								";": "list_extend_down",
+    								"mod+right": "list_extend_right",
+    								"mod+left": "list_extend_left",
+    								"mod+up": "list_extend_up",
+    								"mod+down": "list_extend_down",
+    								"mod+shift+up": "list_extend_copy_up",
+    								"mod+shift+down": "list_extend_copy_down",
+    								"mod+backspace": "list_remove",
+    								"mod+shift+backspace": "list_remove_row",
+    								"shift+left": "sel_left",
+    								"shift+right": "sel_right",
+    								")": "right_paren",
+    								"\\": "backslash",
+    								"tab": "tab"
+    				};
 
-    			// Will populate keyboard shortcuts for symbols from symbol files
-    			this.k_syms = {};
+    				// Will populate keyboard shortcuts for symbols from symbol files
+    				this.k_syms = {};
 
-    			this.k_raw = "mod+space";
+    				this.k_raw = "mod+space";
 
-    			var i = 0;
+    				var i = 0;
 
-    			// letters
+    				// letters
 
-    			for (i = 65; i <= 90; i++) {
-    						this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
-    						this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
-    			}
+    				for (i = 65; i <= 90; i++) {
+    								this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    								this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
+    				}
 
-    			// numbers
+    				// numbers
 
-    			for (i = 48; i <= 57; i++) {
-    						this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
-    			}
+    				for (i = 48; i <= 57; i++) {
+    								this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+    				}
     };
 
     var Settings = {};
@@ -4283,7 +4283,8 @@ var Guppy = (function () {
         "blank_placeholder": "[?]",
         "blacklist": [],
         "buttons": ["osk", "settings", "symbols", "controls"],
-        "cliptype": "latex"
+        "cliptype": "latex",
+        "chars_break_exp": { "name": "exponential", "symbols_group": "operations", "strings": "+-" }
     };
 
     Settings.settings_options = {
@@ -4747,6 +4748,8 @@ var Guppy = (function () {
         var replace_f = false;
         var sel;
 
+        this.break_out_of_exp(true, s.attrs.group);
+
         if (cur > 0) {
             cur--;
             if (this.sel_status != Engine.SEL_NONE) {
@@ -4883,6 +4886,7 @@ var Guppy = (function () {
             this.sel_delete();
             this.sel_clear();
         }
+        this.break_out_of_exp(false, s);
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret, s);
         this.caret += s.length;
         this.checkpoint();
@@ -5729,6 +5733,12 @@ var Guppy = (function () {
         return success;
     };
 
+    Engine.prototype.break_out_of_exp = function (sym, s) {
+        if (this.caret > 0 && this.caret == Utils.get_length(this.current) && this.current.parentNode.parentNode.nodeName == "f" && this.current.parentNode.parentNode.getAttribute("type") == this.setting("chars_break_exp")["name"] && this.setting("chars_break_exp")[sym ? "symbols_group" : "strings"].includes(s)) {
+            this.right();
+        }
+    };
+
     var mousetrap_min = createCommonjsModule(function (module) {
       /* mousetrap v1.6.1 craig.is/killing/mice */
       (function (r, v, f) {
@@ -6121,7 +6131,7 @@ var Guppy = (function () {
     /**
         Add a template symbol to all instances of the editor
         @memberof Guppy
-        @param {string} name - The name of the template to add. 
+        @param {string} name - The name of the template to add.
         @param {Object} template - A template dictionary. This is the same
         as a symbol dictionary, but it can have parameters of the form
         {$myparam} as a substring of any dictionary value, which will be
@@ -6172,9 +6182,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          * "autoreplace": A string describing how to autoreplace typed text with symbols:
             * "auto" (default): Replace symbls greedily
             * "whole": Replace only entire tokens
             * "delay": Same as "whole", but with 200ms delay before replacement
@@ -6185,6 +6195,10 @@ var Guppy = (function () {
           * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
             * "text": Use plain-text editor content
             * "latex": Use LaTeX rendering of editor content
+          * "chars_break_exp": Inserting these characters or string will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
+            * "name": The name of the exponential symbol (in case it is changed)
+            * "symbols_group": The name of the groups which should break out of the exponential
+            * "strings": Characters that will also break out of an exponential
     */
     Guppy.configure = function (name, val) {
         if (name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1) {
@@ -6195,9 +6209,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          "autoreplace": A string describing how to autoreplace typed text with symbols:
              "auto" (default): Replace symbls greedily
              "whole": Replace only entire tokens
              "delay": Same as "whole", but with 200ms delay before replacement
@@ -6231,7 +6245,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6259,7 +6273,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.

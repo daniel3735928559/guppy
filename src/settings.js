@@ -13,6 +13,7 @@ Settings.config.settings = {
     "blacklist":[],
     "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
+    "chars_break_exp": {"name":"exponential","symbols_group":"operations","strings":"+-"},
 };
 
 Settings.settings_options = {
@@ -116,7 +117,7 @@ Settings.init = function(symbols){
         make_x(Settings.panels[Settings.div_names[i]]);
         document.body.appendChild(Settings.panels[Settings.div_names[i]])
     }
-    
+
     make_row("guppy_help_table","left/right arrows","Move cursor");
     make_row("guppy_help_table","shift+left/right arrows","Select region")
     make_row("guppy_help_table","ctrl+a","Select all");
@@ -129,8 +130,8 @@ Settings.init = function(symbols){
     make_row("guppy_help_table","ctrl+backspace","Delete current entry in list or column in matrix");
     make_row("guppy_help_table","ctrl+shift+backspace","Delete current row in matrix");
 
-    
-    
+
+
     for(var s in symbols){
         var latex = Symbols.add_blanks(symbols[s].output.latex, "\\blue{[?]}");
         var row = make_row("guppy_syms_table",s," ");

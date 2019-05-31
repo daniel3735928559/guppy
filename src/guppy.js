@@ -231,7 +231,7 @@ Guppy.add_global_symbol = function(name, symbol, template){
 /**
     Add a template symbol to all instances of the editor
     @memberof Guppy
-    @param {string} name - The name of the template to add. 
+    @param {string} name - The name of the template to add.
     @param {Object} template - A template dictionary. This is the same
     as a symbol dictionary, but it can have parameters of the form
     {$myparam} as a substring of any dictionary value, which will be
@@ -260,9 +260,9 @@ Guppy.remove_global_symbol = function(name){
 
 /**
    @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-   @param {Object} val - The value associated with the named setting: 
+   @param {Object} val - The value associated with the named setting:
       * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-      * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+      * "autoreplace": A string describing how to autoreplace typed text with symbols:
         * "auto" (default): Replace symbls greedily
         * "whole": Replace only entire tokens
         * "delay": Same as "whole", but with 200ms delay before replacement
@@ -273,6 +273,10 @@ Guppy.remove_global_symbol = function(name){
       * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
         * "text": Use plain-text editor content
         * "latex": Use LaTeX rendering of editor content
+      * "chars_break_exp": Inserting these characters or symbol group will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
+        * "name": The name of the exponential symbol (in case it is changed)
+        * "symbols_group": The name of the groups which should break out of the exponential
+        * "strings": Characters that will also break out of an exponential
 */
 Guppy.configure = function(name, val){
     if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){
@@ -283,9 +287,9 @@ Guppy.configure = function(name, val){
 
 /**
    @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-   @param {Object} val - The value associated with the named setting: 
+   @param {Object} val - The value associated with the named setting:
       "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-      "autoreplace": A string describing how to autoreplace typed text with symbols: 
+      "autoreplace": A string describing how to autoreplace typed text with symbols:
          "auto" (default): Replace symbls greedily
          "whole": Replace only entire tokens
          "delay": Same as "whole", but with 200ms delay before replacement
@@ -319,7 +323,7 @@ Guppy.render_all = function(t, delim, root_node){
 }
 
 /**
-   @param {string} name - The name of an event.  Can be: 
+   @param {string} name - The name of an event.  Can be:
      * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
      * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
      * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -350,7 +354,7 @@ Guppy.prototype.event = function(name, handler){
 
 
 /**
-   @param {string} name - The name of an event.  Can be: 
+   @param {string} name - The name of an event.  Can be:
      * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
      * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
      * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
