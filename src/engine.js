@@ -354,7 +354,7 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
         else if("input" in s){
             // If we're at the beginning, then the token is the previous f node
             if(this.caret == 0 && this.current.previousSibling != null){
-                if (this.current.previousSibling.getAttribute("ast_type") != "operator") {
+                if(this.current.previousSibling.getAttribute("ast_type") != "operator") {
                     content[cur] = [this.make_e(""), this.current.previousSibling, this.make_e("")];
                     to_replace = this.current.previousSibling;
                     replace_f = true;
