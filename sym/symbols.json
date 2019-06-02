@@ -86,9 +86,36 @@
     {"output":{
         "latex":"\\left({$1}\\right)",
 	"asciimath":"({$1})"},
-     "keys":["("],
      "attrs":{
-	 "type":"bracket",
+	 "type":"paren",
+	 "group":"functions"},
+     "ast":{
+	 "type":"pass"
+     },
+     "args":[
+	 {"delete":"1","is_bracket":"yes"}]
+    },
+    
+    "paren_guess_close":
+    {"output":{
+        "latex":"\\left({$1}\\right|",
+	"asciimath":"({$1})"},
+     "attrs":{
+	 "type":"paren_guess_close",
+	 "group":"functions"},
+     "ast":{
+	 "type":"pass"
+     },
+     "args":[
+	 {"delete":"1","is_bracket":"yes"}]
+    },
+    
+    "paren_guess_open":
+    {"output":{
+        "latex":"\\left|{$1}\\right)",
+	"asciimath":"({$1})"},
+     "attrs":{
+	 "type":"paren_guess_open",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"

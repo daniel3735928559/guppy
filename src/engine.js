@@ -40,6 +40,9 @@ Engine.SEL_NONE = 0;
 Engine.SEL_CURSOR_AT_START = 1;
 Engine.SEL_CURSOR_AT_END = 2;
 Engine.clipboard = null;
+Engine.PAREN_GUESS_OPEN = "paren_guess_open";
+Engine.PAREN_GUESS_CLOSE = "paren_guess_close";
+Engine.PAREN = "paren";
 
 Engine.prototype.setting = function(name){
     return name in this.settings ? this.settings[name] : Settings.config.settings[name];
@@ -329,7 +332,7 @@ Engine.prototype.template_to_node = function(tmpl_name, content, name, tmpl_args
     @param {string} sym_name - The name of the symbol to insert.
     Should match one of the keys in the symbols JSON object
 */
-Engine.prototype.insert_symbol = function(sym_name,sym_args){
+Engine.prototype.insert_symbol = function(sym_name,sym_args,checkpoint=true){
     var s = sym_args ? Symbols.make_template_symbol(sym_name, sym_args.name, sym_args) : this.symbols[sym_name];
     if(s.attrs && this.is_blacklisted(s.attrs.type)){
         return false;
@@ -342,6 +345,8 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
     var replace_f = false;
     var sel;
 
+    this.convert_guess_bracket_to_proper();
+    
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
@@ -430,7 +435,9 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
     }
 
     this.sel_clear();
-    this.checkpoint();
+    if(checkpoint){
+        this.checkpoint();
+    }
     return true;
 }
 
@@ -483,6 +490,7 @@ Engine.prototype.insert_string = function(s){
         this.sel_delete();
         this.sel_clear();
     }
+    this.convert_guess_bracket_to_proper();
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -947,12 +955,7 @@ Engine.prototype.list_remove = function(){
 Engine.prototype.right = function(){
     this.sel_clear();
     if(this.caret >= Utils.get_length(this.current)){
-        var nn = this.doc.xpath_node("following::e[1]", this.current);
-        if(nn != null){
-            this.current = nn;
-            this.caret = 0;
-        }
-        else{
+        if(!this.jump_to_next_node()){
             this.fire_event("right_end");
         }
     }
@@ -977,12 +980,7 @@ Engine.prototype.spacebar = function(){
 Engine.prototype.left = function(){
     this.sel_clear();
     if(this.caret <= 0){
-        var pn = this.doc.xpath_node("preceding::e[1]", this.current);
-        if(pn != null){
-            this.current = pn;
-            this.caret = this.current.firstChild.nodeValue.length;
-        }
-        else{
+        if(!this.jump_to_previous_node()){
             this.fire_event("left_end");
         }
     }
@@ -1089,6 +1087,17 @@ Engine.prototype.backspace = function(){
         this.sel_status = Engine.SEL_NONE;
         this.checkpoint();
     }
+    // Replace paren with guess right bracket
+    else if(this.is_right_of_bracket()) {
+        var index = this.current.previousSibling.lastChild.childNodes.length-1;
+        var caret_index = Utils.get_length(this.current.previousSibling.lastChild.lastChild);
+        this.current = this.current.previousSibling.lastChild.firstChild;
+        this.delete_from_e();
+        this.insert_opening_bracket();
+        this.current = this.current.parentNode.childNodes[index];
+        this.caret = caret_index;
+        this.checkpoint();
+    }
     else if(this.delete_from_e()){
         this.checkpoint();
     }
@@ -1140,11 +1149,6 @@ Engine.prototype.tab = function(){
     else {
         this.fire_event("completion",{"candidates":candidates});
     }
-}
-
-Engine.prototype.right_paren = function(){
-    if(this.current.nodeName == 'e' && this.caret < this.current.firstChild.nodeValue.length - 1) return;
-    else this.right();
 }
 
 /**
@@ -1206,17 +1210,12 @@ Engine.prototype.end = function(){
 }
 
 Engine.prototype.checkpoint = function(){
-    var base = this.doc.base;
-    this.current.setAttribute("current","yes");
-    this.current.setAttribute("caret",this.caret.toString());
     this.undo_now++;
-    this.undo_data[this.undo_now] = base.cloneNode(true);
+    this.undo_data[this.undo_now] = this.get_xml_with_caret();
     this.undo_data.splice(this.undo_now+1, this.undo_data.length);
-    var old_data = this.undo_data[this.undo_now-1] ? (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now-1]) : "[none]";
-    var new_data = (new XMLSerializer()).serializeToString(this.undo_data[this.undo_now]);
+    var old_data = this.undo_data[this.undo_now-1] ? this.convert_xml_to_string(this.undo_data[this.undo_now-1]) : "[none]";
+    var new_data = this.convert_xml_to_string(this.undo_data[this.undo_now]);
     this.fire_event("change",{"old":old_data,"new":new_data});
-    this.current.removeAttribute("current");
-    this.current.removeAttribute("caret");
 }
 
 Engine.prototype.restore = function(t){
@@ -1229,6 +1228,21 @@ Engine.prototype.restore = function(t){
 Engine.prototype.find_current = function(){
     this.current = this.doc.xpath_node("//*[@current='yes']");
     this.caret = parseInt(this.current.getAttribute("caret"));
+}
+
+Engine.prototype.get_xml_with_caret = function(){
+    var base = this.doc.base;
+    this.current.setAttribute("current","yes");
+    this.current.setAttribute("caret",this.caret.toString());
+    var node = base.cloneNode(true);
+    this.current.removeAttribute("current");
+    this.current.removeAttribute("caret");
+    
+    return node;
+}
+
+Engine.prototype.convert_xml_to_string = function(xml){
+    return (new XMLSerializer()).serializeToString(xml);
 }
 
 /**
@@ -1351,6 +1365,142 @@ Engine.prototype.check_for_symbol = function(whole_node){
         instance.caret = temp_caret;
     }
     return success;
+}
+
+Engine.prototype.jump_to_next_node = function(){
+    var nn = this.doc.xpath_node("following::e[1]", this.current);
+    if(nn != null){
+        this.current = nn;
+        this.caret = 0;
+        return true;
+    }
+    return false;
+}
+
+Engine.prototype.jump_to_previous_node = function(){
+    var pn = this.doc.xpath_node("preceding::e[1]", this.current);
+    if(pn != null){
+        this.current = pn;
+        this.caret = this.current.firstChild.nodeValue.length;
+        return true;
+    }
+    return false;
+}
+
+Engine.prototype.is_in_fnode_type = function(type){
+    var fnode = this.current.parentNode.parentNode;
+    return fnode.nodeName == "f" && fnode.getAttribute("type") == type;
+}
+
+// Note KaTeX issue 1844
+// Can not color bracket
+
+Engine.prototype.insert_opening_bracket = function(){
+    if (this.sel_status != Engine.SEL_NONE){
+        this.insert_symbol(Engine.PAREN);
+        return;
+    }
+    
+    // Next to guess opening bracket, move into it
+    if(this.is_left_of_guess_open_bracket()){
+        this.right();
+    }
+    
+    // Select the nodes to the end of the section
+    var last_sibling = this.current.parentNode.lastChild;
+    this.set_sel_start();
+    this.current = last_sibling;
+    this.caret = Utils.get_length(last_sibling);
+    this.set_sel_end();
+    this.sel_status = Engine.SEL_CURSOR_AT_END;
+    
+    // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
+    if(this.is_in_fnode_type(Engine.PAREN_GUESS_OPEN)){
+        this.insert_symbol(Engine.PAREN, null, false);
+        var node = this.current.parentNode.parentNode;
+        var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+        this.current = this.current.parentNode.parentNode.parentNode.firstChild;
+        this.caret = 0;
+        this.delete_from_e();
+        var children = this.current.parentNode.childNodes[index].childNodes;
+        for(var i=0; i < children.length; i++){
+            if (children[i].nodeName == "c"){
+                this.current = children[i].firstChild;
+                break;
+            }
+        }
+        this.caret = 0;
+        this.checkpoint();
+    }
+    // This bracket is not pairing with another bracket, therefore it is safe to insert a closing guess bracket
+    else{
+        this.insert_symbol(Engine.PAREN_GUESS_CLOSE);
+        this.current = this.current.parentNode.firstChild;
+        this.caret = 0;
+    }
+}
+
+Engine.prototype.insert_closing_bracket = function(){
+    if (this.sel_status != Engine.SEL_NONE){
+        this.insert_symbol(Engine.PAREN);
+        return;
+    }
+    
+    // Next to guess closing bracket, move into it
+    if(this.is_right_of_guess_close_bracket()){
+        this.left();
+    }
+    
+    // Select the nodes to the start of the section
+    var first_sibling = this.current.parentNode.firstChild;
+    this.set_sel_end();
+    this.current = first_sibling;
+    this.caret = 0;
+    this.set_sel_start();
+    this.sel_status = Engine.SEL_CURSOR_AT_START;
+    
+    // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
+    if(this.is_in_fnode_type(Engine.PAREN_GUESS_CLOSE)){
+        this.insert_symbol(Engine.PAREN, null, false);
+        this.current = this.current.parentNode.parentNode.parentNode.firstChild;
+        this.caret = 0;
+        this.delete_from_e();
+        this.current = this.current.nextSibling.nextSibling;
+        this.caret = 0;
+        this.checkpoint();
+    }
+    // This bracket is not pairing with another bracket, therefore it is safe to insert an opening guess bracket
+    else{
+        this.insert_symbol(Engine.PAREN_GUESS_OPEN);
+        this.current = this.current.parentNode.parentNode.nextSibling;
+        this.caret = 0;
+    }
+}
+
+Engine.prototype.is_left_of_guess_open_bracket = function(){
+    var next_sibling = this.current.nextSibling;
+    return next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current);
+}
+
+Engine.prototype.is_right_of_guess_close_bracket = function(){
+    var previous_sibling = this.current.previousSibling;
+    return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0;
+}
+
+Engine.prototype.is_right_of_bracket = function(){
+    var previous_sibling = this.current.previousSibling;
+    return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0;
+}
+
+Engine.prototype.convert_guess_bracket_to_proper = function(){
+    // Nodes are being inserting after or before a guess bracket, therefore replace it with a proper bracket
+    if(this.is_right_of_guess_close_bracket()){
+        this.insert_closing_bracket();
+    }
+    else if(this.is_left_of_guess_open_bracket()){
+        this.insert_opening_bracket();
+        this.left();
+    }
 }
 
 export default Engine;

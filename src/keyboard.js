@@ -68,7 +68,8 @@ var Keyboard = function(){
 	"mod+shift+backspace":"list_remove_row",
 	"shift+left":"sel_left",
 	"shift+right":"sel_right",
-	")":"right_paren",
+	"(":"insert_opening_bracket",
+	")":"insert_closing_bracket",
 	"\\":"backslash",
 	"tab":"tab"
     };
