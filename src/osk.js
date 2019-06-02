@@ -199,31 +199,33 @@ GuppyOSK.prototype.attach = function(guppy, target){
         tab_bar.appendChild(li);
         for(s in grouped[g]){
             var sym = grouped[g][s];
-            if(sym['break']){
-                group_elt.appendChild(elt("br"));
-            }
-            else if(sym['tab']){
-                group_elt.appendChild(elt("span",{"class":"spacer"}));
-            }
-            else{
-                var key = elt("span",{"class":"guppy_osk_key"});
-                var f = null;
-                f = function(n,gn){
-                    click_listener(key, function(e){
-                        e.preventDefault();
-                        if(gn == "arithmetic" || gn == "qwerty" || gn == "QWERTY") guppy.engine.insert_string(n);
-                        else guppy.engine.insert_symbol(n);
-                        guppy.render();
-                        if(self.config.goto_tab){
-                            document.getElementById("guppy_osk_"+self.config.goto_tab+"_tab").click();
-                        }
-                        e.preventDefault();
-                        return false;
-                    });
-                };
-                f(sym.name,g);
-                group_elt.appendChild(key);
-                katex.render(sym.latex, key, {displayMode: false});
+            if (typeof sym != 'function' && typeof sym.name == 'string') {
+                if (sym['break']) {
+                    group_elt.appendChild(elt("br"));
+                }
+                else if (sym['tab']) {
+                    group_elt.appendChild(elt("span", {"class": "spacer"}));
+                }
+                else {
+                    var key = elt("span", {"class": "guppy_osk_key"});
+                    var f = null;
+                    f = function (n, gn) {
+                        click_listener(key, function (e) {
+                            e.preventDefault();
+                            if (gn == "arithmetic" || gn == "qwerty" || gn == "QWERTY") guppy.engine.insert_string(n);
+                            else guppy.engine.insert_symbol(n);
+                            guppy.render();
+                            if (self.config.goto_tab) {
+                                document.getElementById("guppy_osk_" + self.config.goto_tab + "_tab").click();
+                            }
+                            e.preventDefault();
+                            return false;
+                        });
+                    };
+                    f(sym.name, g);
+                    group_elt.appendChild(key);
+                    katex.render(sym.latex, key, {displayMode: false});
+                }
             }
         }
         group_container.appendChild(group_elt);
