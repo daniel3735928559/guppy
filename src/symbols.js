@@ -1,4 +1,3 @@
-import DEFAULT_SYMBOLS from '../sym/symbols.json'
 import Version from './version.js';
 var Symbols = {"symbols":{}, "templates":{}};
 
@@ -132,7 +131,7 @@ Symbols.add_blanks = function(output, blank){
 }
 
 Symbols.symbol_to_node = function(s, content, base){
-    
+
     // s is a symbol
     //
     // content is a list of nodes to insert
@@ -145,11 +144,11 @@ Symbols.symbol_to_node = function(s, content, base){
         if("value" in s.ast) f.setAttribute("ast_value",s.ast["value"])
     }
     //if(s['char']) f.setAttribute("c","yes");
-    
+
     var first_ref=-1, arglist = [];
     var first, i;
-    
-    // Make the b nodes for rendering each output    
+
+    // Make the b nodes for rendering each output
     for(var t in s["output"]){
         var b = base.createElement("b");
         b.setAttribute("p",t);
@@ -288,7 +287,7 @@ Symbols.symbol_to_node = function(s, content, base){
 // 	}
 // 	return ans;
 //     }
-    
+
 //     to_node(content, base){
 // 	// content is a list of nodes to insert
 // 	var f = base.createElement("f");
@@ -297,11 +296,11 @@ Symbols.symbol_to_node = function(s, content, base){
 // 	}
 //         if(this.ast_type) f.setAttribute("ast_type",this.ast_type);
 //         if(this.ast_value) f.setAttribute("ast_value",this.ast_value);
-	
+
 // 	var first_ref=-1, arglist = [];
 // 	var first, i;
-	
-// 	// Make the b nodes for rendering each output    
+
+// 	// Make the b nodes for rendering each output
 // 	for(var t in this.outputs){
 //             var b = base.createElement("b");
 //             b.setAttribute("p",t);
@@ -363,8 +362,7 @@ Symbols.symbol_to_node = function(s, content, base){
 // 	}
 // 	return {"f":f, "first":first, "args":arglist};
 //     }
-    
+
 // }
-	
-Symbols.add_symbols(DEFAULT_SYMBOLS);
+
 export default Symbols;

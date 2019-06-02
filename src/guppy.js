@@ -6,6 +6,7 @@ import Settings from './settings.js';
 import Symbols from './symbols.js';
 import Utils from './utils.js';
 import katex from '../lib/katex/katex-modified.min.js';
+import DEFAULT_SYMBOLS from '../sym/symbols.json'
 
 /**
    @class
@@ -231,7 +232,7 @@ Guppy.add_global_symbol = function(name, symbol, template){
 /**
     Add a template symbol to all instances of the editor
     @memberof Guppy
-    @param {string} name - The name of the template to add. 
+    @param {string} name - The name of the template to add.
     @param {Object} template - A template dictionary. This is the same
     as a symbol dictionary, but it can have parameters of the form
     {$myparam} as a substring of any dictionary value, which will be
@@ -260,9 +261,9 @@ Guppy.remove_global_symbol = function(name){
 
 /**
    @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-   @param {Object} val - The value associated with the named setting: 
+   @param {Object} val - The value associated with the named setting:
       * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-      * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+      * "autoreplace": A string describing how to autoreplace typed text with symbols:
         * "auto" (default): Replace symbls greedily
         * "whole": Replace only entire tokens
         * "delay": Same as "whole", but with 200ms delay before replacement
@@ -283,9 +284,9 @@ Guppy.configure = function(name, val){
 
 /**
    @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-   @param {Object} val - The value associated with the named setting: 
+   @param {Object} val - The value associated with the named setting:
       "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-      "autoreplace": A string describing how to autoreplace typed text with symbols: 
+      "autoreplace": A string describing how to autoreplace typed text with symbols:
          "auto" (default): Replace symbls greedily
          "whole": Replace only entire tokens
          "delay": Same as "whole", but with 200ms delay before replacement
@@ -319,7 +320,7 @@ Guppy.render_all = function(t, delim, root_node){
 }
 
 /**
-   @param {string} name - The name of an event.  Can be: 
+   @param {string} name - The name of an event.  Can be:
      * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
      * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
      * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -350,7 +351,7 @@ Guppy.prototype.event = function(name, handler){
 
 
 /**
-   @param {string} name - The name of an event.  Can be: 
+   @param {string} name - The name of an event.  Can be:
      * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
      * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
      * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -986,8 +987,9 @@ Guppy.register_keyboard_handlers = function(){
 
 Guppy.initialised = false;
 
-Guppy.init = function(){
+Guppy.init = function( symbols=DEFAULT_SYMBOLS ){
     if(Guppy.initialised) return;
+    Symbols.add_symbols(symbols);
     Settings.init(Symbols.symbols);
     Guppy.register_keyboard_handlers();
     document.body.appendChild(Guppy.raw_input);
