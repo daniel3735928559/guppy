@@ -342,7 +342,7 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
     var replace_f = false;
     var sel;
 
-    this.break_out_of_exp(true, s.attrs.group);
+    this.move_to_m_node_child(true, s.attrs.group);
 
     if(cur > 0){
         cur--;
@@ -485,7 +485,7 @@ Engine.prototype.insert_string = function(s){
         this.sel_delete();
         this.sel_clear();
     }
-    this.break_out_of_exp(false, s);
+    this.move_to_m_node_child(false, s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -1356,12 +1356,20 @@ Engine.prototype.check_for_symbol = function(whole_node){
     return success;
 }
 
-Engine.prototype.break_out_of_exp = function(sym, s){
+Engine.prototype.move_to_m_node_child = function(is_sym, s){
     if(this.caret > 0 && this.caret == Utils.get_length(this.current) &&
       this.current.parentNode.parentNode.nodeName == "f" &&
       this.current.parentNode.parentNode.getAttribute("type") == this.setting("chars_break_exp")["name"] &&
-      this.setting("chars_break_exp")[sym ? "symbols_group" : "strings"].includes(s)){
-        this.right();
+      this.setting("chars_break_exp")[is_sym ? "symbols_group" : "strings"].includes(s)){
+        var set = false;
+        while(this.current.parentNode.nodeName != "m"){
+            this.current = this.current.parentNode;
+            set = true;
+        }
+        if(set){
+            this.current = this.current.nextSibling;
+            this.caret = 0;
+        }
     }
 }
 

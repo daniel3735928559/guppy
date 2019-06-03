@@ -4748,7 +4748,7 @@ var Guppy = (function () {
         var replace_f = false;
         var sel;
 
-        this.break_out_of_exp(true, s.attrs.group);
+        this.move_to_m_node_child(true, s.attrs.group);
 
         if (cur > 0) {
             cur--;
@@ -4886,7 +4886,7 @@ var Guppy = (function () {
             this.sel_delete();
             this.sel_clear();
         }
-        this.break_out_of_exp(false, s);
+        this.move_to_m_node_child(false, s);
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret, s);
         this.caret += s.length;
         this.checkpoint();
@@ -5733,9 +5733,17 @@ var Guppy = (function () {
         return success;
     };
 
-    Engine.prototype.break_out_of_exp = function (sym, s) {
-        if (this.caret > 0 && this.caret == Utils.get_length(this.current) && this.current.parentNode.parentNode.nodeName == "f" && this.current.parentNode.parentNode.getAttribute("type") == this.setting("chars_break_exp")["name"] && this.setting("chars_break_exp")[sym ? "symbols_group" : "strings"].includes(s)) {
-            this.right();
+    Engine.prototype.move_to_m_node_child = function (is_sym, s) {
+        if (this.caret > 0 && this.caret == Utils.get_length(this.current) && this.current.parentNode.parentNode.nodeName == "f" && this.current.parentNode.parentNode.getAttribute("type") == this.setting("chars_break_exp")["name"] && this.setting("chars_break_exp")[is_sym ? "symbols_group" : "strings"].includes(s)) {
+            var set = false;
+            while (this.current.parentNode.nodeName != "m") {
+                this.current = this.current.parentNode;
+                set = true;
+            }
+            if (set) {
+                this.current = this.current.nextSibling;
+                this.caret = 0;
+            }
         }
     };
 
@@ -6195,7 +6203,7 @@ var Guppy = (function () {
           * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
             * "text": Use plain-text editor content
             * "latex": Use LaTeX rendering of editor content
-          * "chars_break_exp": Inserting these characters or string will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
+          * "chars_break_exp": Inserting these characters or symbol group will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
             * "name": The name of the exponential symbol (in case it is changed)
             * "symbols_group": The name of the groups which should break out of the exponential
             * "strings": Characters that will also break out of an exponential
