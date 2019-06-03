@@ -194,7 +194,7 @@ Doc.prototype.auto_bracket = function(n){
     var e0 = n.firstChild;
     var e1 = n.lastChild;
     var previous_sibling = n.parentNode.previousSibling;
-    if(previous_sibling && previous_sibling.nodeName == "e" && previous_sibling.textContent && !"+-".includes(previous_sibling.textContent.slice(-1))){ // there is no operator before the symbol
+    if(previous_sibling && previous_sibling.nodeName == "e" && previous_sibling.textContent && "0123456789".includes(previous_sibling.textContent.slice(-1))){ // there is no operator before the symbol
         return true;
     }
     if(n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == ""){ // single f child, all e children empty
