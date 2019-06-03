@@ -65,6 +65,9 @@ var Guppy = (function () {
         functions["_default"] = function (name, args) {
             return name + "(" + args.join(",") + ")";
         };
+        functions["blank"] = function () {
+            return "()";
+        };
         return AST.eval(ast, functions);
     };
 
@@ -195,6 +198,11 @@ var Guppy = (function () {
         functions["_default"] = function (name, args) {
             return make_sym(name, args);
         };
+        functions["blank"] = function () {
+            var elem = document.implementation.createDocument(null, "c");
+            elem.documentElement.innerHTML = "<e></e>";
+            return elem;
+        };
         var ans = AST.eval(ast, functions);
         var new_base = new window.DOMParser().parseFromString("<m></m>", "text/xml");
         for (var nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling) {
@@ -311,9 +319,7 @@ var Guppy = (function () {
 
     AST.eval = function (ast, functions, parent) {
         if (ast.length == 1 && ast[0] == "blank") {
-            var elem = document.implementation.createDocument(null, "c");
-            elem.documentElement.innerHTML = "<e></e>";
-            return elem;
+            return functions["blank"]();
         }
 
         ans = null;
