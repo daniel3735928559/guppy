@@ -759,7 +759,7 @@ var Guppy = (function () {
     };
     var paren_guess_close = {
     	output: {
-    		latex: "\\left({$1}\\right|",
+    		latex: "\\left({$1}\\right.\\hspace{-.5ex}\\textcolor{#bbb}{)}",
     		asciimath: "({$1})"
     	},
     	attrs: {
@@ -776,7 +776,7 @@ var Guppy = (function () {
     };
     var paren_guess_open = {
     	output: {
-    		latex: "\\left|{$1}\\right)",
+    		latex: "\\left.\\hspace{-.5ex}\\textcolor{#bbb}{(}{$1}\\right)",
     		asciimath: "({$1})"
     	},
     	attrs: {
@@ -5823,6 +5823,8 @@ var Guppy = (function () {
             this.right();
         }
 
+        this.convert_guess_bracket_to_proper();
+
         // Select the nodes to the end of the section
         var last_sibling = this.current.parentNode.lastChild;
         this.set_sel_start();
@@ -5868,6 +5870,8 @@ var Guppy = (function () {
             this.left();
         }
 
+        this.convert_guess_bracket_to_proper();
+
         // Select the nodes to the start of the section
         var first_sibling = this.current.parentNode.firstChild;
         this.set_sel_end();
@@ -5896,26 +5900,28 @@ var Guppy = (function () {
 
     Engine.prototype.is_left_of_guess_open_bracket = function () {
         var next_sibling = this.current.nextSibling;
-        return next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current);
+        return Boolean(next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current));
     };
 
     Engine.prototype.is_right_of_guess_close_bracket = function () {
         var previous_sibling = this.current.previousSibling;
-        return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0;
+        return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0);
     };
 
     Engine.prototype.is_right_of_bracket = function () {
         var previous_sibling = this.current.previousSibling;
-        return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0;
+        return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0);
     };
 
     Engine.prototype.convert_guess_bracket_to_proper = function () {
-        // Nodes are being inserting after a guess closing bracket, therefore replace it with a proper bracket
-        if (this.is_right_of_guess_close_bracket()) {
-            this.insert_closing_bracket();
-        } else if (this.is_left_of_guess_open_bracket()) {
-            this.insert_opening_bracket();
-            this.left();
+        if (this.sel_status == Engine.SEL_NONE) {
+            // Nodes are being inserting after or before a guess bracket, therefore replace it with a proper bracket
+            if (this.is_right_of_guess_close_bracket()) {
+                this.insert_closing_bracket();
+            } else if (this.is_left_of_guess_open_bracket()) {
+                this.insert_opening_bracket();
+                this.left();
+            }
         }
     };
 

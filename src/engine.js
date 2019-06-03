@@ -346,7 +346,7 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args,checkpoint=true){
     var sel;
 
     this.convert_guess_bracket_to_proper();
-    
+
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
@@ -1237,7 +1237,7 @@ Engine.prototype.get_xml_with_caret = function(){
     var node = base.cloneNode(true);
     this.current.removeAttribute("current");
     this.current.removeAttribute("caret");
-    
+
     return node;
 }
 
@@ -1396,16 +1396,18 @@ Engine.prototype.is_in_fnode_type = function(type){
 // Can not color bracket
 
 Engine.prototype.insert_opening_bracket = function(){
-    if (this.sel_status != Engine.SEL_NONE){
+    if(this.sel_status != Engine.SEL_NONE){
         this.insert_symbol(Engine.PAREN);
         return;
     }
-    
+
     // Next to guess opening bracket, move into it
     if(this.is_left_of_guess_open_bracket()){
         this.right();
     }
-    
+
+    this.convert_guess_bracket_to_proper();
+
     // Select the nodes to the end of the section
     var last_sibling = this.current.parentNode.lastChild;
     this.set_sel_start();
@@ -1413,7 +1415,7 @@ Engine.prototype.insert_opening_bracket = function(){
     this.caret = Utils.get_length(last_sibling);
     this.set_sel_end();
     this.sel_status = Engine.SEL_CURSOR_AT_END;
-    
+
     // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
     if(this.is_in_fnode_type(Engine.PAREN_GUESS_OPEN)){
         this.insert_symbol(Engine.PAREN, null, false);
@@ -1441,16 +1443,18 @@ Engine.prototype.insert_opening_bracket = function(){
 }
 
 Engine.prototype.insert_closing_bracket = function(){
-    if (this.sel_status != Engine.SEL_NONE){
+    if(this.sel_status != Engine.SEL_NONE){
         this.insert_symbol(Engine.PAREN);
         return;
     }
-    
+
     // Next to guess closing bracket, move into it
     if(this.is_right_of_guess_close_bracket()){
         this.left();
     }
-    
+
+    this.convert_guess_bracket_to_proper();
+
     // Select the nodes to the start of the section
     var first_sibling = this.current.parentNode.firstChild;
     this.set_sel_end();
@@ -1458,7 +1462,7 @@ Engine.prototype.insert_closing_bracket = function(){
     this.caret = 0;
     this.set_sel_start();
     this.sel_status = Engine.SEL_CURSOR_AT_START;
-    
+
     // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
     if(this.is_in_fnode_type(Engine.PAREN_GUESS_CLOSE)){
         this.insert_symbol(Engine.PAREN, null, false);
@@ -1479,27 +1483,29 @@ Engine.prototype.insert_closing_bracket = function(){
 
 Engine.prototype.is_left_of_guess_open_bracket = function(){
     var next_sibling = this.current.nextSibling;
-    return next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current);
+    return Boolean(next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current));
 }
 
 Engine.prototype.is_right_of_guess_close_bracket = function(){
     var previous_sibling = this.current.previousSibling;
-    return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0;
+    return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0);
 }
 
 Engine.prototype.is_right_of_bracket = function(){
     var previous_sibling = this.current.previousSibling;
-    return previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0;
+    return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0);
 }
 
 Engine.prototype.convert_guess_bracket_to_proper = function(){
-    // Nodes are being inserting after or before a guess bracket, therefore replace it with a proper bracket
-    if(this.is_right_of_guess_close_bracket()){
-        this.insert_closing_bracket();
-    }
-    else if(this.is_left_of_guess_open_bracket()){
-        this.insert_opening_bracket();
-        this.left();
+    if(this.sel_status == Engine.SEL_NONE){
+        // Nodes are being inserting after or before a guess bracket, therefore replace it with a proper bracket
+        if(this.is_right_of_guess_close_bracket()){
+            this.insert_closing_bracket();
+        }
+        else if(this.is_left_of_guess_open_bracket()){
+            this.insert_opening_bracket();
+            this.left();
+        }
     }
 }
 
