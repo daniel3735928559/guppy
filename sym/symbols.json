@@ -82,12 +82,12 @@
 	 {"delete":"1"}]
     },
 
-    "paren":
+    "bracket":
     {"output":{
         "latex":"\\left({$1}\\right)",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"paren",
+	 "type":"bracket",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"
@@ -96,12 +96,12 @@
 	 {"delete":"1","is_bracket":"yes"}]
     },
 
-    "paren_guess_close":
+    "bracket_guess_close":
     {"output":{
         "latex":"\\left({$1}\\right.\\hspace{-.5ex}\\textcolor{#bbb}{)}",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"paren_guess_close",
+	 "type":"bracket_guess_close",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"
@@ -110,12 +110,12 @@
 	 {"delete":"1","is_bracket":"yes"}]
     },
 
-    "paren_guess_open":
+    "bracket_guess_open":
     {"output":{
         "latex":"\\left.\\hspace{-.5ex}\\textcolor{#bbb}{(}{$1}\\right)",
 	"asciimath":"({$1})"},
      "attrs":{
-	 "type":"paren_guess_open",
+	 "type":"bracket_guess_open",
 	 "group":"functions"},
      "ast":{
 	 "type":"pass"

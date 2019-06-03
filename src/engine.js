@@ -40,9 +40,9 @@ Engine.SEL_NONE = 0;
 Engine.SEL_CURSOR_AT_START = 1;
 Engine.SEL_CURSOR_AT_END = 2;
 Engine.clipboard = null;
-Engine.PAREN_GUESS_OPEN = "paren_guess_open";
-Engine.PAREN_GUESS_CLOSE = "paren_guess_close";
-Engine.PAREN = "paren";
+Engine.BRACKET_GUESS_OPEN = "bracket_guess_open";
+Engine.BRACKET_GUESS_CLOSE = "bracket_guess_close";
+Engine.BRACKET = "bracket";
 
 Engine.prototype.setting = function(name){
     return name in this.settings ? this.settings[name] : Settings.config.settings[name];
@@ -1082,14 +1082,14 @@ Engine.prototype.delete_forward_from_e = function(){
     @memberof Engine
 */
 Engine.prototype.backspace = function(){
-    var is_right_of_bracket = this.is_right_of_symbol(Engine.PAREN);
+    var is_right_of_bracket = this.is_right_of_symbol(Engine.BRACKET);
     if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
         this.sel_status = Engine.SEL_NONE;
         this.checkpoint();
     }
     // Replace paren with guess right bracket or delete guess open bracket
-    else if(is_right_of_bracket || this.is_right_of_symbol(Engine.PAREN_GUESS_OPEN)){
+    else if(is_right_of_bracket || this.is_right_of_symbol(Engine.BRACKET_GUESS_OPEN)){
         var index = this.current.previousSibling.lastChild.childNodes.length-1;
         var caret_index = Utils.get_length(this.current.previousSibling.lastChild.lastChild);
         this.current = this.current.previousSibling.lastChild.firstChild;
@@ -1400,7 +1400,7 @@ Engine.prototype.is_in_fnode_type = function(type){
 
 Engine.prototype.insert_opening_bracket = function(){
     if(this.sel_status != Engine.SEL_NONE){
-        this.insert_symbol(Engine.PAREN);
+        this.insert_symbol(Engine.BRACKET);
         return;
     }
 
@@ -1420,8 +1420,8 @@ Engine.prototype.insert_opening_bracket = function(){
     this.sel_status = Engine.SEL_CURSOR_AT_END;
 
     // Inside an open guess bracket, now the open bracket position is known meaning that the guess bracket has to be replaced
-    if(this.is_in_fnode_type(Engine.PAREN_GUESS_OPEN)){
-        this.insert_symbol(Engine.PAREN, null, false);
+    if(this.is_in_fnode_type(Engine.BRACKET_GUESS_OPEN)){
+        this.insert_symbol(Engine.BRACKET, null, false);
         var node = this.current.parentNode.parentNode;
         var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
         this.current = this.current.parentNode.parentNode.parentNode.firstChild;
@@ -1439,7 +1439,7 @@ Engine.prototype.insert_opening_bracket = function(){
     }
     // This bracket is not pairing with another bracket, therefore it is safe to insert a closing guess bracket
     else{
-        this.insert_symbol(Engine.PAREN_GUESS_CLOSE);
+        this.insert_symbol(Engine.BRACKET_GUESS_CLOSE);
         this.current = this.current.parentNode.firstChild;
         this.caret = 0;
     }
@@ -1447,7 +1447,7 @@ Engine.prototype.insert_opening_bracket = function(){
 
 Engine.prototype.insert_closing_bracket = function(){
     if(this.sel_status != Engine.SEL_NONE){
-        this.insert_symbol(Engine.PAREN);
+        this.insert_symbol(Engine.BRACKET);
         return;
     }
 
@@ -1467,8 +1467,8 @@ Engine.prototype.insert_closing_bracket = function(){
     this.sel_status = Engine.SEL_CURSOR_AT_START;
 
     // Inside a close guess bracket, now the close bracket position is known meaning that the guess bracket has to be replaced
-    if(this.is_in_fnode_type(Engine.PAREN_GUESS_CLOSE)){
-        this.insert_symbol(Engine.PAREN, null, false);
+    if(this.is_in_fnode_type(Engine.BRACKET_GUESS_CLOSE)){
+        this.insert_symbol(Engine.BRACKET, null, false);
         this.current = this.current.parentNode.parentNode.parentNode.firstChild;
         this.caret = 0;
         this.delete_from_e();
@@ -1478,7 +1478,7 @@ Engine.prototype.insert_closing_bracket = function(){
     }
     // This bracket is not pairing with another bracket, therefore it is safe to insert an opening guess bracket
     else{
-        this.insert_symbol(Engine.PAREN_GUESS_OPEN);
+        this.insert_symbol(Engine.BRACKET_GUESS_OPEN);
         this.current = this.current.parentNode.parentNode.nextSibling;
         this.caret = 0;
     }
@@ -1486,7 +1486,7 @@ Engine.prototype.insert_closing_bracket = function(){
 
 Engine.prototype.is_left_of_guess_open_bracket = function(){
     var next_sibling = this.current.nextSibling;
-    return Boolean(next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current));
+    return Boolean(next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.BRACKET_GUESS_OPEN && this.caret == Utils.get_length(this.current));
 }
 
 Engine.prototype.is_right_of_symbol = function(type){
@@ -1495,7 +1495,7 @@ Engine.prototype.is_right_of_symbol = function(type){
 }
 
 Engine.prototype.is_right_of_guess_close_bracket = function(){
-    return this.is_right_of_symbol(Engine.PAREN_GUESS_CLOSE);
+    return this.is_right_of_symbol(Engine.BRACKET_GUESS_CLOSE);
 }
 
 Engine.prototype.convert_guess_bracket_to_proper = function(){
