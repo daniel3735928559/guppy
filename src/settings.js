@@ -14,6 +14,7 @@ Settings.config.settings = {
     "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
     "chars_break_exp": {"name":"exponential","symbols_group":"operations","strings":"+-"},
+    "top_only_symbols": ["equal","less","greater","leq","geq"],
 };
 
 Settings.settings_options = {
