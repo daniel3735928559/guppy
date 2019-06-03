@@ -1409,13 +1409,10 @@ Engine.prototype.insert_opening_bracket = function(){
         this.right();
     }
 
-    this.convert_guess_bracket_to_proper();
-
     // Select the nodes to the end of the section
-    var last_sibling = this.current.parentNode.lastChild;
     this.set_sel_start();
-    this.current = last_sibling;
-    this.caret = Utils.get_length(last_sibling);
+    this.current = this.current.parentNode.lastChild;
+    this.caret = Utils.get_length(this.current);
     this.set_sel_end();
     this.sel_status = Engine.SEL_CURSOR_AT_END;
 
@@ -1456,12 +1453,9 @@ Engine.prototype.insert_closing_bracket = function(){
         this.left();
     }
 
-    this.convert_guess_bracket_to_proper();
-
     // Select the nodes to the start of the section
-    var first_sibling = this.current.parentNode.firstChild;
     this.set_sel_end();
-    this.current = first_sibling;
+    this.current = this.current.parentNode.firstChild;
     this.caret = 0;
     this.set_sel_start();
     this.sel_status = Engine.SEL_CURSOR_AT_START;
@@ -1507,6 +1501,32 @@ Engine.prototype.convert_guess_bracket_to_proper = function(){
         else if(this.is_left_of_guess_open_bracket()){
             this.insert_opening_bracket();
             this.left();
+        }
+    }
+    else{
+        // Inserting a guess bracket when there is an inner guess bracket, therefore replace the inner one with a proper bracket
+        if(this.is_right_of_guess_close_bracket()){
+            var index = Array.prototype.indexOf.call(this.sel_start.node.parentNode.childNodes, this.sel_start.node);
+            var caret_index = this.sel_start.caret;
+            this.sel_status = Engine.SEL_NONE;
+            this.insert_closing_bracket();
+            this.set_sel_end();
+            this.current = this.current.parentNode.childNodes[index];
+            this.caret = caret_index;
+            this.set_sel_start();
+            this.sel_status = Engine.SEL_CURSOR_AT_START;
+        }
+        else if(this.is_left_of_guess_open_bracket()){
+            var index = Array.prototype.indexOf.call(this.sel_end.node.parentNode.childNodes, this.sel_end.node);
+            var caret_index = this.sel_end.caret;
+            this.sel_status = Engine.SEL_NONE;
+            this.insert_opening_bracket();
+            this.left();
+            this.set_sel_start();
+            this.current = this.current.parentNode.childNodes[index];
+            this.caret = caret_index;
+            this.set_sel_end();
+            this.sel_status = Engine.SEL_CURSOR_AT_END;
         }
     }
 }
