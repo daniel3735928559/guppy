@@ -13,7 +13,7 @@ Settings.config.settings = {
     "blacklist":[],
     "buttons":["osk","settings","symbols","controls"],
     "cliptype":"latex",
-    "chars_break_exp": {"name":"exponential","symbols_group":"operations","strings":"+-"},
+    "chars_break_sup_sub": {"name":["exponential","subscript"],"symbols":"*","strings":"+-"},
     "top_only_symbols": ["equal","less","greater","leq","geq"],
 };
 
