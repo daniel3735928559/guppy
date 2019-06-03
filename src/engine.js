@@ -1082,18 +1082,21 @@ Engine.prototype.delete_forward_from_e = function(){
     @memberof Engine
 */
 Engine.prototype.backspace = function(){
+    var is_right_of_bracket = this.is_right_of_symbol(Engine.PAREN);
     if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
         this.sel_status = Engine.SEL_NONE;
         this.checkpoint();
     }
-    // Replace paren with guess right bracket
-    else if(this.is_right_of_bracket()) {
+    // Replace paren with guess right bracket or delete guess open bracket
+    else if(is_right_of_bracket || this.is_right_of_symbol(Engine.PAREN_GUESS_OPEN)){
         var index = this.current.previousSibling.lastChild.childNodes.length-1;
         var caret_index = Utils.get_length(this.current.previousSibling.lastChild.lastChild);
         this.current = this.current.previousSibling.lastChild.firstChild;
         this.delete_from_e();
-        this.insert_opening_bracket();
+        if(is_right_of_bracket){
+            this.insert_opening_bracket();
+        }
         this.current = this.current.parentNode.childNodes[index];
         this.caret = caret_index;
         this.checkpoint();
@@ -1486,14 +1489,13 @@ Engine.prototype.is_left_of_guess_open_bracket = function(){
     return Boolean(next_sibling && next_sibling.nodeName == "f" && next_sibling.getAttribute("type") == Engine.PAREN_GUESS_OPEN && this.caret == Utils.get_length(this.current));
 }
 
-Engine.prototype.is_right_of_guess_close_bracket = function(){
+Engine.prototype.is_right_of_symbol = function(type){
     var previous_sibling = this.current.previousSibling;
-    return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN_GUESS_CLOSE && this.caret == 0);
+    return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == type && this.caret == 0);
 }
 
-Engine.prototype.is_right_of_bracket = function(){
-    var previous_sibling = this.current.previousSibling;
-    return Boolean(previous_sibling && previous_sibling.nodeName == "f" && previous_sibling.getAttribute("type") == Engine.PAREN && this.caret == 0);
+Engine.prototype.is_right_of_guess_close_bracket = function(){
+    return this.is_right_of_symbol(Engine.PAREN_GUESS_CLOSE);
 }
 
 Engine.prototype.convert_guess_bracket_to_proper = function(){
