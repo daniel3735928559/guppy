@@ -3,7 +3,7 @@
     "_name": "base",
     "norm":
     {"output":{
-        "latex":"||{$1}||",
+        "latex":"\\left|\\left|{$1}\\right|\\right|",
         "asciimath":"norm({$1})"},
      "attrs":{
 	 "type":"norm",
