@@ -3,7 +3,7 @@
     "_name": "base",
     "norm":
     {"output":{
-        "latex":"||{$1}||",
+        "latex":"\\left|\\left|{$1}\\right|\\right|",
         "asciimath":"norm({$1})"},
      "attrs":{
 	 "type":"norm",
@@ -11,7 +11,7 @@
      "args":[
 	 {"delete":"1"}]
     },
-    
+
     "utf8":
     {"output":{
         "latex":"\\texttt{U+{$1}}",
@@ -23,7 +23,7 @@
 	 {"utf8":"entry","mode":"text"}
      ]
     },
-    
+
     "text":
     {"output":{
         "latex":"\\text{{$1}}",
@@ -34,7 +34,7 @@
      "args":[
 	 {"mode":"text"}]
     },
-    
+
     "sym_name":
     {"output":{
         "latex":"\\backslash\\texttt{{$1}}",
@@ -46,7 +46,7 @@
      "args":[
 	 {"mode":"symbol","is_bracket":"yes"}]
     },
-    
+
     "abs":
     {"output":{
         "latex":"\\left|{$1}\\right|",
@@ -58,7 +58,7 @@
      "args":[
 	 {"delete":"1","is_bracket":"yes"}]
     },
-    
+
     "eval":
     {"output":{
         "latex":"{$1}({$2{,}})",
@@ -70,7 +70,7 @@
 	 {"delete":"2","name":"function"},
 	 {"delete":"1","name":"argument"}]
     },
-    
+
     "sqrt":
     {"output":{
         "latex":"\\sqrt{{$1}\\phantom{\\tiny{!}}}",
@@ -81,7 +81,7 @@
      "args":[
 	 {"delete":"1"}]
     },
-    
+
     "paren":
     {"output":{
         "latex":"\\left({$1}\\right)",
@@ -96,7 +96,7 @@
      "args":[
 	 {"delete":"1","is_bracket":"yes"}]
     },
-    
+
     "floor":
     {"output":{
         "latex":"\\lfloor {$1} \\rfloor",
@@ -107,7 +107,7 @@
      "args":[
 	 {"delete":"1"}]
     },
-    
+
     "factorial":
     {"output":{
         "latex":"{$1}!",
@@ -120,7 +120,7 @@
      "args":[
 	 {"bracket":"yes","delete":"1"}]
     },
-    
+
     "exp":
     {"output":{
         "latex":"{{$1}}^{{$2}}",
@@ -135,11 +135,11 @@
 	 {"down":"1","delete":"1","name":"exponent","small":"yes"}
      ]
     },
-    
+
     "sub":
     {"output":{
         "latex":"{{$1}}_{{$2}}",
-	"asciimath":"{$1}{$2}"},
+	"asciimath":"({$1})_({$2})"},
      "input":1,
      "keys":["_","shift+down"],
      "attrs":{
@@ -150,7 +150,7 @@
 	 {"up":"1","delete":"1","name":"subscript","small":"yes"}
      ]
     },
-    
+
     "frac":
     {"output":{
         "latex":"\\dfrac{{$1}}{{$2}}",
@@ -166,7 +166,7 @@
 	 {"up":"1","down":"2","delete":"1","name":"denominator"}
      ]
     },
-        
+
     "int":
     {"output":{
         "latex":"\\displaystyle\\int{{$1}}d{$2}",
@@ -180,7 +180,7 @@
 	 {"delete":"1","bracket":"yes","name":"variable"}
      ]
     },
-    
+
     "defi":
     {"output":{
         "latex":"\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
@@ -196,7 +196,7 @@
 	 {"down":"1","up":"2","bracket":"yes","delete":"4","name":"variable"}
      ]
     },
-    
+
     "deriv":
     {"output":{
         "latex":"\\displaystyle\\frac{d{$1}}{d{$2}}",
@@ -210,7 +210,7 @@
 	 {"down":"1","up":"2","bracket":"yes","name":"variable"}
      ]
     },
-        
+
     "sum":
     {"output":{
         "latex":"\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
@@ -240,7 +240,7 @@
 	 {"down":"1","up":"2","delete":"3","bracket":"yes","name":"summand"}
      ]
     },
-    
+
     "root":
     {"output":{
         "latex":"\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
@@ -283,7 +283,7 @@
 	 "group":"array",
 	 "type":"matrix"}
     },
-    
+
     "*":
     {"output":{
         "latex":"\\cdot",
@@ -301,7 +301,7 @@
 		"attrs":{"group":"functions",
 			 "type":"infinity"}
 	       },
-    
+
     "_templates":
     {
 	"latex_func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
@@ -312,7 +312,7 @@
 		"args":[
 		    {"delete":"1"}
 		]},
-	
+
 	"latex_trig_func":{"output":{"latex":"\\{$name}\\left({$1}\\right)",
 				"asciimath":" {$name}({$1})"},
 		"attrs":{
@@ -321,7 +321,7 @@
 		"args":[
 		    {"delete":"1"}
 		]},
-	
+
 	"func":{"output":{"latex":"{$latex}\\left({$1}\\right)",
 			  "asciimath":" {$asciimath}({$1})"},
 		"attrs":{
@@ -330,7 +330,7 @@
 		"args":[
 		    {"delete":"1"}
 		]},
-	
+
 	"char":{"output":{"latex":"\\{$name}",
 			   "asciimath":" {$name} "},
 		 "attrs":{
@@ -344,13 +344,13 @@
 			     "type":"{$name}"},
 			 "ast":{"value":"\\u{$codepoint}"}
 			},
-	
+
 	"utf8char":{"output":{"latex":"\\text{{$char}}",
 			      "asciimath":" {$name} "},
 		    "attrs":{
 			"group":"emoji",
 			"type":"{$name}"}},
-	
+
 	"binop":{"output":{"latex":"{$latex}",
 			   "asciimath":"{$asciimath}"},
 		 "keys":["{$type}"],
@@ -364,11 +364,11 @@
     "trig_functions":{
 	"template":"latex_trig_func",
 	"values":["sin","cos","tan","sec","csc","cot","arcsin","arccos","arctan","sinh","cosh","tanh"]},
-    
+
     "functions":{
 	"template":"latex_trig_func",
 	"values":["log","ln"]},
-    
+
     "utf8chars":{
 	"template":"utf8char",
 	"values":{"banana":{"char":"🍌"},
@@ -377,7 +377,7 @@
 		  "kiwi":{"char":"🥝"}
 		 }
     },
-    
+
     "greek":{
 	"template":"char",
 	"values":["alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Phi","Psi","Omega"]},
