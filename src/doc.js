@@ -100,6 +100,9 @@ Doc.prototype.import_latex = function(text, syms, s2n){
 }
 
 Doc.prototype.import_ast = function(ast, syms, s2n){
+    if(typeof ast == "string"){
+        ast = JSON.parse(ast);
+    }
     syms = syms || Symbols.symbols;
     s2n = s2n || Symbols.symbol_to_node;
     var doc = AST.to_xml(ast, syms, s2n);

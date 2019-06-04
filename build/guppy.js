@@ -65,6 +65,9 @@ var Guppy = (function () {
         functions["_default"] = function (name, args) {
             return name + "(" + args.join(",") + ")";
         };
+        functions["blank"] = function () {
+            return "()";
+        };
         return AST.eval(ast, functions);
     };
 
@@ -195,6 +198,11 @@ var Guppy = (function () {
         functions["_default"] = function (name, args) {
             return make_sym(name, args);
         };
+        functions["blank"] = function () {
+            var elem = document.implementation.createDocument(null, "c");
+            elem.documentElement.innerHTML = "<e></e>";
+            return elem;
+        };
         var ans = AST.eval(ast, functions);
         var new_base = new window.DOMParser().parseFromString("<m></m>", "text/xml");
         for (var nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling) {
@@ -310,6 +318,10 @@ var Guppy = (function () {
     };
 
     AST.eval = function (ast, functions, parent) {
+        if (ast.length == 1 && ast[0] == "blank") {
+            return functions["blank"]();
+        }
+
         ans = null;
         if (!functions["_default"]) functions["_default"] = function (name, args) {
             throw Error("Function not implemented: " + name + "(" + args + ")");
@@ -3910,6 +3922,9 @@ var Guppy = (function () {
     };
 
     Doc.prototype.import_ast = function (ast, syms, s2n) {
+        if (typeof ast == "string") {
+            ast = JSON.parse(ast);
+        }
         syms = syms || Symbols.symbols;
         s2n = s2n || Symbols.symbol_to_node;
         var doc = AST.to_xml(ast, syms, s2n);

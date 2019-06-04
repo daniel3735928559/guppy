@@ -706,7 +706,15 @@ var tests = [
 	"expected":"matrix(list(list((pi / 2),(x^2)),list(defintegral(1,2,squareroot(x),x),sin(x))))",
 	"run":function(g){
 	    Guppy("guppy1").import_syntax_tree(["matrix",[["list",[["list",[["fraction",[["var",["pi"]],["val",[2]]]],["exponential",[["var",["x"]],["val",[2]]]]]],["list",[["defintegral",[["val",[1]],["val",[2]],["squareroot",[["var",["x"]]]],["var",["x"]]]],["sin",[["var",["x"]]]]]]]]]]);
-	}
+    }
+    },
+    {
+	"description":"import_ast string with blank",
+	"type":"text",
+	"expected":"(1 / ())",
+	"run":function(g){
+	    Guppy("guppy1").import_syntax_tree("[\"fraction\",[[\"val\",[1]],[\"blank\"]]]")
+    }
     },
     {
 	"description":"Comparisons",
@@ -1060,7 +1068,7 @@ describe('Guppy',function(){
     beforeEach(function() {
 	pre_test();
     });
-    
+
     afterEach(function() {
 	post_test();
     });

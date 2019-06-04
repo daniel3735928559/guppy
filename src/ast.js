@@ -26,6 +26,7 @@ AST.to_text = function(ast){
     functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";};
     functions["factorial"] = function(args){return "("+args[0]+")!";};
     functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";};
+    functions["blank"] = function(){return "()"};
     return AST.eval(ast, functions);
 }
 
@@ -49,7 +50,7 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
         var nn = doc2.documentElement.firstChild
         n.firstChild.textContent += nn.firstChild.textContent;
         for(nn = nn.nextSibling; nn; nn = nn.nextSibling){
-            n.parentNode.insertBefore(nn.cloneNode(true),null); 
+            n.parentNode.insertBefore(nn.cloneNode(true),null);
         }
     }
     var ensure_text_nodes = function(base){
@@ -152,6 +153,11 @@ AST.to_xml = function(ast, symbols, symbol_to_node){
     functions["_default"] = function(name, args){
         return make_sym(name, args);
     }
+    functions["blank"] = function(){
+        var elem = document.implementation.createDocument(null, "c");
+        elem.documentElement.innerHTML = "<e></e>";
+        return elem;
+    }
     var ans = AST.eval(ast, functions);
     var new_base = (new window.DOMParser()).parseFromString("<m></m>", "text/xml");
     for(var nn = ans.documentElement.firstChild; nn; nn = nn.nextSibling){
@@ -202,9 +208,13 @@ AST.to_function = function(ast, functions){
 }
 
 AST.eval = function(ast, functions, parent){
+    if(ast.length == 1 && ast[0] == "blank"){
+        return functions["blank"]();
+    }
+
     ans = null;
     if(!functions["_default"]) functions["_default"] = function(name, args){ throw Error("Function not implemented: " + name + "(" + args + ")");}
-    
+
     var args = []
     for(var i = 0; i < ast[1].length; i++){
         if(Object.prototype.toString.call(ast[1][i]) === '[object Array]'){
@@ -217,7 +227,7 @@ AST.eval = function(ast, functions, parent){
     var ans = null;
     if(functions[ast[0]]) ans = functions[ast[0]](args, parent);
     else if(functions["_default"]) ans = functions["_default"](ast[0], args, parent);
-    
+
     return ans
 }
 
