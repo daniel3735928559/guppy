@@ -502,7 +502,7 @@ var tests = [
     {
 	"description":"export sub",
 	"type":"text",
-	"expected":"(x_2)",
+	"expected":"(x_(2))",
 	"run":function(g){
 	    do_keys(['x','_','2']);
 	}
@@ -580,6 +580,14 @@ var tests = [
 	"expected":'["-",[["var",["x"]],["sin",[["var",["x"]]]]]]',
 	"run":function(g){
 	    Guppy("guppy1").import_text("x-sin(x)");
+	}
+    },
+    {
+	"description":"import_text_with_subscript",
+	"type":"ast",
+	"expected":'["subscript",[["var",["K"]],["var",["lambda"]]]]',
+	"run":function(g){
+	    Guppy("guppy1").import_text("K_(lambda)");
 	}
     },
     {
