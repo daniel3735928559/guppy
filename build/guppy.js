@@ -1,6 +1,618 @@
 var Guppy = (function () {
     'use strict';
 
+    var _version = "2.0.0-alpha.3";
+    var _name = "base";
+    var norm = {
+    	output: {
+    		latex: "\\left|\\left|{$1}\\right|\\right|",
+    		asciimath: "norm({$1})"
+    	},
+    	attrs: {
+    		type: "norm",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var utf8 = {
+    	output: {
+    		latex: "\\texttt{U+{$1}}",
+    		asciimath: "\\u{$1}"
+    	},
+    	attrs: {
+    		type: "text",
+    		group: "editor"
+    	},
+    	args: [{
+    		utf8: "entry",
+    		mode: "text"
+    	}]
+    };
+    var text = {
+    	output: {
+    		latex: "\\text{{$1}}",
+    		asciimath: "text({$1})"
+    	},
+    	attrs: {
+    		type: "text",
+    		group: "editor"
+    	},
+    	args: [{
+    		mode: "text"
+    	}]
+    };
+    var sym_name = {
+    	output: {
+    		latex: "\\backslash\\texttt{{$1}}",
+    		asciimath: "SYMBOL({$1})"
+    	},
+    	input: -1,
+    	attrs: {
+    		type: "symbol",
+    		group: "editor"
+    	},
+    	args: [{
+    		mode: "symbol",
+    		is_bracket: "yes"
+    	}]
+    };
+    var abs = {
+    	output: {
+    		latex: "\\left|{$1}\\right|",
+    		asciimath: "|{$1}|"
+    	},
+    	keys: ["|"],
+    	attrs: {
+    		type: "absolutevalue",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var sqrt = {
+    	output: {
+    		latex: "\\sqrt{{$1}\\phantom{\\tiny{!}}}",
+    		asciimath: "sqrt({$1})"
+    	},
+    	attrs: {
+    		type: "squareroot",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var paren = {
+    	output: {
+    		latex: "\\left({$1}\\right)",
+    		asciimath: "({$1})"
+    	},
+    	keys: ["("],
+    	attrs: {
+    		type: "bracket",
+    		group: "functions"
+    	},
+    	ast: {
+    		type: "pass"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var floor = {
+    	output: {
+    		latex: "\\lfloor {$1} \\rfloor",
+    		asciimath: "|_ {$1} _|"
+    	},
+    	attrs: {
+    		type: "floor",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var factorial = {
+    	output: {
+    		latex: "{$1}!",
+    		asciimath: "({$1})!"
+    	},
+    	input: 1,
+    	keys: ["!"],
+    	attrs: {
+    		type: "factorial",
+    		group: "functions"
+    	},
+    	args: [{
+    		bracket: "yes",
+    		"delete": "1"
+    	}]
+    };
+    var exp = {
+    	output: {
+    		latex: "{{$1}}^{{$2}}",
+    		asciimath: "({$1})^({$2})"
+    	},
+    	input: 1,
+    	keys: ["^", "shift+up"],
+    	attrs: {
+    		type: "exponential",
+    		group: "functions"
+    	},
+    	args: [{
+    		up: "2",
+    		bracket: "yes",
+    		"delete": "1",
+    		name: "base"
+    	}, {
+    		down: "1",
+    		"delete": "1",
+    		name: "exponent",
+    		small: "yes"
+    	}]
+    };
+    var sub = {
+    	output: {
+    		latex: "{{$1}}_{{$2}}",
+    		asciimath: "({$1})_({$2})"
+    	},
+    	input: 1,
+    	keys: ["_", "shift+down"],
+    	attrs: {
+    		type: "subscript",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "2",
+    		bracket: "yes",
+    		"delete": "1",
+    		name: "base"
+    	}, {
+    		up: "1",
+    		"delete": "1",
+    		name: "subscript",
+    		small: "yes"
+    	}]
+    };
+    var frac = {
+    	output: {
+    		latex: "\\dfrac{{$1}}{{$2}}",
+    		small_latex: "\\frac{{$1}}{{$2}}",
+    		asciimath: "({$1})/({$2})"
+    	},
+    	input: 1,
+    	keys: ["/"],
+    	attrs: {
+    		type: "fraction",
+    		group: "functions"
+    	},
+    	args: [{
+    		up: "1",
+    		down: "2",
+    		name: "numerator"
+    	}, {
+    		up: "1",
+    		down: "2",
+    		"delete": "1",
+    		name: "denominator"
+    	}]
+    };
+    var int = {
+    	output: {
+    		latex: "\\displaystyle\\int{{$1}}d{$2}",
+    		small_latex: "\\int{{$1}}d{$2}",
+    		asciimath: "int {$1} d{$2}"
+    	},
+    	attrs: {
+    		type: "integral",
+    		group: "calculus"
+    	},
+    	args: [{
+    		"delete": "1",
+    		name: "integrand"
+    	}, {
+    		"delete": "1",
+    		bracket: "yes",
+    		name: "variable"
+    	}]
+    };
+    var defi = {
+    	output: {
+    		latex: "\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
+    		small_latex: "\\int_{{$1}}^{{$2}}{$3}d{$4}",
+    		asciimath: "int_{{$1}}^{{$2}} {$3} d{$4}"
+    	},
+    	attrs: {
+    		type: "defintegral",
+    		group: "calculus"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		name: "integrand"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		"delete": "4",
+    		name: "variable"
+    	}]
+    };
+    var deriv = {
+    	output: {
+    		latex: "\\displaystyle\\frac{d{$1}}{d{$2}}",
+    		small_latex: "\\frac{d{$1}}{d{$2}}",
+    		asciimath: "diff({$1},{$2})"
+    	},
+    	attrs: {
+    		type: "derivative",
+    		group: "calculus"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		name: "function"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		name: "variable"
+    	}]
+    };
+    var sum = {
+    	output: {
+    		latex: "\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
+    		small_latex: "\\sum_{{$1}}^{{$2}}{$3}",
+    		asciimath: "sum_{{$1}}^{{$2}} {$3}"
+    	},
+    	attrs: {
+    		type: "summation",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		bracket: "yes",
+    		name: "summand"
+    	}]
+    };
+    var prod = {
+    	output: {
+    		latex: "\\displaystyle\\prod_{{$1}}^{{$2}}{$3}",
+    		small_latex: "\\prod_{{$1}}^{{$2}}{$3}",
+    		asciimath: "prod_{{$1}}^{{$2}} {$3}"
+    	},
+    	attrs: {
+    		type: "product",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		bracket: "yes",
+    		name: "summand"
+    	}]
+    };
+    var root = {
+    	output: {
+    		latex: "\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
+    		asciimath: "nroot({$1},{$2})"
+    	},
+    	attrs: {
+    		type: "root",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "2",
+    		up: "1",
+    		small: "yes",
+    		"delete": "1",
+    		name: "index"
+    	}, {
+    		down: "2",
+    		up: "1",
+    		"delete": "1",
+    		name: "radicand"
+    	}]
+    };
+    var vec = {
+    	output: {
+    		latex: "\\left\\langle {$1{,}} \\right\\rangle",
+    		asciimath: "<{$1{,}}>"
+    	},
+    	keys: ["{"],
+    	attrs: {
+    		group: "array",
+    		type: "vector"
+    	}
+    };
+    var point = {
+    	output: {
+    		latex: "\\left( {$1{,}} \\right)",
+    		asciimath: "({$1{,}})"
+    	},
+    	keys: ["{"],
+    	attrs: {
+    		group: "array",
+    		type: "point"
+    	}
+    };
+    var mat = {
+    	output: {
+    		latex: "\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
+    		asciimath: "matrix({$1{,}{;}})"
+    	},
+    	keys: ["["],
+    	attrs: {
+    		group: "array",
+    		type: "matrix"
+    	}
+    };
+    var infinity = {
+    	output: {
+    		latex: "\\infty",
+    		asciimath: "oo"
+    	},
+    	attrs: {
+    		group: "functions",
+    		type: "infinity"
+    	}
+    };
+    var _templates = {
+    	latex_func: {
+    		output: {
+    			latex: "\\{$name}\\left({$1}\\right)",
+    			asciimath: " {$name}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "functions"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	latex_trig_func: {
+    		output: {
+    			latex: "\\{$name}\\left({$1}\\right)",
+    			asciimath: " {$name}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "trigonometry"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	func: {
+    		output: {
+    			latex: "{$latex}\\left({$1}\\right)",
+    			asciimath: " {$asciimath}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "{$group}"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	char: {
+    		output: {
+    			latex: "\\{$name}",
+    			asciimath: " {$name} "
+    		},
+    		attrs: {
+    			group: "greek",
+    			type: "{$name}"
+    		}
+    	},
+    	utf8codepoint: {
+    		output: {
+    			latex: "{\\char\"{$codepoint}}",
+    			asciimath: " \\u{$codepoint} "
+    		},
+    		attrs: {
+    			group: "unicode",
+    			type: "{$name}"
+    		},
+    		ast: {
+    			value: "\\u{$codepoint}"
+    		}
+    	},
+    	utf8char: {
+    		output: {
+    			latex: "\\text{{$char}}",
+    			asciimath: " {$name} "
+    		},
+    		attrs: {
+    			group: "emoji",
+    			type: "{$name}"
+    		}
+    	},
+    	binop: {
+    		output: {
+    			latex: "{$latex}",
+    			asciimath: "{$asciimath}"
+    		},
+    		keys: ["{$type}"],
+    		attrs: {
+    			group: "operations",
+    			type: "{$type}"
+    		},
+    		ast: {
+    			type: "operator"
+    		}
+    	}
+    };
+    var trig_functions = {
+    	template: "latex_trig_func",
+    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
+    };
+    var functions = {
+    	template: "latex_trig_func",
+    	values: ["log", "ln"]
+    };
+    var utf8chars = {
+    	template: "utf8char",
+    	values: {
+    		banana: {
+    			char: "🍌"
+    		},
+    		pineapple: {
+    			char: "🍍"
+    		},
+    		mango: {
+    			char: "🥭"
+    		},
+    		kiwi: {
+    			char: "🥝"
+    		}
+    	}
+    };
+    var greek = {
+    	template: "char",
+    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
+    };
+    var comparisons = {
+    	template: "binop",
+    	values: {
+    		equal: {
+    			latex: "=",
+    			asciimath: " = ",
+    			type: "="
+    		},
+    		leq: {
+    			latex: "\\leq",
+    			asciimath: " <= ",
+    			type: "<="
+    		},
+    		less: {
+    			latex: "<",
+    			asciimath: " < ",
+    			type: "<"
+    		},
+    		geq: {
+    			latex: "\\geq",
+    			asciimath: " >= ",
+    			type: ">="
+    		},
+    		greater: {
+    			latex: ">",
+    			asciimath: " > ",
+    			type: ">"
+    		},
+    		neq: {
+    			latex: "\\neq",
+    			asciimath: " != ",
+    			type: "!="
+    		}
+    	}
+    };
+    var DEFAULT_SYMBOLS = {
+    	_version: _version,
+    	_name: _name,
+    	norm: norm,
+    	utf8: utf8,
+    	text: text,
+    	sym_name: sym_name,
+    	abs: abs,
+    	"eval": {
+    		output: {
+    			latex: "{$1}({$2{,}})",
+    			asciimath: "{$1}({$2{,}})"
+    		},
+    		attrs: {
+    			type: "eval",
+    			group: "functions"
+    		},
+    		args: [{
+    			"delete": "2",
+    			name: "function"
+    		}, {
+    			"delete": "1",
+    			name: "argument"
+    		}]
+    	},
+    	sqrt: sqrt,
+    	paren: paren,
+    	floor: floor,
+    	factorial: factorial,
+    	exp: exp,
+    	sub: sub,
+    	frac: frac,
+    	int: int,
+    	defi: defi,
+    	deriv: deriv,
+    	sum: sum,
+    	prod: prod,
+    	root: root,
+    	vec: vec,
+    	point: point,
+    	mat: mat,
+    	"*": {
+    		output: {
+    			latex: "\\cdot",
+    			asciimath: "*"
+    		},
+    		keys: ["*"],
+    		attrs: {
+    			group: "operations",
+    			type: "*"
+    		},
+    		ast: {
+    			type: "operator"
+    		}
+    	},
+    	infinity: infinity,
+    	_templates: _templates,
+    	trig_functions: trig_functions,
+    	functions: functions,
+    	utf8chars: utf8chars,
+    	greek: greek,
+    	comparisons: comparisons
+    };
+
     var AST = {};
 
     AST.to_eqlist = function (ast) {
@@ -5094,618 +5706,6 @@ var Guppy = (function () {
           };c.init();r.Mousetrap = c;module.exports && (module.exports = c);    }
       })("undefined" !== typeof window ? window : null, "undefined" !== typeof window ? document : null);
     });
-
-    var _version = "2.0.0-alpha.3";
-    var _name = "base";
-    var norm = {
-    	output: {
-    		latex: "\\left|\\left|{$1}\\right|\\right|",
-    		asciimath: "norm({$1})"
-    	},
-    	attrs: {
-    		type: "norm",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var utf8 = {
-    	output: {
-    		latex: "\\texttt{U+{$1}}",
-    		asciimath: "\\u{$1}"
-    	},
-    	attrs: {
-    		type: "text",
-    		group: "editor"
-    	},
-    	args: [{
-    		utf8: "entry",
-    		mode: "text"
-    	}]
-    };
-    var text = {
-    	output: {
-    		latex: "\\text{{$1}}",
-    		asciimath: "text({$1})"
-    	},
-    	attrs: {
-    		type: "text",
-    		group: "editor"
-    	},
-    	args: [{
-    		mode: "text"
-    	}]
-    };
-    var sym_name = {
-    	output: {
-    		latex: "\\backslash\\texttt{{$1}}",
-    		asciimath: "SYMBOL({$1})"
-    	},
-    	input: -1,
-    	attrs: {
-    		type: "symbol",
-    		group: "editor"
-    	},
-    	args: [{
-    		mode: "symbol",
-    		is_bracket: "yes"
-    	}]
-    };
-    var abs = {
-    	output: {
-    		latex: "\\left|{$1}\\right|",
-    		asciimath: "|{$1}|"
-    	},
-    	keys: ["|"],
-    	attrs: {
-    		type: "absolutevalue",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1",
-    		is_bracket: "yes"
-    	}]
-    };
-    var sqrt = {
-    	output: {
-    		latex: "\\sqrt{{$1}\\phantom{\\tiny{!}}}",
-    		asciimath: "sqrt({$1})"
-    	},
-    	attrs: {
-    		type: "squareroot",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var paren = {
-    	output: {
-    		latex: "\\left({$1}\\right)",
-    		asciimath: "({$1})"
-    	},
-    	keys: ["("],
-    	attrs: {
-    		type: "bracket",
-    		group: "functions"
-    	},
-    	ast: {
-    		type: "pass"
-    	},
-    	args: [{
-    		"delete": "1",
-    		is_bracket: "yes"
-    	}]
-    };
-    var floor = {
-    	output: {
-    		latex: "\\lfloor {$1} \\rfloor",
-    		asciimath: "|_ {$1} _|"
-    	},
-    	attrs: {
-    		type: "floor",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var factorial = {
-    	output: {
-    		latex: "{$1}!",
-    		asciimath: "({$1})!"
-    	},
-    	input: 1,
-    	keys: ["!"],
-    	attrs: {
-    		type: "factorial",
-    		group: "functions"
-    	},
-    	args: [{
-    		bracket: "yes",
-    		"delete": "1"
-    	}]
-    };
-    var exp = {
-    	output: {
-    		latex: "{{$1}}^{{$2}}",
-    		asciimath: "({$1})^({$2})"
-    	},
-    	input: 1,
-    	keys: ["^", "shift+up"],
-    	attrs: {
-    		type: "exponential",
-    		group: "functions"
-    	},
-    	args: [{
-    		up: "2",
-    		bracket: "yes",
-    		"delete": "1",
-    		name: "base"
-    	}, {
-    		down: "1",
-    		"delete": "1",
-    		name: "exponent",
-    		small: "yes"
-    	}]
-    };
-    var sub = {
-    	output: {
-    		latex: "{{$1}}_{{$2}}",
-    		asciimath: "({$1})_({$2})"
-    	},
-    	input: 1,
-    	keys: ["_", "shift+down"],
-    	attrs: {
-    		type: "subscript",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "2",
-    		bracket: "yes",
-    		"delete": "1",
-    		name: "base"
-    	}, {
-    		up: "1",
-    		"delete": "1",
-    		name: "subscript",
-    		small: "yes"
-    	}]
-    };
-    var frac = {
-    	output: {
-    		latex: "\\dfrac{{$1}}{{$2}}",
-    		small_latex: "\\frac{{$1}}{{$2}}",
-    		asciimath: "({$1})/({$2})"
-    	},
-    	input: 1,
-    	keys: ["/"],
-    	attrs: {
-    		type: "fraction",
-    		group: "functions"
-    	},
-    	args: [{
-    		up: "1",
-    		down: "2",
-    		name: "numerator"
-    	}, {
-    		up: "1",
-    		down: "2",
-    		"delete": "1",
-    		name: "denominator"
-    	}]
-    };
-    var int = {
-    	output: {
-    		latex: "\\displaystyle\\int{{$1}}d{$2}",
-    		small_latex: "\\int{{$1}}d{$2}",
-    		asciimath: "int {$1} d{$2}"
-    	},
-    	attrs: {
-    		type: "integral",
-    		group: "calculus"
-    	},
-    	args: [{
-    		"delete": "1",
-    		name: "integrand"
-    	}, {
-    		"delete": "1",
-    		bracket: "yes",
-    		name: "variable"
-    	}]
-    };
-    var defi = {
-    	output: {
-    		latex: "\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
-    		small_latex: "\\int_{{$1}}^{{$2}}{$3}d{$4}",
-    		asciimath: "int_{{$1}}^{{$2}} {$3} d{$4}"
-    	},
-    	attrs: {
-    		type: "defintegral",
-    		group: "calculus"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		name: "integrand"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		"delete": "4",
-    		name: "variable"
-    	}]
-    };
-    var deriv = {
-    	output: {
-    		latex: "\\displaystyle\\frac{d{$1}}{d{$2}}",
-    		small_latex: "\\frac{d{$1}}{d{$2}}",
-    		asciimath: "diff({$1},{$2})"
-    	},
-    	attrs: {
-    		type: "derivative",
-    		group: "calculus"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		name: "function"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		name: "variable"
-    	}]
-    };
-    var sum = {
-    	output: {
-    		latex: "\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
-    		small_latex: "\\sum_{{$1}}^{{$2}}{$3}",
-    		asciimath: "sum_{{$1}}^{{$2}} {$3}"
-    	},
-    	attrs: {
-    		type: "summation",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		bracket: "yes",
-    		name: "summand"
-    	}]
-    };
-    var prod = {
-    	output: {
-    		latex: "\\displaystyle\\prod_{{$1}}^{{$2}}{$3}",
-    		small_latex: "\\prod_{{$1}}^{{$2}}{$3}",
-    		asciimath: "prod_{{$1}}^{{$2}} {$3}"
-    	},
-    	attrs: {
-    		type: "product",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		bracket: "yes",
-    		name: "summand"
-    	}]
-    };
-    var root = {
-    	output: {
-    		latex: "\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
-    		asciimath: "nroot({$1},{$2})"
-    	},
-    	attrs: {
-    		type: "root",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "2",
-    		up: "1",
-    		small: "yes",
-    		"delete": "1",
-    		name: "index"
-    	}, {
-    		down: "2",
-    		up: "1",
-    		"delete": "1",
-    		name: "radicand"
-    	}]
-    };
-    var vec = {
-    	output: {
-    		latex: "\\left\\langle {$1{,}} \\right\\rangle",
-    		asciimath: "<{$1{,}}>"
-    	},
-    	keys: ["{"],
-    	attrs: {
-    		group: "array",
-    		type: "vector"
-    	}
-    };
-    var point = {
-    	output: {
-    		latex: "\\left( {$1{,}} \\right)",
-    		asciimath: "({$1{,}})"
-    	},
-    	keys: ["{"],
-    	attrs: {
-    		group: "array",
-    		type: "point"
-    	}
-    };
-    var mat = {
-    	output: {
-    		latex: "\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
-    		asciimath: "matrix({$1{,}{;}})"
-    	},
-    	keys: ["["],
-    	attrs: {
-    		group: "array",
-    		type: "matrix"
-    	}
-    };
-    var infinity = {
-    	output: {
-    		latex: "\\infty",
-    		asciimath: "oo"
-    	},
-    	attrs: {
-    		group: "functions",
-    		type: "infinity"
-    	}
-    };
-    var _templates = {
-    	latex_func: {
-    		output: {
-    			latex: "\\{$name}\\left({$1}\\right)",
-    			asciimath: " {$name}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "functions"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	latex_trig_func: {
-    		output: {
-    			latex: "\\{$name}\\left({$1}\\right)",
-    			asciimath: " {$name}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "trigonometry"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	func: {
-    		output: {
-    			latex: "{$latex}\\left({$1}\\right)",
-    			asciimath: " {$asciimath}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "{$group}"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	char: {
-    		output: {
-    			latex: "\\{$name}",
-    			asciimath: " {$name} "
-    		},
-    		attrs: {
-    			group: "greek",
-    			type: "{$name}"
-    		}
-    	},
-    	utf8codepoint: {
-    		output: {
-    			latex: "{\\char\"{$codepoint}}",
-    			asciimath: " \\u{$codepoint} "
-    		},
-    		attrs: {
-    			group: "unicode",
-    			type: "{$name}"
-    		},
-    		ast: {
-    			value: "\\u{$codepoint}"
-    		}
-    	},
-    	utf8char: {
-    		output: {
-    			latex: "\\text{{$char}}",
-    			asciimath: " {$name} "
-    		},
-    		attrs: {
-    			group: "emoji",
-    			type: "{$name}"
-    		}
-    	},
-    	binop: {
-    		output: {
-    			latex: "{$latex}",
-    			asciimath: "{$asciimath}"
-    		},
-    		keys: ["{$type}"],
-    		attrs: {
-    			group: "operations",
-    			type: "{$type}"
-    		},
-    		ast: {
-    			type: "operator"
-    		}
-    	}
-    };
-    var trig_functions = {
-    	template: "latex_trig_func",
-    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
-    };
-    var functions = {
-    	template: "latex_trig_func",
-    	values: ["log", "ln"]
-    };
-    var utf8chars = {
-    	template: "utf8char",
-    	values: {
-    		banana: {
-    			char: "🍌"
-    		},
-    		pineapple: {
-    			char: "🍍"
-    		},
-    		mango: {
-    			char: "🥭"
-    		},
-    		kiwi: {
-    			char: "🥝"
-    		}
-    	}
-    };
-    var greek = {
-    	template: "char",
-    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
-    };
-    var comparisons = {
-    	template: "binop",
-    	values: {
-    		equal: {
-    			latex: "=",
-    			asciimath: " = ",
-    			type: "="
-    		},
-    		leq: {
-    			latex: "\\leq",
-    			asciimath: " <= ",
-    			type: "<="
-    		},
-    		less: {
-    			latex: "<",
-    			asciimath: " < ",
-    			type: "<"
-    		},
-    		geq: {
-    			latex: "\\geq",
-    			asciimath: " >= ",
-    			type: ">="
-    		},
-    		greater: {
-    			latex: ">",
-    			asciimath: " > ",
-    			type: ">"
-    		},
-    		neq: {
-    			latex: "\\neq",
-    			asciimath: " != ",
-    			type: "!="
-    		}
-    	}
-    };
-    var DEFAULT_SYMBOLS = {
-    	_version: _version,
-    	_name: _name,
-    	norm: norm,
-    	utf8: utf8,
-    	text: text,
-    	sym_name: sym_name,
-    	abs: abs,
-    	"eval": {
-    		output: {
-    			latex: "{$1}({$2{,}})",
-    			asciimath: "{$1}({$2{,}})"
-    		},
-    		attrs: {
-    			type: "eval",
-    			group: "functions"
-    		},
-    		args: [{
-    			"delete": "2",
-    			name: "function"
-    		}, {
-    			"delete": "1",
-    			name: "argument"
-    		}]
-    	},
-    	sqrt: sqrt,
-    	paren: paren,
-    	floor: floor,
-    	factorial: factorial,
-    	exp: exp,
-    	sub: sub,
-    	frac: frac,
-    	int: int,
-    	defi: defi,
-    	deriv: deriv,
-    	sum: sum,
-    	prod: prod,
-    	root: root,
-    	vec: vec,
-    	point: point,
-    	mat: mat,
-    	"*": {
-    		output: {
-    			latex: "\\cdot",
-    			asciimath: "*"
-    		},
-    		keys: ["*"],
-    		attrs: {
-    			group: "operations",
-    			type: "*"
-    		},
-    		ast: {
-    			type: "operator"
-    		}
-    	},
-    	infinity: infinity,
-    	_templates: _templates,
-    	trig_functions: trig_functions,
-    	functions: functions,
-    	utf8chars: utf8chars,
-    	greek: greek,
-    	comparisons: comparisons
-    };
 
     /**
        @class
