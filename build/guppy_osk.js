@@ -2263,28 +2263,30 @@ var GuppyOSK = (function () {
 	        tab_bar.appendChild(li);
 	        for (s in grouped[g]) {
 	            var sym = grouped[g][s];
-	            if (sym['break']) {
-	                group_elt.appendChild(elt("br"));
-	            } else if (sym['tab']) {
-	                group_elt.appendChild(elt("span", { "class": "spacer" }));
-	            } else {
-	                var key = elt("span", { "class": "guppy_osk_key" });
-	                var f = null;
-	                f = function f(n, gn) {
-	                    click_listener(key, function (e) {
-	                        e.preventDefault();
-	                        if (gn == "arithmetic" || gn == "qwerty" || gn == "QWERTY") guppy.engine.insert_string(n);else guppy.engine.insert_symbol(n);
-	                        guppy.render();
-	                        if (self.config.goto_tab) {
-	                            document.getElementById("guppy_osk_" + self.config.goto_tab + "_tab").click();
-	                        }
-	                        e.preventDefault();
-	                        return false;
-	                    });
-	                };
-	                f(sym.name, g);
-	                group_elt.appendChild(key);
-	                katex.render(sym.latex, key, { displayMode: false });
+	            if (typeof sym != 'function' && typeof sym.name == 'string') {
+	                if (sym['break']) {
+	                    group_elt.appendChild(elt("br"));
+	                } else if (sym['tab']) {
+	                    group_elt.appendChild(elt("span", { "class": "spacer" }));
+	                } else {
+	                    var key = elt("span", { "class": "guppy_osk_key" });
+	                    var f = null;
+	                    f = function f(n, gn) {
+	                        click_listener(key, function (e) {
+	                            e.preventDefault();
+	                            if (gn == "arithmetic" || gn == "qwerty" || gn == "QWERTY") guppy.engine.insert_string(n);else guppy.engine.insert_symbol(n);
+	                            guppy.render();
+	                            if (self.config.goto_tab) {
+	                                document.getElementById("guppy_osk_" + self.config.goto_tab + "_tab").click();
+	                            }
+	                            e.preventDefault();
+	                            return false;
+	                        });
+	                    };
+	                    f(sym.name, g);
+	                    group_elt.appendChild(key);
+	                    katex.render(sym.latex, key, { displayMode: false });
+	                }
 	            }
 	        }
 	        group_container.appendChild(group_elt);
@@ -2349,37 +2351,39 @@ var GuppyOSK = (function () {
 	    // add_control("&uarr;", function(e){ e.preventDefault();guppy.engine.up();guppy.render();});
 	    // add_control("&darr;", function(e){ e.preventDefault();guppy.engine.down();guppy.render();});
 
-	    matrix_controls.appendChild(elt("br"));
-	    add_matrix_control("&larr;+col", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_left();guppy.render();
-	    });
-	    add_matrix_control("+col&rarr;", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_right();guppy.render();
-	    });
-	    add_matrix_control("&uarr;+row", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_up();guppy.render();
-	    });
-	    add_matrix_control("&darr;+row", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_down();guppy.render();
-	    });
-	    add_matrix_control("col&larr;col", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_copy_left();guppy.render();
-	    });
-	    add_matrix_control("col&rarr;col", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_copy_right();guppy.render();
-	    });
-	    add_matrix_control("row&uarr;row", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_copy_up();guppy.render();
-	    });
-	    add_matrix_control("row&darr;row", function (e) {
-	        e.preventDefault();guppy.engine.list_extend_copy_down();guppy.render();
-	    });
-	    add_matrix_control("-col", function (e) {
-	        e.preventDefault();guppy.engine.list_remove();guppy.render();
-	    });
-	    add_matrix_control("-row", function (e) {
-	        e.preventDefault();guppy.engine.list_remove_row();guppy.render();
-	    });
+	    if (matrix_controls) {
+	        matrix_controls.appendChild(elt("br"));
+	        add_matrix_control("&larr;+col", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_left();guppy.render();
+	        });
+	        add_matrix_control("+col&rarr;", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_right();guppy.render();
+	        });
+	        add_matrix_control("&uarr;+row", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_up();guppy.render();
+	        });
+	        add_matrix_control("&darr;+row", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_down();guppy.render();
+	        });
+	        add_matrix_control("col&larr;col", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_copy_left();guppy.render();
+	        });
+	        add_matrix_control("col&rarr;col", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_copy_right();guppy.render();
+	        });
+	        add_matrix_control("row&uarr;row", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_copy_up();guppy.render();
+	        });
+	        add_matrix_control("row&darr;row", function (e) {
+	            e.preventDefault();guppy.engine.list_extend_copy_down();guppy.render();
+	        });
+	        add_matrix_control("-col", function (e) {
+	            e.preventDefault();guppy.engine.list_remove();guppy.render();
+	        });
+	        add_matrix_control("-row", function (e) {
+	            e.preventDefault();guppy.engine.list_remove_row();guppy.render();
+	        });
+	    }
 
 	    osk.appendChild(controls);
 	    if (target) {

@@ -22,7 +22,7 @@ AST.to_text = function(ast){
     functions["-"] = function(args){return args.length == 1 ? "-"+args[0] : "("+args[0]+" - "+args[1]+")";};
     functions["val"] = function(args){return args[0]+"";};
     functions["var"] = function(args){return args[0];};
-    functions["subscript"] = function(args){return "("+args[0]+"_"+args[1]+")";};
+    functions["subscript"] = function(args){return "("+args[0]+"_("+args[1]+"))";};
     functions["exponential"] = function(args){return "("+args[0]+"^"+args[1]+")";};
     functions["factorial"] = function(args){return "("+args[0]+")!";};
     functions["_default"] = function(name, args){return name + "(" + args.join(",") + ")";};

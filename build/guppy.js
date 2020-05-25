@@ -1,6 +1,618 @@
 var Guppy = (function () {
     'use strict';
 
+    var _version = "2.0.0-alpha.3";
+    var _name = "base";
+    var norm = {
+    	output: {
+    		latex: "\\left|\\left|{$1}\\right|\\right|",
+    		asciimath: "norm({$1})"
+    	},
+    	attrs: {
+    		type: "norm",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var utf8 = {
+    	output: {
+    		latex: "\\texttt{U+{$1}}",
+    		asciimath: "\\u{$1}"
+    	},
+    	attrs: {
+    		type: "text",
+    		group: "editor"
+    	},
+    	args: [{
+    		utf8: "entry",
+    		mode: "text"
+    	}]
+    };
+    var text = {
+    	output: {
+    		latex: "\\text{{$1}}",
+    		asciimath: "text({$1})"
+    	},
+    	attrs: {
+    		type: "text",
+    		group: "editor"
+    	},
+    	args: [{
+    		mode: "text"
+    	}]
+    };
+    var sym_name = {
+    	output: {
+    		latex: "\\backslash\\texttt{{$1}}",
+    		asciimath: "SYMBOL({$1})"
+    	},
+    	input: -1,
+    	attrs: {
+    		type: "symbol",
+    		group: "editor"
+    	},
+    	args: [{
+    		mode: "symbol",
+    		is_bracket: "yes"
+    	}]
+    };
+    var abs = {
+    	output: {
+    		latex: "\\left|{$1}\\right|",
+    		asciimath: "|{$1}|"
+    	},
+    	keys: ["|"],
+    	attrs: {
+    		type: "absolutevalue",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var sqrt = {
+    	output: {
+    		latex: "\\sqrt{{$1}\\phantom{\\tiny{!}}}",
+    		asciimath: "sqrt({$1})"
+    	},
+    	attrs: {
+    		type: "squareroot",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var paren = {
+    	output: {
+    		latex: "\\left({$1}\\right)",
+    		asciimath: "({$1})"
+    	},
+    	keys: ["("],
+    	attrs: {
+    		type: "bracket",
+    		group: "functions"
+    	},
+    	ast: {
+    		type: "pass"
+    	},
+    	args: [{
+    		"delete": "1",
+    		is_bracket: "yes"
+    	}]
+    };
+    var floor = {
+    	output: {
+    		latex: "\\lfloor {$1} \\rfloor",
+    		asciimath: "|_ {$1} _|"
+    	},
+    	attrs: {
+    		type: "floor",
+    		group: "functions"
+    	},
+    	args: [{
+    		"delete": "1"
+    	}]
+    };
+    var factorial = {
+    	output: {
+    		latex: "{$1}!",
+    		asciimath: "({$1})!"
+    	},
+    	input: 1,
+    	keys: ["!"],
+    	attrs: {
+    		type: "factorial",
+    		group: "functions"
+    	},
+    	args: [{
+    		bracket: "yes",
+    		"delete": "1"
+    	}]
+    };
+    var exp = {
+    	output: {
+    		latex: "{{$1}}^{{$2}}",
+    		asciimath: "({$1})^({$2})"
+    	},
+    	input: 1,
+    	keys: ["^", "shift+up"],
+    	attrs: {
+    		type: "exponential",
+    		group: "functions"
+    	},
+    	args: [{
+    		up: "2",
+    		bracket: "yes",
+    		"delete": "1",
+    		name: "base"
+    	}, {
+    		down: "1",
+    		"delete": "1",
+    		name: "exponent",
+    		small: "yes"
+    	}]
+    };
+    var sub = {
+    	output: {
+    		latex: "{{$1}}_{{$2}}",
+    		asciimath: "({$1})_({$2})"
+    	},
+    	input: 1,
+    	keys: ["_", "shift+down"],
+    	attrs: {
+    		type: "subscript",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "2",
+    		bracket: "yes",
+    		"delete": "1",
+    		name: "base"
+    	}, {
+    		up: "1",
+    		"delete": "1",
+    		name: "subscript",
+    		small: "yes"
+    	}]
+    };
+    var frac = {
+    	output: {
+    		latex: "\\dfrac{{$1}}{{$2}}",
+    		small_latex: "\\frac{{$1}}{{$2}}",
+    		asciimath: "({$1})/({$2})"
+    	},
+    	input: 1,
+    	keys: ["/"],
+    	attrs: {
+    		type: "fraction",
+    		group: "functions"
+    	},
+    	args: [{
+    		up: "1",
+    		down: "2",
+    		name: "numerator"
+    	}, {
+    		up: "1",
+    		down: "2",
+    		"delete": "1",
+    		name: "denominator"
+    	}]
+    };
+    var int = {
+    	output: {
+    		latex: "\\displaystyle\\int{{$1}}d{$2}",
+    		small_latex: "\\int{{$1}}d{$2}",
+    		asciimath: "int {$1} d{$2}"
+    	},
+    	attrs: {
+    		type: "integral",
+    		group: "calculus"
+    	},
+    	args: [{
+    		"delete": "1",
+    		name: "integrand"
+    	}, {
+    		"delete": "1",
+    		bracket: "yes",
+    		name: "variable"
+    	}]
+    };
+    var defi = {
+    	output: {
+    		latex: "\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
+    		small_latex: "\\int_{{$1}}^{{$2}}{$3}d{$4}",
+    		asciimath: "int_{{$1}}^{{$2}} {$3} d{$4}"
+    	},
+    	attrs: {
+    		type: "defintegral",
+    		group: "calculus"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		name: "integrand"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		"delete": "4",
+    		name: "variable"
+    	}]
+    };
+    var deriv = {
+    	output: {
+    		latex: "\\displaystyle\\frac{d{$1}}{d{$2}}",
+    		small_latex: "\\frac{d{$1}}{d{$2}}",
+    		asciimath: "diff({$1},{$2})"
+    	},
+    	attrs: {
+    		type: "derivative",
+    		group: "calculus"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		name: "function"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		bracket: "yes",
+    		name: "variable"
+    	}]
+    };
+    var sum = {
+    	output: {
+    		latex: "\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
+    		small_latex: "\\sum_{{$1}}^{{$2}}{$3}",
+    		asciimath: "sum_{{$1}}^{{$2}} {$3}"
+    	},
+    	attrs: {
+    		type: "summation",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		bracket: "yes",
+    		name: "summand"
+    	}]
+    };
+    var prod = {
+    	output: {
+    		latex: "\\displaystyle\\prod_{{$1}}^{{$2}}{$3}",
+    		small_latex: "\\prod_{{$1}}^{{$2}}{$3}",
+    		asciimath: "prod_{{$1}}^{{$2}} {$3}"
+    	},
+    	attrs: {
+    		type: "product",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "lower_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		small: "yes",
+    		name: "upper_limit"
+    	}, {
+    		down: "1",
+    		up: "2",
+    		"delete": "3",
+    		bracket: "yes",
+    		name: "summand"
+    	}]
+    };
+    var root = {
+    	output: {
+    		latex: "\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
+    		asciimath: "nroot({$1},{$2})"
+    	},
+    	attrs: {
+    		type: "root",
+    		group: "functions"
+    	},
+    	args: [{
+    		down: "2",
+    		up: "1",
+    		small: "yes",
+    		"delete": "1",
+    		name: "index"
+    	}, {
+    		down: "2",
+    		up: "1",
+    		"delete": "1",
+    		name: "radicand"
+    	}]
+    };
+    var vec = {
+    	output: {
+    		latex: "\\left\\langle {$1{,}} \\right\\rangle",
+    		asciimath: "<{$1{,}}>"
+    	},
+    	keys: ["{"],
+    	attrs: {
+    		group: "array",
+    		type: "vector"
+    	}
+    };
+    var point = {
+    	output: {
+    		latex: "\\left( {$1{,}} \\right)",
+    		asciimath: "({$1{,}})"
+    	},
+    	keys: ["{"],
+    	attrs: {
+    		group: "array",
+    		type: "point"
+    	}
+    };
+    var mat = {
+    	output: {
+    		latex: "\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
+    		asciimath: "matrix({$1{,}{;}})"
+    	},
+    	keys: ["["],
+    	attrs: {
+    		group: "array",
+    		type: "matrix"
+    	}
+    };
+    var infinity = {
+    	output: {
+    		latex: "\\infty",
+    		asciimath: "oo"
+    	},
+    	attrs: {
+    		group: "functions",
+    		type: "infinity"
+    	}
+    };
+    var _templates = {
+    	latex_func: {
+    		output: {
+    			latex: "\\{$name}\\left({$1}\\right)",
+    			asciimath: " {$name}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "functions"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	latex_trig_func: {
+    		output: {
+    			latex: "\\{$name}\\left({$1}\\right)",
+    			asciimath: " {$name}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "trigonometry"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	func: {
+    		output: {
+    			latex: "{$latex}\\left({$1}\\right)",
+    			asciimath: " {$asciimath}({$1})"
+    		},
+    		attrs: {
+    			type: "{$name}",
+    			group: "{$group}"
+    		},
+    		args: [{
+    			"delete": "1"
+    		}]
+    	},
+    	char: {
+    		output: {
+    			latex: "\\{$name}",
+    			asciimath: " {$name} "
+    		},
+    		attrs: {
+    			group: "greek",
+    			type: "{$name}"
+    		}
+    	},
+    	utf8codepoint: {
+    		output: {
+    			latex: "{\\char\"{$codepoint}}",
+    			asciimath: " \\u{$codepoint} "
+    		},
+    		attrs: {
+    			group: "unicode",
+    			type: "{$name}"
+    		},
+    		ast: {
+    			value: "\\u{$codepoint}"
+    		}
+    	},
+    	utf8char: {
+    		output: {
+    			latex: "\\text{{$char}}",
+    			asciimath: " {$name} "
+    		},
+    		attrs: {
+    			group: "emoji",
+    			type: "{$name}"
+    		}
+    	},
+    	binop: {
+    		output: {
+    			latex: "{$latex}",
+    			asciimath: "{$asciimath}"
+    		},
+    		keys: ["{$type}"],
+    		attrs: {
+    			group: "operations",
+    			type: "{$type}"
+    		},
+    		ast: {
+    			type: "operator"
+    		}
+    	}
+    };
+    var trig_functions = {
+    	template: "latex_trig_func",
+    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
+    };
+    var functions = {
+    	template: "latex_trig_func",
+    	values: ["log", "ln"]
+    };
+    var utf8chars = {
+    	template: "utf8char",
+    	values: {
+    		banana: {
+    			char: "🍌"
+    		},
+    		pineapple: {
+    			char: "🍍"
+    		},
+    		mango: {
+    			char: "🥭"
+    		},
+    		kiwi: {
+    			char: "🥝"
+    		}
+    	}
+    };
+    var greek = {
+    	template: "char",
+    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
+    };
+    var comparisons = {
+    	template: "binop",
+    	values: {
+    		equal: {
+    			latex: "=",
+    			asciimath: " = ",
+    			type: "="
+    		},
+    		leq: {
+    			latex: "\\leq",
+    			asciimath: " <= ",
+    			type: "<="
+    		},
+    		less: {
+    			latex: "<",
+    			asciimath: " < ",
+    			type: "<"
+    		},
+    		geq: {
+    			latex: "\\geq",
+    			asciimath: " >= ",
+    			type: ">="
+    		},
+    		greater: {
+    			latex: ">",
+    			asciimath: " > ",
+    			type: ">"
+    		},
+    		neq: {
+    			latex: "\\neq",
+    			asciimath: " != ",
+    			type: "!="
+    		}
+    	}
+    };
+    var DEFAULT_SYMBOLS = {
+    	_version: _version,
+    	_name: _name,
+    	norm: norm,
+    	utf8: utf8,
+    	text: text,
+    	sym_name: sym_name,
+    	abs: abs,
+    	"eval": {
+    		output: {
+    			latex: "{$1}({$2{,}})",
+    			asciimath: "{$1}({$2{,}})"
+    		},
+    		attrs: {
+    			type: "eval",
+    			group: "functions"
+    		},
+    		args: [{
+    			"delete": "2",
+    			name: "function"
+    		}, {
+    			"delete": "1",
+    			name: "argument"
+    		}]
+    	},
+    	sqrt: sqrt,
+    	paren: paren,
+    	floor: floor,
+    	factorial: factorial,
+    	exp: exp,
+    	sub: sub,
+    	frac: frac,
+    	int: int,
+    	defi: defi,
+    	deriv: deriv,
+    	sum: sum,
+    	prod: prod,
+    	root: root,
+    	vec: vec,
+    	point: point,
+    	mat: mat,
+    	"*": {
+    		output: {
+    			latex: "\\cdot",
+    			asciimath: "*"
+    		},
+    		keys: ["*"],
+    		attrs: {
+    			group: "operations",
+    			type: "*"
+    		},
+    		ast: {
+    			type: "operator"
+    		}
+    	},
+    	infinity: infinity,
+    	_templates: _templates,
+    	trig_functions: trig_functions,
+    	functions: functions,
+    	utf8chars: utf8chars,
+    	greek: greek,
+    	comparisons: comparisons
+    };
+
     var AST = {};
 
     AST.to_eqlist = function (ast) {
@@ -54,7 +666,7 @@ var Guppy = (function () {
             return args[0];
         };
         functions["subscript"] = function (args) {
-            return "(" + args[0] + "_" + args[1] + ")";
+            return "(" + args[0] + "_(" + args[1] + "))";
         };
         functions["exponential"] = function (args) {
             return "(" + args[0] + "^" + args[1] + ")";
@@ -667,618 +1279,6 @@ var Guppy = (function () {
         "LaTeXParser": LaTeXParser,
         "EParser": EParser };
 
-    var _version = "2.0.0-alpha.3";
-    var _name = "base";
-    var norm = {
-    	output: {
-    		latex: "||{$1}||",
-    		asciimath: "norm({$1})"
-    	},
-    	attrs: {
-    		type: "norm",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var utf8 = {
-    	output: {
-    		latex: "\\texttt{U+{$1}}",
-    		asciimath: "\\u{$1}"
-    	},
-    	attrs: {
-    		type: "text",
-    		group: "editor"
-    	},
-    	args: [{
-    		utf8: "entry",
-    		mode: "text"
-    	}]
-    };
-    var text = {
-    	output: {
-    		latex: "\\text{{$1}}",
-    		asciimath: "text({$1})"
-    	},
-    	attrs: {
-    		type: "text",
-    		group: "editor"
-    	},
-    	args: [{
-    		mode: "text"
-    	}]
-    };
-    var sym_name = {
-    	output: {
-    		latex: "\\backslash\\texttt{{$1}}",
-    		asciimath: "SYMBOL({$1})"
-    	},
-    	input: -1,
-    	attrs: {
-    		type: "symbol",
-    		group: "editor"
-    	},
-    	args: [{
-    		mode: "symbol",
-    		is_bracket: "yes"
-    	}]
-    };
-    var abs = {
-    	output: {
-    		latex: "\\left|{$1}\\right|",
-    		asciimath: "|{$1}|"
-    	},
-    	keys: ["|"],
-    	attrs: {
-    		type: "absolutevalue",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1",
-    		is_bracket: "yes"
-    	}]
-    };
-    var sqrt = {
-    	output: {
-    		latex: "\\sqrt{{$1}\\phantom{\\tiny{!}}}",
-    		asciimath: "sqrt({$1})"
-    	},
-    	attrs: {
-    		type: "squareroot",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var paren = {
-    	output: {
-    		latex: "\\left({$1}\\right)",
-    		asciimath: "({$1})"
-    	},
-    	keys: ["("],
-    	attrs: {
-    		type: "bracket",
-    		group: "functions"
-    	},
-    	ast: {
-    		type: "pass"
-    	},
-    	args: [{
-    		"delete": "1",
-    		is_bracket: "yes"
-    	}]
-    };
-    var floor = {
-    	output: {
-    		latex: "\\lfloor {$1} \\rfloor",
-    		asciimath: "|_ {$1} _|"
-    	},
-    	attrs: {
-    		type: "floor",
-    		group: "functions"
-    	},
-    	args: [{
-    		"delete": "1"
-    	}]
-    };
-    var factorial = {
-    	output: {
-    		latex: "{$1}!",
-    		asciimath: "({$1})!"
-    	},
-    	input: 1,
-    	keys: ["!"],
-    	attrs: {
-    		type: "factorial",
-    		group: "functions"
-    	},
-    	args: [{
-    		bracket: "yes",
-    		"delete": "1"
-    	}]
-    };
-    var exp = {
-    	output: {
-    		latex: "{{$1}}^{{$2}}",
-    		asciimath: "({$1})^({$2})"
-    	},
-    	input: 1,
-    	keys: ["^", "shift+up"],
-    	attrs: {
-    		type: "exponential",
-    		group: "functions"
-    	},
-    	args: [{
-    		up: "2",
-    		bracket: "yes",
-    		"delete": "1",
-    		name: "base"
-    	}, {
-    		down: "1",
-    		"delete": "1",
-    		name: "exponent",
-    		small: "yes"
-    	}]
-    };
-    var sub = {
-    	output: {
-    		latex: "{{$1}}_{{$2}}",
-    		asciimath: "{$1}{$2}"
-    	},
-    	input: 1,
-    	keys: ["_", "shift+down"],
-    	attrs: {
-    		type: "subscript",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "2",
-    		bracket: "yes",
-    		"delete": "1",
-    		name: "base"
-    	}, {
-    		up: "1",
-    		"delete": "1",
-    		name: "subscript",
-    		small: "yes"
-    	}]
-    };
-    var frac = {
-    	output: {
-    		latex: "\\dfrac{{$1}}{{$2}}",
-    		small_latex: "\\frac{{$1}}{{$2}}",
-    		asciimath: "({$1})/({$2})"
-    	},
-    	input: 1,
-    	keys: ["/"],
-    	attrs: {
-    		type: "fraction",
-    		group: "functions"
-    	},
-    	args: [{
-    		up: "1",
-    		down: "2",
-    		name: "numerator"
-    	}, {
-    		up: "1",
-    		down: "2",
-    		"delete": "1",
-    		name: "denominator"
-    	}]
-    };
-    var int = {
-    	output: {
-    		latex: "\\displaystyle\\int{{$1}}d{$2}",
-    		small_latex: "\\int{{$1}}d{$2}",
-    		asciimath: "int {$1} d{$2}"
-    	},
-    	attrs: {
-    		type: "integral",
-    		group: "calculus"
-    	},
-    	args: [{
-    		"delete": "1",
-    		name: "integrand"
-    	}, {
-    		"delete": "1",
-    		bracket: "yes",
-    		name: "variable"
-    	}]
-    };
-    var defi = {
-    	output: {
-    		latex: "\\displaystyle\\int_{{$1}}^{{$2}}{$3}d{$4}",
-    		small_latex: "\\int_{{$1}}^{{$2}}{$3}d{$4}",
-    		asciimath: "int_{{$1}}^{{$2}} {$3} d{$4}"
-    	},
-    	attrs: {
-    		type: "defintegral",
-    		group: "calculus"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		name: "integrand"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		"delete": "4",
-    		name: "variable"
-    	}]
-    };
-    var deriv = {
-    	output: {
-    		latex: "\\displaystyle\\frac{d{$1}}{d{$2}}",
-    		small_latex: "\\frac{d{$1}}{d{$2}}",
-    		asciimath: "diff({$1},{$2})"
-    	},
-    	attrs: {
-    		type: "derivative",
-    		group: "calculus"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		name: "function"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		bracket: "yes",
-    		name: "variable"
-    	}]
-    };
-    var sum = {
-    	output: {
-    		latex: "\\displaystyle\\sum_{{$1}}^{{$2}}{$3}",
-    		small_latex: "\\sum_{{$1}}^{{$2}}{$3}",
-    		asciimath: "sum_{{$1}}^{{$2}} {$3}"
-    	},
-    	attrs: {
-    		type: "summation",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		bracket: "yes",
-    		name: "summand"
-    	}]
-    };
-    var prod = {
-    	output: {
-    		latex: "\\displaystyle\\prod_{{$1}}^{{$2}}{$3}",
-    		small_latex: "\\prod_{{$1}}^{{$2}}{$3}",
-    		asciimath: "prod_{{$1}}^{{$2}} {$3}"
-    	},
-    	attrs: {
-    		type: "product",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "lower_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		small: "yes",
-    		name: "upper_limit"
-    	}, {
-    		down: "1",
-    		up: "2",
-    		"delete": "3",
-    		bracket: "yes",
-    		name: "summand"
-    	}]
-    };
-    var root = {
-    	output: {
-    		latex: "\\sqrt[{$1}]{{$2}\\phantom{\\tiny{!}}}",
-    		asciimath: "nroot({$1},{$2})"
-    	},
-    	attrs: {
-    		type: "root",
-    		group: "functions"
-    	},
-    	args: [{
-    		down: "2",
-    		up: "1",
-    		small: "yes",
-    		"delete": "1",
-    		name: "index"
-    	}, {
-    		down: "2",
-    		up: "1",
-    		"delete": "1",
-    		name: "radicand"
-    	}]
-    };
-    var vec = {
-    	output: {
-    		latex: "\\left\\langle {$1{,}} \\right\\rangle",
-    		asciimath: "<{$1{,}}>"
-    	},
-    	keys: ["{"],
-    	attrs: {
-    		group: "array",
-    		type: "vector"
-    	}
-    };
-    var point = {
-    	output: {
-    		latex: "\\left( {$1{,}} \\right)",
-    		asciimath: "({$1{,}})"
-    	},
-    	keys: ["{"],
-    	attrs: {
-    		group: "array",
-    		type: "point"
-    	}
-    };
-    var mat = {
-    	output: {
-    		latex: "\\left(\\begin{matrix} {$1{ & }{\\\\}} \\end{matrix}\\right)",
-    		asciimath: "matrix({$1{,}{;}})"
-    	},
-    	keys: ["["],
-    	attrs: {
-    		group: "array",
-    		type: "matrix"
-    	}
-    };
-    var infinity = {
-    	output: {
-    		latex: "\\infty",
-    		asciimath: "oo"
-    	},
-    	attrs: {
-    		group: "functions",
-    		type: "infinity"
-    	}
-    };
-    var _templates = {
-    	latex_func: {
-    		output: {
-    			latex: "\\{$name}\\left({$1}\\right)",
-    			asciimath: " {$name}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "functions"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	latex_trig_func: {
-    		output: {
-    			latex: "\\{$name}\\left({$1}\\right)",
-    			asciimath: " {$name}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "trigonometry"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	func: {
-    		output: {
-    			latex: "{$latex}\\left({$1}\\right)",
-    			asciimath: " {$asciimath}({$1})"
-    		},
-    		attrs: {
-    			type: "{$name}",
-    			group: "{$group}"
-    		},
-    		args: [{
-    			"delete": "1"
-    		}]
-    	},
-    	char: {
-    		output: {
-    			latex: "\\{$name}",
-    			asciimath: " {$name} "
-    		},
-    		attrs: {
-    			group: "greek",
-    			type: "{$name}"
-    		}
-    	},
-    	utf8codepoint: {
-    		output: {
-    			latex: "{\\char\"{$codepoint}}",
-    			asciimath: " \\u{$codepoint} "
-    		},
-    		attrs: {
-    			group: "unicode",
-    			type: "{$name}"
-    		},
-    		ast: {
-    			value: "\\u{$codepoint}"
-    		}
-    	},
-    	utf8char: {
-    		output: {
-    			latex: "\\text{{$char}}",
-    			asciimath: " {$name} "
-    		},
-    		attrs: {
-    			group: "emoji",
-    			type: "{$name}"
-    		}
-    	},
-    	binop: {
-    		output: {
-    			latex: "{$latex}",
-    			asciimath: "{$asciimath}"
-    		},
-    		keys: ["{$type}"],
-    		attrs: {
-    			group: "operations",
-    			type: "{$type}"
-    		},
-    		ast: {
-    			type: "operator"
-    		}
-    	}
-    };
-    var trig_functions = {
-    	template: "latex_trig_func",
-    	values: ["sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh"]
-    };
-    var functions = {
-    	template: "latex_trig_func",
-    	values: ["log", "ln"]
-    };
-    var utf8chars = {
-    	template: "utf8char",
-    	values: {
-    		banana: {
-    			char: "🍌"
-    		},
-    		pineapple: {
-    			char: "🍍"
-    		},
-    		mango: {
-    			char: "🥭"
-    		},
-    		kiwi: {
-    			char: "🥝"
-    		}
-    	}
-    };
-    var greek = {
-    	template: "char",
-    	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
-    };
-    var comparisons = {
-    	template: "binop",
-    	values: {
-    		equal: {
-    			latex: "=",
-    			asciimath: " = ",
-    			type: "="
-    		},
-    		leq: {
-    			latex: "\\leq",
-    			asciimath: " <= ",
-    			type: "<="
-    		},
-    		less: {
-    			latex: "<",
-    			asciimath: " < ",
-    			type: "<"
-    		},
-    		geq: {
-    			latex: "\\geq",
-    			asciimath: " >= ",
-    			type: ">="
-    		},
-    		greater: {
-    			latex: ">",
-    			asciimath: " > ",
-    			type: ">"
-    		},
-    		neq: {
-    			latex: "\\neq",
-    			asciimath: " != ",
-    			type: "!="
-    		}
-    	}
-    };
-    var DEFAULT_SYMBOLS = {
-    	_version: _version,
-    	_name: _name,
-    	norm: norm,
-    	utf8: utf8,
-    	text: text,
-    	sym_name: sym_name,
-    	abs: abs,
-    	"eval": {
-    		output: {
-    			latex: "{$1}({$2{,}})",
-    			asciimath: "{$1}({$2{,}})"
-    		},
-    		attrs: {
-    			type: "eval",
-    			group: "functions"
-    		},
-    		args: [{
-    			"delete": "2",
-    			name: "function"
-    		}, {
-    			"delete": "1",
-    			name: "argument"
-    		}]
-    	},
-    	sqrt: sqrt,
-    	paren: paren,
-    	floor: floor,
-    	factorial: factorial,
-    	exp: exp,
-    	sub: sub,
-    	frac: frac,
-    	int: int,
-    	defi: defi,
-    	deriv: deriv,
-    	sum: sum,
-    	prod: prod,
-    	root: root,
-    	vec: vec,
-    	point: point,
-    	mat: mat,
-    	"*": {
-    		output: {
-    			latex: "\\cdot",
-    			asciimath: "*"
-    		},
-    		keys: ["*"],
-    		attrs: {
-    			group: "operations",
-    			type: "*"
-    		},
-    		ast: {
-    			type: "operator"
-    		}
-    	},
-    	infinity: infinity,
-    	_templates: _templates,
-    	trig_functions: trig_functions,
-    	functions: functions,
-    	utf8chars: utf8chars,
-    	greek: greek,
-    	comparisons: comparisons
-    };
-
     var Version = {};
     Version.GUPPY_VERSION = "2.0.0-alpha.1";
     Version.DOC_VERSION = "1.2.0";
@@ -1449,7 +1449,7 @@ var Guppy = (function () {
             arglist = [];
         var first, i;
 
-        // Make the b nodes for rendering each output    
+        // Make the b nodes for rendering each output
         for (var t in s["output"]) {
             var b = base.createElement("b");
             b.setAttribute("p", t);
@@ -1514,162 +1514,6 @@ var Guppy = (function () {
         }
         return { "f": f, "first": first, "args": arglist };
     };
-
-    // class SymbolTemplate{
-    //     constructor(name, definition){
-    // 	this.name = name;
-    // 	this.definition = definition;
-    //     }
-    //     evaluate(args){
-    // 	if(!(args.name)) throw "Template requires 'name' argument";
-    // 	let symdef = JSON.parse(JSON.stringify(this.definition));
-    // 	let r = function(src){
-    // 	    if(Object.prototype.toString.call(src) == "[object String]")
-    // 		for(var n in src) src[n].replace(new RegExp("\\{\\$"+n+"\\}"),args[n]);
-    // 	    else
-    // 		for(var x in src) src[x] = r(src[x]);
-    // 	    return src
-    // 	};
-    // 	return new Symbol(args.name, r(this.definition));
-    //     }
-    // }
-
-    // class Symbol{
-    //     constructor(name, definition){
-    // 	this.name = name;
-    // 	this.outputs = {};
-    // 	for(var o of definition.outputs){
-    // 	    this.outputs[o] = Symbol.parse_output(definition.outputs[o]);
-    // 	}
-    // 	this.args = definition.args;
-    // 	this.attrs = definition.attrs;
-    // 	this.input = definition.input;
-    // 	this.keys = definition.keys;
-    // 	this.ast_value = definition.ast.value;
-    // 	this.ast_type = definition.ast.type;
-    //     }
-    //     // Returns an array with alternating text and argument elements of the form
-    //     // {"type":"text", "val":the_text} or {"type":"arg", "index":the_index, "seperators":[sep1,sep2,...], "template":[...]}
-    //     static parse_output(output){
-    // 	var regex = /\{\$([0-9]+)/g, result, starts = [], indices = [], i;
-    // 	var ans = [];
-    // 	while ((result = regex.exec(output))){
-    //             starts.push(result.index);
-    //             indices.push(parseInt(result[1]));
-    // 	}
-    // 	ans.push({"type":"text","val":output.substring(0,starts.length > 0 ? starts[0] : output.length)}); // Push the first text bit
-    // 	for(i = 0; i < starts.length; i++){
-    //             var idx = starts[i]+1;
-    //             // Find template (if defined)
-    //             // var tmpl_str = "";
-    //             // var tmpl = [];
-    //             // if(output[idx] == "["){
-    //             //     idx++;
-    //             //     var tmpl_opens = 1;
-    //             //     while(opens > 0 && idx < output.length){
-    //             //         if(output[idx] == "]"){ tmpl_opens--; }
-    //             //         if(output[idx] == "["){ tmpl_opens++; }
-    //             //         if(tmpl_opens > 1){ tmpl_str += output[idx]; }
-    //             //         idx++;
-    //             //     }
-    //             //     tmpl = Symbols.split_output(tmpl_str);
-    //             // }
-    //             var separators = [];
-    //             var sep = "";
-    //             var opens = 1
-    //             while(opens > 0 && idx < output.length){
-    // 		if(output[idx] == "}"){
-    //                     if(opens == 2){ separators.push(sep); sep = ""; }
-    //                     opens--; }
-    // 		if(opens >= 2){ sep += output[idx]; }
-    // 		if(output[idx] == "{"){ opens++; }
-    // 		idx++;
-    //             }
-    //             ans.push({"type":"arg","index":indices[i],"separators":separators});
-    //             var next = (i == starts.length - 1) ? output.length : starts[i+1];
-    //             ans.push({"type":"text","val":output.substring(idx,next)}); // Push the next text bit
-    // 	}
-    // 	return ans;
-    //     }
-
-    //     to_node(content, base){
-    // 	// content is a list of nodes to insert
-    // 	var f = base.createElement("f");
-    // 	for(var attr in this.attrs){
-    //             f.setAttribute(attr, s.attrs[attr]);
-    // 	}
-    //         if(this.ast_type) f.setAttribute("ast_type",this.ast_type);
-    //         if(this.ast_value) f.setAttribute("ast_value",this.ast_value);
-
-    // 	var first_ref=-1, arglist = [];
-    // 	var first, i;
-
-    // 	// Make the b nodes for rendering each output    
-    // 	for(var t in this.outputs){
-    //             var b = base.createElement("b");
-    //             b.setAttribute("p",t);
-
-    //             var out = this.outputs[t];
-    //             for(i = 0; i < out.length; i++){
-    // 		if(out[i]["type"] == "text"){
-    //                     if(out[i]["val"].length > 0) b.appendChild(base.createTextNode(out[i]['val']));
-    // 		}
-    // 		else{
-    //                     if(t == 'latex') arglist.push(out[i]);
-    //                     var nt = base.createElement("r");
-    //                     nt.setAttribute("ref",out[i]["index"]);
-    //                     if(out[i]["separators"].length > 0) nt.setAttribute("d",out[i]["separators"].length);
-    //                     for(var j = 0; j < out[i]["separators"].length; j++) nt.setAttribute("sep"+j,out[i]["separators"][j]);
-    //                     if(t == 'latex' && first_ref == -1) first_ref = out[i]["index"];
-    //                     b.appendChild(nt);
-    // 		}
-    //             }
-    //             f.appendChild(b);
-    // 	}
-    // 	// Now make the c/l nodes for storing the content
-    // 	for(i = 0; i < arglist.length; i++){
-    //             var a = arglist[i];
-    //             var nc;
-    //             if(i in content && a['separators'].length > 0) {  // If the content for this node is provided and is an array, then dig down to find the first c child
-    // 		f.appendChild(content[i][0]);
-    // 		nc = content[i][0];
-    // 		while(nc.nodeName != "c")
-    //                     nc = nc.firstChild;
-    //             }
-    //             else if(i in content) {                                  // If the content for this node is provided and not an array, create the c node and populate its content
-    // 		var node_list = content[i];
-    // 		nc = base.createElement("c");
-    // 		for(var se = 0; se < node_list.length; se++)
-    //                     nc.appendChild(node_list[se].cloneNode(true));
-    // 		f.appendChild(nc)
-    //             }
-    //             else{                                             // Otherwise create the c node and possibly l nodes
-    // 		nc = base.createElement("c");
-    // 		var new_e = base.createElement("e");
-    // 		new_e.appendChild(base.createTextNode(""));
-    // 		nc.appendChild(new_e);
-    // 		var par = f;                                  // Now we add nested l elements if this is an array of dimension > 0
-    // 		for(j = 0; j < a['separators'].length; j++){
-    //                     var nl = base.createElement("l");
-    //                     nl.setAttribute("s","1");
-    //                     par.appendChild(nl);
-    //                     par = nl;
-    // 		}
-    // 		par.appendChild(nc);
-    //             }
-    //             if(i+1 == first_ref) first = nc.lastChild;        // Note the first node we should visit based on the LaTeX output
-    //             if(this.args && this.args[i]){                    // Set the arguments for the c node based on the symbol
-    // 		for(var arg in this.args[i]){
-    //                     nc.setAttribute(arg,this.args[i][arg]);
-    // 		}
-    //             }
-    // 	}
-    // 	return {"f":f, "first":first, "args":arglist};
-    //     }
-
-    // }
-
-    Symbols.add_symbols(DEFAULT_SYMBOLS);
 
     var Utils = {};
 
@@ -4192,99 +4036,99 @@ var Guppy = (function () {
     };
 
     var Keyboard = function Keyboard() {
-    				this.is_mouse_down = false;
+    			this.is_mouse_down = false;
 
-    				/* keyboard behaviour definitions */
+    			/* keyboard behaviour definitions */
 
-    				// keys aside from 0-9,a-z,A-Z
-    				this.k_chars = {
-    								"+": "+",
-    								"-": "-",
-    								"*": "*",
-    								".": "."
-    				};
-    				this.k_text = {
-    								"/": "/",
-    								"*": "*",
-    								"(": "(",
-    								")": ")",
-    								"<": "<",
-    								">": ">",
-    								"|": "|",
-    								"!": "!",
-    								",": ",",
-    								".": ".",
-    								";": ";",
-    								"=": "=",
-    								"[": "[",
-    								"]": "]",
-    								"@": "@",
-    								"'": "'",
-    								"`": "`",
-    								":": ":",
-    								"\"": "\"",
-    								"?": "?",
-    								"space": " "
-    				};
-    				this.k_controls = {
-    								"up": "up",
-    								"down": "down",
-    								"right": "right",
-    								"left": "left",
-    								"alt+k": "up",
-    								"alt+j": "down",
-    								"alt+l": "right",
-    								"alt+h": "left",
-    								"space": "spacebar",
-    								"home": "home",
-    								"end": "end",
-    								"backspace": "backspace",
-    								"del": "delete_key",
-    								"mod+a": "sel_all",
-    								"mod+c": "sel_copy",
-    								"mod+x": "sel_cut",
-    								"mod+v": "sel_paste",
-    								"mod+z": "undo",
-    								"mod+y": "redo",
-    								"enter": "done",
-    								"mod+shift+right": "list_extend_copy_right",
-    								"mod+shift+left": "list_extend_copy_left",
-    								",": "list_extend_right",
-    								";": "list_extend_down",
-    								"mod+right": "list_extend_right",
-    								"mod+left": "list_extend_left",
-    								"mod+up": "list_extend_up",
-    								"mod+down": "list_extend_down",
-    								"mod+shift+up": "list_extend_copy_up",
-    								"mod+shift+down": "list_extend_copy_down",
-    								"mod+backspace": "list_remove",
-    								"mod+shift+backspace": "list_remove_row",
-    								"shift+left": "sel_left",
-    								"shift+right": "sel_right",
-    								")": "right_paren",
-    								"\\": "backslash",
-    								"tab": "tab"
-    				};
+    			// keys aside from 0-9,a-z,A-Z
+    			this.k_chars = {
+    						"+": "+",
+    						"-": "-",
+    						"*": "*",
+    						".": "."
+    			};
+    			this.k_text = {
+    						"/": "/",
+    						"*": "*",
+    						"(": "(",
+    						")": ")",
+    						"<": "<",
+    						">": ">",
+    						"|": "|",
+    						"!": "!",
+    						",": ",",
+    						".": ".",
+    						";": ";",
+    						"=": "=",
+    						"[": "[",
+    						"]": "]",
+    						"@": "@",
+    						"'": "'",
+    						"`": "`",
+    						":": ":",
+    						"\"": "\"",
+    						"?": "?",
+    						"space": " "
+    			};
+    			this.k_controls = {
+    						"up": "up",
+    						"down": "down",
+    						"right": "right",
+    						"left": "left",
+    						"alt+k": "up",
+    						"alt+j": "down",
+    						"alt+l": "right",
+    						"alt+h": "left",
+    						"space": "spacebar",
+    						"home": "home",
+    						"end": "end",
+    						"backspace": "backspace",
+    						"del": "delete_key",
+    						"mod+a": "sel_all",
+    						"mod+c": "sel_copy",
+    						"mod+x": "sel_cut",
+    						"mod+v": "sel_paste",
+    						"mod+z": "undo",
+    						"mod+y": "redo",
+    						"enter": "done",
+    						"mod+shift+right": "list_extend_copy_right",
+    						"mod+shift+left": "list_extend_copy_left",
+    						",": "list_extend_right",
+    						";": "list_extend_down",
+    						"mod+right": "list_extend_right",
+    						"mod+left": "list_extend_left",
+    						"mod+up": "list_extend_up",
+    						"mod+down": "list_extend_down",
+    						"mod+shift+up": "list_extend_copy_up",
+    						"mod+shift+down": "list_extend_copy_down",
+    						"mod+backspace": "list_remove",
+    						"mod+shift+backspace": "list_remove_row",
+    						"shift+left": "sel_left",
+    						"shift+right": "sel_right",
+    						")": "right_paren",
+    						"\\": "backslash",
+    						"tab": "tab"
+    			};
 
-    				// Will populate keyboard shortcuts for symbols from symbol files
-    				this.k_syms = {};
+    			// Will populate keyboard shortcuts for symbols from symbol files
+    			this.k_syms = {};
 
-    				this.k_raw = "mod+space";
+    			this.k_raw = "mod+space";
 
-    				var i = 0;
+    			var i = 0;
 
-    				// letters
+    			// letters
 
-    				for (i = 65; i <= 90; i++) {
-    								this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
-    								this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
-    				}
+    			for (i = 65; i <= 90; i++) {
+    						this.k_chars[String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toLowerCase();
+    						this.k_chars['shift+' + String.fromCharCode(i).toLowerCase()] = String.fromCharCode(i).toUpperCase();
+    			}
 
-    				// numbers
+    			// numbers
 
-    				for (i = 48; i <= 57; i++) {
-    								this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
-    				}
+    			for (i = 48; i <= 57; i++) {
+    						this.k_chars[String.fromCharCode(i)] = String.fromCharCode(i);
+    			}
     };
 
     var Settings = {};
@@ -6138,7 +5982,7 @@ var Guppy = (function () {
     /**
         Add a template symbol to all instances of the editor
         @memberof Guppy
-        @param {string} name - The name of the template to add. 
+        @param {string} name - The name of the template to add.
         @param {Object} template - A template dictionary. This is the same
         as a symbol dictionary, but it can have parameters of the form
         {$myparam} as a substring of any dictionary value, which will be
@@ -6189,9 +6033,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          * "autoreplace": A string describing how to autoreplace typed text with symbols:
             * "auto" (default): Replace symbls greedily
             * "whole": Replace only entire tokens
             * "delay": Same as "whole", but with 200ms delay before replacement
@@ -6212,9 +6056,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          "autoreplace": A string describing how to autoreplace typed text with symbols:
              "auto" (default): Replace symbls greedily
              "whole": Replace only entire tokens
              "delay": Same as "whole", but with 200ms delay before replacement
@@ -6248,7 +6092,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6276,7 +6120,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6632,14 +6476,14 @@ var Guppy = (function () {
         // All the interesting work is done by transform.  This function just adds in the cursor and selection-start cursor
         var output = "";
         if (t == "render") {
-            var root = this.engine.doc.root();
-            this.engine.add_paths(root, "m");
+            var root$$1 = this.engine.doc.root();
+            this.engine.add_paths(root$$1, "m");
             this.engine.temp_cursor = this.temp_cursor;
-            this.engine.add_classes_cursors(root);
+            this.engine.add_classes_cursors(root$$1);
             this.engine.current.setAttribute("current", "yes");
             if (this.temp_cursor.node) this.temp_cursor.node.setAttribute("temp", "yes");
             output = this.engine.get_content("latex", true);
-            this.engine.remove_cursors_classes(root);
+            this.engine.remove_cursors_classes(root$$1);
             output = output.replace(new RegExp('&amp;', 'g'), '&');
             return output;
         } else {
@@ -6797,8 +6641,8 @@ var Guppy = (function () {
         @param {String} text - A string representing the document to import.
         @memberof Guppy
     */
-    Guppy.prototype.import_text = function (text) {
-        return this.engine.import_text(text);
+    Guppy.prototype.import_text = function (text$$1) {
+        return this.engine.import_text(text$$1);
     };
 
     /**
@@ -6809,8 +6653,8 @@ var Guppy = (function () {
         @param {String} text - A string representing the document to import.
         @memberof Guppy
     */
-    Guppy.prototype.import_latex = function (text) {
-        return this.engine.import_latex(text);
+    Guppy.prototype.import_latex = function (text$$1) {
+        return this.engine.import_latex(text$$1);
     };
 
     /**
@@ -6967,7 +6811,10 @@ var Guppy = (function () {
     Guppy.initialised = false;
 
     Guppy.init = function () {
+        var symbols = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_SYMBOLS;
+
         if (Guppy.initialised) return;
+        Symbols.add_symbols(symbols);
         Settings.init(Symbols.symbols);
         Guppy.register_keyboard_handlers();
         document.body.appendChild(Guppy.raw_input);

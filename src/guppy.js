@@ -1,3 +1,4 @@
+import DEFAULT_SYMBOLS from '../sym/symbols.json';
 import Doc from './doc.js';
 import Engine from './engine.js';
 import Keyboard from './keyboard.js';
@@ -6,7 +7,6 @@ import Settings from './settings.js';
 import Symbols from './symbols.js';
 import Utils from './utils.js';
 import katex from '../lib/katex/katex-modified.min.js';
-import DEFAULT_SYMBOLS from '../sym/symbols.json'
 
 /**
    @class
@@ -987,7 +987,7 @@ Guppy.register_keyboard_handlers = function(){
 
 Guppy.initialised = false;
 
-Guppy.init = function( symbols=DEFAULT_SYMBOLS ){
+Guppy.init = function(symbols=DEFAULT_SYMBOLS){
     if(Guppy.initialised) return;
     Symbols.add_symbols(symbols);
     Settings.init(Symbols.symbols);
