@@ -7,4 +7,3 @@ node_modules
 *.o
 *.so
 *.a
-build
