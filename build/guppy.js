@@ -1159,23 +1159,6 @@ var Guppy = (function () {
     	template: "latex_trig_func",
     	values: ["log", "ln"]
     };
-    var utf8chars = {
-    	template: "utf8char",
-    	values: {
-    		banana: {
-    			char: "🍌"
-    		},
-    		pineapple: {
-    			char: "🍍"
-    		},
-    		mango: {
-    			char: "🥭"
-    		},
-    		kiwi: {
-    			char: "🥝"
-    		}
-    	}
-    };
     var greek = {
     	template: "char",
     	values: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Phi", "Psi", "Omega"]
