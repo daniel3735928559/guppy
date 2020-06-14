@@ -4281,7 +4281,9 @@ var Guppy = (function () {
         "blank_placeholder": "[?]",
         "blacklist": [],
         "buttons": ["osk", "settings", "symbols", "controls"],
-        "cliptype": "latex"
+        "cliptype": "latex",
+        "chars_break_sup_sub": { "name": ["exponential", "subscript"], "symbols": "*", "strings": "+-" },
+        "top_only_symbols": ["equal", "less", "greater", "leq", "geq"]
     };
 
     Settings.settings_options = {
@@ -4745,6 +4747,11 @@ var Guppy = (function () {
         var replace_f = false;
         var sel;
 
+        if (this.setting("top_only_symbols").includes(sym_name)) {
+            this.move_to_m_node_child();
+        }
+        this.break_out_of_sup_sub(true, sym_name);
+
         if (cur > 0) {
             cur--;
             if (this.sel_status != Engine.SEL_NONE) {
@@ -4883,6 +4890,7 @@ var Guppy = (function () {
             this.sel_delete();
             this.sel_clear();
         }
+        this.break_out_of_sup_sub(false, s);
         this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret, s);
         this.caret += s.length;
         this.checkpoint();
@@ -5729,6 +5737,24 @@ var Guppy = (function () {
         return success;
     };
 
+    Engine.prototype.move_to_m_node_child = function () {
+        var set = false;
+        while (this.current.parentNode.nodeName != "m") {
+            this.current = this.current.parentNode;
+            set = true;
+        }
+        if (set) {
+            this.current = this.current.nextSibling;
+            this.caret = 0;
+        }
+    };
+
+    Engine.prototype.break_out_of_sup_sub = function (is_sym, name) {
+        if ((this.caret > 0 || this.current.parentNode != null) && this.caret == Utils.get_length(this.current) && this.current.parentNode.parentNode.nodeName == "f" && this.setting("chars_break_sup_sub")["name"].includes(this.current.parentNode.parentNode.getAttribute("type")) && this.setting("chars_break_sup_sub")[is_sym ? "symbols" : "strings"].includes(name)) {
+            this.move_to_m_node_child();
+        }
+    };
+
     var mousetrap_min = createCommonjsModule(function (module) {
       /* mousetrap v1.6.1 craig.is/killing/mice */
       (function (r, v, f) {
@@ -6121,7 +6147,7 @@ var Guppy = (function () {
     /**
         Add a template symbol to all instances of the editor
         @memberof Guppy
-        @param {string} name - The name of the template to add. 
+        @param {string} name - The name of the template to add.
         @param {Object} template - A template dictionary. This is the same
         as a symbol dictionary, but it can have parameters of the form
         {$myparam} as a substring of any dictionary value, which will be
@@ -6172,9 +6198,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          * "autoreplace": A string describing how to autoreplace typed text with symbols:
             * "auto" (default): Replace symbls greedily
             * "whole": Replace only entire tokens
             * "delay": Same as "whole", but with 200ms delay before replacement
@@ -6185,6 +6211,10 @@ var Guppy = (function () {
           * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
             * "text": Use plain-text editor content
             * "latex": Use LaTeX rendering of editor content
+          * "chars_break_exp": Inserting these characters or symbol group will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
+            * "name": The name of the exponential symbol (in case it is changed)
+            * "symbols_group": The name of the groups which should break out of the exponential
+            * "strings": Characters that will also break out of an exponential
     */
     Guppy.configure = function (name, val) {
         if (name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1) {
@@ -6195,9 +6225,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          "autoreplace": A string describing how to autoreplace typed text with symbols:
              "auto" (default): Replace symbls greedily
              "whole": Replace only entire tokens
              "delay": Same as "whole", but with 200ms delay before replacement
@@ -6231,7 +6261,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6259,7 +6289,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.

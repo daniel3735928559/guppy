@@ -274,6 +274,10 @@ Guppy.remove_global_symbol = function(name){
       * "cliptype": A string describing what gets placed on the system clipboard when content is copied from the editor.
         * "text": Use plain-text editor content
         * "latex": Use LaTeX rendering of editor content
+      * "chars_break_exp": Inserting these characters or symbol group will break out of an exponential, format: {"name": "exponential", "symbols_group": "operations", "strings": "+-"},
+        * "name": The name of the exponential symbol (in case it is changed)
+        * "symbols_group": The name of the groups which should break out of the exponential
+        * "strings": Characters that will also break out of an exponential
 */
 Guppy.configure = function(name, val){
     if(name in Settings.settings_options && Settings.settings_options[name].indexOf(val) == -1){

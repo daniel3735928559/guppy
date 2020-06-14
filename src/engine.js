@@ -342,6 +342,11 @@ Engine.prototype.insert_symbol = function(sym_name,sym_args){
     var replace_f = false;
     var sel;
 
+    if(this.setting("top_only_symbols").includes(sym_name)){
+        this.move_to_m_node_child();
+    }
+    this.break_out_of_sup_sub(true, sym_name);
+
     if(cur > 0){
         cur--;
         if(this.sel_status != Engine.SEL_NONE){
@@ -485,6 +490,7 @@ Engine.prototype.insert_string = function(s){
         this.sel_delete();
         this.sel_clear();
     }
+    this.break_out_of_sup_sub(false, s);
     this.current.firstChild.nodeValue = this.current.firstChild.nodeValue.splice(this.caret,s)
     this.caret += s.length;
     this.checkpoint();
@@ -1353,6 +1359,28 @@ Engine.prototype.check_for_symbol = function(whole_node){
         instance.caret = temp_caret;
     }
     return success;
+}
+
+Engine.prototype.move_to_m_node_child = function(){
+    var set = false;
+    while(this.current.parentNode.nodeName != "m"){
+        this.current = this.current.parentNode;
+        set = true;
+    }
+    if(set){
+        this.current = this.current.nextSibling;
+        this.caret = 0;
+    }
+}
+
+Engine.prototype.break_out_of_sup_sub = function(is_sym, name){
+    if((this.caret > 0 || this.current.parentNode != null) &&
+      this.caret == Utils.get_length(this.current) &&
+      this.current.parentNode.parentNode.nodeName == "f" &&
+      this.setting("chars_break_sup_sub")["name"].includes(this.current.parentNode.parentNode.getAttribute("type")) &&
+      this.setting("chars_break_sup_sub")[is_sym ? "symbols" : "strings"].includes(name)){
+          this.move_to_m_node_child();
+    }
 }
 
 export default Engine;
