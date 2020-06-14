@@ -3998,6 +3998,12 @@ var Guppy = (function () {
     Doc.prototype.auto_bracket = function (n) {
         var e0 = n.firstChild;
         var e1 = n.lastChild;
+        var previous_sibling = n.parentNode.previousSibling;
+        var numbers = "0123456789";
+        if (previous_sibling && previous_sibling.nodeName == "e" && previous_sibling.textContent && numbers.includes(previous_sibling.textContent.slice(-1)) && e0.textContent && numbers.includes(e0.textContent.charAt(0))) {
+            // there are numbers before this node
+            return true;
+        }
         if (n.childElementCount == 3 && e0.firstChild.textContent == "" && e1.firstChild.textContent == "") {
             // single f child, all e children empty
             var f = e0.nextSibling;
