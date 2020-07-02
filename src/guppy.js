@@ -217,6 +217,8 @@ Guppy.make_button = function(cls, parent, cb){
     "math" (the default)
     @param {string} [symbol.args.is_bracket="no"] - Set to "yes" if
     the symbol is itself a bracket/parenthesis equivalent.
+    @param {string} [symbol.args.regexp] - Set to limit String Arguments'
+    expression with regexp
     @param {string} [template] - The name of the template to use
 */
 Guppy.add_global_symbol = function(name, symbol, template){

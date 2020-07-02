@@ -480,6 +480,17 @@ Engine.prototype.make_e = function(text){
     @param {string} s - The string to insert.
 */
 Engine.prototype.insert_string = function(s){
+    if (this.current.parentNode.hasAttribute("regex")) {
+        var regexp = RegExp(this.current.parentNode.getAttribute("regex"));
+        var argu = this.current;
+        var siblingString = argu.parentNode.firstChild.textContent;
+        var newStringArgument = siblingString + s;
+        if (!newStringArgument.match(regexp)) {
+          this.right();
+          this.insert_string(s);
+          return;
+        }
+    }
     var self = this;
     if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
