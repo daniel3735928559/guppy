@@ -330,6 +330,11 @@ Engine.prototype.template_to_node = function(tmpl_name, content, name, tmpl_args
     Should match one of the keys in the symbols JSON object
 */
 Engine.prototype.insert_symbol = function(sym_name,sym_args){
+    if (this.current.parentNode.hasAttribute("regexp")) {
+      this.right();
+      this.insert_symbol(sym_name);
+      return;
+    }
     var s = sym_args ? Symbols.make_template_symbol(sym_name, sym_args.name, sym_args) : this.symbols[sym_name];
     if(s.attrs && this.is_blacklisted(s.attrs.type)){
         return false;
