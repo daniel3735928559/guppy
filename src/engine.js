@@ -330,6 +330,11 @@ Engine.prototype.template_to_node = function(tmpl_name, content, name, tmpl_args
     Should match one of the keys in the symbols JSON object
 */
 Engine.prototype.insert_symbol = function(sym_name,sym_args){
+    if (this.current.parentNode.hasAttribute("regexp")) {
+      this.right();
+      this.insert_symbol(sym_name);
+      return;
+    }
     var s = sym_args ? Symbols.make_template_symbol(sym_name, sym_args.name, sym_args) : this.symbols[sym_name];
     if(s.attrs && this.is_blacklisted(s.attrs.type)){
         return false;
@@ -480,6 +485,17 @@ Engine.prototype.make_e = function(text){
     @param {string} s - The string to insert.
 */
 Engine.prototype.insert_string = function(s){
+    if (this.current.parentNode.hasAttribute("regex")) {
+        var regexp = RegExp(this.current.parentNode.getAttribute("regex"));
+        var argu = this.current;
+        var siblingString = argu.parentNode.firstChild.textContent;
+        var newStringArgument = siblingString + s;
+        if (!newStringArgument.match(regexp)) {
+          this.right();
+          this.insert_string(s);
+          return;
+        }
+    }
     var self = this;
     if(this.sel_status != Engine.SEL_NONE){
         this.sel_delete();
