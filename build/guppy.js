@@ -1432,7 +1432,7 @@ var Guppy = (function () {
             arglist = [];
         var first, i;
 
-        // Make the b nodes for rendering each output    
+        // Make the b nodes for rendering each output
         for (var t in s["output"]) {
             var b = base.createElement("b");
             b.setAttribute("p", t);
@@ -1587,7 +1587,7 @@ var Guppy = (function () {
     // 	var first_ref=-1, arglist = [];
     // 	var first, i;
 
-    // 	// Make the b nodes for rendering each output    
+    // 	// Make the b nodes for rendering each output
     // 	for(var t in this.outputs){
     //             var b = base.createElement("b");
     //             b.setAttribute("p",t);
@@ -6121,7 +6121,7 @@ var Guppy = (function () {
     /**
         Add a template symbol to all instances of the editor
         @memberof Guppy
-        @param {string} name - The name of the template to add. 
+        @param {string} name - The name of the template to add.
         @param {Object} template - A template dictionary. This is the same
         as a symbol dictionary, but it can have parameters of the form
         {$myparam} as a substring of any dictionary value, which will be
@@ -6172,9 +6172,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           * "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          * "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          * "autoreplace": A string describing how to autoreplace typed text with symbols:
             * "auto" (default): Replace symbls greedily
             * "whole": Replace only entire tokens
             * "delay": Same as "whole", but with 200ms delay before replacement
@@ -6195,9 +6195,9 @@ var Guppy = (function () {
 
     /**
        @param {string} name - The name of the setting to configure.  Can be "xml_content", "autoreplace", "blank_caret", "empty_content", "blacklist", "buttons", or "cliptype"
-       @param {Object} val - The value associated with the named setting: 
+       @param {Object} val - The value associated with the named setting:
           "xml_content": An XML string with which to initialise the editor's state. (Defaults to "<m><e/></m>".)
-          "autoreplace": A string describing how to autoreplace typed text with symbols: 
+          "autoreplace": A string describing how to autoreplace typed text with symbols:
              "auto" (default): Replace symbls greedily
              "whole": Replace only entire tokens
              "delay": Same as "whole", but with 200ms delay before replacement
@@ -6231,7 +6231,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6259,7 +6259,7 @@ var Guppy = (function () {
     };
 
     /**
-       @param {string} name - The name of an event.  Can be: 
+       @param {string} name - The name of an event.  Can be:
          * change - Called when the editor's content changes.  Argument will be a dictionary with keys `old` and `new` containing the old and new documents, respectively.
          * left_end - Called when the cursor is at the left-most point and a command is received to move the cursor to the left (e.g., via the left arrow key).  Argument will be null.
          * right_end - Called when the cursor is at the right-most point and a command is received to move the cursor to the right (e.g., via the right arrow key).  Argument will be null.
@@ -6960,3 +6960,5 @@ var Guppy = (function () {
     return Guppy;
 
 }());
+
+module.exports = Guppy;
