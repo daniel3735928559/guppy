@@ -6485,7 +6485,9 @@ var Guppy = (function () {
     };
 
     Guppy.mouse_down = function (e) {
-        if (e.target.getAttribute("class") == "guppy-button") return;
+        if (
+          e.target.getAttribute("class").startsWith("oppia-osk-btn") ||
+          e.target.getAttribute("class") == "guppy-button") return;
         var n = e.target;
         Guppy.kb.is_mouse_down = true;
         while (n != null) {
